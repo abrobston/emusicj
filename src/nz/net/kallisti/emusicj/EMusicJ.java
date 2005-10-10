@@ -23,7 +23,7 @@ public class EMusicJ {
      */
     public static void main(String[] args) {
         IEMusicView view = new SWTView();
-        view.setState(IEMusicView.STATE_STARTUP);
+        view.setState(IEMusicView.ViewState.STARTUP);
         IEMusicController controller = new EMusicController();
         controller.setView(view);
         controller.run(args);

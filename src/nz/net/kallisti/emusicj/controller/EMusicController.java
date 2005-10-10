@@ -31,12 +31,16 @@ public class EMusicController implements IEMusicController {
 
     public void run(String[] args) {
         // Initialise the system
+    	if (view != null)
+    		view.setState(IEMusicView.ViewState.STARTUP);
         for (String file : args)
             loadMetafile(file);
-        view.setState(IEMusicView.STATE_RUNNING);
+        if (view != null)
+        	view.setState(IEMusicView.ViewState.RUNNING);
         // Pass the system state on to the view to ensure it's up to date
         // Call the view's event loop
-        view.processEvents(this);
+        if (view != null)
+        	view.processEvents(this);
         // Clean up the program
     }
 

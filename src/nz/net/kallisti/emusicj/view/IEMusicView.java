@@ -5,10 +5,15 @@ import nz.net.kallisti.emusicj.download.DownloadMonitor;
 
 public interface IEMusicView {
 
-    /** Indicate that the program is starting up */
-    int STATE_STARTUP = 1;
-    /** Indicate that the program has started and is now operational */
-    int STATE_RUNNING = 2;
+	/**
+	 * <p>These states are used to tell the view the large-scale progress of the 
+	 * system so that it can report them to the user, and change how it looks
+	 * accordingly (e.g. by providing a splash screen)</p>
+	 * <ul><li><code>STARTUP</code> indicates the program is initialising</li>
+	 * <li><code>RUNNING</code> indicates the program is in its normal running
+	 * mode</li></ul>
+	 */
+	enum ViewState { STARTUP, RUNNING }
     
     /**
      * Sets the state that the view should run in. This can be used to provide
@@ -18,7 +23,7 @@ public interface IEMusicView {
      * @param s the new state for the view, one of the constants with STATE_
      * as the prefix.
      */
-    public void setState(int s);
+    public void setState(ViewState state);
 
     /**
      * This runs the event loop of the view. This should recieve events from
