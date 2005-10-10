@@ -11,7 +11,7 @@ import nz.net.kallisti.emusicj.view.SWTView;
  * involves creating an instance of the controller, and giving it a view
  * to use.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -26,7 +26,7 @@ public class EMusicJ {
         view.setState(IEMusicView.STATE_STARTUP);
         IEMusicController controller = new EMusicController();
         controller.setView(view);
-        controller.run();
+        controller.run(args);
     }
 
 }

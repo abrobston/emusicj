@@ -4,14 +4,14 @@ package nz.net.kallisti.emusicj.download;
  * <p>This is class that is instantiated by an IDownloader subclass to allow the
  * state of the download progress to be tracked by something.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
 public interface DownloadMonitor {
 
     public enum DLState { NOTSTARTED, CONNECTING, DOWNLOADING, PAUSED, STOPPED,
-        FINISHED } 
+        FINISHED, FAILED } 
     
     /**
      * Gets the percentage complete of the download.

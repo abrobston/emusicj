@@ -1,5 +1,8 @@
 package nz.net.kallisti.emusicj.controller;
 
+import java.util.List;
+
+import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 /**
@@ -8,7 +11,7 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  * display, and update the state of the system in response to what the
  * user inputs (typically done via the view also)</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -27,7 +30,16 @@ public interface IEMusicController {
      * tasks that need to be done, and then pass control to the event loop
      * of the view (or it may do that in a seperate thread if it needs to).
      * This will only return when the program is to shut down. 
+     * @param args the command line arguments, they should just be filenames
+     * of metafiles to add to the queue
      */
-    public void run();
+    public void run(String[] args);
+
+    /**
+     * Tells the controller about a set of new {@link IMusicDownloader}
+     * instances.
+     * @param downloaders the new downloaders for the controller to be aware of
+     */
+    public void newDownloads(List<IMusicDownloader> downloaders);
     
 }
