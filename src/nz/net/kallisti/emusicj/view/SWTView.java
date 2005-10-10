@@ -1,6 +1,11 @@
 package nz.net.kallisti.emusicj.view;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import nz.net.kallisti.emusicj.controller.IEMusicController;
@@ -33,12 +38,49 @@ public class SWTView implements IEMusicView {
     		display =new Display();
     		shell =new Shell(display);
     		shell.setText("eMusic/J");
+    		buildMenuBar(shell);
     		shell.pack();
     		shell.open();
     	}
     }
 
-    public void processEvents(IEMusicController controller) {
+    /**
+     * Builds the menu bar for the application
+	 * @param shell the shell to display it on
+	 */
+	private void buildMenuBar(Shell shell) {
+		// Generalise this gunk into a few nice methods
+		
+		Menu bar = new Menu (shell, SWT.BAR);
+		shell.setMenuBar (bar);
+		MenuItem fileItem = new MenuItem (bar, SWT.CASCADE);
+		fileItem.setText ("File");
+		Menu fileMenu = new Menu (shell, SWT.DROP_DOWN);
+		fileItem.setMenu (fileMenu);
+		
+		MenuItem open = new MenuItem(fileMenu, SWT.PUSH);
+		open.setText("&Open...");
+		
+		new MenuItem(fileMenu, SWT.SEPARATOR);
+
+		MenuItem quit = new MenuItem(fileMenu, SWT.PUSH);
+		quit.setText("&Quit\tCtrl+Q");
+		quit.setAccelerator (SWT.CTRL + 'Q');
+		quit.addListener (SWT.Selection, new Listener () {
+			public void handleEvent (Event e) {
+				userSelected("quit");
+			}
+		});
+	}
+
+	/**
+	 * @param command
+	 */
+	protected void userSelected(String command) {
+				
+	}
+
+	public void processEvents(IEMusicController controller) {
 	      while (!shell.isDisposed()){
  	         if (!display.readAndDispatch()){
  	            display.sleep();
