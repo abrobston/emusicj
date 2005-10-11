@@ -1,15 +1,15 @@
 package nz.net.kallisti.emusicj.view;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-
+import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.download.DownloadMonitor;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * <p>This is the main class for providing the user interface. It uses SWT to
@@ -37,9 +37,10 @@ public class SWTView implements IEMusicView {
     	} else if (state.equals(ViewState.RUNNING)) {
     		display =new Display();
     		shell =new Shell(display);
-    		shell.setText("eMusic/J");
+    		shell.setText(Constants.APPNAME);
     		buildMenuBar(shell);
     		shell.pack();
+            shell.setSize (200, 200);
     		shell.open();
     	}
     }
@@ -49,37 +50,44 @@ public class SWTView implements IEMusicView {
 	 * @param shell the shell to display it on
 	 */
 	private void buildMenuBar(Shell shell) {
-		// Generalise this gunk into a few nice methods
-		
 		Menu bar = new Menu (shell, SWT.BAR);
 		shell.setMenuBar (bar);
-		MenuItem fileItem = new MenuItem (bar, SWT.CASCADE);
-		fileItem.setText ("File");
-		Menu fileMenu = new Menu (shell, SWT.DROP_DOWN);
-		fileItem.setMenu (fileMenu);
-		
-		MenuItem open = new MenuItem(fileMenu, SWT.PUSH);
-		open.setText("&Open...");
-		
+        // --- File menu ---
+		Menu fileMenu = SWTUtils.createDropDown(shell, bar, "&File");
+		SWTUtils.createMenuItem(fileMenu, "&Open...", SWT.CTRL+'O', this, 
+                "openFile");        
 		new MenuItem(fileMenu, SWT.SEPARATOR);
-
-		MenuItem quit = new MenuItem(fileMenu, SWT.PUSH);
-		quit.setText("&Quit\tCtrl+Q");
-		quit.setAccelerator (SWT.CTRL + 'Q');
-		quit.addListener (SWT.Selection, new Listener () {
-			public void handleEvent (Event e) {
-				userSelected("quit");
-			}
-		});
+		SWTUtils.createMenuItem(fileMenu, "&Quit", SWT.CTRL+'Q', this, 
+                "quitProgram");
+        // --- Downloads menu ---
+        Menu downloadsMenu = SWTUtils.createDropDown(shell, bar, "&Downloads");
+        SWTUtils.createMenuItem(downloadsMenu, "&Pause downloads", SWT.CTRL+'P', 
+                this, "pauseDownloads");
+        SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads", SWT.CTRL+'R', 
+                this, "resumeDownloads");
+        // --- Help menu ---
+        Menu aboutMenu = SWTUtils.createDropDown(shell, bar, "&Help");
+        SWTUtils.createMenuItem(aboutMenu, "&About...", null, 
+                this, "aboutBox");
 	}
 
-	/**
-	 * @param command
-	 */
-	protected void userSelected(String command) {
-				
+    public void openFile() {
+        
+    }
+    
+	public void quitProgram() {
+	    shell.dispose();
 	}
-
+    
+    public void aboutBox() {
+        MessageBox about = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+        about.setText("About this program");
+        about.setMessage("This is version "+Constants.VERSION+" of "+
+                Constants.APPNAME+"\nWritten by Robin Sheat <robin@kallisti.net.nz>\n"+
+                "This program downloads music bought from eMusic <http://www.emusic.com>");
+        about.open();
+    }
+    
 	public void processEvents(IEMusicController controller) {
 	      while (!shell.isDisposed()){
  	         if (!display.readAndDispatch()){
