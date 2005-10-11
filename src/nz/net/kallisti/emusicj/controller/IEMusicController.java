@@ -41,5 +41,12 @@ public interface IEMusicController {
      * @param downloaders the new downloaders for the controller to be aware of
      */
     public void newDownloads(List<IMusicDownloader> downloaders);
+
+	/**
+	 * Tells the controller to load a metadata file and add the downloads
+	 * contained in it to the download system.
+	 * @param file the metadata file to load
+	 */
+	public void loadMetafile(String file);
     
 }

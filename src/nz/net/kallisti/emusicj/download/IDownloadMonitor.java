@@ -8,10 +8,16 @@ package nz.net.kallisti.emusicj.download;
  *
  * @author robin
  */
-public interface DownloadMonitor {
+public interface IDownloadMonitor {
 
     public enum DLState { NOTSTARTED, CONNECTING, DOWNLOADING, PAUSED, STOPPED,
         FINISHED, FAILED } 
+    
+    /**
+     * Gets a nice name of the download
+     * @return a String describing the download
+     */
+    public String getName();
     
     /**
      * Gets the percentage complete of the download.

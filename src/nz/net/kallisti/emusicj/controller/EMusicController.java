@@ -6,6 +6,8 @@ import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
+import nz.net.kallisti.emusicj.models.IDownloadsModel;
+import nz.net.kallisti.emusicj.models.test.TestDownloadsModel;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 /**
@@ -20,6 +22,7 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
 public class EMusicController implements IEMusicController {
 
     private IEMusicView view;
+	private IDownloadsModel downloadsModel = new TestDownloadsModel(10);
 
     public EMusicController() {
         super();
@@ -27,6 +30,7 @@ public class EMusicController implements IEMusicController {
 
     public void setView(IEMusicView view) {
         this.view = view;
+        view.setController(this);
     }
 
     public void run(String[] args) {
@@ -35,9 +39,12 @@ public class EMusicController implements IEMusicController {
     		view.setState(IEMusicView.ViewState.STARTUP);
         for (String file : args)
             loadMetafile(file);
+        // Pass the system state on to the view to ensure it's up to date
+        if (view != null)
+        	view.setDownloadsModel(downloadsModel);
+        
         if (view != null)
         	view.setState(IEMusicView.ViewState.RUNNING);
-        // Pass the system state on to the view to ensure it's up to date
         // Call the view's event loop
         if (view != null)
         	view.processEvents(this);
@@ -48,7 +55,7 @@ public class EMusicController implements IEMusicController {
      * Loads a metafile. A metafile may contain any number of files to download.
      * @param file the filename of the metafile to load
      */
-    private void loadMetafile(String file) {
+    public void loadMetafile(String file) {
         try {
             MetafileLoader.load(this, new File(file));
         } catch (IOException e) {

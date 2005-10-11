@@ -1,7 +1,7 @@
 package nz.net.kallisti.emusicj.view;
 
 import nz.net.kallisti.emusicj.controller.IEMusicController;
-import nz.net.kallisti.emusicj.download.DownloadMonitor;
+import nz.net.kallisti.emusicj.models.IDownloadsModel;
 
 public interface IEMusicView {
 
@@ -33,8 +33,19 @@ public interface IEMusicView {
      */
     public void processEvents(IEMusicController controller);
     
-    public void addDownload(DownloadMonitor dm);
+    /**
+     * A view has a downloads model to keep track of what downloads are in the
+     * system. This tells the view the model to watch.
+     * @param model the model that the view will use
+     */
+    public void setDownloadsModel(IDownloadsModel model);
     
-    public void removeDownload(DownloadMonitor dm);
+    /**
+	 * Sets the controller instance that the view should communicate with. 
+	 * If this isn't set by the time the view needs to talk to the controller,
+	 * <code>NullPointerExceptions</code> will be generated.
+	 * @param controller the controller instance the view talks to
+	 */
+	public void setController(IEMusicController controller);
 
 }

@@ -2,10 +2,15 @@ package nz.net.kallisti.emusicj.view;
 
 import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
-import nz.net.kallisti.emusicj.download.DownloadMonitor;
+import nz.net.kallisti.emusicj.download.IDownloadMonitor;
+import nz.net.kallisti.emusicj.models.IDownloadsModel;
+import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -21,17 +26,21 @@ import org.eclipse.swt.widgets.Shell;
  *
  * @author robin
  */
-public class SWTView implements IEMusicView {
+public class SWTView implements IEMusicView, IDownloadsModelListener {
 
-	
     private Display display;
 	private Shell shell;
+	private IEMusicController controller;
+	private IDownloadsModel downloadsModel;
+	private List downloadsList;
+	private ViewState state;
 
 	public SWTView() {
         super();
     }
 
     public void setState(ViewState state) {
+    	this.state = state;
     	if (state.equals(ViewState.STARTUP)) {
     		// do a splashscreen or something
     	} else if (state.equals(ViewState.RUNNING)) {
@@ -39,6 +48,10 @@ public class SWTView implements IEMusicView {
     		shell =new Shell(display);
     		shell.setText(Constants.APPNAME);
     		buildMenuBar(shell);
+    		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
+    		shell.setLayout(fillLayout);
+    		buildInterface(shell);
+    		updateListFromModel();
     		shell.pack();
             shell.setSize (200, 200);
     		shell.open();
@@ -46,6 +59,37 @@ public class SWTView implements IEMusicView {
     }
 
     /**
+	 * Updates the list view to ensure that it reflects the model.
+	 */
+	private void updateListFromModel() {
+		if (downloadsModel == null || state != ViewState.RUNNING)
+			return;
+		final java.util.List<IDownloadMonitor> downloads = 
+			downloadsModel.getDownloadMonitors();
+		display.asyncExec (new Runnable () {
+			public void run () {
+				if (!shell.isDisposed()) {
+					// This isn't very nice - eventually do it smart
+					downloadsList.removeAll();
+					for (IDownloadMonitor dm : downloads) {
+						downloadsList.add(dm.getName());
+					}
+				}					
+			}
+		});
+	}
+
+	/**
+     * Builds the interface. This consists of a top list view containing each
+     * of the download states. Eventually it will also have a lower panel
+     * that shows info on the selected item.
+	 * @param shell the shell to build the interface on
+	 */
+	private void buildInterface(Shell shell) {
+		downloadsList = new List(shell, SWT.MULTI | SWT.V_SCROLL);		
+	}
+
+	/**
      * Builds the menu bar for the application
 	 * @param shell the shell to display it on
 	 */
@@ -72,7 +116,12 @@ public class SWTView implements IEMusicView {
 	}
 
     public void openFile() {
-        
+    	FileDialog dialog = new FileDialog (shell, SWT.OPEN);
+    	dialog.setFilterNames (new String [] {"All Files (*.*)"});
+    	dialog.setFilterExtensions (new String [] {"*.*"}); 
+    	String file = dialog.open();
+    	if (file != null)
+    		controller.loadMetafile(file);
     }
     
 	public void quitProgram() {
@@ -97,14 +146,20 @@ public class SWTView implements IEMusicView {
  	      display.dispose();
     }
 
-    public void addDownload(DownloadMonitor dm) {
-        // TODO Auto-generated method stub
-        
-    }
+	public void setController(IEMusicController controller) {
+		this.controller = controller;
+	}
 
-    public void removeDownload(DownloadMonitor dm) {
-        // TODO Auto-generated method stub
-        
-    }
+	public void setDownloadsModel(IDownloadsModel model) {
+		this.downloadsModel = model;
+		if (model != null)
+			model.addListener(this);
+	}
+
+	public void downloadsListenerChanged(IDownloadsModel model) {
+		// TODO update the display to reflect the model state
+		// must use asyncExec or similar
+		assert model == downloadsModel : "Received event for unknown IDownloadsModel";
+	}
 
 }
