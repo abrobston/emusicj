@@ -14,6 +14,10 @@ public interface IDownloader {
     
     public void start();
     
+    /**
+     * This tells the downloader to shut down any downloads. This should stop
+     * any threads running.
+     */
     public void stop();
     
 }

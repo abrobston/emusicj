@@ -10,11 +10,14 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
+import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -43,9 +46,9 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 	private ViewState state;
     private ArrayList<IDownloadMonitor> dlMonitors = 
         new ArrayList<IDownloadMonitor>();
-    private ArrayList<DownloadDisplay> displays =
+    private ArrayList<DownloadDisplay> dlDisplays =
         new ArrayList<DownloadDisplay>();
-    private Composite downloadsListComp;
+    private SelectableComposite downloadsListComp;
 
 	public SWTView() {
         super();
@@ -94,7 +97,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 				if (!shell.isDisposed()) {
 				    // Now go through the list of DownloadDisplays we have, and
                     // if its monitor is in the removed list, dispose it
-                    for (DownloadDisplay dd : displays) {
+                    for (DownloadDisplay dd : dlDisplays) {
                         if (removedMons.contains(dd.getMonitor()))
                             dd.dispose();                    
                     }
@@ -105,8 +108,11 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
                         if (addedMons.contains(mon)) {
                             DownloadDisplay disp = new DownloadDisplay(
                                     downloadsListComp, SWT.NONE);
+                            downloadsListComp.addSelectableControl(disp);
+                            disp.setLayoutData(new GridData(SWT.FILL, 
+                            		SWT.BEGINNING, true, false));
                             disp.setDownloadMonitor(mon);
-                            displays.add(disp);
+                            dlDisplays.add(disp);
                         }
                     downloadsListComp.pack();
                 }					
@@ -123,11 +129,9 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 	private void buildInterface(Shell shell) {
 		downloadsList = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.BORDER);
         downloadsList.setExpandHorizontal(true);
-        downloadsListComp = new Composite(downloadsList, SWT.NONE);
-        RowLayout layout = new RowLayout(SWT.VERTICAL);
-        layout.wrap = false;
-        layout.fill = true;
-        layout.justify = false;
+        downloadsListComp = new SelectableComposite(downloadsList, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 1;
         downloadsListComp.setLayout(layout);
         downloadsList.setContent(downloadsListComp);
 	}
@@ -187,6 +191,10 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
  	         }
  	      }
  	      display.dispose();
+ 	      // Tell the DownloadDisplay instances to finish up
+ 	      for (DownloadDisplay disp : dlDisplays) {
+ 	    	  disp.stop();
+ 	      }
     }
 
 	public void setController(IEMusicController controller) {
@@ -214,5 +222,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
     public static void asyncExec(Runnable runner) {
         display.asyncExec(runner);
     }
+
+	/**
+	 * Gets the system color for the supplied constant from the display
+	 * @param color the SWT constant corresponding to the colour we want
+	 * @return a Color object of that colour
+	 */
+	public static Color getSystemColor(int color) {
+		return display.getSystemColor(color);
+	}
     
 }

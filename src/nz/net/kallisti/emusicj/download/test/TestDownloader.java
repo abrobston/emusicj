@@ -37,13 +37,12 @@ public class TestDownloader implements IDownloader {
      */
     public TestDownloader(String name, int i, int d) {
         this.name = name;
-        this.inital = i;
+        this.inital = i*1000;
         this.speed = d;
+        monitor = new TestDownloadMonitor(this);
     }
 
     public IDownloadMonitor getMonitor() {
-        if (monitor == null)
-            monitor = new TestDownloadMonitor(this);
         return monitor;
     }
 
@@ -51,8 +50,7 @@ public class TestDownloader implements IDownloader {
         dlThread = new DownloadThread();
         dlThread.start();
         state = DLState.DOWNLOADING;
-        if (monitor != null)
-            monitor.setState(state);
+        monitor.setState(state);
     }
 
     /* (non-Javadoc)
@@ -61,8 +59,8 @@ public class TestDownloader implements IDownloader {
     public void stop() {
         dlThread.finish();        
         state = DLState.STOPPED;
-        if (monitor != null)
-            monitor.setState(state);
+        monitor.setState(state);
+        dlThread.interrupt();
     }
 
     /**
@@ -71,8 +69,7 @@ public class TestDownloader implements IDownloader {
     public void downloadFinished() {
         dlThread.finish();        
         state = DLState.FINISHED;
-        if (monitor != null)
-            monitor.setState(state);        
+        monitor.setState(state); 
     }
 
     
@@ -81,21 +78,16 @@ public class TestDownloader implements IDownloader {
         private boolean done = false;
         
         public void run() {
-            try {
-                Thread.sleep(inital);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            for (int i=0; i<100 && !done; i++) {
-                try {
-                    Thread.sleep((int)speed);
-                    pc = i;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (!done)
-                downloadFinished();            
+        	try {
+        		Thread.sleep(inital);
+        		for (int i=0; i<100 && !done; i++) {
+        			Thread.sleep((int)speed);
+        			pc = i;
+        		}
+        		if (!done)
+        			downloadFinished();
+        	} catch (InterruptedException e) {
+        	}
         }
         
         public void finish() {

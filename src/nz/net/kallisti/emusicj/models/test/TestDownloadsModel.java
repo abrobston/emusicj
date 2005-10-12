@@ -1,6 +1,7 @@
 package nz.net.kallisti.emusicj.models.test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
@@ -51,9 +52,8 @@ public class TestDownloadsModel implements IDownloadsModel {
 	/* (non-Javadoc)
 	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#getDownloaders()
 	 */
-	public List<IDownloader> getDownloaders() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IDownloader> getDownloaders() {		
+		return Collections.unmodifiableList(dl);
 	}
 
 	public List<IDownloadMonitor> getDownloadMonitors() {

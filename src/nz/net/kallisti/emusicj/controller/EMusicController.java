@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
@@ -49,9 +50,21 @@ public class EMusicController implements IEMusicController {
         if (view != null)
         	view.processEvents(this);
         // Clean up the program
+        shutdown();
     }
 
     /**
+	 * This tells all the downloaders to finish, otherwise the threads
+	 * will keep running
+	 */
+	private void shutdown() {
+		List<IDownloader> dls = downloadsModel.getDownloaders();
+		for (IDownloader dl : dls) {
+			dl.stop();
+		}
+	}
+
+	/**
      * Loads a metafile. A metafile may contain any number of files to download.
      * @param file the filename of the metafile to load
      */

@@ -6,6 +6,8 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -19,13 +21,16 @@ import org.eclipse.swt.widgets.ProgressBar;
  *
  * @author robin
  */
-public class DownloadDisplay extends Composite implements IDownloadMonitorListener {
+public class DownloadDisplay extends Composite 
+implements IDownloadMonitorListener, SelectableControl {
 
 
 
     private Label label;
     private ProgressBar progBar;
     private IDownloadMonitor monitor;
+    private PollThread pThread;
+	private Color oldBG;
     
     /**
      * This constructor initialises the display, creating the parts of it and
@@ -40,7 +45,8 @@ public class DownloadDisplay extends Composite implements IDownloadMonitorListen
         this.setLayout(gridLayout);
         label = new Label(this, 0);
         progBar = new ProgressBar(this, SWT.SMOOTH | SWT.HORIZONTAL);
-        pack();
+        progBar.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        layout();
     }
     
     public void setDownloadMonitor(IDownloadMonitor mon) {
@@ -54,8 +60,10 @@ public class DownloadDisplay extends Composite implements IDownloadMonitorListen
             progBar.setSelection(pc);
         // We now spin off a thread that polls the download progress every
         // seconds or so and updates the progress bar
-        PollThread thread = new PollThread(this);
-        thread.start();
+        if (pThread != null)
+        	pThread.finish();
+        pThread = new PollThread(this);
+        pThread.start();
         layout();
     }
     
@@ -78,13 +86,16 @@ public class DownloadDisplay extends Composite implements IDownloadMonitorListen
         else if (state == DLState.PAUSED) { text.append("Paused"); }
         else if (state == DLState.STOPPED) { text.append("Stopped"); }
         else if (state == DLState.FINISHED) { text.append("Finished"); }
-        else if (state == DLState.FAILED) { text.append("Failed"); }      
-        SWTView.asyncExec(new Runnable() {
-            public void run() {
-                label.setText(text.toString());
-                DownloadDisplay.this.layout();
-            }
-        });        
+        else if (state == DLState.FAILED) { text.append("Failed"); }
+        if (!isDisposed()) {
+        	SWTView.asyncExec(new Runnable() {
+        		public void run() {
+        			label.setText(text.toString());
+        			DownloadDisplay.this.layout();
+        			//DownloadDisplay.this.pack();
+        		}
+        	});
+        };        
     }
     
     /**
@@ -100,12 +111,22 @@ public class DownloadDisplay extends Composite implements IDownloadMonitorListen
     }
     
     /**
+     * Stops any threads running
+     */
+    public void stop() {
+    	pThread.finish();
+    	pThread.interrupt();
+	}
+
+    
+    /**
      * <p>This thread will periodically poll the monitor's progress and
      * update the progress bar accordingly</p>
      */
     private class PollThread extends Thread {
 
         private DownloadDisplay parent;
+		private boolean done = false;
 
         /**
          * Creates the thread object
@@ -117,21 +138,35 @@ public class DownloadDisplay extends Composite implements IDownloadMonitorListen
         
         public void run() {
             int oldPerc = (int)monitor.getDownloadPercent();
-            while (!parent.isDisposed()) {
+            while (!parent.isDisposed() && !done) {
                 if (monitor.getDownloadState() == DLState.DOWNLOADING) {
                     int perc = (int)monitor.getDownloadPercent();
                     if (perc != oldPerc) {
                         parent.updateProgressBar(perc);
+                        oldPerc = perc;
                     }
+                } else if (monitor.getDownloadState() == DLState.FINISHED) {
+                	parent.updateProgressBar(100);
                 }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {}
             }
         }
+        
+        public synchronized void finish() {
+        	done  = true;
+        }
 
     }
 
+	public void select() {
+		oldBG = getBackground();
+        setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+	}
 
+	public void unselect() {
+		setBackground(oldBG);
+	}
 
 }
