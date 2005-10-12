@@ -1,16 +1,23 @@
 package nz.net.kallisti.emusicj.view;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
+import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -28,12 +35,17 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SWTView implements IEMusicView, IDownloadsModelListener {
 
-    private Display display;
+    private static Display display;
 	private Shell shell;
 	private IEMusicController controller;
 	private IDownloadsModel downloadsModel;
-	private List downloadsList;
+	private ScrolledComposite downloadsList;
 	private ViewState state;
+    private ArrayList<IDownloadMonitor> dlMonitors = 
+        new ArrayList<IDownloadMonitor>();
+    private ArrayList<DownloadDisplay> displays =
+        new ArrayList<DownloadDisplay>();
+    private Composite downloadsListComp;
 
 	public SWTView() {
         super();
@@ -42,7 +54,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
     public void setState(ViewState state) {
     	this.state = state;
     	if (state.equals(ViewState.STARTUP)) {
-    		// do a splashscreen or something
+    		// TODO do a splashscreen or something
     	} else if (state.equals(ViewState.RUNNING)) {
     		display =new Display();
     		shell =new Shell(display);
@@ -53,7 +65,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
     		buildInterface(shell);
     		updateListFromModel();
     		shell.pack();
-            shell.setSize (200, 200);
+            shell.setSize (400, 400);
     		shell.open();
     	}
     }
@@ -66,15 +78,38 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 			return;
 		final java.util.List<IDownloadMonitor> downloads = 
 			downloadsModel.getDownloadMonitors();
-		display.asyncExec (new Runnable () {
+        // We need to compare this new set of download monitors, and work out
+        // what has been added and what has been removed.
+        Set<IDownloadMonitor> origMons = new HashSet<IDownloadMonitor>(dlMonitors);
+        Set<IDownloadMonitor> currMons = new HashSet<IDownloadMonitor>(downloads);
+        final Set<IDownloadMonitor> addedMons = new HashSet<IDownloadMonitor>(currMons);
+        for (IDownloadMonitor mon : origMons)
+            addedMons.remove(mon);
+        final Set<IDownloadMonitor> removedMons = new HashSet<IDownloadMonitor>(origMons);
+        for (IDownloadMonitor mon : currMons)
+            removedMons.remove(mon);
+        dlMonitors = new ArrayList<IDownloadMonitor>(downloads);
+        display.asyncExec (new Runnable () {
 			public void run () {
 				if (!shell.isDisposed()) {
-					// This isn't very nice - eventually do it smart
-					downloadsList.removeAll();
-					for (IDownloadMonitor dm : downloads) {
-						downloadsList.add(dm.getName());
-					}
-				}					
+				    // Now go through the list of DownloadDisplays we have, and
+                    // if its monitor is in the removed list, dispose it
+                    for (DownloadDisplay dd : displays) {
+                        if (removedMons.contains(dd.getMonitor()))
+                            dd.dispose();                    
+                    }
+                    // Now go through the list of downloads, and if one of these
+                    // is in addedMons, we add it (done this way to keep the order
+                    // correct)
+                    for (IDownloadMonitor mon : downloads) 
+                        if (addedMons.contains(mon)) {
+                            DownloadDisplay disp = new DownloadDisplay(
+                                    downloadsListComp, SWT.NONE);
+                            disp.setDownloadMonitor(mon);
+                            displays.add(disp);
+                        }
+                    downloadsListComp.pack();
+                }					
 			}
 		});
 	}
@@ -86,7 +121,15 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 	 * @param shell the shell to build the interface on
 	 */
 	private void buildInterface(Shell shell) {
-		downloadsList = new List(shell, SWT.MULTI | SWT.V_SCROLL);		
+		downloadsList = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.BORDER);
+        downloadsList.setExpandHorizontal(true);
+        downloadsListComp = new Composite(downloadsList, SWT.NONE);
+        RowLayout layout = new RowLayout(SWT.VERTICAL);
+        layout.wrap = false;
+        layout.fill = true;
+        layout.justify = false;
+        downloadsListComp.setLayout(layout);
+        downloadsList.setContent(downloadsListComp);
 	}
 
 	/**
@@ -160,6 +203,16 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 		// TODO update the display to reflect the model state
 		// must use asyncExec or similar
 		assert model == downloadsModel : "Received event for unknown IDownloadsModel";
+        updateListFromModel();
 	}
 
+    /**
+     * A handy util so that the display object down't have to be passed 
+     * everywhere.
+     * @param runner the Runnable to invoke
+     */
+    public static void asyncExec(Runnable runner) {
+        display.asyncExec(runner);
+    }
+    
 }

@@ -42,5 +42,18 @@ public interface IDownloadMonitor {
      * @return the download state as a DLState enum value.
      */
     public DLState getDownloadState();
+    
+    /**
+     * Adds a listener to the monitor. This listener is triggered on 
+     * state changes only, not on data being downloaded. That must be polled
+     * for.
+     * @param listener the listener to add
+     */
+    public void addListener(IDownloadMonitorListener listener);
 
+    /**
+     * Remove a listener from the monitor.
+     * @param listener the lisener to remove
+     */
+    public void removeListener(IDownloadMonitorListener listener);
 }

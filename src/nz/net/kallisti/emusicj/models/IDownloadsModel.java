@@ -4,6 +4,7 @@ import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
+import nz.net.kallisti.emusicj.download.IMusicDownloader;
 
 /**
  * This is a model that tracks the downloads that are currently in the system.
@@ -23,5 +24,7 @@ public interface IDownloadsModel {
 	public List<IDownloader> getDownloaders();
 	
 	public List<IDownloadMonitor> getDownloadMonitors();
+
+    public void addDownload(IMusicDownloader dl);
 	
 }

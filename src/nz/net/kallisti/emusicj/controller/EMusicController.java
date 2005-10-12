@@ -75,13 +75,12 @@ public class EMusicController implements IEMusicController {
     }
 
     /**
-     * Adds a new set of downloaders to the list. The view is also told about
-     * these.
+     * Adds a new set of downloaders to the model.
      * @param downloaders the downloaders to add
      */
     public void newDownloads(List<IMusicDownloader> downloaders) {
-        // TODO Auto-generated method stub
-        
+        for (IMusicDownloader dl : downloaders)
+            downloadsModel.addDownload(dl);
     }
 
 }

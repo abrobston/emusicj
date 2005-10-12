@@ -5,7 +5,9 @@ import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
+import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.test.TestDownloadMonitor;
+import nz.net.kallisti.emusicj.download.test.TestDownloader;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 
@@ -19,15 +21,17 @@ import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
  */
 public class TestDownloadsModel implements IDownloadsModel {
 
-	List<IDownloadMonitor> dm;
+	List<IDownloader> dl;
 	/**
 	 * Initialise the class, and create some {@link TestDownloadMonitor}s.
 	 * @param n the number of monitors to create
 	 */
 	public TestDownloadsModel(int n) {
-		dm = new ArrayList<IDownloadMonitor>();
+		dl = new ArrayList<IDownloader>();
 		for (int i=0; i<n; i++) {
-			dm.add(new TestDownloadMonitor("TestDownloadMonitor "+i));
+            TestDownloader d = new TestDownloader("TestDownloader "+i,i*2,500);
+			dl.add(d);
+            d.start();
 		}
 	}
 	
@@ -53,7 +57,18 @@ public class TestDownloadsModel implements IDownloadsModel {
 	}
 
 	public List<IDownloadMonitor> getDownloadMonitors() {
+        ArrayList<IDownloadMonitor> dm = new ArrayList<IDownloadMonitor>();
+        for (IDownloader d : dl)
+            dm.add(d.getMonitor());
 		return dm;
 	}
+
+    /* (non-Javadoc)
+     * @see nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti.emusicj.download.IMusicDownloader)
+     */
+    public void addDownload(IMusicDownloader dl) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

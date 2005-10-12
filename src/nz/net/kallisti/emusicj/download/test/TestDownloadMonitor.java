@@ -1,6 +1,9 @@
 package nz.net.kallisti.emusicj.download.test;
 
+import java.util.ArrayList;
+
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
+import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 
 /**
  * <p>A simple test class that always returns the string it was created with.</p>
@@ -10,23 +13,29 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor;
  * @author robin
  */
 public class TestDownloadMonitor implements IDownloadMonitor {
-
-	private String name;
-
-	public TestDownloadMonitor(String name) {
-		this.name = name;
-	}
 	
-	public String getName() {
-		return name;
+	private TestDownloader downloader;
+    private ArrayList<IDownloadMonitorListener> listeners =
+        new ArrayList<IDownloadMonitorListener>();
+    private DLState state;
+
+    /**
+     * This one gets all its info from a TestDownloader
+     * @param downloader
+     */
+    public TestDownloadMonitor(TestDownloader downloader) {
+        this.downloader = downloader;
+    }
+
+    public String getName() {
+		return downloader.name;
 	}
 
 	/* (non-Javadoc)
 	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getDownloadPercent()
 	 */
 	public double getDownloadPercent() {
-		// TODO Auto-generated method stub
-		return 0;
+		return downloader.pc;
 	}
 
 	/* (non-Javadoc)
@@ -49,8 +58,27 @@ public class TestDownloadMonitor implements IDownloadMonitor {
 	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getDownloadState()
 	 */
 	public DLState getDownloadState() {
-		// TODO Auto-generated method stub
-		return null;
+		return state;
 	}
+    
+    void setState(DLState st) {
+        state = st;
+        for (IDownloadMonitorListener l : listeners)
+            l.monitorStateChanged(this);
+    }
+
+    /* (non-Javadoc)
+     * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#addListener(nz.net.kallisti.emusicj.download.IDownloadMonitorListener)
+     */
+    public void addListener(IDownloadMonitorListener listener) {
+        listeners.add(listener);
+    }
+
+    /* (non-Javadoc)
+     * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#removeListener(nz.net.kallisti.emusicj.download.IDownloadMonitorListener)
+     */
+    public void removeListener(IDownloadMonitorListener listener) {
+        listeners.remove(listener);
+    }
 
 }
