@@ -39,6 +39,7 @@ public class TestDownloader implements IDownloader {
         this.name = name;
         this.inital = i*1000;
         this.speed = d;
+        this.state = DLState.NOTSTARTED;
         monitor = new TestDownloadMonitor(this);
     }
 

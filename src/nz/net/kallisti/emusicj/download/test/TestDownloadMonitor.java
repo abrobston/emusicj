@@ -25,6 +25,7 @@ public class TestDownloadMonitor implements IDownloadMonitor {
      */
     public TestDownloadMonitor(TestDownloader downloader) {
         this.downloader = downloader;
+        this.state = downloader.state;
     }
 
     public String getName() {

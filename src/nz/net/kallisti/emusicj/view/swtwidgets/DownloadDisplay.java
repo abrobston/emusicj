@@ -31,7 +31,9 @@ implements IDownloadMonitorListener, SelectableControl {
     private IDownloadMonitor monitor;
     private PollThread pThread;
 	private Color oldBG;
-    
+	private Color oldProgBG;
+	private Color oldLabelBG;
+
     /**
      * This constructor initialises the display, creating the parts of it and
      * so forth.
@@ -162,11 +164,18 @@ implements IDownloadMonitorListener, SelectableControl {
 
 	public void select() {
 		oldBG = getBackground();
+        oldProgBG = progBar.getBackground();
+        oldLabelBG = label.getBackground();
         setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+        progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+        label.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+
 	}
 
 	public void unselect() {
 		setBackground(oldBG);
+		progBar.setBackground(oldProgBG);
+		label.setBackground(oldLabelBG);
 	}
 
 }
