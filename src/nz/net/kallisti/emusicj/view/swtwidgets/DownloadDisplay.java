@@ -6,12 +6,17 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.TypedListener;
 
 /**
  * <p>This is a SWT widget that displays the progress of a download. 
@@ -22,7 +27,7 @@ import org.eclipse.swt.widgets.ProgressBar;
  * @author robin
  */
 public class DownloadDisplay extends Composite 
-implements IDownloadMonitorListener, SelectableControl {
+implements IDownloadMonitorListener, ISelectableControl {
 
 
 
@@ -33,8 +38,7 @@ implements IDownloadMonitorListener, SelectableControl {
 	private Color oldBG;
 	private Color oldProgBG;
 	private Color oldLabelBG;
-
-    /**
+	/**
      * This constructor initialises the display, creating the parts of it and
      * so forth.
      * @param parent
@@ -46,8 +50,23 @@ implements IDownloadMonitorListener, SelectableControl {
         gridLayout.numColumns = 1;
         this.setLayout(gridLayout);
         label = new Label(this, 0);
+        label.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+        		notifyListeners(SWT.Selection, new Event());
+        	}
+        });
         progBar = new ProgressBar(this, SWT.SMOOTH | SWT.HORIZONTAL);
+        progBar.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+        		notifyListeners(SWT.Selection, new Event());
+        	}
+        });
         progBar.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        this.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+        		notifyListeners(SWT.Selection, new Event());
+        	}
+        });
         layout();
     }
     
@@ -178,4 +197,11 @@ implements IDownloadMonitorListener, SelectableControl {
 		label.setBackground(oldLabelBG);
 	}
 
+	public void addSelectionListener(SelectionListener listener) {
+		addListener(SWT.Selection, new TypedListener(listener));
+	}
+	
+	public void removeSelectionListener(SelectionListener listener) {
+		removeListener(SWT.Selection, listener);
+	}
 }
