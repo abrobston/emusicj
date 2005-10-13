@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import nz.net.kallisti.emusicj.Constants;
+import nz.net.kallisti.emusicj.download.IDownloadMonitor;
+import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
+import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.test.TestDownloadsModel;
@@ -20,11 +24,11 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  *
  * @author robin
  */
-public class EMusicController implements IEMusicController {
+public class EMusicController implements IEMusicController, IDownloadMonitorListener {
 
     private IEMusicView view;
 	private IDownloadsModel downloadsModel = new TestDownloadsModel(10);
-
+	
     public EMusicController() {
         super();
     }
@@ -40,12 +44,18 @@ public class EMusicController implements IEMusicController {
     		view.setState(IEMusicView.ViewState.STARTUP);
         for (String file : args)
             loadMetafile(file);
+        for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+        	mon.addStateListener(this);
+        }
         // Pass the system state on to the view to ensure it's up to date
         if (view != null)
         	view.setDownloadsModel(downloadsModel);
         
         if (view != null)
         	view.setState(IEMusicView.ViewState.RUNNING);
+        IDownloader dl = downloadsModel.getDownloaders().get(0);
+        if (dl != null)
+        	dl.start();
         // Call the view's event loop
         if (view != null)
         	view.processEvents(this);
@@ -95,5 +105,34 @@ public class EMusicController implements IEMusicController {
         for (IMusicDownloader dl : downloaders)
             downloadsModel.addDownload(dl);
     }
+
+    /**
+     * This is triggered when a download changes state. We count the
+     * number that are in the state DLState.DOWNLOADING or CONNECTING. If there 
+     * is less than the minimum (defined in Constants), we start the first one 
+     * that is in a state of NOTSTARTED.
+     *  
+     * @param monitor the monitor that changed status
+     */
+    public void monitorStateChanged(IDownloadMonitor monitor) {
+    	int count = 0;
+    	for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+    		if (mon.getDownloadState() == DLState.DOWNLOADING ||
+    				mon.getDownloadState() == DLState.CONNECTING) {
+    			count++;
+    		}
+    	}
+    	int num = Constants.MIN_DOWNLOADS - count;
+    	if (num > 0) {
+        	for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+        		if (mon.getDownloadState() == DLState.NOTSTARTED) {
+        			mon.getDownloader().start();
+        			num--;
+        			if (num <= 0)
+        				break;
+        		}
+        	}
+    	}
+	}
 
 }

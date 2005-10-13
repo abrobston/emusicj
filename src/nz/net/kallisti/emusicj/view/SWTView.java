@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.view;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +17,9 @@ import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,6 +29,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * <p>This is the main class for providing the user interface. It uses SWT to
@@ -62,8 +69,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
     		shell =new Shell(display);
     		shell.setText(Constants.APPNAME);
     		buildMenuBar(shell);
-    		FillLayout fillLayout = new FillLayout(SWT.VERTICAL);
-    		shell.setLayout(fillLayout);
     		buildInterface(shell);
     		updateListFromModel();
     		shell.pack();
@@ -97,8 +102,10 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 				    // Now go through the list of DownloadDisplays we have, and
                     // if its monitor is in the removed list, dispose it
                     for (DownloadDisplay dd : dlDisplays) {
-                        if (removedMons.contains(dd.getMonitor()))
-                            dd.dispose();                    
+                        if (removedMons.contains(dd.getMonitor())) {
+                            dd.dispose();
+                            downloadsListComp.removeSelectableControl(dd);
+                        }
                     }
                     // Now go through the list of downloads, and if one of these
                     // is in addedMons, we add it (done this way to keep the order
@@ -126,13 +133,38 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 	 * @param shell the shell to build the interface on
 	 */
 	private void buildInterface(Shell shell) {
+		GridLayout shellLayout = new GridLayout();
+		shellLayout.numColumns = 1;
+		shell.setLayout(shellLayout);
+		ToolBar toolBar = new ToolBar (shell, SWT.FLAT | SWT.BORDER);
+		// --Testing--
+		Image runIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("start.gif"));
+		ToolItem item = new ToolItem (toolBar, SWT.PUSH);
+		item.setImage(runIconImg);
+		Image pauseIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("pause.gif"));
+		item = new ToolItem (toolBar, SWT.PUSH);
+		item.setImage(pauseIconImg);
+		Image cancelIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("cancel.gif"));
+		item = new ToolItem (toolBar, SWT.PUSH);
+		item.setImage(cancelIconImg);
+		
+		toolBar.pack ();
+		// --End testing--
+		
 		downloadsList = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.BORDER);
         downloadsList.setExpandHorizontal(true);
         downloadsListComp = new SelectableComposite(downloadsList, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.numColumns = 1;
         downloadsListComp.setLayout(layout);
+        downloadsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
+        		true, true));
         downloadsList.setContent(downloadsListComp);
+        //downloadsListComp.layout();
+        //shell.layout();
 	}
 
 	/**

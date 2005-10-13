@@ -49,11 +49,17 @@ public interface IDownloadMonitor {
      * for.
      * @param listener the listener to add
      */
-    public void addListener(IDownloadMonitorListener listener);
+    public void addStateListener(IDownloadMonitorListener listener);
 
     /**
      * Remove a listener from the monitor.
      * @param listener the lisener to remove
      */
-    public void removeListener(IDownloadMonitorListener listener);
+    public void removeStateListener(IDownloadMonitorListener listener);
+    
+    /**
+     * Returns the downloader that this monitor corresponds to
+     * @return the downloader instance
+     */
+    public IDownloader getDownloader();
 }

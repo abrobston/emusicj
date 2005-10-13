@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
+import nz.net.kallisti.emusicj.download.IDownloader;
 
 /**
  * <p>A simple test class that always returns the string it was created with.</p>
@@ -71,15 +72,22 @@ public class TestDownloadMonitor implements IDownloadMonitor {
     /* (non-Javadoc)
      * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#addListener(nz.net.kallisti.emusicj.download.IDownloadMonitorListener)
      */
-    public void addListener(IDownloadMonitorListener listener) {
+    public void addStateListener(IDownloadMonitorListener listener) {
         listeners.add(listener);
     }
 
     /* (non-Javadoc)
      * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#removeListener(nz.net.kallisti.emusicj.download.IDownloadMonitorListener)
      */
-    public void removeListener(IDownloadMonitorListener listener) {
+    public void removeStateListener(IDownloadMonitorListener listener) {
         listeners.remove(listener);
     }
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getDownloader()
+	 */
+	public IDownloader getDownloader() {
+		return downloader;
+	}
 
 }

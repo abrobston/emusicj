@@ -29,4 +29,6 @@ public interface ISelectableControl {
 	 */
 	void addSelectionListener(SelectionListener listener);
 
+	void removeSelectionListener(SelectionListener listener);
+
 }

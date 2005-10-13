@@ -32,7 +32,6 @@ public class TestDownloadsModel implements IDownloadsModel {
 		for (int i=0; i<n; i++) {
             TestDownloader d = new TestDownloader("TestDownloader "+i,i*2,500);
 			dl.add(d);
-            d.start();
 		}
 	}
 	

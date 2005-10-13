@@ -25,6 +25,15 @@ public class SelectableComposite extends Composite implements SelectionListener 
 	public void addSelectableControl(ISelectableControl c) {
 		c.addSelectionListener(this);
 	}
+	
+	public void removeSelectableControl(ISelectableControl c) {
+		c.removeSelectionListener(this);
+		if (c == lastSelected) {
+			lastSelected = null;
+			notifyListeners(SWT.Selection, new Event());
+		}
+	}
+
 
 	public void widgetSelected(SelectionEvent e) {
 		Object o = e.getSource(); 

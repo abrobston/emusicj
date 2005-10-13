@@ -12,5 +12,7 @@ public class Constants {
     public final static String VERSION = "0.01a";
     
     public final static String APPNAME = "eMusic/J";
+
+	public final static int MIN_DOWNLOADS = 2;
     
 }

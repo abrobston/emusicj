@@ -75,7 +75,7 @@ implements IDownloadMonitorListener, ISelectableControl {
         progBar.setMinimum(0);
         progBar.setMaximum(100);
         monitorStateChanged(mon);
-        mon.addListener(this);
+        mon.addStateListener(this);
         int pc = (int)mon.getDownloadPercent();
         if (pc != -1)
             progBar.setSelection(pc);
