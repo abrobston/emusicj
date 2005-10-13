@@ -4,7 +4,7 @@ package nz.net.kallisti.emusicj.download;
 /**
  * <p>The interface for classes that download files</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -19,5 +19,11 @@ public interface IDownloader {
      * any threads running.
      */
     public void stop();
+
+	/**
+	 * This tells the downloader to pause any downloads. This may or may not stop
+	 * threads.
+	 */
+	public void pause();
     
 }

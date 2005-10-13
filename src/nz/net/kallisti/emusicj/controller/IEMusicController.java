@@ -2,6 +2,7 @@ package nz.net.kallisti.emusicj.controller;
 
 import java.util.List;
 
+import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
@@ -48,5 +49,24 @@ public interface IEMusicController {
 	 * @param file the metadata file to load
 	 */
 	public void loadMetafile(String file);
+
+	/**
+	 * Tells the download to start
+	 * @param dl
+	 */
+	public void startDownload(IDownloader dl);
+
+	/**
+	 * Tells the download to pause
+	 * @param dl
+	 */
+	public void pauseDownload(IDownloader dl);
+
+	/**
+	 * Tells the download to stop (functionally the same as pause, but may
+	 * be displayed differently, and more likely to be removed)
+	 * @param dl
+	 */
+	public void stopDownload(IDownloader dl);
     
 }

@@ -1,7 +1,5 @@
 package nz.net.kallisti.emusicj.view;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +7,9 @@ import java.util.Set;
 import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
+import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
+import nz.net.kallisti.emusicj.download.IDownloader;
+import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
@@ -16,11 +17,12 @@ import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -42,7 +44,7 @@ import org.eclipse.swt.widgets.ToolItem;
  *
  * @author robin
  */
-public class SWTView implements IEMusicView, IDownloadsModelListener {
+public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionListener {
 
     private static Display display;
 	private Shell shell;
@@ -55,6 +57,9 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
     private ArrayList<DownloadDisplay> dlDisplays =
         new ArrayList<DownloadDisplay>();
     private SelectableComposite downloadsListComp;
+	private ToolItem runButton;
+	private ToolItem pauseButton;
+	private ToolItem cancelButton;
 
 	public SWTView() {
         super();
@@ -119,6 +124,11 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
                             		SWT.BEGINNING, true, false));
                             disp.setDownloadMonitor(mon);
                             dlDisplays.add(disp);
+                            mon.addStateListener(new IDownloadMonitorListener() {
+								public void monitorStateChanged(IDownloadMonitor monitor) {
+									setButtonsState();
+								}
+                            });
                         }
                     downloadsListComp.pack();
                 }					
@@ -137,22 +147,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
 		ToolBar toolBar = new ToolBar (shell, SWT.FLAT | SWT.BORDER);
-		// --Testing--
-		Image runIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("start.gif"));
-		ToolItem item = new ToolItem (toolBar, SWT.PUSH);
-		item.setImage(runIconImg);
-		Image pauseIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("pause.gif"));
-		item = new ToolItem (toolBar, SWT.PUSH);
-		item.setImage(pauseIconImg);
-		Image cancelIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("cancel.gif"));
-		item = new ToolItem (toolBar, SWT.PUSH);
-		item.setImage(cancelIconImg);
-		
-		toolBar.pack ();
-		// --End testing--
+		buildToolBar(toolBar);
 		
 		downloadsList = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.BORDER);
         downloadsList.setExpandHorizontal(true);
@@ -160,11 +155,106 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
         GridLayout layout = new GridLayout();
         layout.numColumns = 1;
         downloadsListComp.setLayout(layout);
+        downloadsListComp.addSelectionListener(this);
         downloadsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
         		true, true));
         downloadsList.setContent(downloadsListComp);
-        //downloadsListComp.layout();
-        //shell.layout();
+        setButtonsState();
+	}
+
+	/**
+	 * Builds the toolbar contents and events
+	 * @param toolBar the toolbar to add stuff to
+	 */
+	private void buildToolBar(ToolBar toolBar) {
+		final Image runIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("start.gif"));
+		runButton = new ToolItem (toolBar, SWT.PUSH);
+		runButton.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				runIconImg.dispose();
+			}
+		});
+		runButton.setImage(runIconImg);
+		runButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				runSelectedDownload();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				runSelectedDownload();				
+			}
+		});
+
+		final Image pauseIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("pause.gif"));
+		pauseButton = new ToolItem (toolBar, SWT.PUSH);
+		pauseButton.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				pauseIconImg.dispose();
+			}
+		});
+		pauseButton.setImage(pauseIconImg);
+		pauseButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				pauseSelectedDownload();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				pauseSelectedDownload();				
+			}
+		});
+
+		final Image cancelIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("cancel.gif"));
+		cancelButton = new ToolItem (toolBar, SWT.PUSH);
+		cancelButton.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cancelIconImg.dispose();
+			}
+		});
+		cancelButton.setImage(cancelIconImg);
+		cancelButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				cancelSelectedDownload();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				cancelSelectedDownload();				
+			}
+		});
+		
+		toolBar.pack ();
+	}
+
+	protected void cancelSelectedDownload() {
+		if (downloadsListComp == null || 
+				downloadsListComp.getSelectedControl() == null)
+			return;
+		IDownloader dl = 
+			((DownloadDisplay)downloadsListComp.getSelectedControl()).
+			getDownloadMonitor().getDownloader();
+		controller.stopDownload(dl);
+		setButtonsState();
+	}
+
+	protected void pauseSelectedDownload() {
+		if (downloadsListComp == null || 
+				downloadsListComp.getSelectedControl() == null)
+			return;
+		IDownloader dl = 
+			((DownloadDisplay)downloadsListComp.getSelectedControl()).
+			getDownloadMonitor().getDownloader();
+		controller.pauseDownload(dl);		
+		setButtonsState();
+	}
+
+	protected void runSelectedDownload() {
+		if (downloadsListComp == null || 
+				downloadsListComp.getSelectedControl() == null)
+			return;
+		IDownloader dl = 
+			((DownloadDisplay)downloadsListComp.getSelectedControl()).
+			getDownloadMonitor().getDownloader();
+		controller.startDownload(dl);
+		setButtonsState();
 	}
 
 	/**
@@ -193,6 +283,43 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
                 this, "aboutBox");
 	}
 
+	/**
+	 * Enables and disables the buttons depending on the state of the selected
+	 * download 
+	 */
+	private void setButtonsState() {
+		if (display.isDisposed())
+			return;
+		asyncExec(new Runnable() {
+			public void run() {
+				if (downloadsListComp == null)
+					return;
+				if (runButton.isDisposed() || pauseButton.isDisposed() ||
+						cancelButton.isDisposed())
+					return;
+				if (downloadsListComp.getSelectedControl() == null) {
+					runButton.setEnabled(false);
+					pauseButton.setEnabled(false);
+					cancelButton.setEnabled(false);
+					return;
+				}
+				IDownloadMonitor mon = 
+					((DownloadDisplay)downloadsListComp.getSelectedControl()).
+					getDownloadMonitor();
+				if (mon.getDownloadState() == DLState.CONNECTING ||
+						mon.getDownloadState() == DLState.DOWNLOADING) {
+					runButton.setEnabled(false);
+					pauseButton.setEnabled(true);
+					cancelButton.setEnabled(true);			
+				} else {
+					runButton.setEnabled(true);
+					pauseButton.setEnabled(false);
+					cancelButton.setEnabled(false);						
+				}
+			}
+		});
+	}
+	
     public void openFile() {
     	FileDialog dialog = new FileDialog (shell, SWT.OPEN);
     	dialog.setFilterNames (new String [] {"All Files (*.*)"});
@@ -239,8 +366,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 	}
 
 	public void downloadsListenerChanged(IDownloadsModel model) {
-		// TODO update the display to reflect the model state
-		// must use asyncExec or similar
 		assert model == downloadsModel : "Received event for unknown IDownloadsModel";
         updateListFromModel();
 	}
@@ -261,6 +386,16 @@ public class SWTView implements IEMusicView, IDownloadsModelListener {
 	 */
 	public static Color getSystemColor(int color) {
 		return display.getSystemColor(color);
+	}
+
+	public void widgetSelected(SelectionEvent e) {
+		if (e.widget == downloadsListComp)
+			setButtonsState();
+	}
+
+	public void widgetDefaultSelected(SelectionEvent e) {
+		if (e.widget == downloadsListComp)
+			setButtonsState();
 	}
     
 }

@@ -7,7 +7,7 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
 /**
  * <p>The interface for metafile handlers</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */

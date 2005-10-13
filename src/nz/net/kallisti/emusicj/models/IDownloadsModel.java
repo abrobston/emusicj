@@ -11,7 +11,7 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
  * It has listeners that are signalled if something changes (such as downloads
  * being added or removed)
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */

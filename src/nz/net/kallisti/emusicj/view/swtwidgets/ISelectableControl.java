@@ -5,7 +5,7 @@ import org.eclipse.swt.events.SelectionListener;
 /**
  *
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */

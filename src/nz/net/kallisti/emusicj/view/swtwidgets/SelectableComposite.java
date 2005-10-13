@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.TypedListener;
 /**
  * This is a Composite that allows it's children to be selected. 
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */

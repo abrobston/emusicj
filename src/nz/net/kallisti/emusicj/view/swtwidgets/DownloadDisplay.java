@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.TypedListener;
  * <p>This is a SWT widget that displays the progress of a download. 
  * It consists of a label, and below that a progress bar.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */

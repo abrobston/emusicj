@@ -20,7 +20,7 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
  * <tt>URL tracknum songname album artist</tt><br />
  * with any number of lines each containing this information.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */

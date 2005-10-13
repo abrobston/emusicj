@@ -8,7 +8,7 @@ import nz.net.kallisti.emusicj.controller.IEMusicController;
 /**
  * <p></p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -43,5 +43,13 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         // TODO Auto-generated method stub
         
     }
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloader#pause()
+	 */
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

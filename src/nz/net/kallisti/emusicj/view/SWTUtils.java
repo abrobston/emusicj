@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * <p>A miscellanious collection of useful functions for working with SWT.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */

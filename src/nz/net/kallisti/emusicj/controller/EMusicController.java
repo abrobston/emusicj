@@ -135,4 +135,16 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
     	}
 	}
 
+	public void startDownload(IDownloader dl) {
+		dl.start();
+	}
+
+	public void pauseDownload(IDownloader dl) {
+		dl.pause();
+	}
+
+	public void stopDownload(IDownloader dl) {
+		dl.stop();
+	}
+
 }

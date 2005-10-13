@@ -9,7 +9,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 /**
  * <p>A simple test class that always returns the string it was created with.</p>
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */

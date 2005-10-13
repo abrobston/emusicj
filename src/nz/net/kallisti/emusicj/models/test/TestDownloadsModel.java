@@ -16,7 +16,7 @@ import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
  * <p>A simple test download model, that returns a number of 
  * TestDownloadMonitors containing test strings.</p> 
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */

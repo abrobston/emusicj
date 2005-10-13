@@ -11,7 +11,7 @@ import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
  * <p>This is a class with a single static method that loads a metafile, and
  * invokes and appropriate parser for it.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */

@@ -3,7 +3,7 @@ package nz.net.kallisti.emusicj;
 /**
  * <p>Defines global constants for the program.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
