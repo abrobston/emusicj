@@ -10,9 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.download.HTTPMusicDownloader;
-import nz.net.kallisti.emusicj.download.IMusicDownloader;
+import nz.net.kallisti.emusicj.download.IDownloader;
 
 /**
  * <p>This is a parser for plaintext metafiles. These metafiles have
@@ -27,17 +26,15 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
 public class PlainTextMetafile implements IMetafile {
 
     private File file;
-    private IEMusicController controller;
 
-    public PlainTextMetafile(File file, IEMusicController controller) {
+    public PlainTextMetafile(File file) {
         super();
         this.file = file;
-        this.controller = controller;
     }
 
-    public List<IMusicDownloader> getMusicDownloaders() {
-        ArrayList<IMusicDownloader> downloaders = 
-            new ArrayList<IMusicDownloader>();
+    public List<IDownloader> getDownloaders() {
+        ArrayList<IDownloader> downloaders = 
+            new ArrayList<IDownloader>();
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(file));
@@ -70,7 +67,7 @@ public class PlainTextMetafile implements IMetafile {
             } catch (NumberFormatException e) {
                 return null;
             }
-            downloaders.add(new HTTPMusicDownloader(controller, url, 
+            downloaders.add(new HTTPMusicDownloader(url, 
                     tnum, parts[2], parts[3], parts[4]));
         }
         return downloaders;

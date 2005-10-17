@@ -6,7 +6,6 @@ import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
-import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.test.TestDownloadMonitor;
 import nz.net.kallisti.emusicj.download.test.TestDownloader;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
@@ -63,7 +62,7 @@ public class TestDownloadsModel implements IDownloadsModel {
     /* (non-Javadoc)
      * @see nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti.emusicj.download.IMusicDownloader)
      */
-    public void addDownload(IMusicDownloader dl) {
+    public void addDownload(IDownloader dl) {
         // TODO Auto-generated method stub
         
     }

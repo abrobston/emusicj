@@ -42,7 +42,7 @@ public interface IEMusicController {
      * instances.
      * @param downloaders the new downloaders for the controller to be aware of
      */
-    public void newDownloads(List<IMusicDownloader> downloaders);
+    public void newDownloads(List<IDownloader> downloaders);
 
 	/**
 	 * Tells the controller to load a metadata file and add the downloads

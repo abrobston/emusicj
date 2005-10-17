@@ -9,9 +9,9 @@ import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
-import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
+import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.test.TestDownloadsModel;
 import nz.net.kallisti.emusicj.view.IEMusicView;
@@ -82,9 +82,11 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
      */
     public void loadMetafile(String file) {
         try {
-            MetafileLoader.load(this, new File(file));
+            newDownloads(MetafileLoader.load(this, new File(file)));
         } catch (IOException e) {
             error("Error reading file",e.getMessage());
+        } catch (UnknownFileException e) {
+            error("Error reading file","That file was of an unknown type");
         }
     }
 
@@ -103,8 +105,8 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
      * Adds a new set of downloaders to the model.
      * @param downloaders the downloaders to add
      */
-    public void newDownloads(List<IMusicDownloader> downloaders) {
-        for (IMusicDownloader dl : downloaders)
+    public void newDownloads(List<IDownloader> downloaders) {
+        for (IDownloader dl : downloaders)
             downloadsModel.addDownload(dl);
     }
 

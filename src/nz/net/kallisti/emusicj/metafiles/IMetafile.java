@@ -2,7 +2,7 @@ package nz.net.kallisti.emusicj.metafiles;
 
 import java.util.List;
 
-import nz.net.kallisti.emusicj.download.IMusicDownloader;
+import nz.net.kallisti.emusicj.download.IDownloader;
 
 /**
  * <p>The interface for metafile handlers</p>
@@ -13,6 +13,6 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
  */
 public interface IMetafile {
     
-    public List<IMusicDownloader> getMusicDownloaders();
+    public List<IDownloader> getDownloaders();
 
 }
