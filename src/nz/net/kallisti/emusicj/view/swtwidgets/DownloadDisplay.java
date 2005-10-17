@@ -36,8 +36,8 @@ implements IDownloadMonitorListener, ISelectableControl {
     private IDownloadMonitor monitor;
     private PollThread pThread;
 	private Color oldBG;
-	private Color oldProgBG;
 	private Color oldLabelBG;
+    private Color oldLabelFG;
 	/**
      * This constructor initialises the display, creating the parts of it and
      * so forth.
@@ -183,25 +183,29 @@ implements IDownloadMonitorListener, ISelectableControl {
 
 	public void select() {
 		oldBG = getBackground();
-        oldProgBG = progBar.getBackground();
+        //oldProgBG = progBar.getBackground();
         oldLabelBG = label.getBackground();
+        oldLabelFG = label.getForeground();
         setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
-        progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+        //progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
         label.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
-
+        label.setForeground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 	}
 
 	public void unselect() {
 		setBackground(oldBG);
-		progBar.setBackground(oldProgBG);
+		//progBar.setBackground(oldProgBG);
 		label.setBackground(oldLabelBG);
+        label.setForeground(oldLabelFG);
 	}
 
 	public void addSelectionListener(SelectionListener listener) {
-		addListener(SWT.Selection, new TypedListener(listener));
+        if (!isDisposed())
+            addListener(SWT.Selection, new TypedListener(listener));
 	}
 	
 	public void removeSelectionListener(SelectionListener listener) {
-		removeListener(SWT.Selection, listener);
+        if (!isDisposed())
+            removeListener(SWT.Selection, listener);
 	}
 }

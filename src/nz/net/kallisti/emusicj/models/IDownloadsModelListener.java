@@ -10,6 +10,6 @@ package nz.net.kallisti.emusicj.models;
  */
 public interface IDownloadsModelListener {
 
-	public void downloadsListenerChanged(IDownloadsModel model);
+	public void downloadsModelChanged(IDownloadsModel model);
 	
 }

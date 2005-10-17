@@ -26,5 +26,11 @@ public interface IDownloadsModel {
 	public List<IDownloadMonitor> getDownloadMonitors();
 
     public void addDownload(IMusicDownloader dl);
+
+    /**
+     * Removes downloads from the model
+     * @param toRemove the downloads to remove
+     */
+    public void removeDownloads(List<IDownloader> toRemove);
 	
 }

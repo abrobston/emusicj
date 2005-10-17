@@ -22,42 +22,40 @@ import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
  */
 public class TestDownloadsModel implements IDownloadsModel {
 
-	List<IDownloader> dl;
+	List<IDownloader> downloads;
+    private List<IDownloadsModelListener> listeners = 
+        new ArrayList<IDownloadsModelListener>();
+    
 	/**
 	 * Initialise the class, and create some {@link TestDownloadMonitor}s.
 	 * @param n the number of monitors to create
 	 */
 	public TestDownloadsModel(int n) {
-		dl = new ArrayList<IDownloader>();
+		downloads = new ArrayList<IDownloader>();
 		for (int i=0; i<n; i++) {
             TestDownloader d = new TestDownloader("TestDownloader "+i,i*2,500);
-			dl.add(d);
+			downloads.add(d);
 		}
 	}
 	
 	public void addListener(IDownloadsModelListener listener) {
-		// TODO Auto-generated method stub
-
+	    listeners.add(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#removeListener(nz.net.kallisti.emusicj.models.IDownloadsModelListener)
-	 */
 	public void removeListener(IDownloadsModelListener listener) {
-		// TODO Auto-generated method stub
-
+	    listeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#getDownloaders()
 	 */
 	public List<IDownloader> getDownloaders() {		
-		return Collections.unmodifiableList(dl);
+		return Collections.unmodifiableList(downloads);
 	}
 
 	public List<IDownloadMonitor> getDownloadMonitors() {
         ArrayList<IDownloadMonitor> dm = new ArrayList<IDownloadMonitor>();
-        for (IDownloader d : dl)
+        for (IDownloader d : downloads)
             dm.add(d.getMonitor());
 		return dm;
 	}
@@ -68,6 +66,22 @@ public class TestDownloadsModel implements IDownloadsModel {
     public void addDownload(IMusicDownloader dl) {
         // TODO Auto-generated method stub
         
+    }
+
+    /* (non-Javadoc)
+     * @see nz.net.kallisti.emusicj.models.IDownloadsModel#removeDownloads(java.util.List)
+     */
+    public void removeDownloads(List<IDownloader> toRemove) {
+        if (toRemove.size() != 0) {
+            for (IDownloader dl : toRemove)
+                downloads.remove(dl);
+            notifyListeners();
+        }
+    }
+
+    private void notifyListeners() {
+        for (IDownloadsModelListener l : listeners)
+            l.downloadsModelChanged(this);
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
+import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 /**
@@ -68,5 +69,24 @@ public interface IEMusicController {
 	 * @param dl
 	 */
 	public void stopDownload(IDownloader dl);
-    
+
+    /**
+     * Pauses all the downloads that are currently running, and sets a flag
+     * to say that no more will be automatically started.
+     */
+    public void pauseDownloads();
+
+    /**
+     * Restarts all the paused downloads, and unsets the flag used in 
+     * {@link pauseDownloads}, so that downloads are automatically started
+     * again.
+     */
+    public void resumeDownloads();
+
+    /**
+     * Removes all downloads of a given state from the download model
+     * @param state the state of the downloads to be removed 
+     */
+    public void removeDownloads(DLState state);
+
 }

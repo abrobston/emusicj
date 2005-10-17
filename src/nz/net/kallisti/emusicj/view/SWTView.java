@@ -107,7 +107,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 				    // Now go through the list of DownloadDisplays we have, and
                     // if its monitor is in the removed list, dispose it
                     for (DownloadDisplay dd : dlDisplays) {
-                        if (removedMons.contains(dd.getMonitor())) {
+                        if (removedMons.contains(dd.getDownloadMonitor())) {
                             dd.dispose();
                             downloadsListComp.removeSelectableControl(dd);
                         }
@@ -277,11 +277,40 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
                 this, "pauseDownloads");
         SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads", SWT.CTRL+'R', 
                 this, "resumeDownloads");
+        new MenuItem(downloadsMenu, SWT.SEPARATOR);
+        SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads", SWT.CTRL+'C', 
+                this, "cleanUpDownloads");
         // --- Help menu ---
         Menu aboutMenu = SWTUtils.createDropDown(shell, bar, "&Help");
         SWTUtils.createMenuItem(aboutMenu, "&About...", null, 
                 this, "aboutBox");
 	}
+    
+    /**
+     * Tell the controller to pause all the current downloads, and not
+     * start any more.
+     */
+    public void pauseDownloads() {
+        controller.pauseDownloads();
+    }
+    
+    /**
+     * Tell the controller to restart all paused downloads, and allow more
+     * to be automatically started.
+     */
+    public void resumeDownloads() {
+        controller.resumeDownloads();
+    }
+    
+    /**
+     * Tell the controller to remove any stopped or finished downloads from
+     * the model
+     */
+    public void cleanUpDownloads() {
+        controller.removeDownloads(DLState.FINISHED);
+        controller.removeDownloads(DLState.STOPPED);
+        controller.removeDownloads(DLState.FAILED);
+    }
 
 	/**
 	 * Enables and disables the buttons depending on the state of the selected
@@ -311,7 +340,11 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 					runButton.setEnabled(false);
 					pauseButton.setEnabled(true);
 					cancelButton.setEnabled(true);			
-				} else {
+				} else if (mon.getDownloadState() == DLState.FINISHED) {
+                    runButton.setEnabled(false);
+                    pauseButton.setEnabled(false);
+                    cancelButton.setEnabled(false);                                         
+                } else {
 					runButton.setEnabled(true);
 					pauseButton.setEnabled(false);
 					cancelButton.setEnabled(false);						
@@ -360,12 +393,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	}
 
 	public void setDownloadsModel(IDownloadsModel model) {
+        if (model != downloadsModel && downloadsModel != null)
+            downloadsModel.removeListener(this);
 		this.downloadsModel = model;
 		if (model != null)
 			model.addListener(this);
 	}
 
-	public void downloadsListenerChanged(IDownloadsModel model) {
+	public void downloadsModelChanged(IDownloadsModel model) {
 		assert model == downloadsModel : "Received event for unknown IDownloadsModel";
         updateListFromModel();
 	}
@@ -397,5 +432,16 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 		if (e.widget == downloadsListComp)
 			setButtonsState();
 	}
+
+    public void error(final String msgTitle, final String msg) {
+        asyncExec(new Runnable() {
+            public void run() {
+                MessageBox about = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                about.setText(msgTitle);
+                about.setMessage(msg);
+                about.open();
+            }
+        });
+    }
     
 }

@@ -48,4 +48,11 @@ public interface IEMusicView {
 	 */
 	public void setController(IEMusicController controller);
 
+    /**
+     * Tells the view to display an error message
+     * @param msgTitle the title of the error
+     * @param msg the content of the error
+     */
+    public void error(String msgTitle, String msg);
+
 }

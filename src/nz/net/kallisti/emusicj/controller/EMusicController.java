@@ -2,6 +2,7 @@ package nz.net.kallisti.emusicj.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import nz.net.kallisti.emusicj.Constants;
@@ -28,6 +29,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 
     private IEMusicView view;
 	private IDownloadsModel downloadsModel = new TestDownloadsModel(10);
+    private boolean noAutoStartDownloads = false;
 	
     public EMusicController() {
         super();
@@ -94,7 +96,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
      * @param msg The message contents
      */
     private void error(String msgTitle, String msg) {
-        // TODO Auto-generated method stub        
+        view.error(msgTitle, msg);
     }
 
     /**
@@ -112,9 +114,12 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
      * is less than the minimum (defined in Constants), we start the first one 
      * that is in a state of NOTSTARTED.
      *  
-     * @param monitor the monitor that changed status
+     * @param monitor the monitor that changed status. This is unused and may 
+     * safely be null
      */
     public void monitorStateChanged(IDownloadMonitor monitor) {
+        if (noAutoStartDownloads)
+            return;
     	int count = 0;
     	for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
     		if (mon.getDownloadState() == DLState.DOWNLOADING ||
@@ -146,5 +151,35 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	public void stopDownload(IDownloader dl) {
 		dl.stop();
 	}
+
+    public void pauseDownloads() {
+        noAutoStartDownloads = true;
+        for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+            if (mon.getDownloadState() == DLState.DOWNLOADING ||
+                    mon.getDownloadState() == DLState.CONNECTING) {
+                mon.getDownloader().pause();
+            }
+        }
+    }
+
+    public void resumeDownloads() {
+        for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+            if (mon.getDownloadState() == DLState.PAUSED) {
+                mon.getDownloader().start();
+            }
+        }
+        noAutoStartDownloads = false;
+        monitorStateChanged(null);
+    }
+
+    public void removeDownloads(DLState state) {
+        ArrayList<IDownloader> toRemove = new ArrayList<IDownloader>();
+        for (IDownloader dl : downloadsModel.getDownloaders()) {
+            if (dl.getMonitor().getDownloadState() == state) {
+                toRemove.add(dl);
+            }
+        }
+        downloadsModel.removeDownloads(toRemove);
+    }
 
 }
