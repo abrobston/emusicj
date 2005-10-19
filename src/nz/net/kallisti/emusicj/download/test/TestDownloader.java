@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.download.test;
 
+import java.io.File;
 import java.net.URL;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
@@ -138,5 +139,13 @@ public class TestDownloader implements IDownloader {
         // TODO Auto-generated method stub
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloader#getOutputFile()
+	 */
+	public File getOutputFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

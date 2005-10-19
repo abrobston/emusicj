@@ -1,9 +1,20 @@
 package nz.net.kallisti.emusicj.download;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
+import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 
 /**
@@ -25,7 +36,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
     private DownloadThread dlThread;
     private DLState state;
 
-    public HTTPMusicDownloader(URL url, File outputFile,
+    public HTTPMusicDownloader(URL url,
             int trackNum, String songName, String album, String artist) {
         super();
         this.url = url;
@@ -33,7 +44,6 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         this.trackName = songName;
         this.albumName = album;
         this.artistName = artist;
-        this.outputFile = outputFile;
         this.monitor = new HTTPMusicDownloadMonitor(this);
     }
 
@@ -41,10 +51,10 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         return monitor;
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloader#start()
-     */
     public void start() {
+    		Preferences prefs = Preferences.getInstance();
+    		outputFile = new File(prefs.getFilename(trackNum, trackName, 
+    				albumName, artistName));
         if (dlThread == null) {
             dlThread = new DownloadThread();
             dlThread.start();
@@ -59,20 +69,16 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         monitor.setState(state);
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloader#stop()
-     */
     public void stop() {
-        // TODO Auto-generated method stub
-        
+    		dlThread.finish();
+    		state = DLState.STOPPED;
+    		monitor.setState(state);
     }
 
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.download.IDownloader#pause()
-	 */
 	public void pause() {
-		// TODO Auto-generated method stub
-		
+		dlThread.pause(true);
+		state = DLState.PAUSED;
+		monitor.setState(state);
 	}
 
     public String getAlbumName() {
@@ -95,29 +101,103 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         return trackNum;
     }
 
+    /**
+     * Returns the file that the download will be saved to.
+     * @return the file, or null if the download hasn't started yet.
+     */
     public File getOutputFile() {
         return outputFile;
     }
     
+    private void downloadError(Exception e) {
+		state = DLState.FAILED;
+		monitor.setState(state);    	
+    }
+    
+    private void downloadError(String s) {
+		state = DLState.FAILED;
+		monitor.setState(state);	
+    }
+    
     /**
-     * <p></p>
+     * <p>This class does the actual downloading of the file</p>
      */
     public class DownloadThread extends Thread {
 
-        public DownloadThread() {
+        private boolean pause = false;
+		private boolean abort = false;
+
+		public DownloadThread() {
             super();
         }
 
         public void run() {
-            
+        		BufferedOutputStream out = null;
+            try {
+            		// TODO check for existing file and resume
+				out = new BufferedOutputStream(new FileOutputStream(outputFile));
+			} catch (FileNotFoundException e) {
+				downloadError(e);
+				return;
+			}
+			if (abort) return;
+			while (!pause);
+			HttpClient http = new HttpClient();
+			HttpMethod get = new GetMethod(url.toString());
+			InputStream in;
+			try {
+				int statusCode = http.executeMethod(get);
+				if (statusCode != HttpStatus.SC_OK) {
+					get.releaseConnection();
+					downloadError("Download failed: server returned code "+statusCode);
+					return;
+				}
+				// TODO get the headers and work out the length
+				in = get.getResponseBodyAsStream();
+			} catch (IOException e) {
+				get.releaseConnection();
+				downloadError(e);
+				return;
+			}
+			if (abort) {
+				try { out.close(); } catch (IOException e) {}
+				get.releaseConnection();
+				return;
+			}
+			while (!pause);
+			byte[] buff = new byte[8192]; // we'll work in 8K chunks
+
+			int count;
+			try {
+				while ((count = in.read(buff)) != -1) {
+					out.write(buff, 0, count);
+					if (abort) {
+						try { out.close(); } catch (IOException e) {}
+						get.releaseConnection();
+						return;
+					}
+					while (!pause);
+				}
+				out.close();
+				in.close();
+				get.releaseConnection();
+			} catch (IOException e) {
+				try {
+					out.close();
+					in.close();
+				} catch (Exception ex) {}
+				get.releaseConnection();
+				downloadError(e);
+				return;
+			}
         }
         
         public void pause(boolean pause) {
-            
+            this.pause = pause;
         }
         
         public void finish() {
-            
+        		this.abort  = true;
         }
 
     }
