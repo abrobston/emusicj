@@ -1,6 +1,9 @@
 package nz.net.kallisti.emusicj.download;
 
+import java.io.File;
 import java.net.URL;
+
+import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 
 
 /**
@@ -12,26 +15,48 @@ import java.net.URL;
  */
 public class HTTPMusicDownloader implements IMusicDownloader {
 
-    public HTTPMusicDownloader(URL url, 
+    private URL url;
+    private String trackName;
+    private String albumName;
+    private String artistName;
+    private int trackNum;
+    private HTTPMusicDownloadMonitor monitor;
+    private File outputFile;
+    private DownloadThread dlThread;
+    private DLState state;
+
+    public HTTPMusicDownloader(URL url, File outputFile,
             int trackNum, String songName, String album, String artist) {
         super();
-        // TODO Auto-generated constructor stub
+        this.url = url;
+        this.trackNum = trackNum;
+        this.trackName = songName;
+        this.albumName = album;
+        this.artistName = artist;
+        this.outputFile = outputFile;
+        this.monitor = new HTTPMusicDownloadMonitor(this);
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloader#getMonitor()
-     */
     public IDownloadMonitor getMonitor() {
-        // TODO Auto-generated method stub
-        return null;
+        return monitor;
     }
 
     /* (non-Javadoc)
      * @see nz.net.kallisti.emusicj.download.IDownloader#start()
      */
     public void start() {
-        // TODO Auto-generated method stub
-        
+        if (dlThread == null) {
+            dlThread = new DownloadThread();
+            dlThread.start();
+        } else {
+            dlThread.pause(false);
+        }
+        setState(DLState.DOWNLOADING);       
+    }
+
+    private void setState(DLState state) {
+        this.state = state;
+        monitor.setState(state);
     }
 
     /* (non-Javadoc)
@@ -49,5 +74,53 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		// TODO Auto-generated method stub
 		
 	}
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public String getTrackName() {
+        return trackName;
+    }
+
+    public URL getURL() {
+        return url;
+    }
+
+    public int getTrackNum() {
+        return trackNum;
+    }
+
+    public File getOutputFile() {
+        return outputFile;
+    }
+    
+    /**
+     * <p></p>
+     */
+    public class DownloadThread extends Thread {
+
+        public DownloadThread() {
+            super();
+        }
+
+        public void run() {
+            
+        }
+        
+        public void pause(boolean pause) {
+            
+        }
+        
+        public void finish() {
+            
+        }
+
+    }
+
 
 }

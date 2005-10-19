@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.download.test;
 
+import java.net.URL;
+
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
@@ -27,7 +29,7 @@ public class TestDownloader implements IDownloader {
      */
     public TestDownloader() {
         super();
-        // TODO Auto-generated constructor stub
+        monitor = new TestDownloadMonitor(this);
     }
 
     /**
@@ -36,11 +38,11 @@ public class TestDownloader implements IDownloader {
      * @param d
      */
     public TestDownloader(String name, int i, int d) {
+        this();
         this.name = name;
         this.inital = i*1000;
         this.speed = d;
-        this.state = DLState.NOTSTARTED;
-        monitor = new TestDownloadMonitor(this);
+        this.state = DLState.NOTSTARTED;        
     }
 
     public IDownloadMonitor getMonitor() {
@@ -126,6 +128,15 @@ public class TestDownloader implements IDownloader {
         	pause = p;
         }
         
+    }
+
+
+    /* (non-Javadoc)
+     * @see nz.net.kallisti.emusicj.download.IDownloader#getURL()
+     */
+    public URL getURL() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -1,5 +1,8 @@
 package nz.net.kallisti.emusicj.download;
 
+import java.io.File;
+import java.net.URL;
+
 
 /**
  * <p>The interface for classes that download files</p>
@@ -25,5 +28,9 @@ public interface IDownloader {
 	 * threads.
 	 */
 	public void pause();
+    
+    public URL getURL();
+    
+    public File getOutputFile();
     
 }
