@@ -17,12 +17,8 @@ public class HTTPMusicDownloadMonitor implements IDownloadMonitor {
     private ArrayList<IDownloadMonitorListener> listeners =
         new ArrayList<IDownloadMonitorListener>();
 
-    /**
-     * 
-     */
     public HTTPMusicDownloadMonitor() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -32,36 +28,22 @@ public class HTTPMusicDownloadMonitor implements IDownloadMonitor {
         this.downloader = downloader;
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getName()
-     */
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return downloader.getTrackName()+" - "+downloader.getAlbumName() +
+        " - "+downloader.getArtistName();
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getDownloadPercent()
-     */
     public double getDownloadPercent() {
-        // TODO Auto-generated method stub
-        return 0;
+        return downloader.fileLength==-1?
+                -1:((double)downloader.bytesDown/downloader.fileLength)*100;
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getBytesDown()
-     */
     public long getBytesDown() {
-        // TODO Auto-generated method stub
-        return 0;
+        return downloader.bytesDown;
     }
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getTotalBytes()
-     */
     public long getTotalBytes() {
-        // TODO Auto-generated method stub
-        return 0;
+        return downloader.fileLength;
     }
 
     public DLState getDownloadState() {

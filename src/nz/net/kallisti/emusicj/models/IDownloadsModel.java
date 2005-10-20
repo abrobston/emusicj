@@ -26,6 +26,8 @@ public interface IDownloadsModel {
 
     public void addDownload(IDownloader dl);
 
+    public void removeDownload(IDownloader dl);
+    
     /**
      * Removes downloads from the model
      * @param toRemove the downloads to remove

@@ -11,6 +11,7 @@ import java.net.URL;
 import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -35,6 +36,8 @@ public class HTTPMusicDownloader implements IMusicDownloader {
     private File outputFile;
     private DownloadThread dlThread;
     private DLState state;
+    long fileLength = -1;
+    long bytesDown = 0;
 
     public HTTPMusicDownloader(URL url,
             int trackNum, String songName, String album, String artist) {
@@ -132,7 +135,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         }
 
         public void run() {
-        		BufferedOutputStream out = null;
+            BufferedOutputStream out = null;
             try {
             		// TODO check for existing file and resume
 				out = new BufferedOutputStream(new FileOutputStream(outputFile));
@@ -152,7 +155,15 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 					downloadError("Download failed: server returned code "+statusCode);
 					return;
 				}
-				// TODO get the headers and work out the length
+                Header[] requestHeaders = get.getRequestHeaders();                
+                for (int i=0; i<requestHeaders.length; i++){
+                    System.err.print(requestHeaders[i]);
+                    String hLine = requestHeaders[i].toString();
+                    String[] hParts = hLine.split(" ");
+                    if (hParts[0].equals("Length:")) {
+                        fileLength = Long.parseLong(hParts[1]);
+                    }
+                }
 				in = get.getResponseBodyAsStream();
 			} catch (IOException e) {
 				get.releaseConnection();
@@ -170,6 +181,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			int count;
 			try {
 				while ((count = in.read(buff)) != -1) {
+                    bytesDown += count;
 					out.write(buff, 0, count);
 					if (abort) {
 						try { out.close(); } catch (IOException e) {}
