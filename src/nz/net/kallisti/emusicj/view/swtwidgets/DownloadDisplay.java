@@ -38,6 +38,7 @@ implements IDownloadMonitorListener, ISelectableControl {
 	private Color oldBG;
 	private Color oldLabelBG;
     private Color oldLabelFG;
+    private String progressStr = "( pending )";
 	/**
      * This constructor initialises the display, creating the parts of it and
      * so forth.
@@ -103,8 +104,11 @@ implements IDownloadMonitorListener, ISelectableControl {
         DLState state = mon.getDownloadState();
         if (state == DLState.NOTSTARTED) { text.append("Waiting"); } 
         else if (state == DLState.CONNECTING) { text.append("Connecting"); }
-        else if (state == DLState.DOWNLOADING) { text.append("Downloading"); }
-        else if (state == DLState.PAUSED) { text.append("Paused"); }
+        else if (state == DLState.DOWNLOADING) { 
+            text.append("Downloading");
+            text.append(progressStr );
+            // TODO change the above to work in Kb
+        } else if (state == DLState.PAUSED) { text.append("Paused"); }
         else if (state == DLState.STOPPED) { text.append("Stopped"); }
         else if (state == DLState.FINISHED) { text.append("Finished"); }
         else if (state == DLState.FAILED) { text.append("Failed"); }
@@ -166,6 +170,7 @@ implements IDownloadMonitorListener, ISelectableControl {
                         parent.updateProgressBar(perc);
                         oldPerc = perc;
                     }
+                    // TODO add progress message
                 } else if (monitor.getDownloadState() == DLState.FINISHED) {
                 	parent.updateProgressBar(100);
                 }

@@ -12,8 +12,9 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
-import nz.net.kallisti.emusicj.models.test.TestDownloadsModel;
+import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 /**
@@ -25,10 +26,10 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  *
  * @author robin
  */
-public class EMusicController implements IEMusicController, IDownloadMonitorListener {
+public class EMusicController implements IEMusicController, IDownloadMonitorListener, IDownloadsModelListener {
 
     private IEMusicView view;
-	private IDownloadsModel downloadsModel = new TestDownloadsModel(10);
+	private IDownloadsModel downloadsModel = new DownloadsModel();
     private boolean noAutoStartDownloads = false;
 	
     public EMusicController() {
@@ -44,6 +45,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
         // Initialise the system
     	if (view != null)
     		view.setState(IEMusicView.ViewState.STARTUP);
+        downloadsModel.addListener(this);
         for (String file : args)
             loadMetafile(file);
         for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
@@ -55,9 +57,9 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
         
         if (view != null)
         	view.setState(IEMusicView.ViewState.RUNNING);
-        IDownloader dl = downloadsModel.getDownloaders().get(0);
-        if (dl != null)
-        	dl.start();
+        List<IDownloader> downloads = downloadsModel.getDownloaders();
+        if (downloads.size() > 0)
+        	downloads.get(0).start();
         // Call the view's event loop
         if (view != null)
         	view.processEvents(this);
@@ -182,6 +184,10 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
             }
         }
         downloadsModel.removeDownloads(toRemove);
+    }
+
+    public void downloadsModelChanged(IDownloadsModel model) {
+        monitorStateChanged(null);
     }
 
 }

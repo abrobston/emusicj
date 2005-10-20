@@ -16,7 +16,7 @@ import nz.net.kallisti.emusicj.download.test.TestDownloadMonitor;
  *
  * @author robin
  */
-public class DownloadModel implements IDownloadsModel {
+public class DownloadsModel implements IDownloadsModel {
 
 	List<IDownloader> downloads;
     private List<IDownloadsModelListener> listeners = 
@@ -26,7 +26,7 @@ public class DownloadModel implements IDownloadsModel {
 	 * Initialise the class, and create some {@link TestDownloadMonitor}s.
 	 * @param n the number of monitors to create
 	 */
-	public DownloadModel() {
+	public DownloadsModel() {
 		downloads = new ArrayList<IDownloader>();
 	}
 	
@@ -57,6 +57,7 @@ public class DownloadModel implements IDownloadsModel {
      */
     public void addDownload(IDownloader dl) {
         downloads.add(dl);
+        notifyListeners();
     }
 
     /* (non-Javadoc)
@@ -72,6 +73,7 @@ public class DownloadModel implements IDownloadsModel {
 
     public void removeDownload(IDownloader dl) {
         downloads.remove(dl);
+        notifyListeners();
     }
     
     private void notifyListeners() {

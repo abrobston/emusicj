@@ -17,7 +17,9 @@ import nz.net.kallisti.emusicj.download.IDownloader;
  * <p>This is a parser for plaintext metafiles. These metafiles have
  * the format:<br />
  * <tt>URL tracknum songname album artist</tt><br />
- * with any number of lines each containing this information.</p>
+ * with any number of lines each containing this information. (note that
+ * this format doesn't allow spaces in fields, it is primarily intended for
+ * testing)</p>
  * 
  * <p>$Id$</p>
  *
@@ -49,6 +51,10 @@ public class PlainTextMetafile implements IMetafile {
             } catch (IOException e1) {
                 return null;
             }
+            if (line == null || line.equals("")) {
+                done = true;
+                break;
+            }
             String[] parts = line.split(" ");
             if (parts.length != 5) {
                 return null;
@@ -78,8 +84,12 @@ public class PlainTextMetafile implements IMetafile {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         boolean valid = true;
         boolean done = false;
+        boolean atLeastOne = false;
         while (valid && !done) {
             String line = reader.readLine();
+            if (line == null || line.equals("")) {
+                return valid && atLeastOne;
+            }
             String[] parts = line.split(" ");
             if (parts.length != 5) {
                 valid = false;
@@ -99,6 +109,7 @@ public class PlainTextMetafile implements IMetafile {
                 valid = false;
                 break;
             }
+            atLeastOne = true;
         }
         return valid;
     }

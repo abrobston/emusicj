@@ -48,6 +48,8 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         this.albumName = album;
         this.artistName = artist;
         this.monitor = new HTTPMusicDownloadMonitor(this);
+        state = DLState.NOTSTARTED;
+        monitor.setState(state);
     }
 
     public IDownloadMonitor getMonitor() {
@@ -73,13 +75,15 @@ public class HTTPMusicDownloader implements IMusicDownloader {
     }
 
     public void stop() {
-    		dlThread.finish();
-    		state = DLState.STOPPED;
-    		monitor.setState(state);
+        if (dlThread != null)
+            dlThread.finish();
+        state = DLState.STOPPED;
+        monitor.setState(state);
     }
 
 	public void pause() {
-		dlThread.pause(true);
+        if (dlThread != null)
+            dlThread.pause(true);
 		state = DLState.PAUSED;
 		monitor.setState(state);
 	}
@@ -113,11 +117,13 @@ public class HTTPMusicDownloader implements IMusicDownloader {
     }
     
     private void downloadError(Exception e) {
+        e.printStackTrace();
 		state = DLState.FAILED;
 		monitor.setState(state);    	
     }
     
     private void downloadError(String s) {
+        System.err.println(s);
 		state = DLState.FAILED;
 		monitor.setState(state);	
     }
@@ -137,14 +143,17 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         public void run() {
             BufferedOutputStream out = null;
             try {
-            		// TODO check for existing file and resume
+                File parent = outputFile.getParentFile();
+                if (parent != null)
+                    parent.mkdirs();
+            		// TODO check for existing file and resume                
 				out = new BufferedOutputStream(new FileOutputStream(outputFile));
 			} catch (FileNotFoundException e) {
 				downloadError(e);
 				return;
 			}
-			if (abort) return;
-			while (!pause);
+			while (pause && !abort);
+            if (abort) return;
 			HttpClient http = new HttpClient();
 			HttpMethod get = new GetMethod(url.toString());
 			InputStream in;
@@ -155,13 +164,14 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 					downloadError("Download failed: server returned code "+statusCode);
 					return;
 				}
-                Header[] requestHeaders = get.getRequestHeaders();                
-                for (int i=0; i<requestHeaders.length; i++){
-                    System.err.print(requestHeaders[i]);
-                    String hLine = requestHeaders[i].toString();
+                Header[] responseHeaders = get.getResponseHeaders();                
+                for (int i=0; i<responseHeaders.length; i++){
+                    System.err.print(responseHeaders[i]);
+                    String hLine = responseHeaders[i].toString();
                     String[] hParts = hLine.split(" ");
-                    if (hParts[0].equals("Length:")) {
-                        fileLength = Long.parseLong(hParts[1]);
+                    if (hParts[0].equals("Content-Length:")) {
+                        fileLength = Long.parseLong(hParts[1].
+                                substring(0,hParts[1].length()-2));
                     }
                 }
 				in = get.getResponseBodyAsStream();
@@ -170,12 +180,12 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				downloadError(e);
 				return;
 			}
+            while (pause && !abort);
 			if (abort) {
 				try { out.close(); } catch (IOException e) {}
 				get.releaseConnection();
 				return;
 			}
-			while (!pause);
 			byte[] buff = new byte[8192]; // we'll work in 8K chunks
 
 			int count;
@@ -183,12 +193,12 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				while ((count = in.read(buff)) != -1) {
                     bytesDown += count;
 					out.write(buff, 0, count);
+                    while (pause && !abort);
 					if (abort) {
 						try { out.close(); } catch (IOException e) {}
 						get.releaseConnection();
 						return;
 					}
-					while (!pause);
 				}
 				out.close();
 				in.close();
@@ -209,7 +219,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
         }
         
         public void finish() {
-        		this.abort  = true;
+            this.abort  = true;
         }
 
     }
