@@ -35,9 +35,9 @@ public class HTTPMusicDownloader implements IMusicDownloader {
     private HTTPMusicDownloadMonitor monitor;
     private File outputFile;
     private DownloadThread dlThread;
-    private DLState state;
-    long fileLength = -1;
-    long bytesDown = 0;
+    private volatile DLState state;
+    volatile long fileLength = -1;
+    volatile long bytesDown = 0;
 
     public HTTPMusicDownloader(URL url,
             int trackNum, String songName, String album, String artist) {
@@ -191,7 +191,10 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			int count;
 			try {
 				while ((count = in.read(buff)) != -1) {
-                    bytesDown += count;
+                    synchronized (HTTPMusicDownloader.this) {
+                        // synch because an assignment to a long isn't atomic
+                        bytesDown += count;
+                    }
 					out.write(buff, 0, count);
                     while (pause && !abort);
 					if (abort) {

@@ -39,7 +39,9 @@ public class HTTPMusicDownloadMonitor implements IDownloadMonitor {
     }
 
     public long getBytesDown() {
-        return downloader.bytesDown;
+        synchronized (downloader) {
+            return downloader.bytesDown;
+        }
     }
 
     public long getTotalBytes() {
