@@ -108,6 +108,8 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
      * @param downloaders the downloaders to add
      */
     public void newDownloads(List<IDownloader> downloaders) {
+    		if (downloaders == null)
+    			return;
         for (IDownloader dl : downloaders)
             downloadsModel.addDownload(dl);
     }

@@ -34,7 +34,9 @@ public class MetafileLoader {
         if (!filename.exists() || !filename.canRead())
             throw new FileNotFoundException(filename+" not found or not readable.");
         IMetafile meta = null;
-        if (PlainTextMetafile.canParse(filename)) { 
+        if (EMPMetafile.canParse(filename)) {
+        		meta = new EMPMetafile(filename);
+        } else if (PlainTextMetafile.canParse(filename)) { 
             meta = new PlainTextMetafile(filename); 
         }
         if (meta == null)

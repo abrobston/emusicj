@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.metafiles.exceptions;
 
+
 /**
  * <p>This exception indicates that the provided file was not a known metafile.</p>
  * 
@@ -12,5 +13,9 @@ public class UnknownFileException extends RuntimeException {
     public UnknownFileException(String message) {
         super(message);
     }
+
+	public UnknownFileException(Throwable e) {
+		super(e);
+	}
 
 }
