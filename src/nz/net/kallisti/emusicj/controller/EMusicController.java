@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
@@ -31,6 +30,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
     private IEMusicView view;
 	private IDownloadsModel downloadsModel = new DownloadsModel();
     private boolean noAutoStartDownloads = false;
+    private Preferences prefs = Preferences.getInstance();
 	
     public EMusicController() {
         super();
@@ -133,7 +133,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
     			count++;
     		}
     	}
-    	int num = Constants.MIN_DOWNLOADS - count;
+    	int num = prefs.getMinDownloads() - count;
     	if (num > 0) {
         	for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
         		if (mon.getDownloadState() == DLState.NOTSTARTED) {

@@ -13,6 +13,6 @@ public class Constants {
     
     public final static String APPNAME = "eMusic/J";
 
-	public final static int MIN_DOWNLOADS = 2;
-    
+	public static final String STATE_DIR = ".emusicj";
+
 }

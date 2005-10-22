@@ -166,7 +166,6 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				}
                 Header[] responseHeaders = get.getResponseHeaders();                
                 for (int i=0; i<responseHeaders.length; i++){
-                    System.err.print(responseHeaders[i]);
                     String hLine = responseHeaders[i].toString();
                     String[] hParts = hLine.split(" ");
                     if (hParts[0].equals("Content-Length:")) {
@@ -203,6 +202,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 						return;
 					}
 				}
+				setState(DLState.FINISHED);
 				out.close();
 				in.close();
 				get.releaseConnection();
