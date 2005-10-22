@@ -62,6 +62,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	private ToolItem runButton;
 	private ToolItem pauseButton;
 	private ToolItem cancelButton;
+	private Preferences prefs = Preferences.getInstance();
 	
 	public SWTView() {
 		super();
@@ -371,10 +372,13 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	public void openFile() {
 		FileDialog dialog = new FileDialog (shell, SWT.OPEN);
 		dialog.setFilterNames (new String [] {"All Files (*.*)"});
-		dialog.setFilterExtensions (new String [] {"*.*"}); 
+		dialog.setFilterExtensions (new String [] {"*.*"});
+		dialog.setFilterPath(prefs.getProperty("openDefaultPath"));
 		String file = dialog.open();
-		if (file != null)
+		if (file != null) {
+			prefs.setProperty("openDefaultPath", file);
 			controller.loadMetafile(file);
+		}
 	}
 	
 	public void quitProgram() {

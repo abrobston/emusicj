@@ -109,6 +109,8 @@ implements IDownloadMonitorListener, ISelectableControl {
 		else if (state == DLState.STOPPED) { lblState="Stopped"; }
 		else if (state == DLState.FINISHED) { lblState="Finished"; }
 		else if (state == DLState.FAILED) { lblState="Failed"; }
+		if (pThread != null)
+			pThread.interrupt();
 		displayLabel();
 	}
 	
@@ -171,21 +173,23 @@ implements IDownloadMonitorListener, ISelectableControl {
 			int oldPerc = (int)monitor.getDownloadPercent();
 			while (!parent.isDisposed() && !done) {
 				if (monitor.getDownloadState() == DLState.DOWNLOADING) {
+					displayLabel();
 					int perc = (int)monitor.getDownloadPercent();
 					if (perc != oldPerc) {
 						parent.updateProgressBar(perc);
 						if (monitor.getTotalBytes() == -1)
 							lblProgress = "("+(monitor.getBytesDown()/1024)+
-								" of ??Kb)";
+								"Kb)";
 						else
 							lblProgress = "("+(monitor.getBytesDown()/1024)+
-								" of "+(monitor.getTotalBytes()/1024)+"Kb)";
-						displayLabel();
+								"Kb of "+(monitor.getTotalBytes()/1024)+"Kb)";
 						oldPerc = perc;
 					}
 					// TODO add progress message
 				} else if (monitor.getDownloadState() == DLState.FINISHED) {
 					parent.updateProgressBar(100);
+					lblProgress = "";
+					displayLabel();
 				}
 				try {
 					Thread.sleep(1000);

@@ -76,6 +76,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 		for (IDownloader dl : dls) {
 			dl.stop();
 		}
+		prefs.save();
 	}
 
 	/**
@@ -110,8 +111,10 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
     public void newDownloads(List<IDownloader> downloaders) {
     		if (downloaders == null)
     			return;
-        for (IDownloader dl : downloaders)
+        for (IDownloader dl : downloaders) {
             downloadsModel.addDownload(dl);
+            dl.getMonitor().addStateListener(this);
+        }
     }
 
     /**

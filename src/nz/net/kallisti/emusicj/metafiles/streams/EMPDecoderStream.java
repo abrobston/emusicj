@@ -109,10 +109,12 @@ public class EMPDecoderStream extends InputStream {
     			ciphertext[keyIdx - 1] ^= key[(k1 + k2) & 0xFF] ;
     			decBuffer = ciphertext;
     			bufferLength = decBuffer.length;
-    			// For some reason these files seem to have a trailing ']', so
+    			// For some reason these files seem to have a trailing character, so
+    			// we'll go back one step (there seems to always be at least one), then
     			// we'll walk backwards until we see a '>' and set that to the end
     			// of the file
-    			while (decBuffer[bufferLength-1] != '>' && bufferLength > 0)
+    			bufferLength--;
+    			while (bufferLength > 0 && decBuffer[bufferLength-1] != '>')
     				bufferLength--;
     		}
     		if (ptr >= bufferLength)

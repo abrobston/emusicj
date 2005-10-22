@@ -21,7 +21,7 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 <property name="doc.index" value="${doc.dir}/index.html"/>
 <property name="dist.dir" value="${basedir}/dist"/>
 <property name="lib.dir" value="${basedir}/lib"/>
-<property name="jar.name" value="${dist.dir}/${ant.project.name}.jar"/>
+<property name="jar.name" value="${dist.dir}/emusicj-linux/${ant.project.name}.jar"/>
 <property name="sun.api" value="http://java.sun.com/j2se/1.5/docs/api"/>
 
 <target name="compile">
@@ -39,7 +39,7 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 </target>
 
 <target name="jar" depends="compile" description="Creates a runnable jar file.">
-  <mkdir dir="${dist.dir}"/>
+  <mkdir dir="${dist.dir}/emusicj-linux"/>
   <jar jarfile="${jar.name}">
   <fileset dir="${build.dir}"/>
   <manifest>
@@ -47,13 +47,13 @@ Type `ant target' to run a target or `ant' to run the default target. -->
     <attribute name="Main-Class" value="${main.class}"/>
   </manifest>
   </jar>
-  <copy todir="${dist.dir}/lib">
+  <copy todir="${dist.dir}/emusicj-linux/lib">
   	<fileset file="${lib.dir}/*.jar"/>
   	<fileset file="${lib.dir}/*.so"/>
   </copy>
-  <copy todir="${dist.dir}" file="${basedir}/emusicj" />
+  <copy todir="${dist.dir}/emusicj-linux" file="${basedir}/emusicj" />
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
-  <exec executable="chmod" dir="${dist.dir}" os="Linux">
+  <exec executable="chmod" dir="${dist.dir}/emusicj-linux" os="Linux">
   	<arg line="+x emusicj"/>
   </exec>
 </target>

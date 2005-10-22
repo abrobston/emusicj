@@ -83,7 +83,10 @@ public class PreferencesDialogue {
 			}
 			private void doBrowse() {
 				DirectoryDialog dialog = new DirectoryDialog (shell);
-				savePath.setText(dialog.open());
+				dialog.setFilterPath(filePath);
+				String path = dialog.open();
+				if (path != null)
+					savePath.setText(path);
 			}
 		});
 		

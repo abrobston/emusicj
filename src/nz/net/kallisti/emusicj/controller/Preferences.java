@@ -78,8 +78,14 @@ public class Preferences {
 	}
 	
 	public String getFilename(int track, String song, String album, String artist) {
-		String prefix = path+File.separatorChar;
 		DecimalFormat df = new DecimalFormat("00");
+		StringBuffer songB = new StringBuffer(song);
+		StringBuffer albumB = new StringBuffer(album);
+		StringBuffer artistB = new StringBuffer(artist);
+		// Remove any bad characters from the names
+		cleanName(songB);
+		cleanName(albumB);
+		cleanName(artistB);
 		StringBuffer convPattern = new StringBuffer(filePattern);
 		int pos;
 		while ((pos = convPattern.indexOf("%a"))!= -1)
@@ -90,14 +96,19 @@ public class Preferences {
 			convPattern.replace(pos,pos+2,df.format(track));
 		while ((pos = convPattern.indexOf("%t"))!= -1)
 			convPattern.replace(pos,pos+2,song);
-		// Remove any bad characters from the filename
-		for (int i=0; i<convPattern.length(); i++) {
-			char c = convPattern.charAt(i);
+		String fname = path+File.separatorChar+convPattern;
+		return fname;
+	}
+
+	/**
+	 * @param str
+	 */
+	private void cleanName(StringBuffer str) {
+		for (int i=0; i<str.length(); i++) {
+			char c = str.charAt(i);
 			if (c < ' ' || c == '/' || c == '\\' || c > '~')
-				convPattern.setCharAt(i,'_');
+				str.setCharAt(i,'_');
 		}
-		prefix += convPattern;
-		return prefix;
 	}
 	
 	/**
@@ -132,5 +143,24 @@ public class Preferences {
 		props.setProperty("minDownloads",minDownloads+"");
 		this.minDownloads = minDownloads;
 	}
+	
+	/**
+	 * A way of storing property information with arbitrary tags. Don't stomp
+	 * on the values already used in this class.
+	 * @param key the key to store the value with
+	 * @param value the value to store
+	 */
+	public void setProperty(String key, String value) {
+		props.setProperty(key, value);
+	}
+	
+	public String getProperty(String key) {
+		return props.getProperty(key);
+	}
+
+	public String getProperty(String key, String def) {
+		return props.getProperty(key, def);
+	}
+
 
 }
