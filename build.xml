@@ -48,7 +48,8 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   </manifest>
   </jar>
   <copy todir="${dist.dir}/lib">
-  	<fileset dir="${lib.dir}"/>	
+  	<fileset file="${lib.dir}/*.jar"/>
+  	<fileset file="${lib.dir}/*.so"/>
   </copy>
   <copy todir="${dist.dir}" file="${basedir}/emusicj" />
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->

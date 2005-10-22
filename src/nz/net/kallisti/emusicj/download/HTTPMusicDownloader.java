@@ -142,12 +142,14 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 
         public void run() {
             BufferedOutputStream out = null;
+            File partFile;
             try {
                 File parent = outputFile.getParentFile();
                 if (parent != null)
                     parent.mkdirs();
+                partFile = new File(outputFile+".part");
             		// TODO check for existing file and resume                
-				out = new BufferedOutputStream(new FileOutputStream(outputFile));
+				out = new BufferedOutputStream(new FileOutputStream(partFile));
 			} catch (FileNotFoundException e) {
 				downloadError(e);
 				return;
@@ -203,6 +205,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 					}
 				}
 				setState(DLState.FINISHED);
+				partFile.renameTo(outputFile);
 				out.close();
 				in.close();
 				get.releaseConnection();

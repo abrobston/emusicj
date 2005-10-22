@@ -90,6 +90,12 @@ public class Preferences {
 			convPattern.replace(pos,pos+2,df.format(track));
 		while ((pos = convPattern.indexOf("%t"))!= -1)
 			convPattern.replace(pos,pos+2,song);
+		// Remove any bad characters from the filename
+		for (int i=0; i<convPattern.length(); i++) {
+			char c = convPattern.charAt(i);
+			if (c < ' ' || c == '/' || c == '\\' || c > '~')
+				convPattern.setCharAt(i,'_');
+		}
 		prefix += convPattern;
 		return prefix;
 	}
