@@ -125,7 +125,8 @@ implements IDownloadMonitorListener, ISelectableControl {
 				public void run() {
 					if (!label.isDisposed())
 						label.setText(text.toString());
-					DownloadDisplay.this.layout();
+					if (!DownloadDisplay.this.isDisposed())
+						DownloadDisplay.this.layout();
 				}
 			});
 		}        
@@ -186,7 +187,6 @@ implements IDownloadMonitorListener, ISelectableControl {
 								"Kb of "+(monitor.getTotalBytes()/1024)+"Kb)";
 						oldPerc = perc;
 					}
-					// TODO add progress message
 				} else if (monitor.getDownloadState() == DLState.FINISHED) {
 					parent.updateProgressBar(100);
 					lblProgress = "";
