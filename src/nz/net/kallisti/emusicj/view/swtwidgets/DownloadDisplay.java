@@ -123,7 +123,8 @@ implements IDownloadMonitorListener, ISelectableControl {
 		if (!isDisposed()) {
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
-					label.setText(text.toString());
+					if (!label.isDisposed())
+						label.setText(text.toString());
 					DownloadDisplay.this.layout();
 				}
 			});

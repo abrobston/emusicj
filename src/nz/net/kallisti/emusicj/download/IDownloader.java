@@ -22,6 +22,12 @@ public interface IDownloader {
      * any threads running.
      */
     public void stop();
+    
+    /**
+     * This tells the downloads to shut down any downloads as fast as possible.
+     * To be used when the program is shutting down.
+     */
+    public void hardStop();
 
 	/**
 	 * This tells the downloader to pause any downloads. This may or may not stop

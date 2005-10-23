@@ -86,6 +86,14 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		dlThread = null;
 	}
 	
+	public void hardStop() {
+		if (dlThread != null)
+			dlThread.hardFinish();
+		state = DLState.STOPPED;
+		monitor.setState(state);
+		dlThread = null;
+	}
+	
 	public void pause() {
 		if (dlThread != null)
 			dlThread.pause(true);
@@ -141,6 +149,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		
 		private volatile boolean pause = false;
 		private volatile boolean abort = false;
+		private volatile boolean hardAbort = false;
 		
 		public DownloadThread() {
 			super();
@@ -151,13 +160,19 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	        setState(DLState.CONNECTING);
 			BufferedOutputStream out = null;
 			File partFile;
+			boolean needToResume = false;
+			long resumePoint = 0;
 			try {
 				File parent = outputFile.getParentFile();
 				if (parent != null)
 					parent.mkdirs();
 				partFile = new File(outputFile+".part");
-				// TODO check for existing file and resume                
-				out = new BufferedOutputStream(new FileOutputStream(partFile));
+				// TODO check for existing file and resume
+				if (partFile.exists()) {
+					needToResume = true;
+					resumePoint = partFile.length();
+				}
+				out = new BufferedOutputStream(new FileOutputStream(partFile, needToResume));
 			} catch (FileNotFoundException e) {
 				downloadError(e);
 				return;
@@ -166,13 +181,23 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			if (abort) return;
 			HttpClient http = new HttpClient();
 			HttpMethod get = new GetMethod(url.toString());
+			if (needToResume)
+				get.setRequestHeader("Range","bytes="+resumePoint+"-");
 			InputStream in;
 			try {
 				int statusCode = http.executeMethod(get);
-				if (statusCode != HttpStatus.SC_OK) {
+				if (statusCode != HttpStatus.SC_OK &&
+						statusCode != HttpStatus.SC_PARTIAL_CONTENT) {
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "+statusCode);
 					return;
+				}
+				if (statusCode == HttpStatus.SC_OK && needToResume) {
+					// It seems we can't resume. Start the file over
+					needToResume = false;
+					resumePoint = 0;
+					out.close();
+					out = new BufferedOutputStream(new FileOutputStream(partFile));
 				}
 				Header[] responseHeaders = get.getResponseHeaders();                
 				for (int i=0; i<responseHeaders.length; i++){
@@ -180,7 +205,8 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 					String[] hParts = hLine.split(" ");
 					if (hParts[0].equals("Content-Length:")) {
 						fileLength = Long.parseLong(hParts[1].
-								substring(0,hParts[1].length()-2));
+								substring(0,hParts[1].length()-2)) +
+								resumePoint; // resumePoint will be 0 if no resume
 					}
 				}
 				in = get.getResponseBodyAsStream();
@@ -192,12 +218,16 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			while (pause && !abort);
 			if (abort) {
 				try { out.close(); } catch (IOException e) {}
-				get.releaseConnection();
+				if (!hardAbort) {
+					try { in.close(); } catch (IOException e) {}
+					get.releaseConnection();
+				}
 				return;
 			}
 			byte[] buff = new byte[8192]; // we'll work in 8K chunks
 	        setState(DLState.DOWNLOADING);
 			int count;
+			bytesDown = resumePoint;
 			try {
 				while ((count = in.read(buff)) != -1) {
 					synchronized (HTTPMusicDownloader.this) {
@@ -209,9 +239,11 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 						while (pause && !abort) sleep(100);
 					} catch(InterruptedException e) {}
 					if (abort) {
-						try { out.close(); /*in.close();*/ } catch (IOException e) {}
-						// doesn't close the connection nicely because that blocks for ages.
-						//get.releaseConnection();
+						try { out.close(); } catch (IOException e) {}
+						if (!hardAbort) {
+							try { in.close(); } catch (IOException e) {}
+							get.releaseConnection();
+						}
 						return;
 					}
 				}
@@ -237,6 +269,12 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		
 		public synchronized void finish() {
 			this.abort  = true;
+			this.interrupt();
+		}
+		
+		public synchronized void hardFinish() {
+			this.hardAbort = true;
+			this.abort = true;
 			this.interrupt();
 		}
 		

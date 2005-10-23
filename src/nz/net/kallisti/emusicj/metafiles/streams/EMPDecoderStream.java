@@ -90,7 +90,13 @@ public class EMPDecoderStream extends InputStream {
     			case '-': { encoded[i] = '='; break; }            
     			}
     		}
-    		byte[] ciphertext = Base64.decodeBase64(encoded);
+    		byte[] ciphertext;
+    		try {
+    			ciphertext = Base64.decodeBase64(encoded);
+    		} catch (ArrayIndexOutOfBoundsException e) {
+    			// Thrown if the decoder gets confused.
+    			throw new IOException("Decoding of file stream failed");
+    		}
     		// Now do the decryption
     		int carry = 0;
     		for (int keyIdx = 1 ; keyIdx < ciphertext.length; ++keyIdx) {

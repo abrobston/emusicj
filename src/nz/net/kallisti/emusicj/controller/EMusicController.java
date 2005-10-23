@@ -76,7 +76,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 		shuttingDown  = true;
 		List<IDownloader> dls = downloadsModel.getDownloaders();
 		for (IDownloader dl : dls) {
-			dl.stop();
+			dl.hardStop();
 		}
 		prefs.save();
 	}
