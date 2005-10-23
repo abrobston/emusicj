@@ -316,7 +316,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	public void cleanUpDownloads() {
 		controller.removeDownloads(DLState.FINISHED);
 		controller.removeDownloads(DLState.STOPPED);
-		controller.removeDownloads(DLState.FAILED);
+		//controller.removeDownloads(DLState.FAILED);
 	}
 	
 	/**

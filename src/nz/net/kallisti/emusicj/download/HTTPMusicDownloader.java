@@ -268,6 +268,12 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 								resumePoint; // resumePoint will be 0 if no resume
 					}
 				}
+				if (fileLength == -1) {
+					downloadError("Didn't get a Content-Length: header.");
+					out.close();
+					get.releaseConnection();
+					return;
+				}
 				in = get.getResponseBodyAsStream();
 			} catch (IOException e) {
 				get.releaseConnection();
@@ -315,7 +321,8 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				} else { // if we didn't get the whole file, mark it and it'll
 						// be tried again later
 					//setState(DLState.FAILED);
-					downloadError("File downloaded smaller than it should have been");
+					downloadError("File downloaded not the size it should have "+
+							"been: got "+bytesDown+", expected "+fileLength);
 					out.close();
 					in.close();
 					get.releaseConnection();					

@@ -64,9 +64,10 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 		
 		if (view != null)
 			view.setState(IEMusicView.ViewState.RUNNING);
-		List<IDownloader> downloads = downloadsModel.getDownloaders();
-		if (downloads.size() > 0)
-			downloads.get(0).start();
+		//List<IDownloader> downloads = downloadsModel.getDownloaders();
+		//if (downloads.size() > 0)
+		//	downloads.get(0).start();
+		monitorStateChanged(null);
 		// Call the view's event loop
 		if (view != null)
 			view.processEvents(this);
