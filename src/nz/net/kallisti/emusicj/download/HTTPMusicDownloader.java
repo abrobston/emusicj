@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import nz.net.kallisti.emusicj.controller.Preferences;
@@ -16,6 +17,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 /**
@@ -53,6 +56,61 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		monitor.setState(state);
 	}
 	
+	/**
+	 * Loads the downloader state from the provided element
+	 * @param el the element to load from
+	 * @throws MalformedURLException if the URL in the XML is wrong or missing
+	 */
+	public HTTPMusicDownloader(Element el) throws MalformedURLException {
+		super();
+		this.monitor = new HTTPMusicDownloadMonitor(this);
+		String tUrl = el.getAttribute("url");
+		if (tUrl != null)
+			url = new URL(tUrl);
+		else
+			throw new MalformedURLException("Missing URL");
+		String tNum = el.getAttribute("tracknum");
+		if (tNum != null)
+			trackNum = Integer.parseInt(tNum);
+		else
+			trackNum = -1;
+		albumName = el.getAttribute("albumname");
+		artistName = el.getAttribute("artistname");
+		trackName = el.getAttribute("trackname");
+		setState(DLState.NOTSTARTED);
+		String tState = el.getAttribute("state");
+		if (tState != null) {
+			if (tState.equals("CONNECTING") || tState.equals("DOWNLOADING")) {
+				setState(DLState.CONNECTING);
+				start();
+			} else if (tState.equals("STOPPED")) {
+				setState(DLState.STOPPED);
+			} else if (tState.equals("PAUSED")) {
+				setState(DLState.PAUSED);
+			} else if (tState.equals("FINISHED")) {
+				setState(DLState.FINISHED);
+			} else if (tState.equals("FAILED")) {
+				setState(DLState.FAILED);
+			}
+		}		
+	}
+
+	/**
+	 * Saves the important bits of this object to the provided element
+	 * @param el the element to save to
+	 * @param doc the document this is a part of
+	 */
+	public void saveTo(Element el, Document doc) {
+		el.setAttribute("url", url.toString());
+		el.setAttribute("tracknum", trackNum+"");
+		el.setAttribute("trackname", trackName);
+		el.setAttribute("albumname", albumName);
+		el.setAttribute("artistname", artistName);
+		el.setAttribute("state", state.toString());
+	}
+	
+
+	
 	public IDownloadMonitor getMonitor() {
 		return monitor;
 	}
@@ -66,9 +124,10 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			dlThread.start();
 		} else {
 			dlThread.pause(false);
-			if (prevState != null)
+			if (prevState != null) {
 				setState(prevState);
-			else
+				prevState = null;
+			} else
 				setState(DLState.DOWNLOADING);
 		}
 	}
@@ -247,11 +306,20 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 						return;
 					}
 				}
-				setState(DLState.FINISHED);
-				partFile.renameTo(outputFile);
-				out.close();
-				in.close();
-				get.releaseConnection();
+				if (bytesDown == fileLength) {
+					setState(DLState.FINISHED);
+					partFile.renameTo(outputFile);
+					out.close();
+					in.close();
+					get.releaseConnection();
+				} else { // if we didn't get the whole file, mark it and it'll
+						// be tried again later
+					//setState(DLState.FAILED);
+					downloadError("File downloaded smaller than it should have been");
+					out.close();
+					in.close();
+					get.releaseConnection();					
+				}
 			} catch (IOException e) {
 				try {
 					out.close();
@@ -279,6 +347,5 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		}
 		
 	}
-	
 	
 }

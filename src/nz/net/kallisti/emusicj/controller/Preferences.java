@@ -18,7 +18,7 @@ import nz.net.kallisti.emusicj.Constants;
  * other user-definable options.</p>
  * 
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */
@@ -26,6 +26,8 @@ public class Preferences {
 
 	private static Preferences instance;
 	
+	String statePath = System.getProperty("user.home")+
+		File.separatorChar+Constants.STATE_DIR+File.separatorChar;
 	private String path = System.getProperty("user.home")+File.separatorChar+
 		"mp3"+File.separatorChar+"emusic";
 	private String filePattern = "%b"+File.separatorChar+"%a"+

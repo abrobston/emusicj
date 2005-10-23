@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.models.test;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -90,5 +92,21 @@ public class TestDownloadsModel implements IDownloadsModel {
         // TODO Auto-generated method stub
         
     }
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#saveState(java.io.OutputStream)
+	 */
+	public boolean saveState(OutputStream stream) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#loadState(java.io.InputStream)
+	 */
+	public void loadState(InputStream stream) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

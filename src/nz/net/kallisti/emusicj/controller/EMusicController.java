@@ -1,6 +1,9 @@
 package nz.net.kallisti.emusicj.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,9 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 		// Initialise the system
 		if (view != null)
 			view.setState(IEMusicView.ViewState.STARTUP);
+		try {
+			downloadsModel.loadState(new FileInputStream(prefs.statePath+"downloads.xml"));
+		} catch (FileNotFoundException e) {	}
 		downloadsModel.addListener(this);
 		for (String file : args)
 			loadMetafile(file);
@@ -74,6 +80,12 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	 */
 	private void shutdown() {
 		shuttingDown  = true;
+		try {
+			downloadsModel.saveState(new FileOutputStream(prefs.statePath+"downloads.xml"));
+		} catch (FileNotFoundException e) {
+			System.err.println("Warning: error saving download information");
+			e.printStackTrace();
+		}
 		List<IDownloader> dls = downloadsModel.getDownloaders();
 		for (IDownloader dl : dls) {
 			dl.hardStop();
@@ -131,8 +143,8 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	 * is less than the minimum (defined in Constants), we start the first one 
 	 * that is in a state of NOTSTARTED.
 	 *  
-	 * @param monitor the monitor that changed status. This is unused and may 
-	 * safely be null
+	 * @param monitor the monitor that changed status. This may safely be null
+	 * in order to just ensure that downloads are happening. 
 	 */
 	public void monitorStateChanged(IDownloadMonitor monitor) {
 		if (noAutoStartDownloads)
@@ -149,7 +161,10 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 		int num = prefs.getMinDownloads() - count;
 		if (num > 0) {
 			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
-				if (mon.getDownloadState() == DLState.NOTSTARTED) {
+				// Find downloads that are not started, or failed and not
+				// the same one that just changed
+				if (mon.getDownloadState() == DLState.NOTSTARTED ||
+						((monitor != mon) && mon.getDownloadState() == DLState.FAILED)) {
 					mon.getDownloader().start();
 					num--;
 					if (num <= 0)

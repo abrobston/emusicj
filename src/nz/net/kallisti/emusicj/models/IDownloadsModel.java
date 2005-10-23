@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.models;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
@@ -33,5 +35,9 @@ public interface IDownloadsModel {
      * @param toRemove the downloads to remove
      */
     public void removeDownloads(List<IDownloader> toRemove);
+
+	public boolean saveState(OutputStream stream);
+
+	public void loadState(InputStream stream);
 	
 }
