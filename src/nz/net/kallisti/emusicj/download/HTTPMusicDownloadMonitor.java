@@ -1,6 +1,8 @@
 package nz.net.kallisti.emusicj.download;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -14,17 +16,18 @@ public class HTTPMusicDownloadMonitor implements IDownloadMonitor {
 
     private DLState state;
     private HTTPMusicDownloader downloader;
-    private ArrayList<IDownloadMonitorListener> listeners =
-        new ArrayList<IDownloadMonitorListener>();
+    private List<IDownloadMonitorListener> listeners;
 
     public HTTPMusicDownloadMonitor() {
         super();
+        listeners = Collections.synchronizedList(new ArrayList<IDownloadMonitorListener>());
     }
 
     /**
      * @param downloader
      */
     public HTTPMusicDownloadMonitor(HTTPMusicDownloader downloader) {
+    		this();
         this.downloader = downloader;
     }
 

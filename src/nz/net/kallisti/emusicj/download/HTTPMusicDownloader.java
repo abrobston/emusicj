@@ -38,6 +38,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	private volatile DLState state;
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
+	private DLState prevState;
 	
 	public HTTPMusicDownloader(URL url,
 			int trackNum, String songName, String album, String artist) {
@@ -65,6 +66,10 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			dlThread.start();
 		} else {
 			dlThread.pause(false);
+			if (prevState != null)
+				setState(prevState);
+			else
+				setState(DLState.DOWNLOADING);
 		}
 	}
 	
@@ -84,6 +89,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	public void pause() {
 		if (dlThread != null)
 			dlThread.pause(true);
+		prevState = state;
 		state = DLState.PAUSED;
 		monitor.setState(state);
 	}
@@ -141,6 +147,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		}
 		
 		public void run() {
+			setName(getTrackName());
 	        setState(DLState.CONNECTING);
 			BufferedOutputStream out = null;
 			File partFile;
@@ -198,10 +205,13 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 						bytesDown += count;
 					}
 					out.write(buff, 0, count);
-					while (pause && !abort);
+					try {
+						while (pause && !abort) sleep(100);
+					} catch(InterruptedException e) {}
 					if (abort) {
-						try { out.close(); in.close(); } catch (IOException e) {}
-						get.releaseConnection();
+						try { out.close(); /*in.close();*/ } catch (IOException e) {}
+						// doesn't close the connection nicely because that blocks for ages.
+						//get.releaseConnection();
 						return;
 					}
 				}
@@ -221,13 +231,13 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			}
 		}
 		
-		public void pause(boolean pause) {
+		public synchronized void pause(boolean pause) {
 			this.pause = pause;
 		}
 		
-		public void finish() {
+		public synchronized void finish() {
 			this.abort  = true;
-			System.err.println(this+" stopping");
+			this.interrupt();
 		}
 		
 	}

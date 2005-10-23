@@ -89,4 +89,10 @@ public interface IEMusicController {
      */
     public void removeDownloads(DLState state);
 
+	/**
+	 * @param path 
+	 * @param fileNames
+	 */
+	public void loadMetafile(String path, String[] fileNames);
+
 }

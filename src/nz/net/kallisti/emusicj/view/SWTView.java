@@ -370,14 +370,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	}
 	
 	public void openFile() {
-		FileDialog dialog = new FileDialog (shell, SWT.OPEN);
+		FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
 		dialog.setFilterNames (new String [] {"All Files (*.*)"});
 		dialog.setFilterExtensions (new String [] {"*.*"});
 		dialog.setFilterPath(prefs.getProperty("openDefaultPath"));
 		String file = dialog.open();
 		if (file != null) {
 			prefs.setProperty("openDefaultPath", file);
-			controller.loadMetafile(file);
+			controller.loadMetafile(dialog.getFilterPath(),dialog.getFileNames());
 		}
 	}
 	

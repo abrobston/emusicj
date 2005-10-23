@@ -12,22 +12,22 @@ import nz.net.kallisti.emusicj.download.test.TestDownloadMonitor;
  * <p>This is the download model. It keeps tabs on what downloads exists
  * and notifies listeners of changes.</p> 
  * 
- * $Id: TestDownloadsModel.java 21 2005-10-17 21:42:23 +1300 (Mon, 17 Oct 2005) robin $
+ * $Id$
  *
  * @author robin
  */
 public class DownloadsModel implements IDownloadsModel {
 
 	List<IDownloader> downloads;
-    private List<IDownloadsModelListener> listeners = 
-        new ArrayList<IDownloadsModelListener>();
+    private List<IDownloadsModelListener> listeners;
     
 	/**
 	 * Initialise the class, and create some {@link TestDownloadMonitor}s.
 	 * @param n the number of monitors to create
 	 */
 	public DownloadsModel() {
-		downloads = new ArrayList<IDownloader>();
+		downloads = Collections.synchronizedList(new ArrayList<IDownloader>());
+		listeners = Collections.synchronizedList(new ArrayList<IDownloadsModelListener>());
 	}
 	
 	public void addListener(IDownloadsModelListener listener) {

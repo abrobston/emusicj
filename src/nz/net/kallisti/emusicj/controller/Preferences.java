@@ -71,6 +71,7 @@ public class Preferences {
 			dir.mkdirs();
 			OutputStream out = new FileOutputStream(outFile);
 			props.store(out,Constants.APPNAME);
+			out.close();
 		} catch (IOException e) {
 			System.err.println("There was an error saving the preferences:");
 			e.printStackTrace();
