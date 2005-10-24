@@ -13,6 +13,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
+import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
@@ -172,7 +173,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	 */
 	private void buildToolBar(ToolBar toolBar) {
 		final Image runIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("start.gif"));
+				SWTView.class.getResourceAsStream("start.png"));
 		runButton = new ToolItem (toolBar, SWT.PUSH);
 		runButton.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -190,7 +191,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 		});
 		
 		final Image pauseIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("pause.gif"));
+				SWTView.class.getResourceAsStream("pause.png"));
 		pauseButton = new ToolItem (toolBar, SWT.PUSH);
 		pauseButton.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -208,7 +209,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 		});
 		
 		final Image cancelIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("cancel.gif"));
+				SWTView.class.getResourceAsStream("cancel.png"));
 		cancelButton = new ToolItem (toolBar, SWT.PUSH);
 		cancelButton.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -387,11 +388,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	}
 	
 	public void aboutBox() {
-		MessageBox about = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+		/*MessageBox about = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 		about.setText("About this program");
 		about.setMessage("This is version "+Constants.VERSION+" of "+
 				Constants.APPNAME+"\nWritten by Robin Sheat <robin@kallisti.net.nz>\n"+
 		"This program downloads music bought from eMusic <http://www.emusic.com>");
+		about.open();*/
+		
+		AboutDialogue about = new AboutDialogue(shell);
 		about.open();
 	}
 	

@@ -192,13 +192,15 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	private void downloadError(Exception e) {
 		e.printStackTrace();
 		state = DLState.FAILED;
-		monitor.setState(state);    	
+		monitor.setState(state);
+		dlThread = null;
 	}
 	
 	private void downloadError(String s) {
 		System.err.println(s);
 		state = DLState.FAILED;
-		monitor.setState(state);	
+		monitor.setState(state);
+		dlThread = null;
 	}
 	
 	/**
