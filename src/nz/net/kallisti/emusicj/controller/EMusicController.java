@@ -12,6 +12,7 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.ipc.IPCServerClient;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
@@ -35,6 +36,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	private boolean noAutoStartDownloads = false;
 	private Preferences prefs = Preferences.getInstance();
 	private boolean shuttingDown = false;
+	private IPCServerClient server;
 	
 	public EMusicController() {
 		super();
@@ -47,6 +49,13 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	
 	public void run(String[] args) {
 		// Initialise the system
+		// First see if another instance is running, if so, pass our args on
+		server = new IPCServerClient(this);
+		if (server.getState() == IPCServerClient.CONNECTED) {
+			// we just pass the args in and quit
+			server.sendData(args);
+			return;
+		}
 		if (view != null)
 			view.setState(IEMusicView.ViewState.STARTUP);
 		try {
@@ -81,6 +90,8 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	 */
 	private void shutdown() {
 		shuttingDown  = true;
+		if (server != null)
+			server.stopServer();
 		try {
 			downloadsModel.saveState(new FileOutputStream(prefs.statePath+"downloads.xml"));
 		} catch (FileNotFoundException e) {

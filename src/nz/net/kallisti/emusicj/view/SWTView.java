@@ -65,6 +65,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	private ToolItem pauseButton;
 	private ToolItem cancelButton;
 	private Preferences prefs = Preferences.getInstance();
+	private boolean running = false;
 	
 	public SWTView() {
 		super();
@@ -401,6 +402,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	
 	public void processEvents(IEMusicController controller) {
 		try {
+			running  = true;
 			while (!shell.isDisposed()){
 				if (!display.readAndDispatch()){
 					display.sleep();
@@ -464,6 +466,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	}
 	
 	public void error(final String msgTitle, final String msg) {
+		if (!running) // TODO queue up the errors for later.
+			return;
 		asyncExec(new Runnable() {
 			public void run() {
 				MessageBox about = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);

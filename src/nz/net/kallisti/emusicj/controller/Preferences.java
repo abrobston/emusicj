@@ -26,7 +26,7 @@ public class Preferences {
 
 	private static Preferences instance;
 	
-	String statePath = System.getProperty("user.home")+
+	public final String statePath = System.getProperty("user.home")+
 		File.separatorChar+Constants.STATE_DIR+File.separatorChar;
 	private String path = System.getProperty("user.home")+File.separatorChar+
 		"mp3"+File.separatorChar+"emusic";
