@@ -8,8 +8,11 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  * <p>This stream decrypts an eMusic data file.</p>
+ * <p>The algorithm for this was ported directly from the 
+ * <a href="http://frumppyoldwoman.com/emusicdlm/decrypt-emp.tar.gz">decrypt-emp</a>
+ * script.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
