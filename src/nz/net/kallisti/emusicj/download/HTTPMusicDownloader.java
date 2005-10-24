@@ -249,6 +249,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				int statusCode = http.executeMethod(get);
 				if (statusCode != HttpStatus.SC_OK &&
 						statusCode != HttpStatus.SC_PARTIAL_CONTENT) {
+					get.abort();
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "+statusCode);
 					return;
@@ -270,6 +271,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				// TODO better checking that we are getting what we expect
 				if (fileLength == -1) {
 					downloadError("Didn't get a Content-Length: header.");
+					get.abort();
 					out.close();
 					get.releaseConnection();
 					return;
@@ -291,6 +293,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			if (abort) {
 				try { out.close(); } catch (IOException e) {}
 				if (!hardAbort) {
+					get.abort();
 					try { in.close(); } catch (IOException e) {}
 					get.releaseConnection();
 				}
@@ -311,6 +314,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 						while (pause && !abort) sleep(100);
 					} catch(InterruptedException e) {}
 					if (abort) {
+						get.abort();
 						try { out.close(); } catch (IOException e) {}
 						if (!hardAbort) {
 							try { in.close(); } catch (IOException e) {}
@@ -339,6 +343,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 					out.close();
 					in.close();
 				} catch (Exception ex) {}
+				get.abort();
 				get.releaseConnection();
 				downloadError(e);
 				return;
