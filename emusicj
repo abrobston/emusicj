@@ -1,9 +1,25 @@
 #!/bin/bash
-MY_CLASSPATH=lib/swt.jar:lib/commons-codec-1.3.jar:lib/commons-httpclient-3.0-rc4.jar:lib/commons-logging-api.jar:$CLASSPATH
-if [ -e emusicj.jar ] ; then
-	java -cp emusicj.jar:$MY_CLASSPATH -Djava.library.path=lib nz.net.kallisti.emusicj.EMusicJ $@
-elif [ -e bin/nz/net/kallisti/emusicj/EMusicJ.class ] ; then
-	java -cp bin:$MY_CLASSPATH -Djava.library.path=lib nz/net/kallisti/emusicj/EMusicJ $@
+PROGRAM_DIR=""
+
+if [ -z "$PROGRAM_DIR" ]; then
+    PROGRAM_DIR=`dirname "$0"`
+    PROGRAM_DIR=`cd "$PROGRAM_DIR"; pwd`
+else
+    if [ "$(echo ${PROGRAM_DIR}/*.jar)" = "${PROGRAM_DIR}/*.jar" ]; then
+        echo "You seem to have set an invalid PROGRAM_DIR, unable to continue!"
+        exit 1
+    elif ! (echo ${PROGRAM_DIR}/*.jar | grep emusicj.jar >/dev/null 2>&1 ); then
+        echo "Unable to locate emusicj.jar in $PROGRAM_DIR, aborting!"
+        exit 1
+    fi
+fi
+
+MY_CLASSPATH=${PROGRAM_DIR}/lib/swt.jar:${PROGRAM_DIR}/lib/commons-codec-1.3.jar:${PROGRAM_DIR}/lib/commons-httpclient-3.0-rc4.jar:${PROGRAM_DIR}/lib/commons-logging-api.jar:$CLASSPATH
+
+if [ -e ${PROGRAM_DIR}/emusicj.jar ] ; then
+	java -cp ${PROGRAM_DIR}/emusicj.jar:$MY_CLASSPATH -Djava.library.path=${PROGRAM_DIR}/lib nz.net.kallisti.emusicj.EMusicJ $@
+elif [ -e ${PROGRAM_DIR}/bin/nz/net/kallisti/emusicj/EMusicJ.class ] ; then
+	java -cp ${PROGRAM_DIR}/bin:$MY_CLASSPATH -Djava.library.path=${PROGRAM_DIR}/lib nz.net.kallisti.emusicj.EMusicJ $@
 else
 	echo "Couldn't find the compiled Java program.";
 fi
