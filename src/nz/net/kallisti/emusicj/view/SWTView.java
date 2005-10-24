@@ -18,6 +18,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -363,7 +364,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 				} else {
 					runButton.setEnabled(true);
 					pauseButton.setEnabled(false);
-					cancelButton.setEnabled(false);						
+					cancelButton.setEnabled(true);						
 				}
 			}
 		});
@@ -395,13 +396,19 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	}
 	
 	public void processEvents(IEMusicController controller) {
-		while (!shell.isDisposed()){
-			if (!display.readAndDispatch()){
-				display.sleep();
+		try {
+			while (!shell.isDisposed()){
+				if (!display.readAndDispatch()){
+					display.sleep();
+				}
 			}
+			display.dispose();
+			// Tell the DownloadDisplay instances to finish up
+		} catch (SWTException e) {
+			// If a GUI error occurs hopefully we can shut down somewhat gracefully
+			System.err.println("A GUI error occurred. Shutting down.");
+			e.printStackTrace();
 		}
-		display.dispose();
-		// Tell the DownloadDisplay instances to finish up
 		for (DownloadDisplay disp : dlDisplays) {
 			disp.stop();
 		}

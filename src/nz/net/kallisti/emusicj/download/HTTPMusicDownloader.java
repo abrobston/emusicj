@@ -253,10 +253,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				}
 				if (statusCode == HttpStatus.SC_OK && needToResume) {
 					// It seems we can't resume. Start the file over
-					needToResume = false;
 					resumePoint = 0;
-					out.close();
-					out = new BufferedOutputStream(new FileOutputStream(partFile));
 				}
 				Header[] responseHeaders = get.getResponseHeaders();                
 				for (int i=0; i<responseHeaders.length; i++){
@@ -268,11 +265,19 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 								resumePoint; // resumePoint will be 0 if no resume
 					}
 				}
+				// TODO better checking that we are getting what we expect
 				if (fileLength == -1) {
 					downloadError("Didn't get a Content-Length: header.");
 					out.close();
 					get.releaseConnection();
 					return;
+				}
+				if (statusCode == HttpStatus.SC_OK && needToResume) {
+					// This test has to come after the test above so that
+					// we don't zero out the file by mistake.
+					needToResume = false;
+					out.close();
+					out = new BufferedOutputStream(new FileOutputStream(partFile));
 				}
 				in = get.getResponseBodyAsStream();
 			} catch (IOException e) {
