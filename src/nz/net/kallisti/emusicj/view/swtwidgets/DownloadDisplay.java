@@ -173,19 +173,24 @@ implements IDownloadMonitorListener, ISelectableControl {
 		
 		public void run() {
 			int oldPerc = (int)monitor.getDownloadPercent();
+			long oldBytesDown = monitor.getBytesDown();
 			while (!parent.isDisposed() && !done) {
 				if (monitor.getDownloadState() == DLState.DOWNLOADING) {
-					displayLabel();
 					int perc = (int)monitor.getDownloadPercent();
 					if (perc != oldPerc) {
 						parent.updateProgressBar(perc);
+						oldPerc = perc;
+					}
+					long bytesDown = monitor.getBytesDown();
+					if (bytesDown != oldBytesDown) {
 						if (monitor.getTotalBytes() == -1)
 							lblProgress = "("+(monitor.getBytesDown()/1024)+
-								"Kb)";
+							"Kb)";
 						else
 							lblProgress = "("+(monitor.getBytesDown()/1024)+
-								"Kb of "+(monitor.getTotalBytes()/1024)+"Kb)";
-						oldPerc = perc;
+							"Kb of "+(monitor.getTotalBytes()/1024)+"Kb)";
+						oldBytesDown = bytesDown;
+						displayLabel();						
 					}
 				} else if (monitor.getDownloadState() == DLState.FINISHED) {
 					parent.updateProgressBar(100);
