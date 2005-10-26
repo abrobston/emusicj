@@ -17,6 +17,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -241,7 +242,11 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			while (pause && !abort);
 			if (abort) return;
 			HttpClient http = new HttpClient();
+			HttpMethodParams params = new HttpMethodParams();
+			// Two minute timeout if no data is received
+			params.setSoTimeout(120000);
 			HttpMethod get = new GetMethod(url.toString());
+			get.setParams(params);
 			if (needToResume)
 				get.setRequestHeader("Range","bytes="+resumePoint+"-");
 			InputStream in;
@@ -267,6 +272,15 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 								substring(0,hParts[1].length()-2)) +
 								resumePoint; // resumePoint will be 0 if no resume
 					}
+				}
+				while (pause && !abort);
+				if (abort) {
+					try { out.close(); } catch (IOException e) {}
+					if (!hardAbort) {
+						get.abort();
+						get.releaseConnection();
+					}
+					return;
 				}
 				// TODO better checking that we are getting what we expect
 				if (fileLength == -1) {

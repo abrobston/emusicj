@@ -37,6 +37,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	private Preferences prefs = Preferences.getInstance();
 	private boolean shuttingDown = false;
 	private IPCServerClient server;
+	private PollDownloads pollThread;
 	
 	public EMusicController() {
 		super();
@@ -62,6 +63,8 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 			downloadsModel.loadState(new FileInputStream(prefs.statePath+"downloads.xml"));
 		} catch (FileNotFoundException e) {	}
 		downloadsModel.addListener(this);
+		pollThread = new PollDownloads();
+		pollThread.start();
 		for (String file : args)
 			loadMetafile(file);
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
@@ -98,6 +101,7 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 			System.err.println("Warning: error saving download information");
 			e.printStackTrace();
 		}
+		pollThread.finish();
 		List<IDownloader> dls = downloadsModel.getDownloaders();
 		for (IDownloader dl : dls) {
 			dl.hardStop();
@@ -230,6 +234,33 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	
 	public void downloadsModelChanged(IDownloadsModel model) {
 		monitorStateChanged(null);
+	}
+	
+	/**
+	 * Every two minutes this thread makes the controller check the downloads
+	 * and ensure that the minimum is currently active. Its main use is to
+	 * ensure that if a download fails, and if it is the only one going, that
+	 * it gets retried. 
+	 */
+	public class PollDownloads extends Thread {
+
+		private boolean done = false;
+		
+		public void run() {
+			try {
+				while (!done) {
+					Thread.sleep(120000);
+					monitorStateChanged(null);
+				}
+				// If we get interrupted, then shut down the thread
+			} catch (InterruptedException e) {}
+		}
+		
+		public void finish() {
+			done = true;
+			this.interrupt();
+		}
+		
 	}
 	
 }
