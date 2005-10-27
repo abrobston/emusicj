@@ -39,7 +39,7 @@ public class Preferences {
 		super();
 	}
 	
-	public static Preferences getInstance() {
+	public synchronized static Preferences getInstance() {
 		if (instance == null)
 			instance = new Preferences();
 		instance.loadProps();
