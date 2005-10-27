@@ -92,13 +92,13 @@ public class Preferences {
 		StringBuffer convPattern = new StringBuffer(filePattern);
 		int pos;
 		while ((pos = convPattern.indexOf("%a"))!= -1)
-			convPattern.replace(pos,pos+2,album);
+			convPattern.replace(pos,pos+2,albumB.toString());
 		while ((pos = convPattern.indexOf("%b"))!= -1)
-			convPattern.replace(pos,pos+2,artist);
+			convPattern.replace(pos,pos+2,artistB.toString());
 		while ((pos = convPattern.indexOf("%n"))!= -1) 
 			convPattern.replace(pos,pos+2,df.format(track));
 		while ((pos = convPattern.indexOf("%t"))!= -1)
-			convPattern.replace(pos,pos+2,song);
+			convPattern.replace(pos,pos+2,songB.toString());
 		String fname = path+File.separatorChar+convPattern;
 		return fname;
 	}
