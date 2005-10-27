@@ -55,4 +55,10 @@ public interface IEMusicView {
      */
     public void error(String msgTitle, String msg);
 
+	/**
+	 * Called if a new version of the program is available
+	 * @param newVersion the new version
+	 */
+	public void updateAvailable(String newVersion);
+
 }

@@ -34,6 +34,8 @@ public class PreferencesDialogue {
 	protected String filePattern;
 	protected String filePath;
 	private int minDL;
+	private boolean checkForUpdates;
+	private Button updatesButton;
 
 	/**
 	 * @param display
@@ -45,6 +47,7 @@ public class PreferencesDialogue {
 		filePath = prefs.getPath();
 		filePattern = prefs.getFilePattern();
 		minDL = prefs.getMinDownloads();
+		checkForUpdates = prefs.checkForUpdates();
 	}
 
 	/**
@@ -131,6 +134,15 @@ public class PreferencesDialogue {
 		Label minDLLabel = new Label(downloads, SWT.NONE);
 		minDLLabel.setText("Minimum number of downloads at once");
 		
+		Group updates = new Group(dialog, SWT.NONE);
+		updates.setLayout(new GridLayout(2,false));
+		updates.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		updates.setText("Updates");
+		
+		updatesButton = new Button(updates, SWT.CHECK);
+		updatesButton.setSelection(checkForUpdates);
+		updatesButton.setText("Automatically check for updates to the program");
+		
 		final Button close = new Button(dialog, SWT.PUSH);
 		gd = new GridData();
 		gd.horizontalAlignment=SWT.RIGHT;
@@ -158,6 +170,7 @@ public class PreferencesDialogue {
 		prefs.setFilePattern(filePattern);
 		prefs.setPath(filePath);
 		prefs.setMinDownloads(minDL);
+		prefs.setCheckForUpdates(updatesButton.getSelection());
 		dialog.dispose();
 		new Thread() { public void run() { prefs.save(); } }.run();
 	}

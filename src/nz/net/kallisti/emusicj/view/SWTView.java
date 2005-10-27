@@ -17,6 +17,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
+import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -66,6 +67,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	private ToolItem cancelButton;
 	private Preferences prefs = Preferences.getInstance();
 	private boolean running = false;
+	private String update;
 	
 	public SWTView() {
 		super();
@@ -403,6 +405,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	public void processEvents(IEMusicController controller) {
 		try {
 			running  = true;
+			if (update != null)
+				updateAvailable(update);
 			while (!shell.isDisposed()){
 				if (!display.readAndDispatch()){
 					display.sleep();
@@ -476,6 +480,20 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 				about.open();
 			}
 		});
+	}
+
+
+	public void updateAvailable(final String newVersion) {
+		if (!running) {
+			update = newVersion;
+		} else {
+			asyncExec(new Runnable() {
+				public void run() {
+					UpdateDialogue dialogue = new UpdateDialogue(shell, newVersion);
+					dialogue.open();
+				}
+			});
+		}
 	}
 	
 }

@@ -165,5 +165,21 @@ public class Preferences {
 		return props.getProperty(key, def);
 	}
 
+	/**
+	 * Says whether the user wants to the program to check for updates
+	 * @return true if the user specified they want to check (default), false
+	 * otherwise.
+	 */
+	public boolean checkForUpdates() {
+		String updateCheck = props.getProperty("checkForUpdates");
+		if (updateCheck == null)
+			return true;		
+		return updateCheck.equalsIgnoreCase("true");
+	}
+	
+	public void setCheckForUpdates(boolean check) {
+		props.setProperty("checkForUpdates", check?"true":"false");
+	}
+
 
 }

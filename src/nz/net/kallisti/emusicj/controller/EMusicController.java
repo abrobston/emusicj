@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
@@ -18,6 +19,8 @@ import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
+import nz.net.kallisti.emusicj.updater.IUpdateCheckListener;
+import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 /**
@@ -29,7 +32,8 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  *
  * @author robin
  */
-public class EMusicController implements IEMusicController, IDownloadMonitorListener, IDownloadsModelListener {
+public class EMusicController implements IEMusicController, 
+IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	
 	private IEMusicView view;
 	private IDownloadsModel downloadsModel = new DownloadsModel();
@@ -80,6 +84,11 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 		//if (downloads.size() > 0)
 		//	downloads.get(0).start();
 		monitorStateChanged(null);
+		// Check for updates
+		if (prefs.checkForUpdates()) {
+			UpdateCheck update = new UpdateCheck(this, Constants.UPDATE_URL);
+			update.check(Constants.VERSION);
+		}
 		// Call the view's event loop
 		if (view != null)
 			view.processEvents(this);
@@ -235,6 +244,12 @@ public class EMusicController implements IEMusicController, IDownloadMonitorList
 	public void downloadsModelChanged(IDownloadsModel model) {
 		monitorStateChanged(null);
 	}
+
+	public void updateAvailable(String newVersion) {
+		if (view != null)
+			view.updateAvailable(newVersion);
+	}
+
 	
 	/**
 	 * Every two minutes this thread makes the controller check the downloads
