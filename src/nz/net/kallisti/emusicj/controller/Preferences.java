@@ -64,7 +64,7 @@ public class Preferences {
 	/**
 	 * Save the preferences to a file
 	 */
-	public void save() {
+	public synchronized void save() {
 		try {
 			File outFile = new File(System.getProperty("user.home")+
 					File.separatorChar+Constants.STATE_DIR+File.separatorChar+
@@ -117,7 +117,7 @@ public class Preferences {
 	/**
 	 * @param text
 	 */
-	public void setPath(String path) {
+	public synchronized void setPath(String path) {
 		props.setProperty("savePath",path);
 		this.path = path;
 	}
@@ -129,7 +129,7 @@ public class Preferences {
 	/**
 	 * @param filePattern
 	 */
-	public void setFilePattern(String filePattern) {
+	public synchronized void setFilePattern(String filePattern) {
 		props.setProperty("savePattern",filePattern);
 		this.filePattern=filePattern;		
 	}
@@ -142,7 +142,7 @@ public class Preferences {
 		return minDownloads;
 	}
 
-	public void setMinDownloads(int minDownloads) {
+	public synchronized void setMinDownloads(int minDownloads) {
 		props.setProperty("minDownloads",minDownloads+"");
 		this.minDownloads = minDownloads;
 	}
@@ -153,7 +153,7 @@ public class Preferences {
 	 * @param key the key to store the value with
 	 * @param value the value to store
 	 */
-	public void setProperty(String key, String value) {
+	public synchronized void setProperty(String key, String value) {
 		props.setProperty(key, value);
 	}
 	
