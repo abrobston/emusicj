@@ -23,12 +23,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
@@ -50,7 +53,8 @@ import org.eclipse.swt.widgets.ToolItem;
  *
  * @author robin
  */
-public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionListener {
+public class SWTView implements IEMusicView, IDownloadsModelListener, 
+SelectionListener, ControlListener {
 	
 	private static Display display;
     private static Clipboard clipboard;
@@ -70,6 +74,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	private Preferences prefs = Preferences.getInstance();
 	private boolean running = false;
 	private String update;
+	private Rectangle windowLoc;
 	
 	public SWTView() {
 		super();
@@ -87,7 +92,16 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 			buildInterface(shell);
 			updateListFromModel();
 			shell.pack();
-			shell.setSize (400, 400);
+			try {
+				int x = Integer.parseInt(prefs.getProperty("winLocX"));
+				int y = Integer.parseInt(prefs.getProperty("winLocY"));
+				int height = Integer.parseInt(prefs.getProperty("winHeight"));
+				int width = Integer.parseInt(prefs.getProperty("winWidth"));
+				Rectangle r = new Rectangle(x, y, width, height);
+				shell.setBounds(r);
+			} catch (Exception e) {
+				shell.setSize (400, 400);
+			}
 			shell.open();
 		}
 	}
@@ -393,20 +407,15 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 	}
 	
 	public void aboutBox() {
-		/*MessageBox about = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
-		about.setText("About this program");
-		about.setMessage("This is version "+Constants.VERSION+" of "+
-				Constants.APPNAME+"\nWritten by Robin Sheat <robin@kallisti.net.nz>\n"+
-		"This program downloads music bought from eMusic <http://www.emusic.com>");
-		about.open();*/
-		
 		AboutDialogue about = new AboutDialogue(shell);
 		about.open();
 	}
 	
 	public void processEvents(IEMusicController controller) {
 		try {
+			shell.addControlListener(this);
 			running  = true;
+			windowMovedOrResized();
 			if (update != null)
 				updateAvailable(update);
 			while (!shell.isDisposed()){
@@ -414,6 +423,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 					display.sleep();
 				}
 			}
+			saveWindowLocation();
 			display.dispose();
 			// Tell the DownloadDisplay instances to finish up
 		} catch (SWTException e) {
@@ -424,6 +434,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 		for (DownloadDisplay disp : dlDisplays) {
 			disp.stop();
 		}
+	}
+
+	private void saveWindowLocation() {
+		prefs.setProperty("winLocX",windowLoc.x+"");
+		prefs.setProperty("winLocY",windowLoc.y+"");
+		prefs.setProperty("winHeight",windowLoc.height+"");
+		prefs.setProperty("winWidth",windowLoc.width+"");
+		prefs.save();
 	}
 	
 	public void setController(IEMusicController controller) {
@@ -506,5 +524,17 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
             clipboard = new Clipboard(display);
         return clipboard;
     }
+
+	public void windowMovedOrResized() {
+		windowLoc = shell.getBounds();
+	}
+
+	public void controlMoved(ControlEvent e) {
+		windowMovedOrResized();
+	}
+
+	public void controlResized(ControlEvent e) {
+		windowMovedOrResized();
+	}
 	
 }

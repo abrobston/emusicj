@@ -37,6 +37,8 @@ public class Preferences {
 	
 	private Preferences() {
 		super();
+		// Make sure the state path exists, as other things may need it
+		new File(statePath).mkdirs();
 	}
 	
 	public synchronized static Preferences getInstance() {
