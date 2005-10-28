@@ -208,6 +208,7 @@ SelectionListener, ControlListener {
 				runSelectedDownload();				
 			}
 		});
+		runButton.setToolTipText("Start the selected download right now");
 		
 		final Image pauseIconImg = new Image(display, 
 				SWTView.class.getResourceAsStream("pause.png"));
@@ -226,6 +227,7 @@ SelectionListener, ControlListener {
 				pauseSelectedDownload();				
 			}
 		});
+		pauseButton.setToolTipText("Pause the selected download");
 		
 		final Image cancelIconImg = new Image(display, 
 				SWTView.class.getResourceAsStream("cancel.png"));
@@ -244,6 +246,7 @@ SelectionListener, ControlListener {
 				cancelSelectedDownload();				
 			}
 		});
+		cancelButton.setToolTipText("Cancel the selected download");
 		
 		toolBar.pack ();
 	}
