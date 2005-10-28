@@ -22,6 +22,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.ToolItem;
 public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionListener {
 	
 	private static Display display;
+    private static Clipboard clipboard;
 	private Shell shell;
 	private IEMusicController controller;
 	private IDownloadsModel downloadsModel;
@@ -274,23 +276,23 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 		shell.setMenuBar (bar);
 		// --- File menu ---
 		Menu fileMenu = SWTUtils.createDropDown(shell, bar, "&File");
-		SWTUtils.createMenuItem(fileMenu, "&Open...", SWT.CTRL+'O', this, 
+		SWTUtils.createMenuItem(fileMenu, "&Open...\tCtrl-O", SWT.CTRL+'O', this, 
 		"openFile");        
 		new MenuItem(fileMenu, SWT.SEPARATOR);
-		SWTUtils.createMenuItem(fileMenu, "&Quit", SWT.CTRL+'Q', this, 
+		SWTUtils.createMenuItem(fileMenu, "&Quit\tCtrl-Q", SWT.CTRL+'Q', this, 
 		"quitProgram");
 		// --- Downloads menu ---
 		Menu downloadsMenu = SWTUtils.createDropDown(shell, bar, "&Downloads");
-		SWTUtils.createMenuItem(downloadsMenu, "&Pause downloads", SWT.CTRL+'P', 
+		SWTUtils.createMenuItem(downloadsMenu, "&Pause downloads\tCtrl-P", SWT.CTRL+'P', 
 				this, "pauseDownloads");
-		SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads", SWT.CTRL+'R', 
+		SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads\tCtrl-R", SWT.CTRL+'R', 
 				this, "resumeDownloads");
 		new MenuItem(downloadsMenu, SWT.SEPARATOR);
-		SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads", SWT.CTRL+'C', 
+		SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads\tCtrl-C", SWT.CTRL+'C', 
 				this, "cleanUpDownloads");
 		// --- Settings menu
 		Menu settingsMenu = SWTUtils.createDropDown(shell, bar, "&Settings");
-		SWTUtils.createMenuItem(settingsMenu, "&Preferences...", SWT.CTRL+'P', 
+		SWTUtils.createMenuItem(settingsMenu, "&Preferences...", SWT.NONE, 
 				this, "displayPreferences");        
 		// --- Help menu ---
 		Menu aboutMenu = SWTUtils.createDropDown(shell, bar, "&Help");
@@ -495,5 +497,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener, SelectionL
 			});
 		}
 	}
+
+    /**
+     * @return
+     */
+    public static synchronized Clipboard getClipboard() {
+        if (clipboard == null) 
+            clipboard = new Clipboard(display);
+        return clipboard;
+    }
 	
 }
