@@ -164,10 +164,10 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	
 	public void pause() {
 		if (dlThread != null)
-			dlThread.pause(true);
-		prevState = state;
+			dlThread.finish();
 		state = DLState.PAUSED;
 		monitor.setState(state);
+		dlThread = null;
 	}
 	
 	public String getAlbumName() {
@@ -231,13 +231,18 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			BufferedOutputStream out = null;
 			File partFile;
 			boolean needToResume = false;
+			boolean needToRename = true;
 			long resumePoint = 0;
 			try {
 				File parent = outputFile.getParentFile();
 				if (parent != null)
 					parent.mkdirs();
 				partFile = new File(outputFile+".part");
-				// TODO check for existing file and resume
+				if (!partFile.exists() && outputFile.exists()) {
+					// see if we have a plain old file instead, if so, resume on it
+					needToRename = false;
+					partFile = outputFile;
+				}
 				if (partFile.exists()) {
 					needToResume = true;
 					resumePoint = partFile.length();
@@ -347,7 +352,8 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 				}
 				if (bytesDown == fileLength) {
 					setState(DLState.FINISHED);
-					partFile.renameTo(outputFile);
+					if (needToRename)
+						partFile.renameTo(outputFile);
 					out.close();
 					in.close();
 					get.releaseConnection();

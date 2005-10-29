@@ -102,13 +102,13 @@ implements IDownloadMonitorListener, ISelectableControl {
 	public void monitorStateChanged(IDownloadMonitor mon) {
 		assert mon == monitor : "Event received from unknown monitor";
 		DLState state = monitor.getDownloadState();
-		if (state == DLState.NOTSTARTED) { lblState="Waiting"; } 
-		else if (state == DLState.CONNECTING) { lblState="Connecting"; }
+		if (state == DLState.NOTSTARTED) { lblState="Waiting"; lblProgress=""; } 
+		else if (state == DLState.CONNECTING) { lblState="Connecting"; lblProgress="";}
 		else if (state == DLState.DOWNLOADING) { lblState="Downloading"; }
 		else if (state == DLState.PAUSED) { lblState="Paused"; }
-		else if (state == DLState.STOPPED) { lblState="Stopped"; }
-		else if (state == DLState.FINISHED) { lblState="Finished"; }
-		else if (state == DLState.FAILED) { lblState="Failed"; }
+		else if (state == DLState.STOPPED) { lblState="Stopped"; lblProgress="";}
+		else if (state == DLState.FINISHED) { lblState="Finished"; lblProgress="";}
+		else if (state == DLState.FAILED) { lblState="Failed"; lblProgress="";}
 		if (pThread != null)
 			pThread.interrupt();
 		displayLabel();

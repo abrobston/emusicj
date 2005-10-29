@@ -213,7 +213,7 @@ SelectionListener, ControlListener {
 		toolBar.pack ();
 	}
 	
-	protected void cancelSelectedDownload() {
+	public void cancelSelectedDownload() {
 		if (downloadsListComp == null || 
 				downloadsListComp.getSelectedControl() == null)
 			return;
@@ -224,7 +224,7 @@ SelectionListener, ControlListener {
 		setButtonsState();
 	}
 	
-	protected void pauseSelectedDownload() {
+	public void pauseSelectedDownload() {
 		if (downloadsListComp == null || 
 				downloadsListComp.getSelectedControl() == null)
 			return;
@@ -235,7 +235,7 @@ SelectionListener, ControlListener {
 		setButtonsState();
 	}
 	
-	protected void runSelectedDownload() {
+	public void runSelectedDownload() {
 		if (downloadsListComp == null || 
 				downloadsListComp.getSelectedControl() == null)
 			return;
@@ -246,7 +246,7 @@ SelectionListener, ControlListener {
 		setButtonsState();
 	}
 	
-	protected void requeueSelectedDownload() {
+	public void requeueSelectedDownload() {
 		if (downloadsListComp == null || 
 				downloadsListComp.getSelectedControl() == null)
 			return;
