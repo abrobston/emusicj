@@ -146,6 +146,14 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		dlThread = null;
 	}
 	
+	public void requeue() {
+		if (dlThread != null)
+			dlThread.finish();
+		state = DLState.NOTSTARTED;
+		monitor.setState(state);
+		dlThread = null;	
+	}
+	
 	public void hardStop() {
 		if (dlThread != null)
 			dlThread.hardFinish();

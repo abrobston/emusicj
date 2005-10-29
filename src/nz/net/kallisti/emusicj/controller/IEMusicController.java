@@ -70,7 +70,13 @@ public interface IEMusicController {
 	 */
 	public void stopDownload(IDownloader dl);
 
-    /**
+	/**
+	 * Tells the download to be put back into the waiting state
+	 * @param dl
+	 */
+	public void requeueDownload(IDownloader dl);
+	
+	/**
      * Pauses all the downloads that are currently running, and sets a flag
      * to say that no more will be automatically started.
      */

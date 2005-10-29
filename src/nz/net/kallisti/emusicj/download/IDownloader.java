@@ -34,7 +34,9 @@ public interface IDownloader {
 	 * threads.
 	 */
 	public void pause();
-    
+
+	public void requeue();
+	
     public URL getURL();
     
     public File getOutputFile();

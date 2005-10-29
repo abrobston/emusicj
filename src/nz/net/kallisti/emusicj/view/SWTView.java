@@ -25,8 +25,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -75,6 +73,7 @@ SelectionListener, ControlListener {
 	private boolean running = false;
 	private String update;
 	private Rectangle windowLoc;
+	private ToolItem requeueButton;
 	
 	public SWTView() {
 		super();
@@ -193,60 +192,23 @@ SelectionListener, ControlListener {
 	private void buildToolBar(ToolBar toolBar) {
 		final Image runIconImg = new Image(display, 
 				SWTView.class.getResourceAsStream("start.png"));
-		runButton = new ToolItem (toolBar, SWT.PUSH);
-		runButton.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				runIconImg.dispose();
-			}
-		});
-		runButton.setImage(runIconImg);
-		runButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				runSelectedDownload();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				runSelectedDownload();				
-			}
-		});
-		runButton.setToolTipText("Start the selected download right now");
+		runButton = SWTUtils.createToolItem(toolBar, runIconImg, 
+				"Start the selected download right now", this, "runSelectedDownload");
+		
+		final Image requeueIconImg = new Image(display, 
+				SWTView.class.getResourceAsStream("requeue.png"));
+		requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg, 
+				"Requeue the selected download", this, "requeueSelectedDownload");
 		
 		final Image pauseIconImg = new Image(display, 
 				SWTView.class.getResourceAsStream("pause.png"));
-		pauseButton = new ToolItem (toolBar, SWT.PUSH);
-		pauseButton.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				pauseIconImg.dispose();
-			}
-		});
-		pauseButton.setImage(pauseIconImg);
-		pauseButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				pauseSelectedDownload();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				pauseSelectedDownload();				
-			}
-		});
-		pauseButton.setToolTipText("Pause the selected download");
+		pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg, 
+				"Pause the selected download", this, "pauseSelectedDownload");
 		
 		final Image cancelIconImg = new Image(display, 
 				SWTView.class.getResourceAsStream("cancel.png"));
-		cancelButton = new ToolItem (toolBar, SWT.PUSH);
-		cancelButton.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				cancelIconImg.dispose();
-			}
-		});
-		cancelButton.setImage(cancelIconImg);
-		cancelButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				cancelSelectedDownload();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				cancelSelectedDownload();				
-			}
-		});
-		cancelButton.setToolTipText("Cancel the selected download");
+		cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg, 
+				"Cancel the selected download", this, "cancelSelectedDownload");
 		
 		toolBar.pack ();
 	}
@@ -281,6 +243,17 @@ SelectionListener, ControlListener {
 			((DownloadDisplay)downloadsListComp.getSelectedControl()).
 			getDownloadMonitor().getDownloader();
 		controller.startDownload(dl);
+		setButtonsState();
+	}
+	
+	protected void requeueSelectedDownload() {
+		if (downloadsListComp == null || 
+				downloadsListComp.getSelectedControl() == null)
+			return;
+		IDownloader dl = 
+			((DownloadDisplay)downloadsListComp.getSelectedControl()).
+			getDownloadMonitor().getDownloader();
+		controller.requeueDownload(dl);
 		setButtonsState();
 	}
 	
@@ -370,6 +343,7 @@ SelectionListener, ControlListener {
 					runButton.setEnabled(false);
 					pauseButton.setEnabled(false);
 					cancelButton.setEnabled(false);
+					requeueButton.setEnabled(false);
 					return;
 				}
 				IDownloadMonitor mon = 
@@ -379,15 +353,18 @@ SelectionListener, ControlListener {
 						mon.getDownloadState() == DLState.DOWNLOADING) {
 					runButton.setEnabled(false);
 					pauseButton.setEnabled(true);
-					cancelButton.setEnabled(true);			
+					cancelButton.setEnabled(true);
+					requeueButton.setEnabled(true);
 				} else if (mon.getDownloadState() == DLState.FINISHED) {
 					runButton.setEnabled(false);
 					pauseButton.setEnabled(false);
-					cancelButton.setEnabled(false);                                         
+					cancelButton.setEnabled(false);
+					requeueButton.setEnabled(false);
 				} else {
 					runButton.setEnabled(true);
 					pauseButton.setEnabled(false);
-					cancelButton.setEnabled(true);						
+					cancelButton.setEnabled(true);
+					requeueButton.setEnabled(true);
 				}
 			}
 		});

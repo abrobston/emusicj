@@ -76,6 +76,13 @@ public class TestDownloader implements IDownloader {
 		stop();
 	}
 	
+	public void requeue() {
+		dlThread.pause(true);
+		state = DLState.NOTSTARTED;
+		monitor.setState(state);
+		dlThread.interrupt();		
+	}
+	
 	public void pause() {
 		dlThread.pause(true);
 		state = DLState.PAUSED;

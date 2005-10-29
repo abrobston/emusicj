@@ -211,6 +211,10 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 		dl.stop();
 	}
 	
+	public void requeueDownload(IDownloader dl) {
+		dl.requeue();
+	}
+	
 	public void pauseDownloads() {
 		noAutoStartDownloads = true;
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
