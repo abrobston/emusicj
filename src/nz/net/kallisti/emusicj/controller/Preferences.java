@@ -57,6 +57,9 @@ public class Preferences {
 			props.load(in);
 			path = props.getProperty("savePath", path);
 			filePattern = props.getProperty("savePattern", filePattern);
+			// Compatibility fix if moving from <0.07 to >=0.07
+			if (filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
+				filePattern = filePattern.substring(0,filePattern.length()-4);
 			minDownloads = Integer.parseInt(props.getProperty("minDownloads", minDownloads+""));
 		} catch (IOException e) {
 			// We don't care, it'll just use the defaults
