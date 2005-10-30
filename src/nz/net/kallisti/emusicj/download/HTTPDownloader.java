@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 
 import org.apache.commons.httpclient.Header;
@@ -23,7 +22,7 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p></p>
+ * <p>Downloads files from a URL from an HTTP server</p>
  * 
  * <p>$Id$</p>
  *
@@ -32,27 +31,19 @@ import org.w3c.dom.Element;
 public class HTTPDownloader implements IDownloader {
 	
 	private URL url;
-	private String trackName;
-	private String albumName;
-	private String artistName;
-	private int trackNum;
-	private HTTPDownloadMonitor monitor;
+	protected HTTPDownloadMonitor monitor;
 	private File outputFile;
 	private DownloadThread dlThread;
-	private volatile DLState state;
+	protected volatile DLState state;
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
 	private DLState prevState;
 	
-	public HTTPDownloader(URL url,
-			int trackNum, String songName, String album, String artist) {
+	public HTTPDownloader(URL url, File outputFile) {
 		super();
 		this.url = url;
-		this.trackNum = trackNum;
-		this.trackName = songName;
-		this.albumName = album;
-		this.artistName = artist;
-		this.monitor = new HTTPDownloadMonitor(this);
+		this.outputFile = outputFile;
+		createMonitor();
 		state = DLState.NOTSTARTED;
 		monitor.setState(state);
 	}
@@ -63,21 +54,18 @@ public class HTTPDownloader implements IDownloader {
 	 * @throws MalformedURLException if the URL in the XML is wrong or missing
 	 */
 	public HTTPDownloader(Element el) throws MalformedURLException {
-		super();
-		this.monitor = new HTTPDownloadMonitor(this);
+		super();		
 		String tUrl = el.getAttribute("url");
 		if (tUrl != null)
 			url = new URL(tUrl);
 		else
 			throw new MalformedURLException("Missing URL");
-		String tNum = el.getAttribute("tracknum");
-		if (tNum != null)
-			trackNum = Integer.parseInt(tNum);
+		String tFname = el.getAttribute("outputfile");
+		if (tFname != null)
+			outputFile = new File(tFname);
 		else
-			trackNum = -1;
-		albumName = el.getAttribute("albumname");
-		artistName = el.getAttribute("artistname");
-		trackName = el.getAttribute("trackname");
+			throw new MalformedURLException("Missing output filename");
+		createMonitor();
 		setState(DLState.NOTSTARTED);
 		String tState = el.getAttribute("state");
 		if (tState != null) {
@@ -96,6 +84,10 @@ public class HTTPDownloader implements IDownloader {
 		}		
 	}
 
+	protected void createMonitor() {
+		this.monitor = new HTTPDownloadMonitor(this);		
+	}
+	
 	/**
 	 * Saves the important bits of this object to the provided element
 	 * @param el the element to save to
@@ -103,10 +95,6 @@ public class HTTPDownloader implements IDownloader {
 	 */
 	public void saveTo(Element el, Document doc) {
 		el.setAttribute("url", url.toString());
-		el.setAttribute("tracknum", trackNum+"");
-		el.setAttribute("trackname", trackName);
-		el.setAttribute("albumname", albumName);
-		el.setAttribute("artistname", artistName);
 		el.setAttribute("state", state.toString());
 	}
 	
@@ -117,9 +105,6 @@ public class HTTPDownloader implements IDownloader {
 	}
 	
 	public void start() {
-		Preferences prefs = Preferences.getInstance();
-		outputFile = new File(prefs.getFilename(trackNum, trackName, 
-				albumName, artistName));
 		if (dlThread == null) {
 			dlThread = new DownloadThread();
 			dlThread.start();
@@ -170,24 +155,8 @@ public class HTTPDownloader implements IDownloader {
 		dlThread = null;
 	}
 	
-	public String getAlbumName() {
-		return albumName;
-	}
-	
-	public String getArtistName() {
-		return artistName;
-	}
-	
-	public String getTrackName() {
-		return trackName;
-	}
-	
 	public URL getURL() {
 		return url;
-	}
-	
-	public int getTrackNum() {
-		return trackNum;
 	}
 	
 	/**
@@ -226,7 +195,7 @@ public class HTTPDownloader implements IDownloader {
 		}
 		
 		public void run() {
-			setName(getTrackName());
+			setName(outputFile.toString());
 	        setState(DLState.CONNECTING);
 			BufferedOutputStream out = null;
 			File partFile;

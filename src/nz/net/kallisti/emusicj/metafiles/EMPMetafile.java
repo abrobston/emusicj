@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.HTTPMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
@@ -114,7 +115,10 @@ public class EMPMetafile implements IMetafile {
 			throw new UnknownFileException(e);
 		}
 		int trackNum = Integer.parseInt(num);
-		downloaders.add(new HTTPMusicDownloader(url, trackNum, title, album, artist));
+		Preferences prefs = Preferences.getInstance();
+		File outputFile = new File(prefs.getFilename(trackNum, title, album, artist));
+		downloaders.add(new HTTPMusicDownloader(url, outputFile, trackNum, 
+				title, album, artist));
 	}
 
 	/**

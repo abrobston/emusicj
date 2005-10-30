@@ -17,4 +17,6 @@ public interface IMusicDownloader extends IDownloader {
     
     public String getAlbumName();
     
+    public IMusicDownloadMonitor getMusicDownloadMonitor();
+    
 }

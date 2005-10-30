@@ -32,8 +32,7 @@ public class HTTPDownloadMonitor implements IDownloadMonitor {
 	}
 	
 	public String getName() {
-		return downloader.getTrackName()+" - "+downloader.getAlbumName() +
-		" - "+downloader.getArtistName();
+		return downloader.getOutputFile().toString();
 	}
 	
 	public double getDownloadPercent() {
