@@ -29,14 +29,14 @@ import org.w3c.dom.Element;
  *
  * @author robin
  */
-public class HTTPMusicDownloader implements IMusicDownloader {
+public class HTTPDownloader implements IDownloader {
 	
 	private URL url;
 	private String trackName;
 	private String albumName;
 	private String artistName;
 	private int trackNum;
-	private HTTPMusicDownloadMonitor monitor;
+	private HTTPDownloadMonitor monitor;
 	private File outputFile;
 	private DownloadThread dlThread;
 	private volatile DLState state;
@@ -44,7 +44,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	volatile long bytesDown = 0;
 	private DLState prevState;
 	
-	public HTTPMusicDownloader(URL url,
+	public HTTPDownloader(URL url,
 			int trackNum, String songName, String album, String artist) {
 		super();
 		this.url = url;
@@ -52,7 +52,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 		this.trackName = songName;
 		this.albumName = album;
 		this.artistName = artist;
-		this.monitor = new HTTPMusicDownloadMonitor(this);
+		this.monitor = new HTTPDownloadMonitor(this);
 		state = DLState.NOTSTARTED;
 		monitor.setState(state);
 	}
@@ -62,9 +62,9 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 	 * @param el the element to load from
 	 * @throws MalformedURLException if the URL in the XML is wrong or missing
 	 */
-	public HTTPMusicDownloader(Element el) throws MalformedURLException {
+	public HTTPDownloader(Element el) throws MalformedURLException {
 		super();
-		this.monitor = new HTTPMusicDownloadMonitor(this);
+		this.monitor = new HTTPDownloadMonitor(this);
 		String tUrl = el.getAttribute("url");
 		if (tUrl != null)
 			url = new URL(tUrl);
@@ -332,7 +332,7 @@ public class HTTPMusicDownloader implements IMusicDownloader {
 			bytesDown = resumePoint;
 			try {
 				while ((count = in.read(buff)) != -1) {
-					synchronized (HTTPMusicDownloader.this) {
+					synchronized (HTTPDownloader.this) {
 						// synch because an assignment to a long isn't atomic
 						bytesDown += count;
 					}

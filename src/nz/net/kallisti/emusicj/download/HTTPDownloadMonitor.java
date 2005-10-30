@@ -12,13 +12,13 @@ import java.util.List;
  *
  * @author robin
  */
-public class HTTPMusicDownloadMonitor implements IDownloadMonitor {
+public class HTTPDownloadMonitor implements IDownloadMonitor {
 	
 	private DLState state;
-	private HTTPMusicDownloader downloader;
+	private HTTPDownloader downloader;
 	private List<IDownloadMonitorListener> listeners;
 	
-	public HTTPMusicDownloadMonitor() {
+	public HTTPDownloadMonitor() {
 		super();
 		listeners = Collections.synchronizedList(new ArrayList<IDownloadMonitorListener>());
 	}
@@ -26,7 +26,7 @@ public class HTTPMusicDownloadMonitor implements IDownloadMonitor {
 	/**
 	 * @param downloader
 	 */
-	public HTTPMusicDownloadMonitor(HTTPMusicDownloader downloader) {
+	public HTTPDownloadMonitor(HTTPDownloader downloader) {
 		this();
 		this.downloader = downloader;
 	}
