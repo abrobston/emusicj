@@ -21,6 +21,7 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 	private String albumName;
 	private String artistName;
 	private int trackNum;
+	private File coverArt;
 	
 	public HTTPMusicDownloader(URL url, File outputFile,
 			int trackNum, String songName, String album, String artist) {
@@ -28,8 +29,17 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 		this.trackName = songName;
 		this.albumName = album;
 		this.artistName = artist;
+		this.trackNum = trackNum;		
+	}
+	
+	public HTTPMusicDownloader(URL url, File outputFile, File coverArt,
+			int trackNum, String songName, String album, String artist) {
+		super(url, outputFile);
+		this.trackName = songName;
+		this.albumName = album;
+		this.artistName = artist;
 		this.trackNum = trackNum;
-		
+		this.coverArt = coverArt;
 	}
 	
 	public HTTPMusicDownloader(Element el) throws MalformedURLException {
@@ -71,6 +81,10 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 	
 	public int getTrackNum() {
 		return trackNum;
+	}
+	
+	public File getCoverArt() {
+		return coverArt;
 	}
 	
 	public IMusicDownloadMonitor getMusicDownloadMonitor() {

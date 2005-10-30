@@ -1,9 +1,11 @@
 package nz.net.kallisti.emusicj.download;
 
+import java.io.File;
+
 /**
  *
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */
@@ -27,5 +29,25 @@ public class HTTPMusicDownloadMonitor extends HTTPDownloadMonitor
 	public IMusicDownloader getMusicDownloader() {
 		return (IMusicDownloader)getDownloader();
 	}
+	
+	public String getAlbumName() {
+		return getMusicDownloader().getAlbumName();
+	}
+	
+	public String getArtistName() {
+		return getMusicDownloader().getArtistName();
+	}
+	
+	public String getTrackName() {
+		return getMusicDownloader().getTrackName();
+	}
+	
+	public int getTrackNum() {
+		return getMusicDownloader().getTrackNum();
+	}
 
+	public File getCoverArt() {
+		return getMusicDownloader().getCoverArt();
+	}
+	
 }

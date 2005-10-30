@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.download;
 
+import java.io.File;
+
 /**
  * <p></p>
  * 
@@ -16,6 +18,8 @@ public interface IMusicDownloader extends IDownloader {
     public String getArtistName();
     
     public String getAlbumName();
+    
+    public File getCoverArt();
     
     public IMusicDownloadMonitor getMusicDownloadMonitor();
     

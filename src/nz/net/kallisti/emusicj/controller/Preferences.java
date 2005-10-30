@@ -105,6 +105,22 @@ public class Preferences {
 		String fname = path+File.separatorChar+convPattern+format;
 		return fname;
 	}
+	
+	/**
+	 * Works out the directory where a track with the provided parameters will
+	 * be saved to
+	 * @param track
+	 * @param song
+	 * @param album
+	 * @param artist
+	 * @return
+	 */
+	public File getPathFor(int track, String song, String album, String artist) {
+		String filename = getFilename(track, song, album, artist, ".foo");
+		File file = new File(filename);
+		File path = new File(file.getParent());
+		return path;
+	}
 
 	/**
 	 * @param str
