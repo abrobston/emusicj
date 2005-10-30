@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
 /**
  * <p>Loads a .emp file, and creates downloaders from it.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -91,6 +91,7 @@ public class EMPMetafile implements IMetafile {
 		String album = null;
 		String artist = null;
 		String filename = null;
+		String format = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)
@@ -106,7 +107,9 @@ public class EMPMetafile implements IMetafile {
 			else if (node.getNodeName().equalsIgnoreCase("artist"))
 				artist = node.getFirstChild().getNodeValue();				
 			else if (node.getNodeName().equalsIgnoreCase("filename"))
-				filename = node.getFirstChild().getNodeValue();				
+				filename = node.getFirstChild().getNodeValue();	
+			else if (node.getNodeName().equalsIgnoreCase("format"))
+				format = node.getFirstChild().getNodeValue();
 		}
 		URL url;
 		try {
@@ -116,7 +119,8 @@ public class EMPMetafile implements IMetafile {
 		}
 		int trackNum = Integer.parseInt(num);
 		Preferences prefs = Preferences.getInstance();
-		File outputFile = new File(prefs.getFilename(trackNum, title, album, artist));
+		File outputFile = new File(prefs.getFilename(trackNum, title, album, 
+				artist, format));
 		downloaders.add(new HTTPMusicDownloader(url, outputFile, trackNum, 
 				title, album, artist));
 	}

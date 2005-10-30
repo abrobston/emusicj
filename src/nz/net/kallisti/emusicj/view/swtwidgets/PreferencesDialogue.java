@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>Displays a preferences dialogue, and updates the supplied Preferences
  * object as things change.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -109,7 +109,8 @@ public class PreferencesDialogue {
 			}
 		});
 		Label savePatternKey = new Label(files, SWT.NONE);
-		savePatternKey.setText("%a=album, %b=artist, %n=track num, %t=track name");
+		savePatternKey.setText("%a=album, %b=artist, %n=track number, %t=track name\n" +
+				"Note: '.mp3' will be attached to the end of this");
 		gd = new GridData();
 		gd.horizontalSpan=2;
 		savePatternKey.setLayoutData(gd);

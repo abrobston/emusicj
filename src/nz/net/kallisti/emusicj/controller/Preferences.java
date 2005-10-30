@@ -31,7 +31,7 @@ public class Preferences {
 	private String path = System.getProperty("user.home")+File.separatorChar+
 		"mp3"+File.separatorChar+"emusic";
 	private String filePattern = "%b"+File.separatorChar+"%a"+
-		File.separatorChar+"%n %t.mp3";
+		File.separatorChar+"%n %t";
 	private int minDownloads = 2;
 	private Properties props;
 	
@@ -82,7 +82,8 @@ public class Preferences {
 		}
 	}
 	
-	public String getFilename(int track, String song, String album, String artist) {
+	public String getFilename(int track, String song, String album, String artist,
+			String format) {
 		DecimalFormat df = new DecimalFormat("00");
 		StringBuffer songB = new StringBuffer(song);
 		StringBuffer albumB = new StringBuffer(album);
@@ -101,7 +102,7 @@ public class Preferences {
 			convPattern.replace(pos,pos+2,df.format(track));
 		while ((pos = convPattern.indexOf("%t"))!= -1)
 			convPattern.replace(pos,pos+2,songB.toString());
-		String fname = path+File.separatorChar+convPattern;
+		String fname = path+File.separatorChar+convPattern+format;
 		return fname;
 	}
 
