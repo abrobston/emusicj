@@ -9,22 +9,23 @@ package nz.net.kallisti.emusicj;
  */
 public class Constants {
 
-    public final static String VERSION = "0.06-svn";
+    public final static String VERSION = "0.07";
     
     public final static String APPNAME = "eMusic/J";
 
 	public static final String STATE_DIR = ".emusicj";
 
+	public static final String APPURL = "http://www.kallisti.net.nz/RobinsStuff/EMusicJ";
+
 	public static final String ABOUT_BOX_TEXT = 
 		"This program was written by Robin Sheat <robin@kallisti.net.nz> "+
 		"(eMusic.com username: Eythian)\n"+
 		"\nIcons done by James Elwood (eMusic: jelwood01)\n"+
-		"\nCheck http://www.kallisti.net.nz/RobinsStuff/EMusicJ for updates and "+
+		"\nCheck "+APPURL+" for updates and "+
 		"information.\n"+
-		"\nThe program may be freely distributed under the terms of the GNU GPL.\n";
+		"\nThe program may be freely distributed under the terms of the GNU GPL.\n"+
+		"\nNote that this program is not affiliated in any way with eMusic.com\n";
 
 	public static final String UPDATE_URL = "http://www.kallisti.net.nz/~robin/emusicj-version.txt";
-
-	public static final String APPURL = "http://www.kallisti.net.nz/RobinsStuff/EMusicJ";
 
 }
