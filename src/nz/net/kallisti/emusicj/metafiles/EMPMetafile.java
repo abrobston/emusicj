@@ -188,8 +188,10 @@ public class EMPMetafile implements IMetafile {
 		EMPDecoderStream stream = new EMPDecoderStream(new FileInputStream(file));
 		// just look at the first Kb
 		byte[] buff = new byte[1024];
+        // ignore return value, we don't really care
 		stream.read(buff);
 		String s = new String(buff);		
+        stream.close();
 		return s.indexOf("<PACKAGE>") != -1;
 	}
 	

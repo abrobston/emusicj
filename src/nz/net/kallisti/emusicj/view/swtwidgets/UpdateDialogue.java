@@ -99,7 +99,7 @@ public class UpdateDialogue {
 		final Preferences prefs = Preferences.getInstance();
 		prefs.setCheckForUpdates(!againButton.getSelection());
 		dialog.dispose();
-		new Thread() { public void run() { prefs.save(); } }.run();
+		new Thread() { public void run() { prefs.save(); } }.start();
 	}
 	
 }

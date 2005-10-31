@@ -144,7 +144,7 @@ public class Preferences {
 		this.path = path;
 	}
 	
-	public String getPath() {
+	public synchronized String getPath() {
 		return path;
 	}
 
@@ -156,11 +156,11 @@ public class Preferences {
 		this.filePattern=filePattern;		
 	}
 	
-	public String getFilePattern() {
+	public synchronized String getFilePattern() {
 		return filePattern;
 	}
 	
-	public int getMinDownloads() {
+	public synchronized int getMinDownloads() {
 		return minDownloads;
 	}
 
@@ -175,7 +175,7 @@ public class Preferences {
 	 * @param key the key to store the value with
 	 * @param value the value to store
 	 */
-	public synchronized void setProperty(String key, String value) {
+	public void setProperty(String key, String value) {
 		props.setProperty(key, value);
 	}
 	
@@ -192,14 +192,14 @@ public class Preferences {
 	 * @return true if the user specified they want to check (default), false
 	 * otherwise.
 	 */
-	public boolean checkForUpdates() {
+	public synchronized boolean checkForUpdates() {
 		String updateCheck = props.getProperty("checkForUpdates");
 		if (updateCheck == null)
 			return true;		
 		return updateCheck.equalsIgnoreCase("true");
 	}
 	
-	public void setCheckForUpdates(boolean check) {
+	public synchronized void setCheckForUpdates(boolean check) {
 		props.setProperty("checkForUpdates", check?"true":"false");
 	}
 

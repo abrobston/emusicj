@@ -37,7 +37,6 @@ public class HTTPDownloader implements IDownloader {
 	protected volatile DLState state;
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
-	private DLState prevState;
 	
 	public HTTPDownloader(URL url, File outputFile) {
 		super();
@@ -110,11 +109,7 @@ public class HTTPDownloader implements IDownloader {
 			dlThread.start();
 		} else {
 			dlThread.pause(false);
-			if (prevState != null) {
-				setState(prevState);
-				prevState = null;
-			} else
-				setState(DLState.DOWNLOADING);
+			setState(DLState.DOWNLOADING);
 		}
 	}
 	
@@ -219,6 +214,9 @@ public class HTTPDownloader implements IDownloader {
 				out = new BufferedOutputStream(new FileOutputStream(partFile, needToResume));
 			} catch (FileNotFoundException e) {
 				downloadError(e);
+                try {
+                    out.close();
+                } catch (IOException e2) {}
 				return;
 			}
 			while (pause && !abort);
@@ -239,6 +237,7 @@ public class HTTPDownloader implements IDownloader {
 					get.abort();
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "+statusCode);
+                    out.close();
 					return;
 				}
 				if (statusCode == HttpStatus.SC_OK && needToResume) {
@@ -262,6 +261,7 @@ public class HTTPDownloader implements IDownloader {
 						get.abort();
 						get.releaseConnection();
 					}
+                    out.close();
 					return;
 				}
 				// TODO better checking that we are getting what we expect
@@ -283,6 +283,9 @@ public class HTTPDownloader implements IDownloader {
 			} catch (IOException e) {
 				get.releaseConnection();
 				downloadError(e);
+                try {
+                    out.close();
+                } catch (IOException e2) {}
 				return;
 			}
 			while (pause && !abort);

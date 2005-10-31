@@ -53,6 +53,7 @@ public class IPCServerClient {
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(portFile));
 			String port = in.readLine();
+            try { in.close(); } catch (IOException e) {}
 			String loopback = null;
 			connection = new Socket(loopback,Integer.parseInt(port));
 			Thread.sleep(500);
@@ -62,7 +63,7 @@ public class IPCServerClient {
 				return;
 			}
 		} catch (Exception e) {
-			startServer();
+			startServer();            
 			return;
 		}
 		state = CONNECTED;

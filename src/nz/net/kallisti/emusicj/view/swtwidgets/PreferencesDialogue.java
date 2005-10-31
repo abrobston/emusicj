@@ -173,7 +173,7 @@ public class PreferencesDialogue {
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
 		dialog.dispose();
-		new Thread() { public void run() { prefs.save(); } }.run();
+		new Thread() { public void run() { prefs.save(); } }.start();
 	}
 	
 }
