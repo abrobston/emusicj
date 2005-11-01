@@ -9,9 +9,11 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 
 import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -221,7 +223,13 @@ public class HTTPDownloader implements IDownloader {
 			}
 			while (pause && !abort);
 			if (abort) return;
-			HttpClient http = new HttpClient();
+            HttpClient http = new HttpClient();
+            Preferences prefs = Preferences.getInstance();
+            if (!prefs.getProxyHost().equals("")) {
+                HostConfiguration hostConf = new HostConfiguration();
+                hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
+                http.setHostConfiguration(hostConf);
+            }
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received
 			params.setSoTimeout(120000);

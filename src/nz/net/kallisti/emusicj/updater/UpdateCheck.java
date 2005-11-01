@@ -2,6 +2,9 @@ package nz.net.kallisti.emusicj.updater;
 
 import java.io.IOException;
 
+import nz.net.kallisti.emusicj.controller.Preferences;
+
+import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -65,7 +68,13 @@ public class UpdateCheck {
 		
 		public void run() {
 			setName("Update Check");
-			HttpClient http = new HttpClient();
+            Preferences prefs = Preferences.getInstance();
+            HttpClient http = new HttpClient();
+            if (!prefs.getProxyHost().equals("")) {
+                HostConfiguration hostConf = new HostConfiguration();
+                hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
+                http.setHostConfiguration(hostConf);
+            }
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received
 			params.setSoTimeout(120000);

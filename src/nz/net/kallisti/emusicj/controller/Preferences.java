@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Properties;
 
@@ -34,11 +36,19 @@ public class Preferences {
 		File.separatorChar+"%n %t";
 	private int minDownloads = 2;
 	private Properties props;
+    private String proxyHost="";
+    private int proxyPort=0;
 	
 	private Preferences() {
 		super();
 		// Make sure the state path exists, as other things may need it
 		new File(statePath).mkdirs();
+        // Set the proxy variables
+        try {
+            URL url = new URL(System.getenv("http_proxy"));
+            proxyHost = url.getHost();
+            proxyPort = url.getPort();
+        } catch (MalformedURLException e) {}
 	}
 	
 	public synchronized static Preferences getInstance() {
@@ -61,6 +71,8 @@ public class Preferences {
 			if (filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
 				filePattern = filePattern.substring(0,filePattern.length()-4);
 			minDownloads = Integer.parseInt(props.getProperty("minDownloads", minDownloads+""));
+            proxyHost = props.getProperty("proxyHost",proxyHost);
+            proxyPort = Integer.parseInt(props.getProperty("proxyPort",proxyPort+""));
 		} catch (IOException e) {
 			// We don't care, it'll just use the defaults
 		}
@@ -203,5 +215,22 @@ public class Preferences {
 		props.setProperty("checkForUpdates", check?"true":"false");
 	}
 
+    public synchronized String getProxyHost() {
+        return proxyHost;
+    }
+    
+    public synchronized int getProxyPort() {
+        return proxyPort;
+    }
+    
+    public synchronized void setProxyHost(String host) {
+        proxyHost = host;
+        props.setProperty("proxyHost", host);
+    }
+    
+    public synchronized void setProxyPort(int port) {
+        proxyPort = port;
+        props.setProperty("proxyPort", port+"");        
+    }
 
 }

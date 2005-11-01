@@ -1,5 +1,6 @@
-#Mon Oct 10 21:21:18 NZDT 2005
+#Tue Nov 01 12:51:33 NZDT 2005
 eclipse.preferences.version=1
+formatter_settings_version=8
 org.eclipse.jdt.ui.exception.name=e
 org.eclipse.jdt.ui.gettersetter.use.is=true
 org.eclipse.jdt.ui.javadoc=true
