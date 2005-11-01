@@ -68,6 +68,7 @@ public class Preferences {
 			path = props.getProperty("savePath", path);
 			filePattern = props.getProperty("savePattern", filePattern);
 			// Compatibility fix if moving from <0.07 to >=0.07
+			// TODO remove this some time in the future (31/10/05)
 			if (filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
 				filePattern = filePattern.substring(0,filePattern.length()-4);
 			minDownloads = Integer.parseInt(props.getProperty("minDownloads", minDownloads+""));

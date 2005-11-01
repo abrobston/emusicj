@@ -36,6 +36,9 @@ public class PreferencesDialogue {
 	private int minDL;
 	private boolean checkForUpdates;
 	private Button updatesButton;
+	private Text proxyHost;
+	private Text proxyPort;
+	protected boolean proxyModified=false;
 
 	/**
 	 * @param display
@@ -144,6 +147,29 @@ public class PreferencesDialogue {
 		updatesButton.setSelection(checkForUpdates);
 		updatesButton.setText("Automatically check for updates to the program");
 		
+		Group network = new Group(dialog, SWT.NONE);
+		network.setLayout(new GridLayout(2,false));
+		network.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		network.setText("Network");
+		
+		new Label(network, SWT.NONE).setText("Proxy host:");
+		new Label(network, SWT.NONE).setText("Proxy port:");
+		proxyHost = new Text(network,SWT.BORDER);
+		proxyHost.setText(prefs.getProxyHost());
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		proxyHost.setLayoutData(gd);
+		proxyHost.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				proxyModified = true;
+			}
+		});
+		proxyPort = new Text(network,SWT.BORDER);
+		if (prefs.getProxyPort() != 0)
+			proxyPort.setText(prefs.getProxyPort()+"");
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		proxyPort.setLayoutData(gd);
+
+		
 		final Button close = new Button(dialog, SWT.PUSH);
 		gd = new GridData();
 		gd.horizontalAlignment=SWT.RIGHT;
@@ -172,6 +198,12 @@ public class PreferencesDialogue {
 		prefs.setPath(filePath);
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
+		if (proxyModified && !proxyHost.equals("")) {
+			try {
+				prefs.setProxyPort(Integer.parseInt(proxyPort.getText()));
+				prefs.setProxyHost(proxyHost.getText());
+			} catch (NumberFormatException e) {}
+		}
 		dialog.dispose();
 		new Thread() { public void run() { prefs.save(); } }.start();
 	}
