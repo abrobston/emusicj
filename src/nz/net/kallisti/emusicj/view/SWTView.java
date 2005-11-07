@@ -22,6 +22,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.ControlEvent;
@@ -76,6 +77,9 @@ SelectionListener, ControlListener {
 	private Rectangle windowLoc;
 	private ToolItem requeueButton;
 	private FileInfoPanel fileInfo;
+	private SashForm mainArea;
+	private int sashTop=50;
+	private int sashBottom=50;
 	
 	public SWTView() {
 		super();
@@ -90,7 +94,13 @@ SelectionListener, ControlListener {
 			shell =new Shell(display);
 			shell.setText(Constants.APPNAME);
 			buildMenuBar(shell);
-			buildInterface(shell);
+			int topAmount = 60;
+			int bottomAmount = 40;
+			try {
+				topAmount = Integer.parseInt(prefs.getProperty("topRatio"));
+				bottomAmount = Integer.parseInt(prefs.getProperty("bottomRatio"));
+			} catch (Exception e) { }
+			buildInterface(shell, topAmount, bottomAmount);
 			updateListFromModel();
 			shell.layout();
 			shell.pack();
@@ -168,14 +178,16 @@ SelectionListener, ControlListener {
 	 * that shows info on the selected item.
 	 * @param shell the shell to build the interface on
 	 */
-	private void buildInterface(Shell shell) {
+	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
 		ToolBar toolBar = new ToolBar (shell, SWT.FLAT | SWT.BORDER);
 		buildToolBar(toolBar);
-		
-		downloadsList = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.BORDER);
+		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
+		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
+				true, true));	
+		downloadsList = new ScrolledComposite(mainArea, SWT.V_SCROLL | SWT.BORDER);
 		downloadsList.setExpandHorizontal(true);
 		downloadsListComp = new SelectableComposite(downloadsList, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -186,7 +198,7 @@ SelectionListener, ControlListener {
 				true, true));
 		downloadsList.setContent(downloadsListComp);
 		setButtonsState();
-		ScrolledComposite fileInfoPlace = new ScrolledComposite(shell, SWT.V_SCROLL | 
+		ScrolledComposite fileInfoPlace = new ScrolledComposite(mainArea, SWT.V_SCROLL | 
 				SWT.H_SCROLL | SWT.BORDER );
 		/*GridData layoutData = new GridData();
 		layoutData.grabExcessHorizontalSpace=true;
@@ -196,6 +208,8 @@ SelectionListener, ControlListener {
 				true, false));
 		fileInfo = new FileInfoPanel(fileInfoPlace, SWT.NONE, display);
 		fileInfoPlace.setContent(fileInfo);
+		mainArea.setWeights(new int[] {topAmount, bottomAmount});
+		mainArea.addControlListener(this);
 	}
 	
 	/**
@@ -416,7 +430,7 @@ SelectionListener, ControlListener {
 					display.sleep();
 				}
 			}
-			saveWindowLocation();
+			saveWindowState();
 			display.dispose();
 			// Tell the DownloadDisplay instances to finish up
 		} catch (SWTException e) {
@@ -429,11 +443,13 @@ SelectionListener, ControlListener {
 		}
 	}
 
-	private void saveWindowLocation() {
+	private void saveWindowState() {
 		prefs.setProperty("winLocX",windowLoc.x+"");
 		prefs.setProperty("winLocY",windowLoc.y+"");
 		prefs.setProperty("winHeight",windowLoc.height+"");
 		prefs.setProperty("winWidth",windowLoc.width+"");
+		prefs.setProperty("topRatio",sashTop+"");
+		prefs.setProperty("bottomRatio",sashBottom+"");
 		prefs.save();
 	}
 	
@@ -522,6 +538,8 @@ SelectionListener, ControlListener {
 
 	public void windowMovedOrResized() {
 		windowLoc = shell.getBounds();
+		sashTop = mainArea.getWeights()[0];
+		sashBottom = mainArea.getWeights()[1];
 	}
 
 	public void controlMoved(ControlEvent e) {
