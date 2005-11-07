@@ -82,7 +82,10 @@ public class HTTPDownloader implements IDownloader {
 			} else if (tState.equals("FAILED")) {
 				setState(DLState.FAILED);
 			}
-		}		
+		}
+		String tOut = el.getAttribute("outputfile");
+		if (tOut != null)
+			outputFile = new File(tOut);
 	}
 
 	protected void createMonitor() {
@@ -97,6 +100,7 @@ public class HTTPDownloader implements IDownloader {
 	public void saveTo(Element el, Document doc) {
 		el.setAttribute("url", url.toString());
 		el.setAttribute("state", state.toString());
+		el.setAttribute("outputfile", outputFile.toString());
 	}
 	
 

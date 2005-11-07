@@ -15,6 +15,7 @@ import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
+import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
@@ -74,6 +75,7 @@ SelectionListener, ControlListener {
 	private String update;
 	private Rectangle windowLoc;
 	private ToolItem requeueButton;
+	private FileInfoPanel fileInfo;
 	
 	public SWTView() {
 		super();
@@ -90,6 +92,7 @@ SelectionListener, ControlListener {
 			buildMenuBar(shell);
 			buildInterface(shell);
 			updateListFromModel();
+			shell.layout();
 			shell.pack();
 			try {
 				int x = Integer.parseInt(prefs.getProperty("winLocX"));
@@ -183,6 +186,16 @@ SelectionListener, ControlListener {
 				true, true));
 		downloadsList.setContent(downloadsListComp);
 		setButtonsState();
+		ScrolledComposite fileInfoPlace = new ScrolledComposite(shell, SWT.V_SCROLL | 
+				SWT.H_SCROLL | SWT.BORDER );
+		/*GridData layoutData = new GridData();
+		layoutData.grabExcessHorizontalSpace=true;
+		fileInfo.setLayoutData(layoutData);*/
+		fileInfoPlace.setExpandHorizontal(true);
+		fileInfoPlace.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
+				true, false));
+		fileInfo = new FileInfoPanel(fileInfoPlace, SWT.NONE, display);
+		fileInfoPlace.setContent(fileInfo);
 	}
 	
 	/**
@@ -460,13 +473,15 @@ SelectionListener, ControlListener {
 	}
 	
 	public void widgetSelected(SelectionEvent e) {
-		if (e.widget == downloadsListComp)
+		if (e.widget == downloadsListComp) {
 			setButtonsState();
+			fileInfo.setDownloader(((DownloadDisplay)downloadsListComp.getSelectedControl()).
+					getDownloadMonitor());
+		}
 	}
 	
 	public void widgetDefaultSelected(SelectionEvent e) {
-		if (e.widget == downloadsListComp)
-			setButtonsState();
+		widgetSelected(e);
 	}
 	
 	public void error(final String msgTitle, final String msg) {

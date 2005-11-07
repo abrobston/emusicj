@@ -52,6 +52,9 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 		albumName = el.getAttribute("albumname");
 		artistName = el.getAttribute("artistname");
 		trackName = el.getAttribute("trackname");
+		String tCov = el.getAttribute("coverart");
+		if (tCov != null) 
+			coverArt = new File(tCov);
 	}
 	
 	@Override
@@ -60,11 +63,13 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 	}
 	
 	public void saveTo(Element el, Document doc) {
+		super.saveTo(el, doc);
 		el.setAttribute("tracknum", trackNum+"");
 		el.setAttribute("trackname", trackName);
 		el.setAttribute("albumname", albumName);
 		el.setAttribute("artistname", artistName);
-		super.saveTo(el, doc);
+		if (coverArt != null)
+			el.setAttribute("coverart", coverArt.toString());
 	}
 	
 	public String getAlbumName() {
