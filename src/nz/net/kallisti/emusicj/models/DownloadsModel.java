@@ -17,6 +17,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import nz.net.kallisti.emusicj.download.HTTPDownloader;
 import nz.net.kallisti.emusicj.download.HTTPMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
@@ -83,7 +84,11 @@ public class DownloadsModel implements IDownloadsModel {
 				Element dlEl = doc.createElement("HTTPMusicDownloader");
 				((HTTPMusicDownloader)dls[i]).saveTo(dlEl, doc);
 				el.appendChild(dlEl);
-			}
+			} else if (dls[i] instanceof HTTPDownloader) {
+                Element dlEl = doc.createElement("HTTPDownloader");
+                ((HTTPDownloader)dls[i]).saveTo(dlEl, doc);
+                el.appendChild(dlEl);
+            }
 		}
 		doc.appendChild(el);
 		TransformerFactory tFactory =
@@ -126,11 +131,14 @@ public class DownloadsModel implements IDownloadsModel {
 			NodeList dlList = root.getChildNodes(); 
 			for (int count = 0; count < dlList.getLength(); count++) {
 				Node dlNode = dlList.item(count);
-				if (!(dlNode.getNodeType() == Node.ELEMENT_NODE &&
-						dlNode.getNodeName().equals("HTTPMusicDownloader"))) {
+				if (!(dlNode.getNodeType() == Node.ELEMENT_NODE)) {
 					continue;
 				}
-				downloads.add(new HTTPMusicDownloader((Element)dlNode));
+				if (dlNode.getNodeName().equals("HTTPMusicDownloader")) {
+				    downloads.add(new HTTPMusicDownloader((Element)dlNode));
+                } else if (dlNode.getNodeName().equals("HTTPDownloader")) {
+                    downloads.add(new HTTPDownloader((Element)dlNode));
+                }
 			}
 		} catch (Exception e) {
 			System.err.println("An error occurred loading the downloads state");

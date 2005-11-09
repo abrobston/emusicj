@@ -35,7 +35,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -209,7 +211,12 @@ SelectionListener, ControlListener {
 		fileInfo = new FileInfoPanel(fileInfoPlace, SWT.NONE, display);
 		fileInfoPlace.setContent(fileInfo);
 		mainArea.setWeights(new int[] {topAmount, bottomAmount});
-		mainArea.addControlListener(this);
+		shell.addListener (SWT.Close, new Listener () {
+		    public void handleEvent (Event event) {
+		        windowMovedOrResized();
+		        event.doit = true;
+		    }
+		});
 	}
 	
 	/**
@@ -549,5 +556,5 @@ SelectionListener, ControlListener {
 	public void controlResized(ControlEvent e) {
 		windowMovedOrResized();
 	}
-	
+
 }
