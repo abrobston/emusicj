@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
  * IDownloader instance). Once it is in place, a call to {@link setDownloader}
  * defines what to display. It keeps an image cache for album covers.
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */
@@ -82,6 +82,7 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 	}
 	
 	public void setDownloader(IDownloadMonitor dl) {
+		// TODO image caching and disposing
 		// Done like this so I can add display of non-music stuff easily later
 		if (dl == null || !(dl instanceof IMusicDownloadMonitor)) {
 			titleLabel.setVisible(false);
