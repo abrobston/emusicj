@@ -25,7 +25,7 @@ import nz.net.kallisti.emusicj.controller.Preferences;
  * or there is no response on the port, then the server is started and that
  * file is created.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -74,11 +74,13 @@ public class IPCServerClient {
 		// find a free port
 		boolean foundPort = false;
 		int port=-1;
-		for (port=20000; port <=30000; port++) {
+		Exception err=null;
+		for (port=20000; port <=25000; port+=7) {
 			try {
 				socket = new ServerSocket(port,0, 
 						InetAddress.getByName("127.0.0.1"));
 			} catch (IOException e) {
+				err = e;
 				continue;
 			}
 			foundPort = true;
@@ -87,6 +89,8 @@ public class IPCServerClient {
 		if (!foundPort || socket == null) {
 			state = FAILED;
 			System.err.println("Failed to start the server for listening");
+			if (err != null)
+				err.printStackTrace();
 			return;
 		}
 		serverThread = new ServerThread(socket);
