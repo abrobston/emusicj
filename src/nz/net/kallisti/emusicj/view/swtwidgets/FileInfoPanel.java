@@ -98,7 +98,8 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 			album.setText(mdl.getAlbumName());
 			artist.setText(mdl.getArtistName());
             File coverFile = mdl.getCoverArt();
-            if (coverFile != null && !coverFile.toString().equals("")) {
+            if (coverFile != null && !coverFile.toString().equals("")
+            		&& coverFile.exists()) {
                 Image im = imageCache.get(coverFile); 
                 if (im == null) {
                     im = new Image(display, mdl.getCoverArt().toString());

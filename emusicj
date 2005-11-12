@@ -1,5 +1,8 @@
 #!/bin/bash
-PROGRAM_DIR=""
+
+# If you decide to move this script to somewhere else, then you can set the
+# environment variable EMUSICJ_HOME to point to where the program actually is.
+PROGRAM_DIR="$EMUSICJ_HOME"
 
 if [ -z "$PROGRAM_DIR" ]; then
     PROGRAM_DIR=`dirname "$0"`
