@@ -498,8 +498,9 @@ SelectionListener, ControlListener {
 	public void widgetSelected(SelectionEvent e) {
 		if (e.widget == downloadsListComp) {
 			setButtonsState();
-			fileInfo.setDownloader(((DownloadDisplay)downloadsListComp.getSelectedControl()).
-					getDownloadMonitor());
+			if (downloadsListComp.getSelectedControl() != null)
+				fileInfo.setDownloader(((DownloadDisplay)downloadsListComp.getSelectedControl()).
+						getDownloadMonitor());
 		}
 	}
 	
