@@ -501,6 +501,9 @@ SelectionListener, ControlListener {
 			if (downloadsListComp.getSelectedControl() != null)
 				fileInfo.setDownloader(((DownloadDisplay)downloadsListComp.getSelectedControl()).
 						getDownloadMonitor());
+            else
+                // It's null if it is unselected, eg by cleaning up downloads
+                fileInfo.setDownloader(null);
 		}
 	}
 	

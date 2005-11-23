@@ -169,6 +169,7 @@ public class HTTPDownloader implements IDownloader {
 	}
 	
 	private void downloadError(Exception e) {
+        System.err.println(dlThread+": A download error occurred:");
 		e.printStackTrace();
 		state = DLState.FAILED;
 		monitor.setState(state);
@@ -176,7 +177,7 @@ public class HTTPDownloader implements IDownloader {
 	}
 	
 	private void downloadError(String s) {
-		System.err.println(s);
+		System.err.println(dlThread+": "+s);
 		state = DLState.FAILED;
 		monitor.setState(state);
 		dlThread = null;
@@ -293,6 +294,7 @@ public class HTTPDownloader implements IDownloader {
 				}
 				in = get.getResponseBodyAsStream();
 			} catch (IOException e) {
+                get.abort();
 				get.releaseConnection();
 				downloadError(e);
                 try {
@@ -303,8 +305,8 @@ public class HTTPDownloader implements IDownloader {
 			while (pause && !abort);
 			if (abort) {
 				try { out.close(); } catch (IOException e) {}
+                get.abort();
 				if (!hardAbort) {
-					get.abort();
 					try { in.close(); } catch (IOException e) {}
 					get.releaseConnection();
 				}
@@ -351,11 +353,11 @@ public class HTTPDownloader implements IDownloader {
 					get.releaseConnection();					
 				}
 			} catch (IOException e) {
+                get.abort();
 				try {
 					out.close();
 					in.close();
 				} catch (Exception ex) {}
-				get.abort();
 				get.releaseConnection();
 				downloadError(e);
 				return;
