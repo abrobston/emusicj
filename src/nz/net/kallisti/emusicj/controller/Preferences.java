@@ -144,7 +144,7 @@ public class Preferences {
 	private void cleanName(StringBuffer str) {
 		for (int i=0; i<str.length(); i++) {
 			char c = str.charAt(i);
-			if (c < ' ' || c == '/' || c == '\\' || c > '~')
+			if (c < ' ' || c == '/' || c == '\\' || c > '~' || c == ':')
 				str.setCharAt(i,'_');
 		}
 	}
