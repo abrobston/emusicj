@@ -245,19 +245,20 @@ public class HTTPDownloader implements IDownloader {
 			InputStream in;
 			try {
 				int statusCode = http.executeMethod(get);
-				if (statusCode != HttpStatus.SC_OK &&
-						statusCode != HttpStatus.SC_PARTIAL_CONTENT) {
+				if (!((statusCode == HttpStatus.SC_OK && !needToResume) ||
+						(statusCode == HttpStatus.SC_PARTIAL_CONTENT && needToResume))) {
 					get.abort();
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "+statusCode);
                     out.close();
 					return;
 				}
-				if (statusCode == HttpStatus.SC_OK && needToResume) {
+				/*if (statusCode == HttpStatus.SC_OK && needToResume) {
 					// It seems we can't resume. Start the file over
 					resumePoint = 0;
-				}
-				Header[] responseHeaders = get.getResponseHeaders();                
+				} -- we no longer allow non-resuming, although we probably should */
+				Header[] responseHeaders = get.getResponseHeaders();
+				boolean isFile = false;
 				for (int i=0; i<responseHeaders.length; i++){
 					String hLine = responseHeaders[i].toString();
 					String[] hParts = hLine.split(" ");
@@ -266,6 +267,16 @@ public class HTTPDownloader implements IDownloader {
 								substring(0,hParts[1].length()-2)) +
 								resumePoint; // resumePoint will be 0 if no resume
 					}
+					if (hParts[0].equals("Content-Disposition:")) {
+						isFile = hParts[1].equals("attachment;");
+					}
+				}
+				if (!isFile) {
+					downloadError("Result isn't a file");
+					get.abort();
+					out.close();
+					get.releaseConnection();
+					return;
 				}
 				while (pause && !abort);
 				if (abort) {
@@ -277,7 +288,6 @@ public class HTTPDownloader implements IDownloader {
                     out.close();
 					return;
 				}
-				// TODO better checking that we are getting what we expect
 				if (fileLength == -1) {
 					downloadError("Didn't get a Content-Length: header.");
 					get.abort();
@@ -312,7 +322,7 @@ public class HTTPDownloader implements IDownloader {
 				}
 				return;
 			}
-			byte[] buff = new byte[8192]; // we'll work in 8K chunks
+			byte[] buff = new byte[512]; // we'll work in 512b chunks
 	        setState(DLState.DOWNLOADING);
 			int count;
 			bytesDown = resumePoint;

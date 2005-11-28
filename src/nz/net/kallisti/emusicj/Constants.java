@@ -9,7 +9,7 @@ package nz.net.kallisti.emusicj;
  */
 public class Constants {
 
-    public final static String VERSION = "0.11";
+    public final static String VERSION = "0.12";
     
     public final static String APPNAME = "eMusic/J";
 
