@@ -3,3 +3,4 @@ V0.12 2005-11-28:
 * Added ':' to characters that are converted to '_' to allow saving files on a fat32 partition
 * Better checking to see if the result of the HTTP request is actually an attachment
 * No longer allow the server to not resume if we are expecting it (this is temporary, to allow something else to be fixed quickly)
+* *.emp file filter used by default in open dialogue

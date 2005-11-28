@@ -406,8 +406,8 @@ SelectionListener, ControlListener {
 	
 	public void openFile() {
 		FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
-		dialog.setFilterNames (new String [] {"All Files (*.*)"});
-		dialog.setFilterExtensions (new String [] {"*.*"});
+		dialog.setFilterNames (new String [] {"eMusic files (*.emp)","All Files (*.*)"});
+		dialog.setFilterExtensions (new String [] {"*.emp", "*.*"});
 		dialog.setFilterPath(prefs.getProperty("openDefaultPath"));
 		String file = dialog.open();
 		if (file != null) {

@@ -270,6 +270,9 @@ public class HTTPDownloader implements IDownloader {
 					if (hParts[0].equals("Content-Disposition:")) {
 						isFile = hParts[1].equals("attachment;");
 					}
+					if (hParts[0].equals("Content-Type:")) {
+						isFile = hParts[1].equals("image/jpeg\r\n"); // hack for covers until I fix this properly
+					}
 				}
 				if (!isFile) {
 					downloadError("Result isn't a file");
