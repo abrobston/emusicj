@@ -268,10 +268,10 @@ public class HTTPDownloader implements IDownloader {
 								resumePoint; // resumePoint will be 0 if no resume
 					}
 					if (hParts[0].equals("Content-Disposition:")) {
-						isFile = hParts[1].equals("attachment;");
+						isFile = isFile || hParts[1].equals("attachment;");
 					}
 					if (hParts[0].equals("Content-Type:")) {
-						isFile = hParts[1].equals("image/jpeg\r\n"); // hack for covers until I fix this properly
+						isFile = isFile || hParts[1].equals("image/jpeg\r\n"); // hack for covers until I fix this properly
 					}
 				}
 				if (!isFile) {
