@@ -215,8 +215,8 @@ public class HTTPDownloader implements IDownloader {
 					partFile = outputFile;
 				}
 				if (partFile.exists()) {
-					needToResume = true;
 					resumePoint = partFile.length();
+					needToResume = (resumePoint != 0);
 				}
 				out = new BufferedOutputStream(new FileOutputStream(partFile, needToResume));
 			} catch (FileNotFoundException e) {
