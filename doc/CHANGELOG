@@ -1,3 +1,6 @@
+V0.13 1005-12-16:
+* Fixed bug that made download of MP3s break (oops)
+* Very minor change to how resuming is handled
 V0.12 2005-11-28:
 * Started keeping changelog
 * Added ':' to characters that are converted to '_' to allow saving files on a fat32 partition
