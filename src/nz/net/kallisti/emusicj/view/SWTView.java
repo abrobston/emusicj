@@ -85,6 +85,10 @@ SelectionListener, ControlListener {
 	private int sashTop=50;
 	private int sashBottom=50;
 	private SystemTrayManager sysTray;
+	private Image downloadingIcon;
+	private Image notDownloadingIcon;
+	private ArrayList<Runnable> deferredList =
+		new ArrayList<Runnable>();
 	
 	public SWTView() {
 		super();
@@ -185,8 +189,11 @@ SelectionListener, ControlListener {
 	 */
 	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
 		setAppIcon(shell);
-		buildSystemTray(this, new Image(display, 
-				SWTView.class.getResourceAsStream("emusicj-16.png")));
+		downloadingIcon = new Image(display, 
+				SWTView.class.getResourceAsStream("emusicj-dl-16.png"));
+		notDownloadingIcon = new Image(display, 
+				SWTView.class.getResourceAsStream("emusicj-nodl-16.png"));
+		buildSystemTray(this, notDownloadingIcon);
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
@@ -233,7 +240,7 @@ SelectionListener, ControlListener {
 	private void buildSystemTray(SWTView view, Image icon) {
 		Tray tray = display.getSystemTray();
 		if (tray != null)
-			sysTray = new SystemTrayManager(view, icon, tray, "eMusic/J");		
+			sysTray = new SystemTrayManager(view, icon, tray, Constants.APPNAME);		
 	}
 
 	/**
@@ -459,6 +466,11 @@ SelectionListener, ControlListener {
 			windowMovedOrResized();
 			if (update != null)
 				updateAvailable(update);
+			synchronized (deferredList) {
+				for (Runnable r : deferredList)
+					asyncExec(r);
+				deferredList.clear();
+			}
 			while (!shell.isDisposed()){
 				if (!display.readAndDispatch()){
 					display.sleep();
@@ -539,9 +551,7 @@ SelectionListener, ControlListener {
 	}
 	
 	public void error(final String msgTitle, final String msg) {
-		if (!running) // TODO queue up the errors for later.
-			return;
-		asyncExec(new Runnable() {
+		defer(new Runnable() {
 			public void run() {
 				MessageBox about = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 				about.setText(msgTitle);
@@ -602,6 +612,40 @@ SelectionListener, ControlListener {
 		if (shell.isVisible()) shell.setVisible(false);
 		else if (!shell.isVisible()) {shell.setVisible(true); shell.setMinimized(false);} 
 		else if (shell.getMinimized()) {shell.setMinimized(false); shell.setActive();}
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.view.IEMusicView#downloadCount(int, int, int)
+	 */
+	public void downloadCount(final int dl, final int finished, final int total) {
+		defer(new Runnable() {
+			public void run() {
+				
+				sysTray.setText(Constants.APPNAME+": "+dl+" downloading, "+finished+
+						" finished, "+total+" total");
+				if (dl == 0)
+					sysTray.setImage(notDownloadingIcon);
+				else
+					sysTray.setImage(downloadingIcon);
+			}});
+	}
+	
+	/**
+	 * Allows execution of something to be deferred until later. Later usually
+	 * means when the view has been initialised (to allow recieving and
+	 * processing events when starting up, but actually executing them later),
+	 * or next time the event thread comes around. Deferred events will always
+	 * be executed during the UI thread, so can happily make GUI modifications.
+	 * @param code
+	 */
+	public void defer(Runnable code) {
+		if (running) {
+			asyncExec(code);			
+		} else {
+			synchronized (deferredList) {
+				deferredList.add(code);
+			}
+		}
 	}
 
 }

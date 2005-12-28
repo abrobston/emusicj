@@ -1,4 +1,7 @@
-V0.13 1005-12-16:
+V0.13-svn (development)
+* System tray icon, supports hiding/showing the window and quitting the program
+* Application icon
+V0.13 2005-12-16:
 * Fixed bug that made download of MP3s break (oops)
 * Very minor change to how resuming is handled
 V0.12 2005-11-28:

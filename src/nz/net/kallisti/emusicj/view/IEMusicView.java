@@ -61,4 +61,13 @@ public interface IEMusicView {
 	 */
 	public void updateAvailable(String newVersion);
 
+	/**
+	 * Notifies the view of the current number of files in the list, and how
+	 * many are currently downloading
+	 * @param dl the number currently downloading
+	 * @param finished the number of finished downloads
+	 * @param total the total number of files
+	 */
+	public void downloadCount(int dl, int finished, int total);
+
 }

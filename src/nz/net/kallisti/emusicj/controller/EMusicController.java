@@ -176,13 +176,19 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 			return;
 		if (shuttingDown)
 			return;
-		int count = 0;
+		int count = 0, finished = 0;
+		int total = downloadsModel.getDownloadMonitors().size();
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 			if (mon.getDownloadState() == DLState.DOWNLOADING ||
 					mon.getDownloadState() == DLState.CONNECTING) {
 				count++;
 			}
+			if (mon.getDownloadState() == DLState.FINISHED) {
+				finished++;
+			}
 		}
+		if (view != null)
+			view.downloadCount(count, finished, total);
 		int num = prefs.getMinDownloads() - count;
 		if (num > 0) {
 			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {

@@ -9,13 +9,13 @@ package nz.net.kallisti.emusicj;
  */
 public class Constants {
 
-    public final static String VERSION = "0.13";
+    public final static String VERSION = "0.13-svn";
     
     public final static String APPNAME = "eMusic/J";
 
 	public static final String STATE_DIR = ".emusicj";
 
-	public static final String APPURL = "http://www.kallisti.net.nz/RobinsStuff/EMusicJ";
+	public static final String APPURL = "http://www.kallisti.net.nz/EMusicJ";
 
 	public static final String ABOUT_BOX_TEXT = 
 		"This program was written by Robin Sheat <robin@kallisti.net.nz> "+
