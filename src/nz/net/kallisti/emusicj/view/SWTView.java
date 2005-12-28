@@ -18,6 +18,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
+import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 
 import org.eclipse.swt.SWT;
@@ -44,6 +45,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tray;
 
 /**
  * <p>This is the main class for providing the user interface. It uses SWT to
@@ -82,6 +84,7 @@ SelectionListener, ControlListener {
 	private SashForm mainArea;
 	private int sashTop=50;
 	private int sashBottom=50;
+	private SystemTrayManager sysTray;
 	
 	public SWTView() {
 		super();
@@ -182,6 +185,8 @@ SelectionListener, ControlListener {
 	 */
 	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
 		setAppIcon(shell);
+		buildSystemTray(this, new Image(display, 
+				SWTView.class.getResourceAsStream("emusicj-16.png")));
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
@@ -220,6 +225,17 @@ SelectionListener, ControlListener {
 		});
 	}
 	
+	/**
+	 * Creates the system tray icon and controller object
+	 * @param view this, i.e. the SWTView that gets the events
+	 * @param icon the image to use as the system tray icon
+	 */
+	private void buildSystemTray(SWTView view, Image icon) {
+		Tray tray = display.getSystemTray();
+		if (tray != null)
+			sysTray = new SystemTrayManager(view, icon, tray, "eMusic/J");		
+	}
+
 	/**
 	 * Sets up the application icon stuff
 	 * @param shell the application's shell
@@ -484,7 +500,7 @@ SelectionListener, ControlListener {
 	}
 	
 	public void downloadsModelChanged(IDownloadsModel model) {
-		assert model == downloadsModel : "Received event for unknown IDownloadsModel";
+		assert model == downloadsModel : "Received event for unknown IDownloadsModel";		
 		updateListFromModel();
 	}
 	
@@ -557,6 +573,10 @@ SelectionListener, ControlListener {
             clipboard = new Clipboard(display);
         return clipboard;
     }
+    
+    public Shell getShell() {
+    		return shell;
+    }
 
 	public void windowMovedOrResized() {
 		windowLoc = shell.getBounds();
@@ -570,6 +590,18 @@ SelectionListener, ControlListener {
 
 	public void controlResized(ControlEvent e) {
 		windowMovedOrResized();
+	}
+
+	/**
+	 * This method should be called to indicate a system tray icon has been 
+	 * clicked. It will determine what needs to happen as a result.
+	 */
+	public void trayClicked() {
+		// Note that the order of checks here is fairly important, making a shell
+		// not visible causes an implicit minimisation
+		if (shell.isVisible()) shell.setVisible(false);
+		else if (!shell.isVisible()) {shell.setVisible(true); shell.setMinimized(false);} 
+		else if (shell.getMinimized()) {shell.setMinimized(false); shell.setActive();}
 	}
 
 }
