@@ -181,6 +181,7 @@ SelectionListener, ControlListener {
 	 * @param shell the shell to build the interface on
 	 */
 	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
+		setAppIcon(shell);
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
@@ -219,6 +220,16 @@ SelectionListener, ControlListener {
 		});
 	}
 	
+	/**
+	 * Sets up the application icon stuff
+	 * @param shell the application's shell
+	 */
+	private void setAppIcon(Shell shell) {
+		final Image appIcon = new Image(display, 
+				SWTView.class.getResourceAsStream("emusicj-app.png"));
+		shell.setImage(appIcon);
+	}
+
 	/**
 	 * Builds the toolbar contents and events
 	 * @param toolBar the toolbar to add stuff to
