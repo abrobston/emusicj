@@ -60,6 +60,10 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   <exec executable="chmod" dir="${dist.dir}/emusicj-linux" os="Linux">
   	<arg line="+x emusicj"/>
   </exec>
+  <!-- create an .xpm icon from the app icon PNG file -->
+  <exec executable="convert" dir="${src.dir}/images" os="Linux">
+	<arg line="emusicj-app.png ${dist.dir}/emusicj-linux/emusicj.xpm"/>
+  </exec>
 </target>
 
 <target name="view" description="Displays Javadoc documentation in a browser.">
