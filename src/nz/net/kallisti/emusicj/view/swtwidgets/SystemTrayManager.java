@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.TrayItem;
  * <p>Manages the system tray icon and events for the application. Any events that
  * occur are passed on to SWTView.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -64,7 +64,7 @@ public class SystemTrayManager {
 	 * @param text the new text
 	 */
 	public void setText(String text) {
-		item.setText(text);
+		item.setToolTipText(text);
 	}
 
 	/**

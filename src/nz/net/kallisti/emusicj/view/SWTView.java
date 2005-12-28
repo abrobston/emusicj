@@ -77,7 +77,6 @@ SelectionListener, ControlListener {
 	private ToolItem cancelButton;
 	private Preferences prefs = Preferences.getInstance();
 	private boolean running = false;
-	private String update;
 	private Rectangle windowLoc;
 	private ToolItem requeueButton;
 	private FileInfoPanel fileInfo;
@@ -464,8 +463,6 @@ SelectionListener, ControlListener {
 			shell.addControlListener(this);
 			running  = true;
 			windowMovedOrResized();
-			if (update != null)
-				updateAvailable(update);
 			synchronized (deferredList) {
 				for (Runnable r : deferredList)
 					asyncExec(r);
@@ -561,18 +558,13 @@ SelectionListener, ControlListener {
 		});
 	}
 
-
 	public void updateAvailable(final String newVersion) {
-		if (!running) {
-			update = newVersion;
-		} else {
-			asyncExec(new Runnable() {
-				public void run() {
-					UpdateDialogue dialogue = new UpdateDialogue(shell, newVersion);
-					dialogue.open();
-				}
-			});
-		}
+		defer(new Runnable() {
+			public void run() {
+				UpdateDialogue dialogue = new UpdateDialogue(shell, newVersion);
+				dialogue.open();
+			}
+		});
 	}
 
     /**
@@ -619,8 +611,7 @@ SelectionListener, ControlListener {
 	 */
 	public void downloadCount(final int dl, final int finished, final int total) {
 		defer(new Runnable() {
-			public void run() {
-				
+			public void run() {				
 				sysTray.setText(Constants.APPNAME+": "+dl+" downloading, "+finished+
 						" finished, "+total+" total");
 				if (dl == 0)

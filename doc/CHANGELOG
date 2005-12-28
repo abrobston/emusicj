@@ -1,6 +1,7 @@
-V0.13-svn (development)
-* System tray icon, supports hiding/showing the window and quitting the program
+V0.14 2005-12-29
+* System tray icon, supports hiding/showing the window, quitting the program, shows download status
 * Application icon
+* Added ability to defer events within the GUI, so that if the GUI hasn't yet been displayed, messages or actions can be buffered until the GUI comes up
 V0.13 2005-12-16:
 * Fixed bug that made download of MP3s break (oops)
 * Very minor change to how resuming is handled
