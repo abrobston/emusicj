@@ -162,7 +162,7 @@ SelectionListener, ControlListener {
 					for (IDownloadMonitor mon : downloads) 
 						if (addedMons.contains(mon)) {
 							DownloadDisplay disp = new DownloadDisplay(
-									downloadsListComp, SWT.NONE);
+									downloadsListComp, SWT.NONE, display);
 							downloadsListComp.addSelectableControl(disp);
 							disp.setLayoutData(new GridData(SWT.FILL, 
 									SWT.BEGINNING, true, false));

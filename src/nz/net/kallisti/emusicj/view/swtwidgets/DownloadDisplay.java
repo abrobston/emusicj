@@ -10,9 +10,12 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -29,7 +32,9 @@ import org.eclipse.swt.widgets.TypedListener;
 public class DownloadDisplay extends Composite 
 implements IDownloadMonitorListener, ISelectableControl {
 	
-	private Label label;
+	private Label titleLabel;
+	private Label statusLabel;
+	private Composite labelArea;
 	private ProgressBar progBar;
 	private IDownloadMonitor monitor;
 	private PollThread pThread;
@@ -45,17 +50,52 @@ implements IDownloadMonitorListener, ISelectableControl {
 	 * @param parent
 	 * @param style
 	 */
-	public DownloadDisplay(Composite parent, int style) {
+	public DownloadDisplay(Composite parent, int style, Display display) {
 		super(parent, style);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
 		this.setLayout(gridLayout);
-		label = new Label(this, 0);
-		label.addMouseListener(new MouseAdapter() {
+		labelArea = new Composite(this, SWT.NONE);
+		labelArea.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				notifyListeners(SWT.Selection, new Event());
 			}
 		});
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 2;
+		labelArea.setLayout(gridLayout);
+		labelArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+		titleLabel = new Label(labelArea, 0);
+		titleLabel.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				notifyListeners(SWT.Selection, new Event());
+			}
+		});
+		GridData gd = new GridData();
+		gd.horizontalAlignment = SWT.LEFT;
+		gd.grabExcessHorizontalSpace = true;
+		titleLabel.setLayoutData(gd);
+		
+		statusLabel = new Label(labelArea, 0);
+		statusLabel.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				notifyListeners(SWT.Selection, new Event());
+			}
+		});
+		Font initialFont = statusLabel.getFont();
+		FontData[] fontData = initialFont.getFontData();
+		for (int i = 0; i < fontData.length; i++) {
+			fontData[i].setStyle(SWT.BOLD);
+		}
+		Font newFont = new Font(display, fontData);
+		statusLabel.setFont(newFont);
+		
+		gd = new GridData();
+		gd.horizontalAlignment = SWT.RIGHT;
+		gd.grabExcessHorizontalSpace = true;
+		gd.minimumWidth = SWT.DEFAULT;
+		statusLabel.setLayoutData(gd);
+		
 		progBar = new ProgressBar(this, SWT.SMOOTH | SWT.HORIZONTAL);
 		progBar.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
@@ -116,17 +156,23 @@ implements IDownloadMonitorListener, ISelectableControl {
 	
 	private void displayLabel() {
 		final StringBuffer text = new StringBuffer();
-		text.append(lblName+" - ");
 		text.append(lblState);
 		if (lblProgress != null)
 			text.append(" "+lblProgress);
 		if (!isDisposed()) {
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
-					if (!label.isDisposed())
-						label.setText(text.toString());
-					if (!DownloadDisplay.this.isDisposed())
+					if (!titleLabel.isDisposed())
+						titleLabel.setText(lblName);
+					if (!statusLabel.isDisposed())
+						statusLabel.setText(text.toString());
+					if (!DownloadDisplay.this.isDisposed()) {
 						DownloadDisplay.this.layout();
+						titleLabel.pack();
+						statusLabel.pack();
+						labelArea.pack();
+						layout();
+					}
 				}
 			});
 		}        
@@ -212,19 +258,25 @@ implements IDownloadMonitorListener, ISelectableControl {
 	public void select() {
 		oldBG = getBackground();
 		//oldProgBG = progBar.getBackground();
-		oldLabelBG = label.getBackground();
-		oldLabelFG = label.getForeground();
+		oldLabelBG = titleLabel.getBackground();
+		oldLabelFG = titleLabel.getForeground();
 		setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		labelArea.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		//progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
-		label.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
-		label.setForeground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+		titleLabel.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		titleLabel.setForeground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+		statusLabel.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		statusLabel.setForeground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 	}
 	
 	public void unselect() {
 		setBackground(oldBG);
+		labelArea.setBackground(oldBG);
 		//progBar.setBackground(oldProgBG);
-		label.setBackground(oldLabelBG);
-		label.setForeground(oldLabelFG);
+		titleLabel.setBackground(oldLabelBG);
+		titleLabel.setForeground(oldLabelFG);
+		statusLabel.setBackground(oldLabelBG);
+		statusLabel.setForeground(oldLabelFG);
 	}
 	
 	public void addSelectionListener(SelectionListener listener) {
