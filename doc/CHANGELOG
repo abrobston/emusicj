@@ -1,4 +1,4 @@
-V0.14-svn
+V0.15 2006-01-04
 * The display for the title and download status no longer gets ugly when the 
   title is long. Now the download status will always be displayed, and the title 
   truncated
