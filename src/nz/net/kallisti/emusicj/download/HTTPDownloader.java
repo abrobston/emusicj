@@ -73,8 +73,10 @@ public class HTTPDownloader implements IDownloader {
 			if (tState.equals("CONNECTING") || tState.equals("DOWNLOADING")) {
 				setState(DLState.CONNECTING);
 				start();
-			} else if (tState.equals("STOPPED")) {
-				setState(DLState.STOPPED);
+			} else if (tState.equals("STOPPED") || tState.equals("CANCELLED")) {
+                // in v.0.14-svn, STOPPED became CANCELLED. This double-check is
+                // for backwards compatability
+				setState(DLState.CANCELLED);
 			} else if (tState.equals("PAUSED")) {
 				setState(DLState.PAUSED);
 			} else if (tState.equals("FINISHED")) {
@@ -127,7 +129,7 @@ public class HTTPDownloader implements IDownloader {
 	public void stop() {
 		if (dlThread != null)
 			dlThread.finish();
-		state = DLState.STOPPED;
+		state = DLState.CANCELLED;
 		monitor.setState(state);
 		dlThread = null;
 	}
@@ -143,7 +145,7 @@ public class HTTPDownloader implements IDownloader {
 	public void hardStop() {
 		if (dlThread != null)
 			dlThread.hardFinish();
-		state = DLState.STOPPED;
+		state = DLState.CANCELLED;
 		monitor.setState(state);
 		dlThread = null;
 	}

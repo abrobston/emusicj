@@ -146,7 +146,7 @@ implements IDownloadMonitorListener, ISelectableControl {
 		else if (state == DLState.CONNECTING) { lblState="Connecting"; lblProgress="";}
 		else if (state == DLState.DOWNLOADING) { lblState="Downloading"; }
 		else if (state == DLState.PAUSED) { lblState="Paused"; }
-		else if (state == DLState.STOPPED) { lblState="Stopped"; lblProgress="";}
+		else if (state == DLState.CANCELLED) { lblState="Cancelled"; lblProgress="";}
 		else if (state == DLState.FINISHED) { lblState="Finished"; lblProgress="";}
 		else if (state == DLState.FAILED) { lblState="Failed"; lblProgress="";}
 		if (pThread != null)

@@ -379,7 +379,7 @@ SelectionListener, ControlListener {
 	 */
 	public void cleanUpDownloads() {
 		controller.removeDownloads(DLState.FINISHED);
-		controller.removeDownloads(DLState.STOPPED);
+		controller.removeDownloads(DLState.CANCELLED);
 		//controller.removeDownloads(DLState.FAILED);
 	}
 	

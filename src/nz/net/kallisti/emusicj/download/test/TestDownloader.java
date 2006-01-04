@@ -65,7 +65,7 @@ public class TestDownloader implements IDownloader {
 	 * @see nz.net.kallisti.emusicj.download.IDownloader#stop()
 	 */
 	public void stop() {
-		setState(DLState.STOPPED);
+		setState(DLState.CANCELLED);
 		if (dlThread != null) {
 			dlThread.finish();        
 			dlThread.interrupt();

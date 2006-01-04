@@ -10,7 +10,7 @@ package nz.net.kallisti.emusicj.download;
  */
 public interface IDownloadMonitor {
 
-    public enum DLState { NOTSTARTED, CONNECTING, DOWNLOADING, PAUSED, STOPPED,
+    public enum DLState { NOTSTARTED, CONNECTING, DOWNLOADING, PAUSED, CANCELLED,
         FINISHED, FAILED } 
     
     /**
