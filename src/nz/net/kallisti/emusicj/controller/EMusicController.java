@@ -243,7 +243,7 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	
     public void cancelDownloads() {
         for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
-            if (mon.getDownloadState() == DLState.FINISHED)
+            if (mon.getDownloadState() != DLState.FINISHED)
                 mon.getDownloader().stop();           
         }
         monitorStateChanged(null);
