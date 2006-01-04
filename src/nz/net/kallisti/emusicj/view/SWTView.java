@@ -344,7 +344,7 @@ SelectionListener, ControlListener {
 				this, "pauseDownloads");
 		SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads\tCtrl-R", SWT.CTRL+'R', 
 				this, "resumeDownloads");
-        SWTUtils.createMenuItem(downloadsMenu, "&Cancel all downloads", SWT.NONE, 
+        SWTUtils.createMenuItem(downloadsMenu, "Cancel &all downloads", SWT.NONE, 
                 this, "cancelAllDownloads");
 		new MenuItem(downloadsMenu, SWT.SEPARATOR);
 		SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads\tCtrl-C", SWT.CTRL+'C', 
