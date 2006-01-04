@@ -378,7 +378,7 @@ SelectionListener, ControlListener {
     /**
      * Tell the controller to cancel all downloads
      */
-    public void cancelDownloads() {
+    public void cancelAllDownloads() {
         controller.cancelDownloads();
     }
 	
