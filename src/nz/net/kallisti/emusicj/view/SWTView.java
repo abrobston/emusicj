@@ -18,6 +18,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
+import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 
@@ -88,6 +89,7 @@ SelectionListener, ControlListener {
 	private Image notDownloadingIcon;
 	private ArrayList<Runnable> deferredList =
 		new ArrayList<Runnable>();
+    private StatusLine statusLine;
 	
 	public SWTView() {
 		super();
@@ -229,6 +231,7 @@ SelectionListener, ControlListener {
 		        event.doit = true;
 		    }
 		});
+        statusLine = new StatusLine(shell, SWT.NONE);
 	}
 	
 	/**
@@ -647,5 +650,13 @@ SelectionListener, ControlListener {
 			}
 		}
 	}
+
+    public void pausedStateChanged(boolean state) {
+        if (state) {
+            statusLine.setText("All Downloads Paused");
+        } else {
+            statusLine.unsetText();
+        }
+    }
 
 }

@@ -5,6 +5,8 @@ V0.14-svn
 * 'Stopped' has been renamed to 'Cancelled' in order to be a bit clearer about
   what is really going on
 * Added a 'Cancel all' menu item
+* Added a status bar that indicates when the downloads are paused, this'll
+  probably be used for more things in the future
 V0.14 2005-12-29
 * System tray icon, supports hiding/showing the window, quitting the program, 
   shows download status

@@ -70,4 +70,11 @@ public interface IEMusicView {
 	 */
 	public void downloadCount(int dl, int finished, int total);
 
+    /**
+     * If the 'all paused' state is changed, this tells the view about it.
+     * @param state the new all paused state, true if downloads are paused, 
+     * false otherwise.
+     */
+    public void pausedStateChanged(boolean state);
+
 }

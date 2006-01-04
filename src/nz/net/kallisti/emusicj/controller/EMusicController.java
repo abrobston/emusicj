@@ -75,11 +75,12 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 			mon.addStateListener(this);
 		}
 		// Pass the system state on to the view to ensure it's up to date
-		if (view != null)
+		if (view != null) {
 			view.setDownloadsModel(downloadsModel);
-		
-		if (view != null)
 			view.setState(IEMusicView.ViewState.RUNNING);
+            view.pausedStateChanged(noAutoStartDownloads);
+        }
+            
 		//List<IDownloader> downloads = downloadsModel.getDownloaders();
 		//if (downloads.size() > 0)
 		//	downloads.get(0).start();
@@ -223,6 +224,7 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	
 	public void pauseDownloads() {
 		noAutoStartDownloads = true;
+        view.pausedStateChanged(noAutoStartDownloads);
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 			if (mon.getDownloadState() == DLState.DOWNLOADING ||
 					mon.getDownloadState() == DLState.CONNECTING) {
@@ -238,6 +240,7 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 			}
 		}
 		noAutoStartDownloads = false;
+        view.pausedStateChanged(noAutoStartDownloads);
 		monitorStateChanged(null);
 	}
 	
