@@ -101,4 +101,10 @@ public interface IEMusicController {
 	 */
 	public void loadMetafile(String path, String[] fileNames);
 
+    /**
+     * Marks all downloads that are currently on the screen as 'Cancelled',
+     * unless they're already marked 'Finished'
+     */
+    public void cancelDownloads();
+
 }

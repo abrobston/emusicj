@@ -3,7 +3,8 @@ V0.14-svn
   title is long. Now the download status will always be displayed, and the title 
   truncated
 * 'Stopped' has been renamed to 'Cancelled' in order to be a bit clearer about
-  what is really going on.
+  what is really going on
+* Added a 'Cancel all' menu item
 V0.14 2005-12-29
 * System tray icon, supports hiding/showing the window, quitting the program, 
   shows download status

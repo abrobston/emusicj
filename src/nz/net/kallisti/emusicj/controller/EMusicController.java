@@ -241,6 +241,14 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 		monitorStateChanged(null);
 	}
 	
+    public void cancelDownloads() {
+        for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+            if (mon.getDownloadState() == DLState.FINISHED)
+                mon.getDownloader().stop();           
+        }
+        monitorStateChanged(null);
+    }
+    
 	public void removeDownloads(DLState state) {
 		ArrayList<IDownloader> toRemove = new ArrayList<IDownloader>();
 		for (IDownloader dl : downloadsModel.getDownloaders()) {
