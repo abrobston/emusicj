@@ -220,6 +220,7 @@ implements IDownloadMonitorListener, ISelectableControl {
 		public void run() {
 			int oldPerc = (int)monitor.getDownloadPercent();
 			long oldBytesDown = monitor.getBytesDown();
+			boolean alreadyFinished = false;
 			while (!parent.isDisposed() && !done) {
 				if (monitor.getDownloadState() == DLState.DOWNLOADING) {
 					int perc = (int)monitor.getDownloadPercent();
@@ -238,7 +239,9 @@ implements IDownloadMonitorListener, ISelectableControl {
 						oldBytesDown = bytesDown;
 						displayLabel();						
 					}
-				} else if (monitor.getDownloadState() == DLState.FINISHED) {
+				} else if (monitor.getDownloadState() == DLState.FINISHED
+						&& !alreadyFinished) {
+					alreadyFinished = true;
 					parent.updateProgressBar(100);
 					lblProgress = "";
 					displayLabel();
