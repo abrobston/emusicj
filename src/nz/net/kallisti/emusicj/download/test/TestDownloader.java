@@ -159,5 +159,21 @@ public class TestDownloader implements IDownloader {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloader#getFailureCount()
+	 */
+	public int getFailureCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloader#resetFailureCount()
+	 */
+	public void resetFailureCount() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

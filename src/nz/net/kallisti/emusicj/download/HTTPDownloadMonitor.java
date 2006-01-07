@@ -74,5 +74,19 @@ public class HTTPDownloadMonitor implements IDownloadMonitor {
 	public IDownloader getDownloader() {
 		return downloader;
 	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getFailureCount()
+	 */
+	public int getFailureCount() {
+		return downloader.getFailureCount();
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#resetFailureCount()
+	 */
+	public void resetFailureCount() {
+		downloader.resetFailureCount();
+	}
 	
 }

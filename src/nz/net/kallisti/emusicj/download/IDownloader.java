@@ -41,4 +41,8 @@ public interface IDownloader {
     
     public File getOutputFile();
     
+    public int getFailureCount();
+    
+    public void resetFailureCount();
+    
 }

@@ -196,7 +196,8 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 				// Find downloads that are not started, or failed and not
 				// the same one that just changed
 				if (mon.getDownloadState() == DLState.NOTSTARTED ||
-						((monitor != mon) && mon.getDownloadState() == DLState.FAILED)) {
+						((monitor != mon) && mon.getDownloadState() == DLState.FAILED)
+						&& mon.getFailureCount() < Constants.MAX_FAILURES) {
 					mon.getDownloader().start();
 					num--;
 					if (num <= 0)
@@ -207,6 +208,7 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	}
 	
 	public void startDownload(IDownloader dl) {
+		dl.resetFailureCount();
 		dl.start();
 	}
 	

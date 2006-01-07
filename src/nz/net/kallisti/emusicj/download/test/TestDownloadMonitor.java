@@ -90,4 +90,20 @@ public class TestDownloadMonitor implements IDownloadMonitor {
 		return downloader;
 	}
 
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#getFailureCount()
+	 */
+	public int getFailureCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloadMonitor#resetFailureCount()
+	 */
+	public void resetFailureCount() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

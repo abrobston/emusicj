@@ -39,6 +39,7 @@ public class HTTPDownloader implements IDownloader {
 	protected volatile DLState state;
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
+	protected int failureCount = 0;
 	
 	public HTTPDownloader(URL url, File outputFile) {
 		super();
@@ -173,6 +174,7 @@ public class HTTPDownloader implements IDownloader {
 	private void downloadError(Exception e) {
         System.err.println(dlThread+": A download error occurred:");
 		e.printStackTrace();
+		failureCount++;
 		state = DLState.FAILED;
 		monitor.setState(state);
 		dlThread = null;
@@ -180,6 +182,7 @@ public class HTTPDownloader implements IDownloader {
 	
 	private void downloadError(String s) {
 		System.err.println(dlThread+": "+s);
+		failureCount++;
 		state = DLState.FAILED;
 		monitor.setState(state);
 		dlThread = null;
@@ -200,6 +203,14 @@ public class HTTPDownloader implements IDownloader {
 	
 	public int hashCode() {
 		return outputFile.hashCode();
+	}
+	
+	public int getFailureCount() {
+		return failureCount;
+	}
+	
+	public void resetFailureCount() {
+		failureCount = 0;
 	}
 	
 	/**

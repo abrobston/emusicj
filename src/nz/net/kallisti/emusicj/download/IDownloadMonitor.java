@@ -62,4 +62,14 @@ public interface IDownloadMonitor {
      * @return the downloader instance
      */
     public IDownloader getDownloader();
+    
+    /**
+     * Gets the number of times the downloads have failed
+     */
+    public int getFailureCount();
+    
+    /**
+     * Resets the failure count back to zero
+     */
+    public void resetFailureCount();
 }

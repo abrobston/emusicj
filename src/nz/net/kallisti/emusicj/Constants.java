@@ -28,4 +28,10 @@ public class Constants {
 
 	public static final String UPDATE_URL = "http://www.kallisti.net.nz/~robin/emusicj-version.txt";
 
+	/**
+	 * Maximum amount of failures allowed before we give up automatically
+	 * starting the download
+	 */
+	public static final int MAX_FAILURES = 5;
+
 }
