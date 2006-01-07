@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,8 +40,19 @@ import org.w3c.dom.NodeList;
  */
 public class DownloadsModel implements IDownloadsModel {
 
+	/**
+	 * Contains the downloads as an ordered list
+	 */
 	List<IDownloader> downloads;
+	/**
+	 * Contains the listeners listening to changes in the state of the model
+	 */
     private List<IDownloadsModelListener> listeners;
+    /**
+     * Contains the download in a way that can be searched quickly. <i>Must</i>
+     * be kept synchronous with {@link downloads} at all times. 
+     */
+    private Set<IDownloader> dlsHash;
     
 	/**
 	 * Initialise the class, and create some {@link TestDownloadMonitor}s.
@@ -47,12 +60,13 @@ public class DownloadsModel implements IDownloadsModel {
 	 */
 	public DownloadsModel() {
 		downloads = Collections.synchronizedList(new ArrayList<IDownloader>());
+		dlsHash = Collections.synchronizedSet(new HashSet<IDownloader>());
 		listeners = Collections.synchronizedList(new ArrayList<IDownloadsModelListener>());
 	}
 	
 	/**
 	 * Restores the download model from an XML element. Only the downloaders
-	 * are restored.
+	 * are restored. (Note: not actually implemented yet)
 	 * @param el the element to do the restore from
 	 */
 	public DownloadsModel(Element el) {
@@ -135,9 +149,13 @@ public class DownloadsModel implements IDownloadsModel {
 					continue;
 				}
 				if (dlNode.getNodeName().equals("HTTPMusicDownloader")) {
-				    downloads.add(new HTTPMusicDownloader((Element)dlNode));
+					HTTPMusicDownloader dl = new HTTPMusicDownloader((Element)dlNode);
+				    downloads.add(dl);
+					dlsHash.add(dl);
                 } else if (dlNode.getNodeName().equals("HTTPDownloader")) {
-                    downloads.add(new HTTPDownloader((Element)dlNode));
+                		HTTPDownloader dl = new HTTPDownloader((Element)dlNode);
+                    downloads.add(dl);
+                    dlsHash.add(dl);
                 }
 			}
 		} catch (Exception e) {
@@ -173,8 +191,11 @@ public class DownloadsModel implements IDownloadsModel {
      * @see nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti.emusicj.download.IMusicDownloader)
      */
     public void addDownload(IDownloader dl) {
-        downloads.add(dl);
-        notifyListeners();
+    		if (!dlsHash.contains(dl)) {
+    			downloads.add(dl);
+    			dlsHash.add(dl);
+    			notifyListeners();
+    		}
     }
 
     /* (non-Javadoc)
@@ -182,15 +203,21 @@ public class DownloadsModel implements IDownloadsModel {
      */
     public void removeDownloads(List<IDownloader> toRemove) {
         if (toRemove.size() != 0) {
-            for (IDownloader dl : toRemove)
-                downloads.remove(dl);
+            for (IDownloader dl : toRemove) {
+            		if (dlsHash.contains(dl)) {
+            			downloads.remove(dl);
+            			dlsHash.remove(dl);
+            		}
+            }
             notifyListeners();
         }
     }
 
     public void removeDownload(IDownloader dl) {
-        downloads.remove(dl);
-        notifyListeners();
+    		if (dlsHash.contains(dl)) {
+    			downloads.remove(dl);
+    			notifyListeners();
+    		}
     }
     
     private void notifyListeners() {

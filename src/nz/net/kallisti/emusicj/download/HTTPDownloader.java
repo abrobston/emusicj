@@ -186,6 +186,23 @@ public class HTTPDownloader implements IDownloader {
 	}
 	
 	/**
+	 * Determines if this instance is the equivalent of another one. The
+	 * comparison is made based on the output filename.
+	 * @param o the oject to compare to
+	 * @return true if the output paths are the same, false otherwise
+	 */
+	public boolean equals(Object o) {
+		if (o==null) return false;
+		if (!(o instanceof HTTPDownloader)) return false;
+		HTTPDownloader d = (HTTPDownloader)o;
+		return outputFile.equals(d.outputFile);
+	}
+	
+	public int hashCode() {
+		return outputFile.hashCode();
+	}
+	
+	/**
 	 * <p>This class does the actual downloading of the file</p>
 	 */
 	public class DownloadThread extends Thread {
