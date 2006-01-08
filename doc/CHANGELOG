@@ -4,6 +4,7 @@ V0.15-svn (development)
   currently untested)
 * Refactored the display of extra information (in the info panel) to be
   much more general, to allow more things to be displayed
+* Album covers now show the cover when they are selected
 V0.15 2006-01-04
 * The display for the title and download status no longer gets ugly when the 
   title is long. Now the download status will always be displayed, and the title 

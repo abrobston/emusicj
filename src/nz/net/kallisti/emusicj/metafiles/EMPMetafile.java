@@ -14,9 +14,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import nz.net.kallisti.emusicj.controller.Preferences;
-import nz.net.kallisti.emusicj.download.HTTPDownloader;
-import nz.net.kallisti.emusicj.download.MusicDownloader;
+import nz.net.kallisti.emusicj.download.CoverDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
+import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.metafiles.streams.EMPDecoderStream;
 
@@ -173,7 +173,7 @@ public class EMPMetafile implements IMetafile {
 		coverArtCache.put(coverArt, coverFile);
 		if (!coverFile.exists()) {
 			// add the downloader
-			downloaders.add(new HTTPDownloader(coverUrl, coverFile));
+			downloaders.add(new CoverDownloader(coverUrl, coverFile));
 		}
 		return coverFile;
 	}

@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import nz.net.kallisti.emusicj.download.CoverDownloader;
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
@@ -98,6 +99,10 @@ public class DownloadsModel implements IDownloadsModel {
 				Element dlEl = doc.createElement("MusicDownloader");
 				((MusicDownloader)dls[i]).saveTo(dlEl, doc);
 				el.appendChild(dlEl);
+			} else if (dls[i] instanceof CoverDownloader) {
+				Element dlEl = doc.createElement("CoverDownloader");
+				((CoverDownloader)dls[i]).saveTo(dlEl, doc);
+				el.appendChild(dlEl);				
 			} else if (dls[i] instanceof HTTPDownloader) {
                 Element dlEl = doc.createElement("HTTPDownloader");
                 ((HTTPDownloader)dls[i]).saveTo(dlEl, doc);
@@ -148,10 +153,15 @@ public class DownloadsModel implements IDownloadsModel {
 				if (!(dlNode.getNodeType() == Node.ELEMENT_NODE)) {
 					continue;
 				}
-				if (dlNode.getNodeName().equals("MusicDownloader")) {
+				if (dlNode.getNodeName().equals("MusicDownloader") ||
+						(dlNode.getNodeName().equals("HTTPMusicDownloader"))) { // backwards compatibility after class rename
 					MusicDownloader dl = new MusicDownloader((Element)dlNode);
 				    downloads.add(dl);
 					dlsHash.add(dl);
+				} else if (dlNode.getNodeName().equals("CoverDownloader")) {
+					CoverDownloader dl = new CoverDownloader((Element)dlNode);
+				    downloads.add(dl);
+					dlsHash.add(dl);					
                 } else if (dlNode.getNodeName().equals("HTTPDownloader")) {
                 		HTTPDownloader dl = new HTTPDownloader((Element)dlNode);
                     downloads.add(dl);

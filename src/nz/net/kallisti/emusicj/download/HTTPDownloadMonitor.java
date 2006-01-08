@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class HTTPDownloadMonitor implements IDownloadMonitor {
 	
-	private DLState state;
-	private HTTPDownloader downloader;
+	protected DLState state;
+	protected HTTPDownloader downloader;
 	private List<IDownloadMonitorListener> listeners;
 	
 	public HTTPDownloadMonitor() {

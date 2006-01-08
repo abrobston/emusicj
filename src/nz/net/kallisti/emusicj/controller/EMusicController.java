@@ -247,10 +247,13 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	}
 	
     public void cancelDownloads() {
+    		boolean oldState = noAutoStartDownloads;
+    		noAutoStartDownloads = true; // make sure crazy doesn't happen
         for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
             if (mon.getDownloadState() != DLState.FINISHED)
                 mon.getDownloader().stop();           
         }
+        noAutoStartDownloads = oldState;
         monitorStateChanged(null);
     }
     
