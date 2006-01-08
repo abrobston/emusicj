@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
  *
  * @author robin
  */
-public class HTTPMusicDownloader extends HTTPDownloader implements
+public class MusicDownloader extends HTTPDownloader implements
 		IMusicDownloader {
 	
 	private String trackName;
@@ -23,7 +23,7 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 	private int trackNum;
 	private File coverArt;
 	
-	public HTTPMusicDownloader(URL url, File outputFile,
+	public MusicDownloader(URL url, File outputFile,
 			int trackNum, String songName, String album, String artist) {
 		super(url, outputFile);
 		this.trackName = songName;
@@ -32,7 +32,7 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 		this.trackNum = trackNum;		
 	}
 	
-	public HTTPMusicDownloader(URL url, File outputFile, File coverArt,
+	public MusicDownloader(URL url, File outputFile, File coverArt,
 			int trackNum, String songName, String album, String artist) {
 		super(url, outputFile);
 		this.trackName = songName;
@@ -42,7 +42,7 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 		this.coverArt = coverArt;
 	}
 	
-	public HTTPMusicDownloader(Element el) throws MalformedURLException {
+	public MusicDownloader(Element el) throws MalformedURLException {
 		super(el);
 		String tNum = el.getAttribute("tracknum");
 		if (tNum != null)
@@ -59,7 +59,7 @@ public class HTTPMusicDownloader extends HTTPDownloader implements
 	
 	@Override
 	protected void createMonitor() {
-		monitor = new HTTPMusicDownloadMonitor(this);
+		monitor = new MusicDownloadMonitor(this);
 	}
 	
 	public void saveTo(Element el, Document doc) {

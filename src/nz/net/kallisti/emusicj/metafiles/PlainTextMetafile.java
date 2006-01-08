@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nz.net.kallisti.emusicj.controller.Preferences;
-import nz.net.kallisti.emusicj.download.HTTPMusicDownloader;
+import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
 
 /**
@@ -77,7 +77,7 @@ public class PlainTextMetafile implements IMetafile {
             Preferences prefs = Preferences.getInstance();
             File outputFile = new File(prefs.getFilename(tnum, parts[2], 
             		parts[3], parts[4], ".mp3"));
-            downloaders.add(new HTTPMusicDownloader(url, outputFile,
+            downloaders.add(new MusicDownloader(url, outputFile,
                     tnum, parts[2], parts[3], parts[4]));
         }
         return downloaders;

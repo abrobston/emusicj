@@ -15,7 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
-import nz.net.kallisti.emusicj.download.HTTPMusicDownloader;
+import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.metafiles.streams.EMPDecoderStream;
@@ -131,7 +131,7 @@ public class EMPMetafile implements IMetafile {
 		if (coverArt != null) 
 			coverArtFile = getCoverArtCached(coverArt, prefs, trackNum, 
 				title, album, artist);
-		downloaders.add(new HTTPMusicDownloader(url, outputFile, coverArtFile, trackNum, 
+		downloaders.add(new MusicDownloader(url, outputFile, coverArtFile, trackNum, 
 				title, album, artist));
 	}
 

@@ -9,14 +9,14 @@ import java.io.File;
  *
  * @author robin
  */
-public class HTTPMusicDownloadMonitor extends HTTPDownloadMonitor 
+public class MusicDownloadMonitor extends HTTPDownloadMonitor 
 	implements IMusicDownloadMonitor {
 	
-	public HTTPMusicDownloadMonitor() {
+	public MusicDownloadMonitor() {
 		super();
 	}
 	
-	public HTTPMusicDownloadMonitor(HTTPMusicDownloader downloader) {
+	public MusicDownloadMonitor(MusicDownloader downloader) {
 		super(downloader);
 	}
 	
@@ -46,8 +46,20 @@ public class HTTPMusicDownloadMonitor extends HTTPDownloadMonitor
 		return getMusicDownloader().getTrackNum();
 	}
 
-	public File getCoverArt() {
+	public File getImageFile() {
 		return getMusicDownloader().getCoverArt();
+	}
+	
+//	public File getCoverArt() {
+//		return getImageFile();
+//	}
+	
+	public String[][] getText() {
+		String[][] res = new String[3][2];
+		res[0][0] = "Title"; res[0][1] = getTrackName();
+		res[1][0] = "Album"; res[1][1] = getAlbumName();
+		res[2][0] = "Artist"; res[2][1] = getArtistName();		
+		return res;
 	}
 	
 }

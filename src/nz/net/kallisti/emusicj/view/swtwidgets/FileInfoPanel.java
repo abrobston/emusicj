@@ -1,10 +1,11 @@
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
+import nz.net.kallisti.emusicj.download.IDisplayableDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
-import nz.net.kallisti.emusicj.download.IMusicDownloadMonitor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -28,17 +29,12 @@ import org.eclipse.swt.widgets.Label;
 public class FileInfoPanel extends Composite implements DisposeListener {
 
 	//private ScrolledComposite displayArea;
-	private Label titleLabel;
-	private Label albumLabel;
-	private Label artistLabel;
-	private Label title;
-	private Label album;
-	private Label artist;
 	private Composite imageArea;
 	private Composite textArea;
 	private Label imageLabel;
 	private Display display;
     private Hashtable<File, Image> imageCache;
+    private ArrayList<Label> labels = new ArrayList<Label>();
 
 	/**
 	 * Creates an instance of FileInfoPanel with the provided parent and style.
@@ -60,21 +56,6 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
 				true, true));
 		textArea.setLayout(new GridLayout(2, false));
-		titleLabel = new Label(textArea, SWT.NONE);
-		titleLabel.setText("Title:");
-		titleLabel.setVisible(false);
-		title = new Label(textArea, SWT.NONE);
-		title.setVisible(false);
-		albumLabel = new Label(textArea, SWT.NONE);
-		albumLabel.setText("Album:");
-		albumLabel.setVisible(false);
-		album = new Label(textArea, SWT.NONE);
-		album.setVisible(false);
-		artistLabel = new Label(textArea, SWT.NONE);
-		artistLabel.setText("Artist:");
-		artistLabel.setVisible(false);
-		artist = new Label(textArea, SWT.NONE);
-		artist.setVisible(false);
 		imageArea.layout();
 		textArea.layout();
 		layout();
@@ -82,39 +63,35 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 	}
 	
 	public void setDownloader(IDownloadMonitor dl) {
-		// TODO image caching and disposing
-		// Done like this so I can add display of non-music stuff easily later
-		if (dl == null || !(dl instanceof IMusicDownloadMonitor)) {
-			titleLabel.setVisible(false);
-			title.setVisible(false);
-			albumLabel.setVisible(false);
-			album.setVisible(false);
-			artistLabel.setVisible(false);
-			artist.setVisible(false);
-            imageLabel.setImage(null);
-		} else if (dl instanceof IMusicDownloadMonitor) {
-			IMusicDownloadMonitor mdl = (IMusicDownloadMonitor)dl;
-			title.setText(mdl.getTrackName());
-			album.setText(mdl.getAlbumName());
-			artist.setText(mdl.getArtistName());
-            File coverFile = mdl.getCoverArt();
+		// Dispose all the labels being displayed at the moment...
+		for (Label l : labels) {
+			l.dispose();
+		}
+		labels.clear();
+		if (dl instanceof IDisplayableDownloadMonitor) {
+			IDisplayableDownloadMonitor ddl = (IDisplayableDownloadMonitor)dl;
+			String[][] textToDisplay = ddl.getText();
+			File coverFile = ddl.getImageFile();
             if (coverFile != null && !coverFile.toString().equals("")
             		&& coverFile.exists()) {
                 Image im = imageCache.get(coverFile); 
                 if (im == null) {
-                    im = new Image(display, mdl.getCoverArt().toString());
+                    im = new Image(display, ddl.getImageFile().toString());
                     imageCache.put(coverFile, im);
                 }
                 imageLabel.setImage(im);
             } else {
                 imageLabel.setImage(null);
             }
-			titleLabel.setVisible(true);
-			title.setVisible(true);
-			albumLabel.setVisible(true);
-			album.setVisible(true);
-			artistLabel.setVisible(true);
-			artist.setVisible(true);
+            // create the labels
+            for (int i=0; i<textToDisplay.length; i++) {
+            		Label l = new Label(textArea, SWT.NONE);
+            		l.setText(textToDisplay[i][0]+":");
+            		labels.add(l);
+            		l = new Label(textArea, SWT.NONE);
+            		l.setText(textToDisplay[i][1]);
+            		labels.add(l);            		
+            }
 		}
 		imageArea.layout();
 		imageArea.pack();
@@ -126,6 +103,10 @@ public class FileInfoPanel extends Composite implements DisposeListener {
         for (Image im : imageCache.values()) {
             im.dispose();
         }
+        for (Label l : labels) {
+        		l.dispose();
+        }
+        labels.clear();
     }
     
     

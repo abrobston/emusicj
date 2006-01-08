@@ -20,7 +20,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
-import nz.net.kallisti.emusicj.download.HTTPMusicDownloader;
+import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.test.TestDownloadMonitor;
@@ -75,7 +75,7 @@ public class DownloadsModel implements IDownloadsModel {
 	
 	/**
 	 * Writes the state of the downloaders into the provided stream. Note that 
-	 * currently only {@link HTTPMusicDownloader} is supported. The output
+	 * currently only {@link MusicDownloader} is supported. The output
 	 * into the stream is XML.
 	 * @param str the stream to save to
 	 * @return true if everything was OK
@@ -94,9 +94,9 @@ public class DownloadsModel implements IDownloadsModel {
 		IDownloader[] dls = new IDownloader[downloads.size()];
 		dls = downloads.toArray(dls);
 		for (int i=0; i<dls.length; i++) {
-			if (dls[i] instanceof HTTPMusicDownloader) {
-				Element dlEl = doc.createElement("HTTPMusicDownloader");
-				((HTTPMusicDownloader)dls[i]).saveTo(dlEl, doc);
+			if (dls[i] instanceof MusicDownloader) {
+				Element dlEl = doc.createElement("MusicDownloader");
+				((MusicDownloader)dls[i]).saveTo(dlEl, doc);
 				el.appendChild(dlEl);
 			} else if (dls[i] instanceof HTTPDownloader) {
                 Element dlEl = doc.createElement("HTTPDownloader");
@@ -148,8 +148,8 @@ public class DownloadsModel implements IDownloadsModel {
 				if (!(dlNode.getNodeType() == Node.ELEMENT_NODE)) {
 					continue;
 				}
-				if (dlNode.getNodeName().equals("HTTPMusicDownloader")) {
-					HTTPMusicDownloader dl = new HTTPMusicDownloader((Element)dlNode);
+				if (dlNode.getNodeName().equals("MusicDownloader")) {
+					MusicDownloader dl = new MusicDownloader((Element)dlNode);
 				    downloads.add(dl);
 					dlsHash.add(dl);
                 } else if (dlNode.getNodeName().equals("HTTPDownloader")) {
