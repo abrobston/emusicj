@@ -96,6 +96,8 @@ public class EMPMetafile implements IMetafile {
 		String filename = null;
 		String format = null;
 		String coverArt = null;
+		String genre = null;
+		String duration = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)
@@ -116,6 +118,10 @@ public class EMPMetafile implements IMetafile {
 				format = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("albumart"))
 				coverArt = node.getFirstChild().getNodeValue();
+			else if (node.getNodeName().equalsIgnoreCase("genre"))
+				genre = node.getFirstChild().getNodeValue();
+			else if (node.getNodeName().equalsIgnoreCase("duration"))
+				duration = node.getFirstChild().getNodeValue();			
 		}
 		URL url;
 		try {
@@ -131,8 +137,15 @@ public class EMPMetafile implements IMetafile {
 		if (coverArt != null) 
 			coverArtFile = getCoverArtCached(coverArt, prefs, trackNum, 
 				title, album, artist);
-		downloaders.add(new MusicDownloader(url, outputFile, coverArtFile, trackNum, 
-				title, album, artist));
+		MusicDownloader dl = new MusicDownloader(url, outputFile, coverArtFile, trackNum, 
+				title, album, artist);
+		downloaders.add(dl);
+		dl.setGenre(genre);
+		try {
+			dl.setDuration(Integer.parseInt(duration));
+		} catch (NumberFormatException e) { 
+//			 do nothing
+		}
 	}
 
 	/**

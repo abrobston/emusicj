@@ -157,10 +157,14 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	public void newDownloads(List<IDownloader> downloaders) {
 		if (downloaders == null)
 			return;
+		boolean oldState = noAutoStartDownloads;
+		noAutoStartDownloads = true;
 		for (IDownloader dl : downloaders) {
 			downloadsModel.addDownload(dl);
 			dl.getMonitor().addStateListener(this);
 		}
+		noAutoStartDownloads = oldState;
+		monitorStateChanged(null);
 	}
 	
 	/**

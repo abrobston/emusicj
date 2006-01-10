@@ -22,6 +22,8 @@ public class MusicDownloader extends HTTPDownloader implements
 	private String artistName;
 	private int trackNum;
 	private File coverArt;
+	private String genre;
+	private int duration=-1;
 	
 	public MusicDownloader(URL url, File outputFile,
 			int trackNum, String songName, String album, String artist) {
@@ -52,6 +54,12 @@ public class MusicDownloader extends HTTPDownloader implements
 		albumName = el.getAttribute("albumname");
 		artistName = el.getAttribute("artistname");
 		trackName = el.getAttribute("trackname");
+		genre = el.getAttribute("genre");
+		tNum = el.getAttribute("duration");
+		if (tNum != null)
+			duration = Integer.parseInt(tNum);
+		else
+			duration = -1;
 		String tCov = el.getAttribute("coverart");
 		if (tCov != null) 
 			coverArt = new File(tCov);
@@ -68,6 +76,8 @@ public class MusicDownloader extends HTTPDownloader implements
 		el.setAttribute("trackname", trackName);
 		el.setAttribute("albumname", albumName);
 		el.setAttribute("artistname", artistName);
+		el.setAttribute("genre", genre);
+		el.setAttribute("duration", duration+"");
 		if (coverArt != null)
 			el.setAttribute("coverart", coverArt.toString());
 	}
@@ -98,6 +108,22 @@ public class MusicDownloader extends HTTPDownloader implements
 	
 	public IDownloadMonitor getMonitor() {
 		return monitor;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public void setDuration(int i) {
+		this.duration = i;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public String getGenre() {
+		return genre;
 	}
 	
 }

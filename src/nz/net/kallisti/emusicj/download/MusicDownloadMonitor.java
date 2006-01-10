@@ -55,10 +55,17 @@ public class MusicDownloadMonitor extends HTTPDownloadMonitor
 //	}
 	
 	public String[][] getText() {
-		String[][] res = new String[3][2];
-		res[0][0] = "Title"; res[0][1] = getTrackName();
-		res[1][0] = "Album"; res[1][1] = getAlbumName();
-		res[2][0] = "Artist"; res[2][1] = getArtistName();		
+		String[][] res = new String[5][2];
+		int i=0;
+		res[i][0] = "Title"; res[i++][1] = getTrackName();
+		res[i][0] = "Album"; res[i++][1] = getAlbumName();
+		res[i][0] = "Artist"; res[i++][1] = getArtistName();
+		String genre = ((IMusicDownloader)downloader).getGenre();
+		if (genre != null)
+			res[i][0] = "Genre"; res[i++][1] = genre;
+		int dur = ((IMusicDownloader)downloader).getDuration();
+		if (dur != -1)
+			res[i][0] = "Duration"; res[i++][1] = (dur/60)+":"+(dur%60);
 		return res;
 	}
 	

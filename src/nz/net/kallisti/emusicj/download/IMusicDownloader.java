@@ -21,6 +21,14 @@ public interface IMusicDownloader extends IDownloader {
     
     public File getCoverArt();
     
+    public void setGenre(String genre);
+    
+    public String getGenre();
+    
+    public void setDuration(int i);
+    
+    public int getDuration();
+    
     public IMusicDownloadMonitor getMusicDownloadMonitor();
     
 }

@@ -27,15 +27,15 @@ import org.eclipse.swt.widgets.Label;
  * @author robin
  */
 public class FileInfoPanel extends Composite implements DisposeListener {
-
+	
 	//private ScrolledComposite displayArea;
 	private Composite imageArea;
 	private Composite textArea;
 	private Label imageLabel;
 	private Display display;
-    private Hashtable<File, Image> imageCache;
-    private ArrayList<Label> labels = new ArrayList<Label>();
-
+	private Hashtable<File, Image> imageCache;
+	private ArrayList<Label> labels = new ArrayList<Label>();
+	
 	/**
 	 * Creates an instance of FileInfoPanel with the provided parent and style.
 	 * @param parent the parent of this widget
@@ -43,8 +43,8 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 	 */
 	public FileInfoPanel(Composite parent, int style, Display display) {
 		super(parent, style);
-        imageCache = new Hashtable<File, Image>();
-        addDisposeListener(this);
+		imageCache = new Hashtable<File, Image>();
+		addDisposeListener(this);
 		this.display = display;
 		this.setLayout(new GridLayout(2, false));
 		imageArea = new Composite(this, SWT.NONE);
@@ -72,43 +72,45 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 			IDisplayableDownloadMonitor ddl = (IDisplayableDownloadMonitor)dl;
 			String[][] textToDisplay = ddl.getText();
 			File coverFile = ddl.getImageFile();
-            if (coverFile != null && !coverFile.toString().equals("")
-            		&& coverFile.exists()) {
-                Image im = imageCache.get(coverFile); 
-                if (im == null) {
-                    im = new Image(display, ddl.getImageFile().toString());
-                    imageCache.put(coverFile, im);
-                }
-                imageLabel.setImage(im);
-            } else {
-                imageLabel.setImage(null);
-            }
-            // create the labels
-            for (int i=0; i<textToDisplay.length; i++) {
-            		Label l = new Label(textArea, SWT.NONE);
-            		l.setText(textToDisplay[i][0]+":");
-            		labels.add(l);
-            		l = new Label(textArea, SWT.NONE);
-            		l.setText(textToDisplay[i][1]);
-            		labels.add(l);            		
-            }
+			if (coverFile != null && !coverFile.toString().equals("")
+					&& coverFile.exists()) {
+				Image im = imageCache.get(coverFile); 
+				if (im == null) {
+					im = new Image(display, ddl.getImageFile().toString());
+					imageCache.put(coverFile, im);
+				}
+				imageLabel.setImage(im);
+			} else {
+				imageLabel.setImage(null);
+			}
+			// create the labels
+			for (int i=0; i<textToDisplay.length; i++) {
+				if (textToDisplay[i][0] != null) {
+					Label l = new Label(textArea, SWT.NONE);
+					l.setText(textToDisplay[i][0]+":");
+					labels.add(l);
+					l = new Label(textArea, SWT.NONE);
+					l.setText(textToDisplay[i][1]);
+					labels.add(l);            		
+				}
+			}
 		}
 		imageArea.layout();
 		imageArea.pack();
 		textArea.layout();
 		pack();
 	}
-
-    public void widgetDisposed(DisposeEvent e) {
-        for (Image im : imageCache.values()) {
-            im.dispose();
-        }
-        for (Label l : labels) {
-        		l.dispose();
-        }
-        labels.clear();
-    }
-    
-    
-
+	
+	public void widgetDisposed(DisposeEvent e) {
+		for (Image im : imageCache.values()) {
+			im.dispose();
+		}
+		for (Label l : labels) {
+			l.dispose();
+		}
+		labels.clear();
+	}
+	
+	
+	
 }
