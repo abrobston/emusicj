@@ -5,7 +5,7 @@ import java.io.File;
 /**
  *
  * 
- * $Id$
+ * $Id: MusicDownloadMonitor.java 101 2006-01-10 11:07:33Z robin $
  *
  * @author robin
  */
@@ -64,8 +64,10 @@ public class MusicDownloadMonitor extends HTTPDownloadMonitor
 		if (genre != null)
 			res[i][0] = "Genre"; res[i++][1] = genre;
 		int dur = ((IMusicDownloader)downloader).getDuration();
-		if (dur != -1)
-			res[i][0] = "Duration"; res[i++][1] = (dur/60)+":"+(dur%60);
+		if (dur != -1) {
+            int secs=dur%60;
+			res[i][0] = "Duration"; res[i++][1] = (dur/60)+":"+(secs<10?"0":"")+secs;
+        }
 		return res;
 	}
 	

@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 /**
  *
  * 
- * $Id:$
+ * $Id: CoverDownloader.java 100 2006-01-08 11:11:54Z robin $
  *
  * @author robin
  */
@@ -33,4 +33,9 @@ public class CoverDownloader extends HTTPDownloader {
 		// TODO Auto-generated constructor stub
 	}
 
+    @Override
+    protected void createMonitor() {
+        monitor = new CoverDownloadMonitor(this);
+    }
+    
 }

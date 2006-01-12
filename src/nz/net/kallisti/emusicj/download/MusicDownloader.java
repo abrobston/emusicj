@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 /**
  *
  * 
- * $Id$
+ * $Id: MusicDownloader.java 101 2006-01-10 11:07:33Z robin $
  *
  * @author robin
  */
@@ -47,7 +47,7 @@ public class MusicDownloader extends HTTPDownloader implements
 	public MusicDownloader(Element el) throws MalformedURLException {
 		super(el);
 		String tNum = el.getAttribute("tracknum");
-		if (tNum != null)
+		if (tNum != null && !tNum.equals(""))
 			trackNum = Integer.parseInt(tNum);
 		else
 			trackNum = -1;
@@ -56,7 +56,7 @@ public class MusicDownloader extends HTTPDownloader implements
 		trackName = el.getAttribute("trackname");
 		genre = el.getAttribute("genre");
 		tNum = el.getAttribute("duration");
-		if (tNum != null)
+		if (tNum != null && !tNum.equals(""))
 			duration = Integer.parseInt(tNum);
 		else
 			duration = -1;

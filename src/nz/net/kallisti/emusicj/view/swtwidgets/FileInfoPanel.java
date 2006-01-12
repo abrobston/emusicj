@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Label;
  * IDownloader instance). Once it is in place, a call to {@link setDownloader}
  * defines what to display. It keeps an image cache for album covers.
  * 
- * $Id$
+ * $Id: FileInfoPanel.java 101 2006-01-10 11:07:33Z robin $
  *
  * @author robin
  */
@@ -67,6 +67,7 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 		for (Label l : labels) {
 			l.dispose();
 		}
+        imageLabel.setImage(null);
 		labels.clear();
 		if (dl instanceof IDisplayableDownloadMonitor) {
 			IDisplayableDownloadMonitor ddl = (IDisplayableDownloadMonitor)dl;
