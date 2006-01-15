@@ -1,7 +1,6 @@
-V0.15-svn (development)
+V0.16 2006-01-15
 * New downloads aren't added to the list if they're already on it.
-* If a download fails 5 times, it won't be automatically started again (code 
-  currently untested)
+* If a download fails 5 times, it won't be automatically started again
 * Refactored the display of extra information (in the info panel) to be
   much more general, to allow more things to be displayed
 * Album covers now show the cover when they are selected
