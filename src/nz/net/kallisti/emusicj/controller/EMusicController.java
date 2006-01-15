@@ -54,12 +54,15 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	
 	public void run(String[] args) {
 		// Initialise the system
-		// First see if another instance is running, if so, pass our args on
-		server = new IPCServerClient(this);
-		if (server.getState() == IPCServerClient.CONNECTED) {
-			// we just pass the args in and quit
-			server.sendData(args);
-			return;
+		
+		if (!prefs.getProperty("noServer","0").equals("1")) { 
+			// First see if another instance is running, if so, pass our args on
+			server = new IPCServerClient(this);
+			if (server.getState() == IPCServerClient.CONNECTED) {
+				// we just pass the args in and quit
+				server.sendData(args);
+				return;
+			}
 		}
 		if (view != null)
 			view.setState(IEMusicView.ViewState.STARTUP);

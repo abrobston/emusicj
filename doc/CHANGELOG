@@ -6,6 +6,11 @@ V0.15-svn (development)
   much more general, to allow more things to be displayed
 * Album covers now show the cover when they are selected
 * Genre and duration now show for tracks in the info panel
+* Added 'undocumented' option "noServer" to preferences. If the line:
+  noServer=1
+  is added to ~/.emusicj/emusicj.props then the client/server business won't
+  happen, which will lead to faster startup on the machines that it doesn't 
+  work on.
 V0.15 2006-01-04
 * The display for the title and download status no longer gets ugly when the 
   title is long. Now the download status will always be displayed, and the title 
