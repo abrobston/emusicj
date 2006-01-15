@@ -13,9 +13,12 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.dropdir.DirectoryMonitor;
+import nz.net.kallisti.emusicj.dropdir.IDirectoryMonitorListener;
 import nz.net.kallisti.emusicj.ipc.IPCServerClient;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.misc.EMPFilenameFilter;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
@@ -33,7 +36,8 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  * @author robin
  */
 public class EMusicController implements IEMusicController, 
-IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
+IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener, 
+IDirectoryMonitorListener, IPreferenceChangeListener {
 	
 	private IEMusicView view;
 	private IDownloadsModel downloadsModel = new DownloadsModel();
@@ -42,6 +46,7 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	private boolean shuttingDown = false;
 	private IPCServerClient server;
 	private PollDownloads pollThread;
+	private DirectoryMonitor dropDirMon;
 	
 	public EMusicController() {
 		super();
@@ -54,7 +59,7 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	
 	public void run(String[] args) {
 		// Initialise the system
-		
+		prefs.addListener(this);
 		if (!prefs.getProperty("noServer","0").equals("1")) { 
 			// First see if another instance is running, if so, pass our args on
 			server = new IPCServerClient(this);
@@ -77,6 +82,11 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 			mon.addStateListener(this);
 		}
+		// Start the drop directory monitoring, if that's what we want to do.
+		String dd = prefs.getDropDir();
+		if (dd != null && !dd.equals("")) {
+			dropDirMon = new DirectoryMonitor(this, new EMPFilenameFilter(), new File(dd));
+		}
 		// Pass the system state on to the view to ensure it's up to date
 		if (view != null) {
 			view.setDownloadsModel(downloadsModel);
@@ -84,9 +94,6 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
             view.pausedStateChanged(noAutoStartDownloads);
         }
             
-		//List<IDownloader> downloads = downloadsModel.getDownloaders();
-		//if (downloads.size() > 0)
-		//	downloads.get(0).start();
 		monitorStateChanged(null);
 		// Check for updates
 		if (prefs.checkForUpdates()) {
@@ -108,6 +115,8 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 		shuttingDown  = true;
 		if (server != null)
 			server.stopServer();
+		if (dropDirMon != null)
+			dropDirMon.stopMonitor();
 		try {
 			downloadsModel.saveState(new FileOutputStream(prefs.statePath+"downloads.xml"));
 		} catch (FileNotFoundException e) {
@@ -281,6 +290,22 @@ IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener {
 	public void updateAvailable(String newVersion) {
 		if (view != null)
 			view.updateAvailable(newVersion);
+	}
+
+	public void newFile(DirectoryMonitor mon, File file) {
+		loadMetafile(file.toString());
+		file.delete();
+	}
+
+	public void preferenceChanged(Pref pref) {
+		if (pref == Pref.DROP_DIR) {
+			String dd = prefs.getDropDir();
+			if (dropDirMon != null)
+				if (dd != null && !dd.equals(""))
+					dropDirMon.setDirToMonitor(new File(dd));
+				else
+					dropDirMon.setDirToMonitor(null);
+		}
 	}
 
 	

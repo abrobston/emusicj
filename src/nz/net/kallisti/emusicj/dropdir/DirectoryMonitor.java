@@ -14,7 +14,7 @@ import java.util.Set;
  * about it. This filename will not be notified about again, unless it is seen
  * to be deleted and then come back.</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
@@ -24,8 +24,8 @@ public class DirectoryMonitor {
 	private File dirToMonitor;
 	private IDirectoryMonitorListener listener;
 	private Set<File> ignoreList = Collections.synchronizedSet(new HashSet<File>());
-	private int checkTime = 3000;
-	private int verifyTime = 3000;
+	private int checkTime = 30000;
+	private int verifyTime = 30000;
 	private MonitorThread monitorThread;
 	private Set<FileMonitorThread> fileMonitorThreads =
 		Collections.synchronizedSet(new HashSet<FileMonitorThread>());
@@ -120,6 +120,14 @@ public class DirectoryMonitor {
 		for (FileMonitorThread fm : fileMonitorThreads)
 			fm.shutdown();
 	}
+
+	/**
+	 * This allows the directory being monitored to be changed.
+	 * @param file the new directory to monitor
+	 */
+	public void setDirToMonitor(File dir) {
+		dirToMonitor = dir;
+	}
 	
 	protected void startFileMonitor(File f) {
 		FileMonitorThread fm = new FileMonitorThread(verifyTime, f);
@@ -153,12 +161,18 @@ public class DirectoryMonitor {
 		}
 		
 		public void run() {
-			while (!stop) {
+			this.setName("Monitoring "+dirToMonitor);
+			loop: while (!stop) {
+				if (dirToMonitor == null)
+					continue loop;
 				File[] files = dirToMonitor.listFiles(filenameFilter);
+				if (files == null) {
+					continue loop;
+				}
 				HashSet<File> set = new HashSet<File>(files.length);
 				for(File f : files)
 					set.add(f);
-				set.remove(ignoreList);
+				set.removeAll(ignoreList);
 				for (File f : set) {
 					ignoreList.add(f);
 					startFileMonitor(f);
@@ -187,9 +201,10 @@ public class DirectoryMonitor {
 		}
 		
 		public void run() {
+			this.setName("Monitoring file "+file);
 			long time = file.lastModified();
 			if (time == 0L) {
-				System.err.println("Error monitoring file:"+file);
+				System.err.println("Error monitoring file: "+file);
 				shutdown();
 				return; // Error, but we have no way of notifying, so we ignore
 			}
@@ -199,7 +214,12 @@ public class DirectoryMonitor {
 				try {
 					Thread.sleep(verifyTime);
 				} catch (InterruptedException e) {}
-				newTime = file.lastModified();	
+				newTime = file.lastModified();
+				if (newTime == 0L) {
+					System.err.println("Error monitoring file: "+file);
+					shutdown();
+					return;					
+				}
 			} while (newTime != time && !stop);
 			if (stop) return;
 			notifyListeners(file);
@@ -213,4 +233,5 @@ public class DirectoryMonitor {
 		}
 		
 	}
+
 }

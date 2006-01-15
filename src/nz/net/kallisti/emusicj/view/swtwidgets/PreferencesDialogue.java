@@ -39,6 +39,8 @@ public class PreferencesDialogue {
 	private Text proxyHost;
 	private Text proxyPort;
 	protected boolean proxyModified=false;
+	private Text dropDir;
+	private boolean dropDirModified = false;
 
 	/**
 	 * @param display
@@ -47,7 +49,7 @@ public class PreferencesDialogue {
 	public PreferencesDialogue(Shell shell, Preferences prefs) {
 		this.shell = shell;
 		this.prefs = prefs;
-		filePath = prefs.getPath();
+		filePath = prefs.getSavePath();
 		filePattern = prefs.getFilePattern();
 		minDL = prefs.getMinDownloads();
 		checkForUpdates = prefs.checkForUpdates();
@@ -61,18 +63,20 @@ public class PreferencesDialogue {
 		dialog.setLayout (new GridLayout(1,false));
 		dialog.setText(Constants.APPNAME+" Preferences");
 		Group files = new Group(dialog, SWT.NONE);
-		files.setLayout(new GridLayout(2,false));
+		files.setLayout(new GridLayout(3,false));
 		files.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		files.setText("Files");
 		
 		Label pathLabel = new Label(files, SWT.NONE);
 		GridData gd = new GridData();
-		gd.horizontalSpan=2;
+		gd.horizontalSpan=3;
 		pathLabel.setLayoutData(gd);
 		pathLabel.setText("Save files to:");
 		final Text savePath = new Text(files,SWT.READ_ONLY);
-		savePath.setText(prefs.getPath());
-		savePath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		savePath.setText(prefs.getSavePath());
+		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gd.horizontalSpan=2;
+		savePath.setLayoutData(gd);
 		savePath.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				filePath=((Text)e.getSource()).getText();		
@@ -99,11 +103,11 @@ public class PreferencesDialogue {
 		Label fileName = new Label(files, SWT.NONE);
 		fileName.setText("Save files as:");
 		gd = new GridData();
-		gd.horizontalSpan=2;
+		gd.horizontalSpan=3;
 		pathLabel.setLayoutData(gd);
 		final Text savePattern = new Text(files,SWT.BORDER);
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.horizontalSpan=2;
+		gd.horizontalSpan=3;
 		savePattern.setLayoutData(gd);
 		savePattern.setText(prefs.getFilePattern());
 		savePattern.addModifyListener(new ModifyListener() {
@@ -115,8 +119,50 @@ public class PreferencesDialogue {
 		savePatternKey.setText("%a=album, %b=artist, %n=track number, %t=track name\n" +
 				"Note: '.mp3' will be attached to the end of this");
 		gd = new GridData();
-		gd.horizontalSpan=2;
+		gd.horizontalSpan=3;
 		savePatternKey.setLayoutData(gd);
+		
+		gd = new GridData();
+		gd.horizontalSpan=3;
+		Label dropDirLabel = new Label(files, SWT.NONE);
+		dropDirLabel.setLayoutData(gd);
+		dropDirLabel.setText("Automatically load .emp files from:");
+		dropDir = new Text(files, SWT.READ_ONLY);
+		dropDir.setText(prefs.getProperty("dropDir",""));
+		dropDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		Button clearDropDir = new Button(files, SWT.PUSH);
+		clearDropDir.setText("None");
+		clearDropDir.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				doClear();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				doClear();
+			}
+			private void doClear() {
+				dropDir.setText("");
+				dropDirModified = true;
+			}
+		});
+		
+		Button browseDropDir = new Button(files, SWT.PUSH);
+		browseDropDir.setText("Browse...");
+		browseDropDir.addSelectionListener(new SelectionListener(){
+			public void widgetSelected(SelectionEvent e) {
+				doBrowse();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				doBrowse();
+			}
+			private void doBrowse() {
+				DirectoryDialog dialog = new DirectoryDialog (shell);
+				dialog.setFilterPath(dropDir.getText());
+				String path = dialog.open();
+				if (path != null)
+					dropDir.setText(path);
+				dropDirModified = true;
+			}
+		});
 		
 		Group downloads = new Group(dialog, SWT.NONE);
 		downloads.setLayout(new GridLayout(2,false));
@@ -195,7 +241,7 @@ public class PreferencesDialogue {
 	 */
 	public void close() {
 		prefs.setFilePattern(filePattern);
-		prefs.setPath(filePath);
+		prefs.setSavePath(filePath);
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
 		if (proxyModified && !proxyHost.equals("")) {
@@ -203,6 +249,9 @@ public class PreferencesDialogue {
 				prefs.setProxyPort(Integer.parseInt(proxyPort.getText()));
 				prefs.setProxyHost(proxyHost.getText());
 			} catch (NumberFormatException e) {}
+		}
+		if (dropDirModified) {
+			prefs.setDropDir(dropDir.getText());
 		}
 		dialog.dispose();
 		new Thread() { public void run() { prefs.save(); } }.start();

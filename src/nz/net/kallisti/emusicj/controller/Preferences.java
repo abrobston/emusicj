@@ -9,9 +9,13 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import nz.net.kallisti.emusicj.Constants;
+import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
 
 /**
  * <p>This is a singleton class that tracks the application preferences.
@@ -38,6 +42,8 @@ public class Preferences {
 	private Properties props;
     private String proxyHost="";
     private int proxyPort=0;
+    private List<IPreferenceChangeListener> listeners = 
+    		Collections.synchronizedList(new ArrayList<IPreferenceChangeListener>());
 	
 	private Preferences() {
 		super();
@@ -152,12 +158,13 @@ public class Preferences {
 	/**
 	 * @param text
 	 */
-	public synchronized void setPath(String path) {
+	public synchronized void setSavePath(String path) {
 		props.setProperty("savePath",path);
 		this.path = path;
+        notify(Pref.SAVE_PATH);
 	}
 	
-	public synchronized String getPath() {
+	public synchronized String getSavePath() {
 		return path;
 	}
 
@@ -166,7 +173,8 @@ public class Preferences {
 	 */
 	public synchronized void setFilePattern(String filePattern) {
 		props.setProperty("savePattern",filePattern);
-		this.filePattern=filePattern;		
+		this.filePattern=filePattern;	
+        notify(Pref.FILE_PATTERN);
 	}
 	
 	public synchronized String getFilePattern() {
@@ -180,6 +188,7 @@ public class Preferences {
 	public synchronized void setMinDownloads(int minDownloads) {
 		props.setProperty("minDownloads",minDownloads+"");
 		this.minDownloads = minDownloads;
+        notify(Pref.MIN_DOWNLOADS);
 	}
 	
 	/**
@@ -214,6 +223,7 @@ public class Preferences {
 	
 	public synchronized void setCheckForUpdates(boolean check) {
 		props.setProperty("checkForUpdates", check?"true":"false");
+        notify(Pref.CHECK_FOR_UPDATES);
 	}
 
     public synchronized String getProxyHost() {
@@ -227,11 +237,32 @@ public class Preferences {
     public synchronized void setProxyHost(String host) {
         proxyHost = host;
         props.setProperty("proxyHost", host);
+        notify(Pref.PROXY_HOST);
     }
     
     public synchronized void setProxyPort(int port) {
         proxyPort = port;
-        props.setProperty("proxyPort", port+"");        
+        props.setProperty("proxyPort", port+"");   
+        notify(Pref.PROXY_PORT);
     }
+    
+    public synchronized String getDropDir() {
+    		return props.getProperty("dropDir");
+    }
+    
+    public synchronized void setDropDir(String dd) {
+    		props.setProperty("dropDir", dd);
+    		notify(Pref.DROP_DIR);
+    }
+    
+    public void addListener(IPreferenceChangeListener l) {
+    		listeners.add(l);
+    }
+    
+    protected void notify(Pref p) {
+    		for (IPreferenceChangeListener l : listeners)
+    			l.preferenceChanged(p);
+    }
+    
 
 }
