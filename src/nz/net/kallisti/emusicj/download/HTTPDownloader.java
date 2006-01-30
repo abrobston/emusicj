@@ -253,7 +253,7 @@ public class HTTPDownloader implements IDownloader {
 				downloadError(e);
                 try {
                     out.close();
-                } catch (IOException e2) {}
+                } catch (Exception e2) {}
 				return;
 			}
 			while (pause && !abort);
