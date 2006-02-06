@@ -47,6 +47,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 	private IPCServerClient server;
 	private PollDownloads pollThread;
 	private DirectoryMonitor dropDirMon;
+	private int maxDownloadFailures;
 	
 	public EMusicController() {
 		super();
@@ -68,6 +69,14 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 				server.sendData(args);
 				return;
 			}
+		}
+		try {
+			// allow max download failures to be overridden
+			maxDownloadFailures = 
+				Integer.parseInt(prefs.
+						getProperty("maxDownloadFailures",Constants.MAX_FAILURES+""));
+		} catch (Exception e) {
+			maxDownloadFailures = Constants.MAX_FAILURES;
 		}
 		if (view != null)
 			view.setState(IEMusicView.ViewState.STARTUP);
