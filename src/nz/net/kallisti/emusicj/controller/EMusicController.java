@@ -223,7 +223,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 				// the same one that just changed
 				if (mon.getDownloadState() == DLState.NOTSTARTED ||
 						((monitor != mon) && mon.getDownloadState() == DLState.FAILED)
-						&& mon.getFailureCount() < Constants.MAX_FAILURES) {
+						&& mon.getFailureCount() < maxDownloadFailures) {
 					mon.getDownloader().start();
 					num--;
 					if (num <= 0)
