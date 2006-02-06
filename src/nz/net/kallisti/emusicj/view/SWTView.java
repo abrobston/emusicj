@@ -250,9 +250,19 @@ SelectionListener, ControlListener {
 	 * @param shell the application's shell
 	 */
 	private void setAppIcon(Shell shell) {
-		final Image appIcon = new Image(display, 
-				SWTView.class.getResourceAsStream("emusicj-app.png"));
-		shell.setImage(appIcon);
+		//shell.setImage(appIcon);
+		shell.setImages(new Image[] {
+				new Image(display, 
+						SWTView.class.getResourceAsStream("emusicj-app-16.png")),
+				new Image(display, 
+						SWTView.class.getResourceAsStream("emusicj-app-32.png")),
+				new Image(display, 
+						SWTView.class.getResourceAsStream("emusicj-app-48.png")),
+				new Image(display, 
+						SWTView.class.getResourceAsStream("emusicj-app-64.png")),
+				new Image(display, 
+						SWTView.class.getResourceAsStream("emusicj-app-128.png"))
+		});
 	}
 
 	/**

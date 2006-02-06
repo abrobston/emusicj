@@ -9,7 +9,7 @@ package nz.net.kallisti.emusicj;
  */
 public class Constants {
 
-    public final static String VERSION = "0.16";
+    public final static String VERSION = "0.16-svn";
     
     public final static String APPNAME = "eMusic/J";
 
@@ -20,7 +20,8 @@ public class Constants {
 	public static final String ABOUT_BOX_TEXT = 
 		"This program was written by Robin Sheat <robin@kallisti.net.nz> "+
 		"(eMusic.com username: Eythian)\n"+
-		"\nIcons done by James Elwood (eMusic: jelwood01)\n"+
+		"\nIcons done by Liron Tocker <http://lironbot.com> (eMusic: liron) and "+
+		"James Elwood (eMusic: jelwood01)\n"+
 		"\nCheck "+APPURL+" for updates and "+
 		"information.\n"+
 		"\nThe program may be freely distributed under the terms of the GNU GPL.\n"+
