@@ -238,6 +238,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 	}
 	
 	public void requeueDownload(IDownloader dl) {
+		dl.resetFailureCount();
 		dl.requeue();
 	}
 	

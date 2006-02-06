@@ -82,8 +82,6 @@ public class HTTPDownloader implements IDownloader {
 				setState(DLState.PAUSED);
 			} else if (tState.equals("FINISHED")) {
 				setState(DLState.FINISHED);
-			} else if (tState.equals("FAILED")) {
-				setState(DLState.FAILED);
 			}
 		}
 		String tOut = el.getAttribute("outputfile");
