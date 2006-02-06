@@ -90,6 +90,8 @@ SelectionListener, ControlListener {
 	private ArrayList<Runnable> deferredList =
 		new ArrayList<Runnable>();
     private StatusLine statusLine;
+	private boolean pausedState=false;
+	private MenuItem pauseSysTrayMenuItem;
 	
 	public SWTView() {
 		super();
@@ -241,8 +243,20 @@ SelectionListener, ControlListener {
 	 */
 	private void buildSystemTray(SWTView view, Image icon) {
 		Tray tray = display.getSystemTray();
-		if (tray != null)
-			sysTray = new SystemTrayManager(view, icon, tray, Constants.APPNAME);		
+		if (tray != null) {
+			sysTray = new SystemTrayManager(view, icon, tray, Constants.APPNAME);
+			Menu menu = sysTray.getMenu();
+			SWTUtils.createMenuItem(menu, "Show/Hide", SWT.NONE, view, "trayClicked");
+			if (!pausedState) {
+				pauseSysTrayMenuItem = 
+					SWTUtils.createMenuItem(menu, "Pause downloads", SWT.NONE, view, "togglePaused");
+			} else {
+				pauseSysTrayMenuItem = 
+					SWTUtils.createMenuItem(menu, "Resume downloads", SWT.NONE, view, "togglePaused");				
+			}
+			SWTUtils.createMenuItem(menu, "Quit", SWT.NONE, view, "quitProgram");
+			sysTray.buildMenu();
+		}
 	}
 
 	/**
@@ -387,7 +401,15 @@ SelectionListener, ControlListener {
 	public void resumeDownloads() {
 		controller.resumeDownloads();
 	}
-    
+
+	public void togglePaused() {
+		if (pausedState) {
+			resumeDownloads();
+		} else {
+			pauseDownloads();
+		}
+	}
+	
     /**
      * Tell the controller to cancel all downloads
      */
@@ -662,10 +684,13 @@ SelectionListener, ControlListener {
 	}
 
     public void pausedStateChanged(boolean state) {
+    		pausedState = state;
         if (state) {
             statusLine.setText("All Downloads Paused");
+            pauseSysTrayMenuItem.setText("Resume downloads");
         } else {
             statusLine.unsetText();
+            pauseSysTrayMenuItem.setText("Pause downloads");
         }
     }
 

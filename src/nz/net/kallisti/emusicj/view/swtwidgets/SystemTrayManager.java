@@ -1,6 +1,5 @@
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
-import nz.net.kallisti.emusicj.view.SWTUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
@@ -23,14 +22,7 @@ import org.eclipse.swt.widgets.TrayItem;
 public class SystemTrayManager {
 
 	private TrayItem item;
-
-	/**
-	 * 
-	 */
-	public SystemTrayManager() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	private Menu menu;
 
 	/**
 	 * Creates a system tray icon, and associated handlers
@@ -49,14 +41,29 @@ public class SystemTrayManager {
 			}
 		});
 		Shell shell = view.getShell();
-		final Menu menu = new Menu (shell, SWT.POP_UP);
-		SWTUtils.createMenuItem(menu, "Show/Hide", SWT.NONE, view, "trayClicked");
-		SWTUtils.createMenuItem(menu, "Quit", SWT.NONE, view, "quitProgram");
+		menu = new Menu (shell, SWT.POP_UP);
+	}
+
+	/**
+	 * This allows other classes to add things to the system tray menu
+	 * @return the system tray menu instance
+	 */
+	public Menu getMenu() {
+		return menu;
+	}
+	
+	/**
+	 * This must be called in order for the menu to be functional. It allows
+	 * menu items to be added to the menu first, and then this is called to
+	 * enable it.
+	 */
+	public void buildMenu() {
 		item.addListener (SWT.MenuDetect, new Listener () {
 			public void handleEvent (Event event) {
 				menu.setVisible (true);
 			}
 		});
+		
 	}
 	
 	/**
