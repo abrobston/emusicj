@@ -6,6 +6,7 @@ V0.16-svn (development)
 * When eMusic/J is opened, any downloads that had failed will now be tried
   again (fixes #11)
 * Requeuing a track resets its download failure count (fixes #11)
+* 'Finished' has been renamed to 'Completed' (fixes #12)
 V0.16 2006-01-15
 * New downloads aren't added to the list if they're already on it.
 * If a download fails 5 times, it won't be automatically started again
