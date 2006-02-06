@@ -1,4 +1,4 @@
-V0.16-svn (development)
+V0.17 2006-02-06
 * Added new set of icons, from Liron Tocker <http://lironbot.com>
 * About text box now has a scrollbar (fixes bug #7), changed the look of
   it a bit to include new app logo
