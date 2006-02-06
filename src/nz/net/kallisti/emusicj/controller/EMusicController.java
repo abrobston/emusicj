@@ -189,8 +189,6 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 	 * in order to just ensure that downloads are happening. 
 	 */
 	public void monitorStateChanged(IDownloadMonitor monitor) {
-		if (noAutoStartDownloads)
-			return;
 		if (shuttingDown)
 			return;
 		int count = 0, finished = 0;
@@ -206,6 +204,9 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 		}
 		if (view != null)
 			view.downloadCount(count, finished, total);
+		// This is down here so that the view gets notified about what's going on
+		if (noAutoStartDownloads)
+			return;
 		int num = prefs.getMinDownloads() - count;
 		if (num > 0) {
 			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
@@ -249,6 +250,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 				mon.getDownloader().pause();
 			}
 		}
+		monitorStateChanged(null);
 	}
 	
 	public void resumeDownloads() {

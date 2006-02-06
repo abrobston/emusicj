@@ -2,6 +2,7 @@ V0.16-svn (development)
 * Added new set of icons, from Liron Tocker <http://lironbot.com>
 * About text box now has a scrollbar (fixes bug #7), changed the look of
   it a bit to include new app logo
+* System tray icon now changes when all downloads are paused (fixes bug #8)
 V0.16 2006-01-15
 * New downloads aren't added to the list if they're already on it.
 * If a download fails 5 times, it won't be automatically started again
