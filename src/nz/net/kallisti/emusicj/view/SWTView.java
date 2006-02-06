@@ -669,4 +669,12 @@ SelectionListener, ControlListener {
         }
     }
 
+	/**
+	 * Allows other things to have access to the display
+	 * @return the current display
+	 */
+	public static Display getDisplay() {
+		return display;
+	}
+
 }

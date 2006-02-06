@@ -20,7 +20,7 @@ public class Constants {
 	public static final String ABOUT_BOX_TEXT = 
 		"This program was written by Robin Sheat <robin@kallisti.net.nz> "+
 		"(eMusic.com username: Eythian)\n"+
-		"\nIcons done by Liron Tocker <http://lironbot.com> (eMusic: liron) and "+
+		"\nIcons done by Liron Tocker <http://lironbot.com> (eMusic: Liron) and "+
 		"James Elwood (eMusic: jelwood01)\n"+
 		"\nCheck "+APPURL+" for updates and "+
 		"information.\n"+
