@@ -16,13 +16,17 @@ else
         exit 1
     fi
 fi
+MACHINE=`uname -m`
 
-MY_CLASSPATH=${PROGRAM_DIR}/lib/swt.jar:${PROGRAM_DIR}/lib/commons-codec-1.3.jar:${PROGRAM_DIR}/lib/commons-httpclient-3.0-rc4.jar:${PROGRAM_DIR}/lib/commons-logging-api.jar:$CLASSPATH
+# swt.jar is referenced twice because it is in a different place on a 
+# checked-out tree versus a dist build
+MY_CLASSPATH=${PROGRAM_DIR}/lib/${MACHINE}/swt.jar:${PROGRAM_DIR}/lib/swt.jar:${PROGRAM_DIR}/lib/commons-codec-1.3.jar:${PROGRAM_DIR}/lib/commons-httpclient-3.0-rc4.jar:${PROGRAM_DIR}/lib/commons-logging-api.jar:$CLASSPATH
 
-if [ -e ${PROGRAM_DIR}/emusicj.jar ] ; then
+if [ -e ${PROGRAM_DIR}/bin/nz/net/kallisti/emusicj/EMusicJ.class ] ; then
+        java -cp ${PROGRAM_DIR}/bin:$MY_CLASSPATH -Djava.library.path=${PROGRAM_DIR}/lib/${MACHINE} nz.net.kallisti.emusicj.EMusicJ $@
+elif [ -e ${PROGRAM_DIR}/emusicj.jar ] ; then
 	java -cp ${PROGRAM_DIR}/emusicj.jar:$MY_CLASSPATH -Djava.library.path=${PROGRAM_DIR}/lib nz.net.kallisti.emusicj.EMusicJ $@
-elif [ -e ${PROGRAM_DIR}/bin/nz/net/kallisti/emusicj/EMusicJ.class ] ; then
-	java -cp ${PROGRAM_DIR}/bin:$MY_CLASSPATH -Djava.library.path=${PROGRAM_DIR}/lib nz.net.kallisti.emusicj.EMusicJ $@
 else
-	echo "Couldn't find the compiled Java program.";
+        echo "Couldn't find the compiled Java program.";
 fi
+
