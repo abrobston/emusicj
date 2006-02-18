@@ -53,40 +53,40 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   </jar>
 
   <!-- copy in for i686 -->
-  <copy todir="${dist.dir}/emusicj-linux/i686/lib">
+  <copy todir="${dist.dir}/i686/emusicj-linux/lib">
   	<fileset file="${lib.dir}/*.jar"/>
   	<fileset file="${lib.dir}/i686/*"/>
   </copy>
-  <copy todir="${dist.dir}/emusicj-linux/i686">
+  <copy todir="${dist.dir}/i686/emusicj-linux">
 	<fileset file="${basedir}/emusicj" />
 	<fileset file="${basedir}/emusicj.jar" />
   </copy>
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
-  <exec executable="chmod" dir="${dist.dir}/emusicj-linux/i686" os="Linux">
+  <exec executable="chmod" dir="${dist.dir}/i686/emusicj-linux" os="Linux">
   	<arg line="+x emusicj"/>
   </exec>
   <!-- create an .xpm icon from the app icon PNG file -->
   <exec executable="convert" dir="${src.dir}/images" os="Linux">
-	<arg line="emusicj_64.png ${dist.dir}/emusicj-linux/i686/emusicj.xpm"/>
+	<arg line="emusicj_64.png ${dist.dir}/i686/emusicj-linux/emusicj.xpm"/>
   </exec>
   <!-- end i686 -->
 
-  <!-- copy in for amd64 -->
-  <copy todir="${dist.dir}/emusicj-linux/amd64/lib">
+  <!-- copy in for x86_64 -->
+  <copy todir="${dist.dir}/x86_64/emusicj-linux/lib">
         <fileset file="${lib.dir}/*.jar"/>
-        <fileset file="${lib.dir}/amd64/*"/>
+        <fileset file="${lib.dir}/x86_64/*"/>
   </copy>
-  <copy todir="${dist.dir}/emusicj-linux/amd64">
+  <copy todir="${dist.dir}/x86_64/emusicj-linux">
  	<fileset file="${basedir}/emusicj" />
 	<fileset file="${basedir}/emusicj.jar" />
   </copy>
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
-  <exec executable="chmod" dir="${dist.dir}/emusicj-linux/amd64" os="Linux">
+  <exec executable="chmod" dir="${dist.dir}/x86_64/emusicj-linux/" os="Linux">
         <arg line="+x emusicj"/>
   </exec>
   <!-- create an .xpm icon from the app icon PNG file -->
   <exec executable="convert" dir="${src.dir}/images" os="Linux">
-        <arg line="emusicj_64.png ${dist.dir}/emusicj-linux/amd64/emusicj.xpm"/>
+        <arg line="emusicj_64.png ${dist.dir}/x86_64/emusicj-linux/emusicj.xpm"/>
   </exec>
   <!-- end amd64 -->
 
