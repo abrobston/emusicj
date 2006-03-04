@@ -244,11 +244,8 @@ public class PreferencesDialogue {
 		prefs.setSavePath(filePath);
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
-		if (proxyModified && !proxyHost.equals("")) {
-			try {
-				prefs.setProxyPort(Integer.parseInt(proxyPort.getText()));
-				prefs.setProxyHost(proxyHost.getText());
-			} catch (NumberFormatException e) {}
+		if (proxyModified) {
+			prefs.setProxy(proxyHost.getText(), proxyPort.getText());
 		}
 		if (dropDirModified) {
 			prefs.setDropDir(dropDir.getText());

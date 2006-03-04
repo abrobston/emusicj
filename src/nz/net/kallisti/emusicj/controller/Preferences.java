@@ -30,6 +30,16 @@ import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
  */
 public class Preferences {
 
+	/**
+	 * 
+	 */
+	private static final String PROXY_PORT = "proxyPort";
+
+	/**
+	 * 
+	 */
+	private static final String PROXY_HOST = "proxyHost";
+
 	private static Preferences instance;
 	
 	public final String statePath = System.getProperty("user.home")+
@@ -78,8 +88,8 @@ public class Preferences {
 			if (filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
 				filePattern = filePattern.substring(0,filePattern.length()-4);
 			minDownloads = Integer.parseInt(props.getProperty("minDownloads", minDownloads+""));
-            proxyHost = props.getProperty("proxyHost",proxyHost);
-            proxyPort = Integer.parseInt(props.getProperty("proxyPort",proxyPort+""));
+            proxyHost = props.getProperty(PROXY_HOST,proxyHost);
+            proxyPort = Integer.parseInt(props.getProperty(PROXY_PORT,proxyPort+""));
 		} catch (IOException e) {
 			// We don't care, it'll just use the defaults
 		}
@@ -236,13 +246,13 @@ public class Preferences {
     
     public synchronized void setProxyHost(String host) {
         proxyHost = host;
-        props.setProperty("proxyHost", host);
+      	props.setProperty(PROXY_HOST, host);
         notify(Pref.PROXY_HOST);
     }
     
     public synchronized void setProxyPort(int port) {
         proxyPort = port;
-        props.setProperty("proxyPort", port+"");   
+       	props.setProperty(PROXY_PORT, port+"");   
         notify(Pref.PROXY_PORT);
     }
     
@@ -263,6 +273,20 @@ public class Preferences {
     		for (IPreferenceChangeListener l : listeners)
     			l.preferenceChanged(p);
     }
+
+	public void setProxy(String host, String port) {
+		if (host.equals("") || port.equals("")) {
+			props.remove(PROXY_HOST);
+			props.remove(PROXY_PORT);
+			proxyHost = "";
+			proxyPort = 0;
+		} else {
+			setProxyHost(host);
+			try {
+				setProxyPort(Integer.parseInt(port));
+			} catch (NumberFormatException ignoreForNow) {}
+		}
+	}
     
 
 }
