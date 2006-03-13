@@ -5,7 +5,6 @@ import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -77,13 +76,10 @@ public class AboutDialogue {
 		gd.horizontalAlignment=SWT.RIGHT;
 		gd.horizontalSpan=2;
 		closeButton.setLayoutData(gd);
-		closeButton.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
+		closeButton.addSelectionListener(new SelectionAdapter(){
+			public void action(SelectionEvent e) {
 				close();
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				close();
-			}			
 		});
 		leftBit.layout();
 		rightBit.layout();

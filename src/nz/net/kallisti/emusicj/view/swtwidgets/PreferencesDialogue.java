@@ -7,7 +7,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,7 +35,7 @@ public class PreferencesDialogue {
 	private int minDL;
 	private boolean checkForUpdates;
 	private Button updatesButton;
-	private Button useProxyButton;
+	private Button clearProxyButton;
 	private Text proxyHost;
 	private Text proxyPort;
 	protected boolean proxyModified=false;
@@ -85,14 +84,8 @@ public class PreferencesDialogue {
 		});
 		Button browseSavePath = new Button(files, SWT.PUSH);
 		browseSavePath.setText("Browse...");
-		browseSavePath.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				doBrowse();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				doBrowse();
-			}
-			private void doBrowse() {
+		browseSavePath.addSelectionListener(new SelectionAdapter(){
+			public void action(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog (shell);
 				dialog.setFilterPath(filePath);
 				String path = dialog.open();
@@ -133,14 +126,8 @@ public class PreferencesDialogue {
 		dropDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		Button clearDropDir = new Button(files, SWT.PUSH);
 		clearDropDir.setText("Clear");
-		clearDropDir.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				doClear();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				doClear();
-			}
-			private void doClear() {
+		clearDropDir.addSelectionListener(new SelectionAdapter(){
+			public void action(SelectionEvent e) {
 				dropDir.setText("");
 				dropDirModified = true;
 			}
@@ -148,14 +135,8 @@ public class PreferencesDialogue {
 		
 		Button browseDropDir = new Button(files, SWT.PUSH);
 		browseDropDir.setText("Browse...");
-		browseDropDir.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				doBrowse();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				doBrowse();
-			}
-			private void doBrowse() {
+		browseDropDir.addSelectionListener(new SelectionAdapter(){
+			public void action(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog (shell);
 				dialog.setFilterPath(dropDir.getText());
 				String path = dialog.open();
@@ -201,11 +182,8 @@ public class PreferencesDialogue {
 		gd.horizontalAlignment=SWT.RIGHT;
 		close.setLayoutData(gd);
 		close.setText("Close");
-		close.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
-				close();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
+		close.addSelectionListener(new SelectionAdapter(){
+			public void action(SelectionEvent e) {
 				close();
 			}			
 		});
@@ -235,24 +213,14 @@ public class PreferencesDialogue {
 			}
 		});
 		proxyPort = new Text(network,SWT.BORDER);
-		useProxyButton = new Button(network, SWT.BUTTON1);
-		useProxyButton.setText("Clear");
-		useProxyButton.addSelectionListener(new SelectionListener() {
-			
-			public void widgetSelected(SelectionEvent arg0) {
-				clearProxyFields();
-			}
-			
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				clearProxyFields();
-			}
-			
-			private void clearProxyFields() {
+		clearProxyButton = new Button(network, SWT.BUTTON1);
+		clearProxyButton.setText("Clear");
+		clearProxyButton.addSelectionListener(new SelectionAdapter() {
+			public void action(SelectionEvent e) {
 				proxyModified = true;
 				proxyHost.setText("");
 				proxyPort.setText("");
 			}
-			
 		});
 		if (prefs.getProxyPort() != 0)
 			proxyPort.setText(prefs.getProxyPort()+"");

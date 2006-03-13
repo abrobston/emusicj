@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry sourcepath="lib/swt-src.zip" kind="lib" path="lib/swt.jar"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-3.0-rc4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
+	<classpathentry kind="lib" path="lib/i686/swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

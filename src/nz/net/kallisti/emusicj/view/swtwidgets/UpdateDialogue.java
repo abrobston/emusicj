@@ -8,7 +8,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -18,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  *
  * 
- * $Id:$
+ * $Id$
  *
  * @author robin
  */
@@ -58,13 +57,10 @@ public class UpdateDialogue {
         gd.horizontalAlignment=SWT.RIGHT;
         copy.setLayoutData(gd);
         copy.setText("Copy URL to clipboard");
-        copy.addSelectionListener(new SelectionListener(){
-            public void widgetSelected(SelectionEvent e) {
+        copy.addSelectionListener(new SelectionAdapter(){
+            public void action(SelectionEvent e) {
                 copyToClip();
             }
-            public void widgetDefaultSelected(SelectionEvent e) {
-                copyToClip();
-            }           
         });
         
         Button close = new Button(dialog, SWT.PUSH);
@@ -72,13 +68,10 @@ public class UpdateDialogue {
 		gd.horizontalAlignment=SWT.RIGHT;
 		close.setLayoutData(gd);
 		close.setText("Close");
-		close.addSelectionListener(new SelectionListener(){
-			public void widgetSelected(SelectionEvent e) {
+		close.addSelectionListener(new SelectionAdapter(){
+			public void action(SelectionEvent e) {
 				close();
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				close();
-			}			
 		});
 
 		dialog.pack();

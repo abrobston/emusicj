@@ -1,3 +1,10 @@
+V0.17-svn
+* Renamed 'None' to 'Clear' for the .emp drop for button, added a 'Clear' 
+  button to the proxy settings
+* Allowed proxy settings able to be cleared (fixes bug #14)
+* Having * and ? in filenames seems to cause issues with some things, 
+  these are now converted to '_'
+* Refactored away some tedious boilerplate code for dealing with buttons
 V0.17 2006-02-06
 * Added new set of icons, from Liron Tocker <http://lironbot.com>
 * About text box now has a scrollbar (fixes bug #7), changed the look of

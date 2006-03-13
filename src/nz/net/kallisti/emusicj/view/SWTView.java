@@ -575,6 +575,11 @@ SelectionListener, ControlListener {
 		return display.getSystemColor(color);
 	}
 	
+	/**
+	 * This listens to events from the components of the display. At the moment
+	 * this is only triggered by the downloads list. When this happens, the
+	 * state of the download display is updated with the new selection.
+	 */
 	public void widgetSelected(SelectionEvent e) {
 		if (e.widget == downloadsListComp) {
 			setButtonsState();
