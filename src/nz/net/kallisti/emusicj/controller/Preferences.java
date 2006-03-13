@@ -244,13 +244,13 @@ public class Preferences {
         return proxyPort;
     }
     
-    public synchronized void setProxyHost(String host) {
+    private synchronized void setProxyHost(String host) {
         proxyHost = host;
       	props.setProperty(PROXY_HOST, host);
         notify(Pref.PROXY_HOST);
     }
     
-    public synchronized void setProxyPort(int port) {
+    private synchronized void setProxyPort(int port) {
         proxyPort = port;
        	props.setProperty(PROXY_PORT, port+"");   
         notify(Pref.PROXY_PORT);
@@ -274,17 +274,17 @@ public class Preferences {
     			l.preferenceChanged(p);
     }
 
-	public void setProxy(String host, String port) {
-		if (host.equals("") || port.equals("")) {
-			props.remove(PROXY_HOST);
-			props.remove(PROXY_PORT);
-			proxyHost = "";
-			proxyPort = 0;
-		} else {
+	public synchronized void setProxy(String host, String port) {
+		if (host.length() > 0) {
 			setProxyHost(host);
 			try {
 				setProxyPort(Integer.parseInt(port));
 			} catch (NumberFormatException ignoreForNow) {}
+		} else {
+			props.remove(PROXY_HOST);
+			props.remove(PROXY_PORT);
+			proxyHost = "";
+			proxyPort = 0;
 		}
 	}
     

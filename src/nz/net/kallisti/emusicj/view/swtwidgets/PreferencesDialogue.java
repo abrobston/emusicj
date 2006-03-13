@@ -36,6 +36,7 @@ public class PreferencesDialogue {
 	private int minDL;
 	private boolean checkForUpdates;
 	private Button updatesButton;
+	private Button useProxyButton;
 	private Text proxyHost;
 	private Text proxyPort;
 	protected boolean proxyModified=false;
@@ -131,7 +132,7 @@ public class PreferencesDialogue {
 		dropDir.setText(prefs.getProperty("dropDir",""));
 		dropDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		Button clearDropDir = new Button(files, SWT.PUSH);
-		clearDropDir.setText("None");
+		clearDropDir.setText("Clear");
 		clearDropDir.addSelectionListener(new SelectionListener(){
 			public void widgetSelected(SelectionEvent e) {
 				doClear();
@@ -193,28 +194,7 @@ public class PreferencesDialogue {
 		updatesButton.setSelection(checkForUpdates);
 		updatesButton.setText("Automatically check for updates to the program");
 		
-		Group network = new Group(dialog, SWT.NONE);
-		network.setLayout(new GridLayout(2,false));
-		network.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		network.setText("Network");
-		
-		new Label(network, SWT.NONE).setText("Proxy host:");
-		new Label(network, SWT.NONE).setText("Proxy port:");
-		proxyHost = new Text(network,SWT.BORDER);
-		proxyHost.setText(prefs.getProxyHost());
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		proxyHost.setLayoutData(gd);
-		proxyHost.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				proxyModified = true;
-			}
-		});
-		proxyPort = new Text(network,SWT.BORDER);
-		if (prefs.getProxyPort() != 0)
-			proxyPort.setText(prefs.getProxyPort()+"");
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		proxyPort.setLayoutData(gd);
-
+		createNetworkPanel();
 		
 		final Button close = new Button(dialog, SWT.PUSH);
 		gd = new GridData();
@@ -234,6 +214,50 @@ public class PreferencesDialogue {
 		//dialog.setSize(200,200);
 		dialog.layout();
 		dialog.open();
+	}
+
+	private void createNetworkPanel() {
+		Group network = new Group(dialog, SWT.NONE);
+		network.setLayout(new GridLayout(3,false));
+		network.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		network.setText("Network");
+		
+		new Label(network, SWT.NONE).setText("Proxy host:");
+		new Label(network, SWT.NONE).setText("Proxy port:");
+		new Label(network, SWT.NONE);
+		proxyHost = new Text(network,SWT.BORDER);
+		proxyHost.setText(prefs.getProxyHost());
+		GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		proxyHost.setLayoutData(gd);
+		proxyHost.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				proxyModified = true;
+			}
+		});
+		proxyPort = new Text(network,SWT.BORDER);
+		useProxyButton = new Button(network, SWT.BUTTON1);
+		useProxyButton.setText("Clear");
+		useProxyButton.addSelectionListener(new SelectionListener() {
+			
+			public void widgetSelected(SelectionEvent arg0) {
+				clearProxyFields();
+			}
+			
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				clearProxyFields();
+			}
+			
+			private void clearProxyFields() {
+				proxyModified = true;
+				proxyHost.setText("");
+				proxyPort.setText("");
+			}
+			
+		});
+		if (prefs.getProxyPort() != 0)
+			proxyPort.setText(prefs.getProxyPort()+"");
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		proxyPort.setLayoutData(gd);
 	}
 	
 	/**
