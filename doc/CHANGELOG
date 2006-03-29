@@ -1,3 +1,8 @@
+* Renamed the 'Network' group to 'Proxy Settings'
+* Added radio buttons to the proxy settings
+* Remember last proxy host and port when proxy is turned off via radio buttons
+* Removed the 'Clear' button in the proxy settings
+* Http checks if proxy is active instead of if the host > 0 length
 V0.17-svn
 * Renamed 'None' to 'Clear' for the .emp drop for button, added a 'Clear' 
   button to the proxy settings

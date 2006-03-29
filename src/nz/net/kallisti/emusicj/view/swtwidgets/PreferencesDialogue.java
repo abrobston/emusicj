@@ -18,11 +18,14 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * <p>Displays a preferences dialogue, and updates the supplied Preferences
- * object as things change.</p>
+ * <p>
+ * Displays a preferences dialogue, and updates the supplied Preferences object as things change.
+ * </p>
  * 
- * <p>$Id$</p>
- *
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author robin
  */
 public class PreferencesDialogue {
@@ -35,10 +38,10 @@ public class PreferencesDialogue {
 	private int minDL;
 	private boolean checkForUpdates;
 	private Button updatesButton;
-	private Button clearProxyButton;
+	private Button noProxy;
 	private Text proxyHost;
 	private Text proxyPort;
-	protected boolean proxyModified=false;
+	protected boolean proxyModified = false;
 	private Text dropDir;
 	private boolean dropDirModified = false;
 
@@ -59,27 +62,27 @@ public class PreferencesDialogue {
 	 * 
 	 */
 	public void open() {
-		dialog = new Shell (shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		dialog.setLayout (new GridLayout(1,false));
-		dialog.setText(Constants.APPNAME+" Preferences");
+		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		dialog.setLayout(new GridLayout(1, false));
+		dialog.setText(Constants.APPNAME + " Preferences");
 		Group files = new Group(dialog, SWT.NONE);
-		files.setLayout(new GridLayout(3,false));
+		files.setLayout(new GridLayout(3, false));
 		files.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		files.setText("Files");
-		
+
 		Label pathLabel = new Label(files, SWT.NONE);
 		GridData gd = new GridData();
-		gd.horizontalSpan=3;
+		gd.horizontalSpan = 3;
 		pathLabel.setLayoutData(gd);
 		pathLabel.setText("Save files to:");
-		final Text savePath = new Text(files,SWT.READ_ONLY);
+		final Text savePath = new Text(files, SWT.READ_ONLY);
 		savePath.setText(prefs.getSavePath());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gd.horizontalSpan=2;
+		gd.horizontalSpan = 2;
 		savePath.setLayoutData(gd);
 		savePath.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				filePath=((Text)e.getSource()).getText();		
+				filePath = ((Text) e.getSource()).getText();
 			}
 		});
 		Button browseSavePath = new Button(files, SWT.PUSH);
@@ -89,40 +92,38 @@ public class PreferencesDialogue {
 				DirectoryDialog dialog = new DirectoryDialog (shell);
 				dialog.setFilterPath(filePath);
 				String path = dialog.open();
-				if (path != null)
-					savePath.setText(path);
+				if (path != null) savePath.setText(path);
 			}
 		});
-		
+
 		Label fileName = new Label(files, SWT.NONE);
 		fileName.setText("Save files as:");
 		gd = new GridData();
-		gd.horizontalSpan=3;
+		gd.horizontalSpan = 3;
 		pathLabel.setLayoutData(gd);
-		final Text savePattern = new Text(files,SWT.BORDER);
+		final Text savePattern = new Text(files, SWT.BORDER);
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.horizontalSpan=3;
+		gd.horizontalSpan = 3;
 		savePattern.setLayoutData(gd);
 		savePattern.setText(prefs.getFilePattern());
 		savePattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				filePattern = ((Text)e.getSource()).getText();		
+				filePattern = ((Text) e.getSource()).getText();
 			}
 		});
 		Label savePatternKey = new Label(files, SWT.NONE);
-		savePatternKey.setText("%a=album, %b=artist, %n=track number, %t=track name\n" +
-				"Note: '.mp3' will be attached to the end of this");
+		savePatternKey.setText("%a=album, %b=artist, %n=track number, %t=track name\n" + "Note: '.mp3' will be attached to the end of this");
 		gd = new GridData();
-		gd.horizontalSpan=3;
+		gd.horizontalSpan = 3;
 		savePatternKey.setLayoutData(gd);
-		
+
 		gd = new GridData();
-		gd.horizontalSpan=3;
+		gd.horizontalSpan = 3;
 		Label dropDirLabel = new Label(files, SWT.NONE);
 		dropDirLabel.setLayoutData(gd);
 		dropDirLabel.setText("Automatically load .emp files from:");
 		dropDir = new Text(files, SWT.READ_ONLY);
-		dropDir.setText(prefs.getProperty("dropDir",""));
+		dropDir.setText(prefs.getProperty("dropDir", ""));
 		dropDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		Button clearDropDir = new Button(files, SWT.PUSH);
 		clearDropDir.setText("Clear");
@@ -132,7 +133,7 @@ public class PreferencesDialogue {
 				dropDirModified = true;
 			}
 		});
-		
+
 		Button browseDropDir = new Button(files, SWT.PUSH);
 		browseDropDir.setText("Browse...");
 		browseDropDir.addSelectionListener(new SelectionAdapter(){
@@ -140,18 +141,17 @@ public class PreferencesDialogue {
 				DirectoryDialog dialog = new DirectoryDialog (shell);
 				dialog.setFilterPath(dropDir.getText());
 				String path = dialog.open();
-				if (path != null)
-					dropDir.setText(path);
+				if (path != null) dropDir.setText(path);
 				dropDirModified = true;
 			}
 		});
-		
+
 		Group downloads = new Group(dialog, SWT.NONE);
-		downloads.setLayout(new GridLayout(2,false));
+		downloads.setLayout(new GridLayout(2, false));
 		downloads.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		downloads.setText("Downloads");
-		
-		final Spinner minDLSpin = new Spinner (downloads, SWT.BORDER);
+
+		final Spinner minDLSpin = new Spinner(downloads, SWT.BORDER);
 		minDLSpin.setMinimum(0);
 		minDLSpin.setMaximum(10);
 		minDLSpin.setSelection(minDL);
@@ -165,21 +165,21 @@ public class PreferencesDialogue {
 		minDLSpin.pack();
 		Label minDLLabel = new Label(downloads, SWT.NONE);
 		minDLLabel.setText("Minimum number of downloads at once");
-		
+
 		Group updates = new Group(dialog, SWT.NONE);
-		updates.setLayout(new GridLayout(2,false));
+		updates.setLayout(new GridLayout(2, false));
 		updates.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		updates.setText("Updates");
-		
+
 		updatesButton = new Button(updates, SWT.CHECK);
 		updatesButton.setSelection(checkForUpdates);
 		updatesButton.setText("Automatically check for updates to the program");
-		
+
 		createNetworkPanel();
-		
+
 		final Button close = new Button(dialog, SWT.PUSH);
 		gd = new GridData();
-		gd.horizontalAlignment=SWT.RIGHT;
+		gd.horizontalAlignment = SWT.RIGHT;
 		close.setLayoutData(gd);
 		close.setText("Close");
 		close.addSelectionListener(new SelectionAdapter(){
@@ -189,45 +189,65 @@ public class PreferencesDialogue {
 		});
 
 		dialog.pack();
-		//dialog.setSize(200,200);
+		// dialog.setSize(200,200);
 		dialog.layout();
 		dialog.open();
 	}
 
 	private void createNetworkPanel() {
 		Group network = new Group(dialog, SWT.NONE);
-		network.setLayout(new GridLayout(3,false));
+		network.setLayout(new GridLayout(3, false));
 		network.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		network.setText("Network");
-		
+		network.setText("Proxy Settings");
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		noProxy = new Button(network, SWT.RADIO);
+		noProxy.setText("No Proxy");
+		noProxy.setLayoutData(gd);
+
+		final Button manualProxy = new Button(network, SWT.RADIO);
+		manualProxy.setText("Manual Settings");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		manualProxy.setLayoutData(gd);
+
 		new Label(network, SWT.NONE).setText("Proxy host:");
 		new Label(network, SWT.NONE).setText("Proxy port:");
 		new Label(network, SWT.NONE);
-		proxyHost = new Text(network,SWT.BORDER);
+		proxyHost = new Text(network, SWT.BORDER);
 		proxyHost.setText(prefs.getProxyHost());
-		GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		proxyHost.setLayoutData(gd);
 		proxyHost.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				proxyModified = true;
 			}
 		});
-		proxyPort = new Text(network,SWT.BORDER);
-		clearProxyButton = new Button(network, SWT.BUTTON1);
-		clearProxyButton.setText("Clear");
-		clearProxyButton.addSelectionListener(new SelectionAdapter() {
-			public void action(SelectionEvent e) {
-				proxyModified = true;
-				proxyHost.setText("");
-				proxyPort.setText("");
+		proxyPort = new Text(network, SWT.BORDER);
+		noProxy.addSelectionListener(new SelectionAdapter() {
+			public void action(SelectionEvent ev) {
+				enableDisableProxyFields(manualProxy.getSelection());
 			}
+
 		});
-		if (prefs.getProxyPort() != 0)
-			proxyPort.setText(prefs.getProxyPort()+"");
+		if (prefs.getProxyPort() != 0) proxyPort.setText(prefs.getProxyPort() + "");
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 		proxyPort.setLayoutData(gd);
+		if (prefs.usingProxy()) {
+			manualProxy.setSelection(true);
+			enableDisableProxyFields(true);
+		} else {
+			noProxy.setSelection(true);
+			enableDisableProxyFields(false);
+		}
 	}
-	
+
+	private void enableDisableProxyFields(boolean enabled) {
+		proxyHost.setEnabled(enabled);
+		proxyPort.setEnabled(enabled);
+		proxyModified = true;
+	}
+
 	/**
 	 * Close the dialog and save the preferences
 	 */
@@ -237,13 +257,17 @@ public class PreferencesDialogue {
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
 		if (proxyModified) {
-			prefs.setProxy(proxyHost.getText(), proxyPort.getText());
+			prefs.setProxy(noProxy.getSelection(), proxyHost.getText(), proxyPort.getText());
 		}
 		if (dropDirModified) {
 			prefs.setDropDir(dropDir.getText());
 		}
 		dialog.dispose();
-		new Thread() { public void run() { prefs.save(); } }.start();
+		new Thread() {
+			public void run() {
+				prefs.save();
+			}
+		}.start();
 	}
-	
+
 }

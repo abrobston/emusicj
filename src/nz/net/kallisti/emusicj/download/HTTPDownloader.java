@@ -258,7 +258,7 @@ public class HTTPDownloader implements IDownloader {
 			if (abort) return;
             HttpClient http = new HttpClient();
             Preferences prefs = Preferences.getInstance();
-            if (!prefs.getProxyHost().equals("")) {
+            if (prefs.usingProxy()) {
                 HostConfiguration hostConf = new HostConfiguration();
                 hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
                 http.setHostConfiguration(hostConf);
