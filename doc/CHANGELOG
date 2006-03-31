@@ -1,3 +1,4 @@
+* Made the Proxy Host text box wider than the Proxy Port text box
 * Renamed the 'Network' group to 'Proxy Settings'
 * Added radio buttons to the proxy settings
 * Remember last proxy host and port when proxy is turned off via radio buttons
