@@ -211,12 +211,16 @@ public class PreferencesDialogue {
 		gd.horizontalSpan = 3;
 		manualProxy.setLayoutData(gd);
 
-		new Label(network, SWT.NONE).setText("Proxy host:");
+		Label hostLabel = new Label(network, SWT.NONE);
+		hostLabel.setText("Proxy host:");
+		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.horizontalSpan = 2;
+		hostLabel.setLayoutData(gd);
 		new Label(network, SWT.NONE).setText("Proxy port:");
-		new Label(network, SWT.NONE);
 		proxyHost = new Text(network, SWT.BORDER);
 		proxyHost.setText(prefs.getProxyHost());
 		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd.horizontalSpan = 2;
 		proxyHost.setLayoutData(gd);
 		proxyHost.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -231,7 +235,7 @@ public class PreferencesDialogue {
 
 		});
 		if (prefs.getProxyPort() != 0) proxyPort.setText(prefs.getProxyPort() + "");
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+		gd = new GridData(SWT.FILL, SWT.NONE, false, false);
 		proxyPort.setLayoutData(gd);
 		if (prefs.usingProxy()) {
 			manualProxy.setSelection(true);
