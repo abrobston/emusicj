@@ -4,12 +4,15 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import nz.net.kallisti.emusicj.download.mime.IMimeType;
+import nz.net.kallisti.emusicj.download.mime.MimeTypes;
+
 import org.w3c.dom.Element;
 
 /**
  *
  * 
- * $Id: CoverDownloader.java 100 2006-01-08 11:11:54Z robin $
+ * $Id$
  *
  * @author robin
  */
@@ -20,8 +23,7 @@ public class CoverDownloader extends HTTPDownloader {
 	 * @param outputFile
 	 */
 	public CoverDownloader(URL url, File outputFile) {
-		super(url, outputFile);
-		// TODO Auto-generated constructor stub
+		super(url, outputFile, new IMimeType[] {MimeTypes.IMAGES});
 	}
 
 	/**

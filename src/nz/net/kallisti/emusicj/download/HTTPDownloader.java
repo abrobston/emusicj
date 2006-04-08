@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.download;
 
+import java.awt.datatransfer.MimeTypeParseException;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +12,8 @@ import java.net.URL;
 
 import nz.net.kallisti.emusicj.controller.Preferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.download.mime.IMimeType;
+import nz.net.kallisti.emusicj.download.mime.MimeType;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -40,11 +43,20 @@ public class HTTPDownloader implements IDownloader {
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
 	protected int failureCount = 0;
+	private IMimeType[] mimeType;
 	
-	public HTTPDownloader(URL url, File outputFile) {
+	/**
+	 * Initialise, but do not start, the downloader
+	 * @param url the URL to download
+	 * @param outputFile the file to save the output to
+	 * @param mimeType the MIME type to restrict the downloading to. Anything
+	 * else will be considered an error.
+	 */
+	public HTTPDownloader(URL url, File outputFile, IMimeType[] mimeType) {
 		super();
 		this.url = url;
 		this.outputFile = outputFile;
+		this.mimeType = mimeType;
 		createMonitor();
 		state = DLState.NOTSTARTED;
 		monitor.setState(state);
@@ -58,19 +70,19 @@ public class HTTPDownloader implements IDownloader {
 	public HTTPDownloader(Element el) throws MalformedURLException {
 		super();		
 		String tUrl = el.getAttribute("url");
-		if (tUrl != null)
+		if (!"".equals(tUrl))
 			url = new URL(tUrl);
 		else
 			throw new MalformedURLException("Missing URL");
 		String tFname = el.getAttribute("outputfile");
-		if (tFname != null)
+		if (!"".equals(tFname))
 			outputFile = new File(tFname);
 		else
 			throw new MalformedURLException("Missing output filename");
 		createMonitor();
 		setState(DLState.NOTSTARTED);
 		String tState = el.getAttribute("state");
-		if (tState != null) {
+		if (!"".equals(tState)) {
 			if (tState.equals("CONNECTING") || tState.equals("DOWNLOADING")) {
 				setState(DLState.CONNECTING);
 				start();
@@ -85,8 +97,19 @@ public class HTTPDownloader implements IDownloader {
 			}
 		}
 		String tOut = el.getAttribute("outputfile");
-		if (tOut != null)
+		if (!"".equals(tOut))
 			outputFile = new File(tOut);
+		String tMime = el.getAttribute("mimetype");
+		if (!"".equals(tMime)) {
+			try {
+				String[] parts = tMime.split(",");
+				mimeType = new IMimeType[parts.length];
+				for (int i=0; i<parts.length; i++)
+					mimeType[i] = new MimeType(parts[i]);
+			} catch (MimeTypeParseException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	protected void createMonitor() {
@@ -102,6 +125,14 @@ public class HTTPDownloader implements IDownloader {
 		el.setAttribute("url", url.toString());
 		el.setAttribute("state", state.toString());
 		el.setAttribute("outputfile", outputFile.toString());
+		if (mimeType != null) {
+			String out = "";
+			for (int i=0; i<mimeType.length; i++) {
+				if (i!=0) out+=",";
+				out += mimeType[i].toString();
+			}
+			el.setAttribute("mimetype", out);
+		}
 	}
 	
 
@@ -286,7 +317,7 @@ public class HTTPDownloader implements IDownloader {
 					resumePoint = 0;
 				} -- we no longer allow non-resuming, although we probably should */
 				Header[] responseHeaders = get.getResponseHeaders();
-				boolean isFile = false;
+				boolean isFile = mimeType == null;
 				for (int i=0; i<responseHeaders.length; i++){
 					String hLine = responseHeaders[i].toString();
 					String[] hParts = hLine.split(" ");
@@ -295,11 +326,24 @@ public class HTTPDownloader implements IDownloader {
 								substring(0,hParts[1].length()-2)) +
 								resumePoint; // resumePoint will be 0 if no resume
 					}
-					if (hParts[0].equals("Content-Disposition:")) {
-						isFile = isFile || hParts[1].equals("attachment;");
-					}
-					if (hParts[0].equals("Content-Type:")) {
-						isFile = isFile || hParts[1].equals("image/jpeg\r\n"); // hack for covers until I fix this properly
+//					if (hParts[0].equals("Content-Disposition:")) {
+//						isFile = isFile || hParts[1].equals("attachment;");
+//					}
+					if (hParts[0].equals("Content-Type:") && mimeType != null) {
+						try {
+							// Substring is to remove the \r\n off the end
+							String m = hParts[1].substring(0,hParts[1].length()-2);
+							for (IMimeType t : mimeType)
+								isFile = isFile || t.matches(m);
+							if (!isFile) {
+								System.err.print("MIME error: got "+m+", expecting one of:");
+								for (IMimeType t : mimeType)
+									System.err.print(" "+t);
+								System.err.println();
+							}
+						} catch (MimeTypeParseException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 				if (!isFile) {

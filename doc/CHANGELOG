@@ -1,9 +1,3 @@
-* Made the Proxy Host text box wider than the Proxy Port text box
-* Renamed the 'Network' group to 'Proxy Settings'
-* Added radio buttons to the proxy settings
-* Remember last proxy host and port when proxy is turned off via radio buttons
-* Removed the 'Clear' button in the proxy settings
-* Http checks if proxy is active instead of if the host > 0 length
 V0.17-svn
 * Renamed 'None' to 'Clear' for the .emp drop for button, added a 'Clear' 
   button to the proxy settings
@@ -11,6 +5,13 @@ V0.17-svn
 * Having * and ? in filenames seems to cause issues with some things, 
   these are now converted to '_'
 * Refactored away some tedious boilerplate code for dealing with buttons
+* Made the Proxy Host text box wider than the Proxy Port text box
+* Renamed the 'Network' group to 'Proxy Settings'
+* Added radio buttons to the proxy settings
+* Remember last proxy host and port when proxy is turned off via radio buttons
+* Removed the 'Clear' button in the proxy settings
+* Http checks if proxy is active instead of if the host > 0 length
+* Fixed ugly MIME handling in download code, now it's a lot more generalised
 V0.17 2006-02-06
 * Added new set of icons, from Liron Tocker <http://lironbot.com>
 * About text box now has a scrollbar (fixes bug #7), changed the look of

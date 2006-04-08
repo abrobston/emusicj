@@ -4,13 +4,16 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import nz.net.kallisti.emusicj.download.mime.IMimeType;
+import nz.net.kallisti.emusicj.download.mime.MimeTypes;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  *
  * 
- * $Id: MusicDownloader.java 101 2006-01-10 11:07:33Z robin $
+ * $Id$
  *
  * @author robin
  */
@@ -27,7 +30,7 @@ public class MusicDownloader extends HTTPDownloader implements
 	
 	public MusicDownloader(URL url, File outputFile,
 			int trackNum, String songName, String album, String artist) {
-		super(url, outputFile);
+		super(url, outputFile, new IMimeType[] {MimeTypes.AUDIO, MimeTypes.APP_OCTET});
 		this.trackName = songName;
 		this.albumName = album;
 		this.artistName = artist;
@@ -36,7 +39,7 @@ public class MusicDownloader extends HTTPDownloader implements
 	
 	public MusicDownloader(URL url, File outputFile, File coverArt,
 			int trackNum, String songName, String album, String artist) {
-		super(url, outputFile);
+		super(url, outputFile, new IMimeType[] {MimeTypes.AUDIO, MimeTypes.APP_OCTET});
 		this.trackName = songName;
 		this.albumName = album;
 		this.artistName = artist;
