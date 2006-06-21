@@ -60,6 +60,8 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   <copy todir="${dist.dir}/i686/emusicj-linux">
 	<fileset file="${basedir}/emusicj" />
 	<fileset file="${basedir}/emusicj.jar" />
+	<fileset file="${basedir}/doc/COPYING" />
+	<fileset file="${basedir}/doc/README" />
   </copy>
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
   <exec executable="chmod" dir="${dist.dir}/i686/emusicj-linux" os="Linux">
@@ -79,6 +81,8 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   <copy todir="${dist.dir}/x86_64/emusicj-linux">
  	<fileset file="${basedir}/emusicj" />
 	<fileset file="${basedir}/emusicj.jar" />
+	<fileset file="${basedir}/doc/COPYING" />
+	<fileset file="${basedir}/doc/README" />
   </copy>
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
   <exec executable="chmod" dir="${dist.dir}/x86_64/emusicj-linux/" os="Linux">
