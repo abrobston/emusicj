@@ -292,7 +292,11 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 		}
 		noAutoStartDownloads = false;
         view.pausedStateChanged(noAutoStartDownloads);
-		monitorStateChanged(null);
+        // This hopefully stops twice as many tracks restarting after resuming
+        // from pause. My guess is that it was getting to here fast enough
+        // the the download threads hadn't had a chance to properly fire up.
+        // This shouldn't really be needed anyway. (Bug #15)
+		//monitorStateChanged(null);
 	}
 	
     public void cancelDownloads() {
