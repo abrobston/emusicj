@@ -54,6 +54,7 @@ public class Preferences {
     private static final String PROXY_PORT = "proxyPort";
     private static final String PROXY_HOST = "proxyHost";
     private static final String USE_PROXY = "useProxy";
+    private static final String DEFAULT_BROWSER = "firefox -new-tab %s";
     private static Preferences instance;
     
     public final String statePath = System.getProperty("user.home")+
@@ -308,6 +309,23 @@ public class Preferences {
             } catch (NumberFormatException ignoreForNow) {}
         }
     }
-    
+
+	/**
+	 * Gets the browser command that would open the browser to the specified URL.
+	 * If the command contains '%s', the URL is places there, otherwise it is
+	 * appended.
+	 * @param url the URL to open
+	 * @return the command line to open the browser
+	 */
+	public String getBrowserCommand(String url) {
+		String browser = props.getProperty("browserCommand", DEFAULT_BROWSER);
+		if (browser.indexOf("%s") != -1) {
+			browser = browser.replace("%s", url);
+		} else {
+			browser += " "+url;
+		}
+		return browser;
+	}
+
     
 }

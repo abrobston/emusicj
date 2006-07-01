@@ -403,7 +403,9 @@ SelectionListener, ControlListener {
 				this, "displayPreferences");        
 		// --- Help menu ---
 		Menu aboutMenu = SWTUtils.createDropDown(shell, bar, "&Help");
-		SWTUtils.createMenuItem(aboutMenu, "&About...", null, 
+		SWTUtils.createMenuItem(aboutMenu, "&User Manual...", SWT.NONE, 
+				this, "userManual");
+		SWTUtils.createMenuItem(aboutMenu, "&About...", SWT.NONE, 
 				this, "aboutBox");
 	}
 	
@@ -521,6 +523,27 @@ SelectionListener, ControlListener {
 	public void aboutBox() {
 		AboutDialogue about = new AboutDialogue(shell);
 		about.open();
+	}
+	
+	public void userManual() {
+		new Thread() {
+			public void run() {
+				String browserCmd = prefs.getBrowserCommand(Constants.USER_MANUAL_URL);
+				try {
+					System.out.println(browserCmd);
+					Process p = Runtime.getRuntime().exec(browserCmd);
+					p.waitFor();
+					if (p.exitValue() != 0)
+						throw new Exception();
+				}catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					error("Error launching browser", "There seemed to be a " +
+							"problem launching the browser. The user manual can" +
+							"be found at "+Constants.APPURL);
+				}				
+			}
+		}.start();
 	}
 	
 	public void processEvents(IEMusicController controller) {

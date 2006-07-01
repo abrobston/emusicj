@@ -58,4 +58,6 @@ public class Constants {
 	 */
 	public static final int MAX_FAILURES = 5;
 
+	public static final String USER_MANUAL_URL = "http://www.kallisti.net.nz/EMusicJ/UserManual";
+
 }
