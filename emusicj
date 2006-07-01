@@ -4,6 +4,29 @@
 # environment variable EMUSICJ_HOME to point to where the program actually is.
 PROGRAM_DIR="$EMUSICJ_HOME"
 
+# This function taken from Azureus, and modified
+check_version()
+{
+  JAVA_HEADER=`java -version 2>&1 | head -n 1`
+  JAVA_IMPL=`echo ${JAVA_HEADER} | cut -f1 -d' '`
+  if [ "$JAVA_IMPL" = "java" ] ; then
+    VERSION=`echo ${JAVA_HEADER} | sed "s/java version \"\(.*\)\"/\1/"`
+    if echo $VERSION | grep "^1.[0-4]" ; then
+      echo Your Java version is too old "[java = ${VERSION}]"
+      echo You need to upgrade to Java 1.5 or higher.
+      echo See http://www.kallisti.net.nz/EMusicJ/InstallingJava for details.
+      exit 1
+    else
+      return 0
+    fi
+  else
+    echo You don\'t seem to have a valid JRE "[java = ${JAVA_IMPL}]" 
+    echo See http://www.kallisti.net.nz/EMusicJ/InstallingJava for details.
+    exit 1
+  fi
+}
+
+
 if [ -z "$PROGRAM_DIR" ]; then
     PROGRAM_DIR=`dirname "$0"`
     PROGRAM_DIR=`cd "$PROGRAM_DIR"; pwd`
@@ -17,6 +40,8 @@ else
     fi
 fi
 MACHINE=`uname -m`
+
+check_version
 
 # swt.jar is referenced twice because it is in a different place on a 
 # checked-out tree versus a dist build
