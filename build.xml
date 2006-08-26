@@ -10,7 +10,7 @@ view  - Displays Javadoc documentation in a browser.
 
 Type `ant target' to run a target or `ant' to run the default target. -->
  
-<project name="emusicj" default="jar" basedir=".">
+<project name="emusicj" default="all" basedir=".">
 
 <description>A Java eMusic.com download program.</description>
 
@@ -25,9 +25,11 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 <property name="jar.name" value="${basedir}/${ant.project.name}.jar"/>
 <property name="sun.api" value="http://java.sun.com/j2se/1.5/docs/api"/>
 
+<target name="all" depends="compile, jar" />
+
 <target name="compile">
   <mkdir dir="${build.dir}"/>
-  <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/>
+  <!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
   <javac srcdir="${src.dir}" destdir="${build.dir}" debug="yes" nowarn="on" 
   	classpath="${lib.dir}/i686/swt.jar:${lib.dir}/commons-codec-1.3.jar:
   	${lib.dir}/commons-httpclient-3.0-rc4.jar"/>
@@ -43,7 +45,7 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   <echo message="${os.name}"/>
 </target>
 
-<target name="jar" depends="compile" description="Creates a runnable jar file.">
+<target name="jar" description="Creates a runnable jar file.">
   <jar jarfile="${jar.name}">
   <fileset dir="${build.dir}"/>
   <manifest>
