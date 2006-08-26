@@ -25,7 +25,7 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 <property name="jar.name" value="${basedir}/${ant.project.name}.jar"/>
 <property name="sun.api" value="http://java.sun.com/j2se/1.5/docs/api"/>
 
-<target name="all" depends="compile, jar" />
+<target name="all" depends="compile, jar, weave, copy" />
 
 <target name="compile">
   <mkdir dir="${build.dir}"/>
@@ -40,7 +40,6 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 </target>
 
 <target name="check">
- 
   <echo message="${basedir}"/>
   <echo message="${os.name}"/>
 </target>
@@ -53,7 +52,9 @@ Type `ant target' to run a target or `ant' to run the default target. -->
     <attribute name="Main-Class" value="${main.class}"/>
   </manifest>
   </jar>
+</target>
 
+<target name="copy" description="Copies the files to the dist directory">
   <!-- copy in for i686 -->
   <copy todir="${dist.dir}/i686/emusicj-linux/lib">
   	<fileset file="${lib.dir}/*.jar"/>
@@ -61,10 +62,11 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   </copy>
   <copy todir="${dist.dir}/i686/emusicj-linux">
 	<fileset file="${basedir}/emusicj" />
-	<fileset file="${basedir}/emusicj.jar" />
+<!--	<fileset file="${basedir}/emusicj.jar" /> -->
 	<fileset file="${basedir}/doc/COPYING" />
 	<fileset file="${basedir}/doc/README" />
   </copy>
+  <copy file="${basedir}/emusicj-14.jar" tofile="${dist.dir}/i686/emusicj-linux/emusicj.jar" />
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
   <exec executable="chmod" dir="${dist.dir}/i686/emusicj-linux" os="Linux">
   	<arg line="+x emusicj"/>
@@ -82,10 +84,11 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   </copy>
   <copy todir="${dist.dir}/x86_64/emusicj-linux">
  	<fileset file="${basedir}/emusicj" />
-	<fileset file="${basedir}/emusicj.jar" />
+<!--	<fileset file="${basedir}/emusicj.jar" /> -->
 	<fileset file="${basedir}/doc/COPYING" />
 	<fileset file="${basedir}/doc/README" />
   </copy>
+  <copy file="${basedir}/emusicj-14.jar" tofile="${dist.dir}/x86_64/emusicj-linux/emusicj.jar" />
   <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
   <exec executable="chmod" dir="${dist.dir}/x86_64/emusicj-linux/" os="Linux">
         <arg line="+x emusicj"/>
@@ -96,6 +99,16 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   </exec>
   <!-- end amd64 -->
 
+</target>
+
+<taskdef name="retroweaver" classname="com.rc.retroweaver.ant.RetroWeaverTask">
+  <classpath>
+    <fileset dir="${lib.dir}" includes="**/*"/>
+  </classpath>
+</taskdef>
+
+<target name="weave">
+  <retroweaver outputjar="emusicj-14.jar" inputjar="emusicj.jar" target="1.4"/>
 </target>
 
 <target name="view" description="Displays Javadoc documentation in a browser.">

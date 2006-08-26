@@ -5,6 +5,8 @@ V0.19-SVN
 * Updated SWT to stable 3.2 build
 * Added option to automatically remove completed downloads from the
   downloads list. This happens 30 seconds after it finishes.
+* Builds now use retroweaver to gain JDK1.4 compatibility. This means it
+  works with GCJ, and probably other open JREs.
 V0.18 2006-04-09
 * Renamed 'None' to 'Clear' for the .emp drop for button, added a 'Clear' 
   button to the proxy settings
