@@ -65,7 +65,7 @@ public class DownloadsModel implements IDownloadsModel {
 	/**
 	 * Contains the downloads as an ordered list
 	 */
-	List<IDownloader> downloads;
+	private List<IDownloader> downloads;
 	/**
 	 * Contains the listeners listening to changes in the state of the model
 	 */
@@ -247,6 +247,7 @@ public class DownloadsModel implements IDownloadsModel {
     public void removeDownload(IDownloader dl) {
     		if (dlsHash.contains(dl)) {
     			downloads.remove(dl);
+    			dlsHash.remove(dl);
     			notifyListeners();
     		}
     }

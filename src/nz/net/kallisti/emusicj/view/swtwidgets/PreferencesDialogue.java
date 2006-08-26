@@ -65,6 +65,8 @@ public class PreferencesDialogue {
 	protected boolean proxyModified = false;
 	private Text dropDir;
 	private boolean dropDirModified = false;
+	private boolean removeCompletedDownloads;
+	private Button autoCleanup;
 
 	/**
 	 * @param display
@@ -77,6 +79,7 @@ public class PreferencesDialogue {
 		filePattern = prefs.getFilePattern();
 		minDL = prefs.getMinDownloads();
 		checkForUpdates = prefs.checkForUpdates();
+		removeCompletedDownloads = prefs.removeCompletedDownloads();
 	}
 
 	/**
@@ -186,7 +189,14 @@ public class PreferencesDialogue {
 		minDLSpin.pack();
 		Label minDLLabel = new Label(downloads, SWT.NONE);
 		minDLLabel.setText("Minimum number of downloads at once");
-
+		
+		autoCleanup = new Button(downloads, SWT.CHECK);
+		autoCleanup.setSelection(removeCompletedDownloads);
+		autoCleanup.setText("Automatically remove completed downloads from list");
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		autoCleanup.setLayoutData(gd);
+		
 		Group updates = new Group(dialog, SWT.NONE);
 		updates.setLayout(new GridLayout(2, false));
 		updates.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -281,6 +291,7 @@ public class PreferencesDialogue {
 		prefs.setSavePath(filePath);
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
+		prefs.setRemoveCompletedDownloads(autoCleanup.getSelection());
 		if (proxyModified) {
 			prefs.setProxy(noProxy.getSelection(), proxyHost.getText(), proxyPort.getText());
 		}

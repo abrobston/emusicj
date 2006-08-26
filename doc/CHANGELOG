@@ -3,6 +3,8 @@ V0.19-SVN
   default Firefox, this can be changed by using the 'undocumented'
   browserCommand option in the prefs file.)
 * Updated SWT to stable 3.2 build
+* Added option to automatically remove completed downloads from the
+  downloads list. This happens 30 seconds after it finishes.
 V0.18 2006-04-09
 * Renamed 'None' to 'Clear' for the .emp drop for button, added a 'Clear' 
   button to the proxy settings

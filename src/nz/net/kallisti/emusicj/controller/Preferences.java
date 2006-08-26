@@ -252,6 +252,16 @@ public class Preferences {
         notify(Pref.CHECK_FOR_UPDATES);
     }
     
+    public synchronized boolean removeCompletedDownloads() {
+    	String removeCompleted = props.getProperty("removeCompletedDownloads", "true");
+    	return removeCompleted.equalsIgnoreCase("true");
+    }
+    
+    public synchronized void setRemoveCompletedDownloads(boolean remove) {
+    	props.setProperty("removeCompletedDownloads", remove?"true":"false");
+    	notify(Pref.REMOVE_COMPLETED_DOWNLOADS);
+    }
+    
     public synchronized String getProxyHost() {
         return proxyHost;
     }

@@ -69,6 +69,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 	private PollDownloads pollThread;
 	private DirectoryMonitor dropDirMon;
 	private int maxDownloadFailures;
+	private Boolean monitorStateChangedIsRunning=false;
 	
 	public EMusicController() {
 		super();
@@ -219,38 +220,68 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 	 * in order to just ensure that downloads are happening. 
 	 */
 	public void monitorStateChanged(IDownloadMonitor monitor) {
-		if (shuttingDown)
-			return;
-		int count = 0, finished = 0;
-		int total = downloadsModel.getDownloadMonitors().size();
-		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
-			if (mon.getDownloadState() == DLState.DOWNLOADING ||
-					mon.getDownloadState() == DLState.CONNECTING) {
-				count++;
-			}
-			if (mon.getDownloadState() == DLState.FINISHED) {
-				finished++;
-			}
+		synchronized (monitorStateChangedIsRunning) {
+			if (monitorStateChangedIsRunning)
+				return;
+			// Poor-mans synchronization, can't use synchronized on the method as 
+			// it may cause deadlocks
+			monitorStateChangedIsRunning = false;
 		}
-		if (view != null)
-			view.downloadCount(count, finished, total);
-		// This is down here so that the view gets notified about what's going on
-		if (noAutoStartDownloads)
-			return;
-		int num = prefs.getMinDownloads() - count;
-		if (num > 0) {
+		try {
+			if (shuttingDown)
+				return;
+			// If we're supposed to auto-remove downloads, then we fire up a 
+			// thread for that here.
+			if (monitor != null && 
+					monitor.getDownloadState() == DLState.FINISHED &&
+					prefs.removeCompletedDownloads()) {
+				final IDownloader downloader = monitor.getDownloader();
+				Thread removalThread = new Thread() {
+					public void run() {
+						try {
+							// Wait 30 seconds
+							Thread.sleep(30000);
+							downloadsModel.removeDownload(downloader);
+						} catch (InterruptedException e) {}
+					}
+				};
+				removalThread.setDaemon(true);
+				removalThread.start();
+			}
+			int count = 0, finished = 0;
+			int total = downloadsModel.getDownloadMonitors().size();
 			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
-				// Find downloads that are not started, or failed and not
-				// the same one that just changed
-				if (mon.getDownloadState() == DLState.NOTSTARTED ||
-						((monitor != mon) && mon.getDownloadState() == DLState.FAILED)
-						&& mon.getFailureCount() < maxDownloadFailures) {
-					mon.getDownloader().start();
-					num--;
-					if (num <= 0)
-						break;
+				if (mon.getDownloadState() == DLState.DOWNLOADING ||
+						mon.getDownloadState() == DLState.CONNECTING) {
+					count++;
+				}
+				if (mon.getDownloadState() == DLState.FINISHED) {
+					finished++;
 				}
 			}
+			if (view != null)
+				view.downloadCount(count, finished, total);
+			// This is down here so that the view still gets notified about 
+			// what's going on
+			if (noAutoStartDownloads)
+				return;
+			int num = prefs.getMinDownloads() - count;
+			if (num > 0) {
+				for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+					// Find downloads that are not started, or failed and not
+					// the same one that just changed
+					if (mon.getDownloadState() == DLState.NOTSTARTED ||
+							((monitor != mon) && mon.getDownloadState() == DLState.FAILED)
+							&& mon.getFailureCount() < maxDownloadFailures) {
+						mon.getDownloader().start();
+						num--;
+						if (num <= 0)
+							break;
+					}
+				}
+			}
+		} finally {
+			monitorStateChangedIsRunning = false;
 		}
 	}
 	
