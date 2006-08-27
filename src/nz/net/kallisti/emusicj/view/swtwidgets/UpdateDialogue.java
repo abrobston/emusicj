@@ -44,35 +44,49 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class UpdateDialogue {
 
-	private String newVersion;
-	private Shell shell;
+	private final String newVersion;
+	private final Shell shell;
 	private Shell dialog;
 	private Button againButton;
+	private final SWTView view;
+	private final Preferences prefs = Preferences.getInstance();
 
-	public UpdateDialogue(Shell shell, String newVersion) {
+	public UpdateDialogue(Shell shell, SWTView view, String newVersion) {
 		this.shell = shell;
+		this.view = view;
 		this.newVersion = newVersion;
 	}
 
 	public void open() {
 		dialog = new Shell (shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		dialog.setLayout (new GridLayout(2,false));
+		dialog.setLayout (new GridLayout(3,false));
 		dialog.setText("New Version of "+Constants.APPNAME);
 		Label textLabel = new Label(dialog, SWT.WRAP);
 		textLabel.setText("A new version of "+Constants.APPNAME+" is available.\n" +
 				"Version "+newVersion+" has been released.\n"+
 				"It can be downloaded from "+Constants.APPURL);
 		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		textLabel.setLayoutData(gd);
 		againButton = new Button(dialog, SWT.CHECK);
 		againButton.setText("Don't check for updates automatically");
 		gd = new GridData();
-        gd.horizontalSpan = 2;
+        gd.horizontalSpan = 3;
         againButton.setLayoutData(gd);
 //		Label againLabel = new Label(dialog, SWT.NONE);
 //		againLabel.setText("Don't check for updates automatically");
 		
+        Button openInBrowser = new Button(dialog, SWT.PUSH);
+        gd = new GridData();
+        gd.horizontalAlignment=SWT.RIGHT;
+        openInBrowser.setLayoutData(gd);
+        openInBrowser.setText("Open in browser");
+        openInBrowser.addSelectionListener(new SelectionAdapter(){
+            public void action(SelectionEvent e) {
+                openPageInBrowser();
+            }
+        });        
+        
         Button copy = new Button(dialog, SWT.PUSH);
         gd = new GridData();
         gd.horizontalAlignment=SWT.RIGHT;
@@ -115,5 +129,25 @@ public class UpdateDialogue {
 		dialog.dispose();
 		new Thread() { public void run() { prefs.save(); } }.start();
 	}
+    
+    public void openPageInBrowser() {
+		new Thread() {
+			public void run() {
+				String browserCmd = prefs.getBrowserCommand(Constants.APPURL);
+				try {
+					Process p = Runtime.getRuntime().exec(browserCmd);
+					p.waitFor();
+					if (p.exitValue() != 0)
+						throw new Exception();
+				}catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					view.error("Error launching browser", "There seemed to be a " +
+							"problem launching the browser. The user manual can" +
+							"be found at "+Constants.APPURL);
+				}				
+			}
+		}.start();
+    }
 	
 }

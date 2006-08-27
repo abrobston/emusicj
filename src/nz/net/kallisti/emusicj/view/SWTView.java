@@ -530,7 +530,6 @@ SelectionListener, ControlListener {
 			public void run() {
 				String browserCmd = prefs.getBrowserCommand(Constants.USER_MANUAL_URL);
 				try {
-					System.out.println(browserCmd);
 					Process p = Runtime.getRuntime().exec(browserCmd);
 					p.waitFor();
 					if (p.exitValue() != 0)
@@ -654,7 +653,7 @@ SelectionListener, ControlListener {
 	public void updateAvailable(final String newVersion) {
 		defer(new Runnable() {
 			public void run() {
-				UpdateDialogue dialogue = new UpdateDialogue(shell, newVersion);
+				UpdateDialogue dialogue = new UpdateDialogue(shell, SWTView.this, newVersion);
 				dialogue.open();
 			}
 		});

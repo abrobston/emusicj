@@ -1,7 +1,9 @@
-V0.19-SVN
+V0.19 2006-08-28
 * Added 'User Manual' option in help menu, which opens a browser (by
   default Firefox, this can be changed by using the 'undocumented'
   browserCommand option in the prefs file.)
+* The update dialogue now offers to open a browser to the application
+  homepage
 * Updated SWT to stable 3.2 build
 * Added option to automatically remove completed downloads from the
   downloads list. This happens 30 seconds after it finishes.
