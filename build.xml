@@ -71,7 +71,8 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   <exec executable="chmod" dir="${dist.dir}/i686/emusicj-linux" os="Linux">
   	<arg line="+x emusicj"/>
   </exec>
-  <!-- create an .xpm icon from the app icon PNG file -->
+  <!-- create an .xpm icon from the app icon PNG file. If you get an error here,
+       install ImageMagick -->
   <exec executable="convert" dir="${src.dir}/images" os="Linux">
 	<arg line="emusicj_64.png ${dist.dir}/i686/emusicj-linux/emusicj.xpm"/>
   </exec>
@@ -93,7 +94,8 @@ Type `ant target' to run a target or `ant' to run the default target. -->
   <exec executable="chmod" dir="${dist.dir}/x86_64/emusicj-linux/" os="Linux">
         <arg line="+x emusicj"/>
   </exec>
-  <!-- create an .xpm icon from the app icon PNG file -->
+  <!-- create an .xpm icon from the app icon PNG file. If you get an error here,
+       install ImageMagick -->
   <exec executable="convert" dir="${src.dir}/images" os="Linux">
         <arg line="emusicj_64.png ${dist.dir}/x86_64/emusicj-linux/emusicj.xpm"/>
   </exec>

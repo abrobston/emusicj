@@ -45,7 +45,7 @@ import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
  * other user-definable options.</p>
  *
  *
- * $Id$
+ * $Id: Preferences.java 134 2006-08-26 05:24:17Z robin $
  *
  * @author robin
  */
@@ -75,8 +75,9 @@ public class Preferences {
         // Make sure the state path exists, as other things may need it
         new File(statePath).mkdirs();
         // Set the proxy variables
+        System.out.println("Proxy var: "+System.getProperty("env.http_proxy"));
         try {
-            URL url = new URL(System.getenv("http_proxy"));
+            URL url = new URL(System.getProperty("env.http_proxy"));
             proxyHost = url.getHost();
             proxyPort = url.getPort();
         } catch (MalformedURLException e) {}
