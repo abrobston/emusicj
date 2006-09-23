@@ -75,7 +75,6 @@ public class Preferences {
         // Make sure the state path exists, as other things may need it
         new File(statePath).mkdirs();
         // Set the proxy variables
-        System.out.println("Proxy var: "+System.getProperty("env.http_proxy"));
         try {
             URL url = new URL(System.getProperty("env.http_proxy"));
             proxyHost = url.getHost();
