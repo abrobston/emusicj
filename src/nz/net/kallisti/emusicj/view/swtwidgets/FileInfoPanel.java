@@ -29,6 +29,7 @@ import nz.net.kallisti.emusicj.download.IDisplayableDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -43,7 +44,7 @@ import org.eclipse.swt.widgets.Label;
  * IDownloader instance). Once it is in place, a call to {@link setDownloader}
  * defines what to display. It keeps an image cache for album covers.
  * 
- * $Id$
+ * $Id: FileInfoPanel.java 129 2006-06-21 13:06:54Z robin $
  *
  * @author robin
  */
@@ -98,8 +99,18 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 					&& coverFile.exists()) {
 				Image im = imageCache.get(coverFile); 
 				if (im == null) {
-					im = new Image(display, ddl.getImageFile().toString());
-					imageCache.put(coverFile, im);
+					try {
+						im = new Image(display, ddl.getImageFile().toString());
+						imageCache.put(coverFile, im);
+					} catch (SWTException e) {
+						// Sometimes an error here can cause the whole system 
+						// to fall over, so we catch it and fail more
+						// gracefully
+						System.err.println("An error occurred loading the " +
+								"image: "+ddl.getImageFile().toString());
+						e.printStackTrace();
+						im = null;
+					}
 				}
 				imageLabel.setImage(im);
 			} else {
