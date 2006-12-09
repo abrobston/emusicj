@@ -173,6 +173,11 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 			error("Error reading file",e.getMessage());
 		} catch (UnknownFileException e) {
 			error("Error reading file","The file is of an unknown type\n"+file);
+		} catch (Exception e) {
+			error("Error reading file","Something failed while reading the " +
+					"file\n"+file+"\nError details have been written to the " +
+							"terminal.");
+			e.printStackTrace();
 		}
 	}
 	

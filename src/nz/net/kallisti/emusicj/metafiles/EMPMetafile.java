@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
 /**
  * <p>Loads a .emp file, and creates downloaders from it.</p>
  * 
- * <p>$Id$</p>
+ * <p>$Id: EMPMetafile.java 129 2006-06-21 13:06:54Z robin $</p>
  *
  * @author robin
  */
@@ -69,7 +69,8 @@ public class EMPMetafile implements IMetafile {
 		try {
 			doc = builder.parse(new EMPDecoderStream(new FileInputStream(file)));
 		} catch (SAXException e) {
-			throw new UnknownFileException(e);
+			throw new UnknownFileException("I wasn't able to load this file. " +
+					"Perhaps try downloading it again", e);
 		}
 		Node root = doc.getDocumentElement();
 		if (!(root.getNodeType() == Node.ELEMENT_NODE &&

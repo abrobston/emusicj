@@ -23,7 +23,8 @@ package nz.net.kallisti.emusicj.metafiles.exceptions;
 
 
 /**
- * <p>This exception indicates that the provided file was not a known metafile.</p>
+ * <p>This exception indicates that the provided file was not a known metafile,
+ * or that some kind of parse error occurred while reading it.</p>
  * 
  * <p>$Id$</p>
  *
@@ -31,7 +32,11 @@ package nz.net.kallisti.emusicj.metafiles.exceptions;
  */
 public class UnknownFileException extends RuntimeException {
 
-    public UnknownFileException(String message) {
+	public UnknownFileException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public UnknownFileException(String message) {
         super(message);
     }
 
