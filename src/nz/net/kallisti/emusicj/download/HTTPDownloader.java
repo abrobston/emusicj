@@ -444,10 +444,10 @@ public class HTTPDownloader implements IDownloader {
 				}
 				if (bytesDown == fileLength) {
 					setState(DLState.FINISHED);
-					if (needToRename)
-						partFile.renameTo(outputFile);
 					out.close();
 					in.close();
+					if (needToRename)
+						partFile.renameTo(outputFile);
 					get.releaseConnection();
 				} else { // if we didn't get the whole file, mark it and it'll
 						// be tried again later

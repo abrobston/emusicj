@@ -45,7 +45,7 @@ import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
  * other user-definable options.</p>
  *
  *
- * $Id: Preferences.java 134 2006-08-26 05:24:17Z robin $
+ * $Id$
  *
  * @author robin
  */
