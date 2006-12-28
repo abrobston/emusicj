@@ -49,14 +49,16 @@ import org.xml.sax.SAXException;
 /**
  * <p>Loads a .emp file, and creates downloaders from it.</p>
  * 
- * <p>$Id: EMPMetafile.java 129 2006-06-21 13:06:54Z robin $</p>
+ * <p>$Id$</p>
  *
  * @author robin
+ * @author Paul Focke <paul.focke@gmail.com>
  */
 public class EMPMetafile implements IMetafile {
 
 	List<IDownloader> downloaders = new ArrayList<IDownloader>();
 	private static Hashtable<String, File> coverArtCache;
+	private EMPServer server;
 	
 	public EMPMetafile(File file) throws IOException {
 		DocumentBuilder builder;
@@ -81,13 +83,17 @@ public class EMPMetafile implements IMetafile {
 			throw new UnknownFileException("File appears to contain no downloads");
 		}
 		NodeList pkg = root.getChildNodes(); 
+		
+		
 		for (int count = 0; count < pkg.getLength(); count++) {
 			Node node = pkg.item(count);
-			if (!(node.getNodeType() == Node.ELEMENT_NODE &&
-					node.getNodeName().equalsIgnoreCase("tracklist"))) {
-				continue;
-			}
-			loadTrackList(node);
+			if (node.getNodeType() == Node.ELEMENT_NODE &&
+					node.getNodeName().equalsIgnoreCase("tracklist")) {
+				loadTrackList(node);
+			} else if (node.getNodeType() == Node.ELEMENT_NODE &&
+					node.getNodeName().equalsIgnoreCase("server")) {
+				server = new EMPServer(node);
+			}		
 		}
 
 	}
@@ -147,7 +153,7 @@ public class EMPMetafile implements IMetafile {
 		}
 		URL url;
 		try {
-			url = new URL("http://dl.emusic.com/dl/"+id+"/"+filename);
+			url = server.createDownloadURL(id, filename);
 		} catch (MalformedURLException e) {
 			throw new UnknownFileException(e);
 		}
@@ -233,5 +239,75 @@ public class EMPMetafile implements IMetafile {
 	public List<IDownloader> getDownloaders() {
 		return downloaders;
 	}
-
+	
+	private static class EMPServer {
+		
+		private final String protocol = "http"; 
+		private final String name;
+		private final String desc;
+		private final String server;
+		private final String location;
+		private final String key;
+		
+		public EMPServer(String name, String desc, String server, String location, String key){
+			this.name = name;
+			this.desc = desc;
+			this.server = server;
+			this.location = location;
+			this.key = key;		
+		}
+		public EMPServer(Node serverNode){
+			String nname = "";
+			String ndesc = "";
+			String nserver = "";
+			String nlocation = "";
+			String nkey = "";
+			NodeList nodeList = serverNode.getChildNodes();
+			for(int i = 0; i < nodeList.getLength(); i++){
+				Node node = nodeList.item(i);
+				if (node.getFirstChild() == null)
+					continue;
+				if (node.getNodeName().equalsIgnoreCase("name"))
+					nname=node.getFirstChild().getNodeValue();
+				else if (node.getNodeName().equalsIgnoreCase("desc"))
+					ndesc=node.getFirstChild().getNodeValue();
+				else if (node.getNodeName().equalsIgnoreCase("netname"))
+					nserver=node.getFirstChild().getNodeValue();
+				else if (node.getNodeName().equalsIgnoreCase("location"))
+					nlocation=node.getFirstChild().getNodeValue();
+				else if (node.getNodeName().equalsIgnoreCase("key"))
+					nkey=node.getFirstChild().getNodeValue();
+			}
+			
+			name = nname;
+			desc = ndesc;
+			server = nserver;
+			location = nlocation;
+			key = nkey;			
+		}
+		public URL createDownloadURL(String id, String filename) throws MalformedURLException{
+			String filelocation = new String (location);
+			filelocation = filelocation.replaceAll("%fid", id);
+			filelocation = filelocation.replaceAll("%f", filename);
+			return new URL(protocol, server, filelocation);			
+		}
+		/**
+		 * @return Returns the desc.
+		 */
+		public String getDesc() {
+			return desc;
+		}
+		/**
+		 * @return Returns the key.
+		 */
+		public String getKey() {
+			return key;
+		}
+		/**
+		 * @return Returns the name.
+		 */
+		public String getName() {
+			return name;
+		}
+	}
 }

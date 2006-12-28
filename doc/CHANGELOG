@@ -1,3 +1,11 @@
+V0.20-svn
+* Patch by Paul Focke to make the server URL in the .emp file respected. This
+  is better for European users who now have their own server.
+* Improved error handling in a few situations. Things that previously crashed
+  the program should now cause it to display an error.
+* Changed order of operations when a file download completes, previously it
+  was 'rename file, close file'. This has been reversed in order to work
+  on Windows.
 V0.20 2006-09-03
 * No longer use System.getenv(String) to get the http proxy value. Now it's
   passed into the program from the script via a -D declaration (the 'proper'

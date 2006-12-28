@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Label;
  * IDownloader instance). Once it is in place, a call to {@link setDownloader}
  * defines what to display. It keeps an image cache for album covers.
  * 
- * $Id: FileInfoPanel.java 129 2006-06-21 13:06:54Z robin $
+ * $Id$
  *
  * @author robin
  */

@@ -30,7 +30,7 @@ import nz.net.kallisti.emusicj.metafiles.streams.EMPDecoderStream;
  * <p>This tests the EMPDecoderStream class. An encrypted EMP file should be
  * provided on the command line, and a decrypted version is output to STDOUT</p>
  * 
- * <p>$Id:$</p>
+ * <p>$Id$</p>
  *
  * @author robin
  */
