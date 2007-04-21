@@ -561,7 +561,8 @@ SelectionListener, ControlListener {
 				}
 			}
 			saveWindowState();
-			display.dispose();
+			if (!display.isDisposed())
+				display.dispose();
 			// Tell the DownloadDisplay instances to finish up
 		} catch (SWTException e) {
 			// If a GUI error occurs hopefully we can shut down somewhat gracefully
