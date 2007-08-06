@@ -339,12 +339,14 @@ public class HTTPDownloader implements IDownloader {
 				} -- we no longer allow non-resuming, although we probably should */
 				Header[] responseHeaders = get.getResponseHeaders();
 				boolean isFile = mimeType == null;
+				long contentLength = -1;
 				for (int i=0; i<responseHeaders.length; i++){
 					String hLine = responseHeaders[i].toString();
 					String[] hParts = hLine.split(" ");
 					if (hParts[0].equals("Content-Length:")) {
-						fileLength = Long.parseLong(hParts[1].
-								substring(0,hParts[1].length()-2)) +
+						contentLength = Long.parseLong(hParts[1].
+								substring(0,hParts[1].length()-2));
+						fileLength = contentLength +
 								resumePoint; // resumePoint will be 0 if no resume
 					}
 //					if (hParts[0].equals("Content-Disposition:")) {
@@ -366,6 +368,15 @@ public class HTTPDownloader implements IDownloader {
 							e.printStackTrace();
 						}
 					}
+				}
+				if (contentLength == 0 && !isFile) {
+					// This hopefully fixes an odd issue where if you request
+					// an already complete file from emusic, it will not
+					// provide a MIME header. This makes a small amount of
+					// sense, but kinda violates 'least surprise'.
+					// We let the download proceed so that we don't get a
+					// failure when it wasn't really.
+					isFile = true;
 				}
 				if (!isFile) {
 					downloadError("Result isn't a file");
