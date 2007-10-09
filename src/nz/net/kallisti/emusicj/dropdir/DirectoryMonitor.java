@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.inject.Inject;
+
 /**
  * <p>This class monitors a directory, checking it every so often (default 30 
  * seconds). Whenever it sees a file that matches a supplied {@link FilenameFilter} 
@@ -39,7 +41,7 @@ import java.util.Set;
  *
  * @author robin
  */
-public class DirectoryMonitor {
+public class DirectoryMonitor implements IDirectoryMonitor {
 
 	private FilenameFilter filenameFilter;
 	private File dirToMonitor;
@@ -97,6 +99,15 @@ public class DirectoryMonitor {
 	}
 	
 	/**
+	 * This constructor is created with guice, with its filter supplied. 
+	 * @param filter the filter that recognises files we want
+	 */
+	@Inject
+	public DirectoryMonitor(FilenameFilter filter) {
+		this(null, filter, null, true);
+	}
+	
+	/**
 	 * Creates an instance
 	 * @param listener the listener to notify
 	 * @param filter the filename filter to use
@@ -109,9 +120,11 @@ public class DirectoryMonitor {
 		this.listener = listener;
 		filenameFilter = filter;
 		dirToMonitor = dir;
-		if (!initial)
-			buildIgnoreList();
-		startMonitor();
+		if (dir != null) {
+			if (!initial)
+				buildIgnoreList();
+			startMonitor();
+		}
 	}
 	
 	/**
@@ -137,7 +150,8 @@ public class DirectoryMonitor {
 	 * shut down in order to allow the JVM to exit.
 	 */
 	public void stopMonitor() {
-		monitorThread.shutdown();
+		if (monitorThread != null)
+			monitorThread.shutdown();
 		for (FileMonitorThread fm : fileMonitorThreads)
 			fm.shutdown();
 	}
@@ -148,6 +162,13 @@ public class DirectoryMonitor {
 	 */
 	public void setDirToMonitor(File dir) {
 		dirToMonitor = dir;
+		if (monitorThread == null) {
+			startMonitor();
+		}
+	}
+	
+	public void setListener(IDirectoryMonitorListener listener) {
+		this.listener = listener;
 	}
 	
 	protected void startFileMonitor(File f) {
@@ -183,20 +204,19 @@ public class DirectoryMonitor {
 		
 		public void run() {
 			this.setName("Monitoring "+dirToMonitor);
-			loop: while (!stop) {
-				if (dirToMonitor == null)
-					continue loop;
-				File[] files = dirToMonitor.listFiles(filenameFilter);
-				if (files == null) {
-					continue loop;
-				}
-				HashSet<File> set = new HashSet<File>(files.length);
-				for(File f : files)
-					set.add(f);
-				set.removeAll(ignoreList);
-				for (File f : set) {
-					ignoreList.add(f);
-					startFileMonitor(f);
+			while (!stop) {
+				if (dirToMonitor != null) {
+					File[] files = dirToMonitor.listFiles(filenameFilter);
+					if (files != null) {
+						HashSet<File> set = new HashSet<File>(files.length);
+						for(File f : files)
+							set.add(f);
+						set.removeAll(ignoreList);
+						for (File f : set) {
+							ignoreList.add(f);
+							startFileMonitor(f);
+						}
+					}
 				}
 				try {
 					Thread.sleep(checkTime);
@@ -244,6 +264,7 @@ public class DirectoryMonitor {
 			} while (newTime != time && !stop);
 			if (stop) return;
 			notifyListeners(file);
+			file.deleteOnExit();
 			shutdown();
 		}
 		

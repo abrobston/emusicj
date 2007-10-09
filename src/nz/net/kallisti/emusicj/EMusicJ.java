@@ -21,10 +21,14 @@
  */
 package nz.net.kallisti.emusicj;
 
-import nz.net.kallisti.emusicj.controller.EMusicController;
+import nz.net.kallisti.emusicj.bindings.Bindings;
+import nz.net.kallisti.emusicj.bindings.EmusicjBindings;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.view.IEMusicView;
-import nz.net.kallisti.emusicj.view.SWTView;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
 
 /**
  * <p>This is the main class for the eMusic/J downloader. It doesn't do a
@@ -42,12 +46,25 @@ public class EMusicJ {
      * Initialises the components of the system.
      * @param args command line parameters.
      */
-    public static void main(String[] args) {
-        IEMusicView view = new SWTView();
+    public EMusicJ(String[] args) {
+    	Injector injector = Guice.createInjector(Stage.PRODUCTION, new Bindings(), new EmusicjBindings());
+        IEMusicView view = injector.getInstance(IEMusicView.class);
         view.setState(IEMusicView.ViewState.STARTUP);
-        IEMusicController controller = new EMusicController();
-        controller.setView(view);
+        IEMusicController controller = injector.getInstance(IEMusicController.class);
         controller.run(args);
+    }
+
+    /**
+     * This may be overridden to provide custom starters for other platforms
+     * @param controller the application controller
+     * @param args the command line arguments
+     */
+    public void startApp(IEMusicController controller, String[] args) {
+        controller.run(args);
+    }
+    
+    public static void main(String[] args) {
+    	new EMusicJ(args);
     }
 
 }

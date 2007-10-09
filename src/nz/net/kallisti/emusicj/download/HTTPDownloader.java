@@ -31,7 +31,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import nz.net.kallisti.emusicj.controller.Preferences;
+import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeType;
@@ -46,6 +46,8 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.google.inject.Inject;
+
 
 /**
  * <p>Downloads files from a URL from an HTTP server</p>
@@ -56,15 +58,22 @@ import org.w3c.dom.Element;
  */
 public class HTTPDownloader implements IDownloader {
 	
-	private URL url;
+	URL url;
 	protected HTTPDownloadMonitor monitor;
-	private File outputFile;
+	File outputFile;
 	private DownloadThread dlThread;
 	protected volatile DLState state;
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
 	protected int failureCount = 0;
-	private IMimeType[] mimeType;
+	IMimeType[] mimeType;
+	protected IPreferences prefs;
+	
+	@Inject
+	public HTTPDownloader(IPreferences prefs) {
+		this.prefs = prefs;
+		createMonitor();
+	}
 	
 	/**
 	 * Initialise, but do not start, the downloader
@@ -73,12 +82,10 @@ public class HTTPDownloader implements IDownloader {
 	 * @param mimeType the MIME type to restrict the downloading to. Anything
 	 * else will be considered an error.
 	 */
-	public HTTPDownloader(URL url, File outputFile, IMimeType[] mimeType) {
-		super();
+	public void setDownloader(URL url, File outputFile, IMimeType[] mimeType) {
 		this.url = url;
 		this.outputFile = outputFile;
 		this.mimeType = mimeType;
-		createMonitor();
 		state = DLState.NOTSTARTED;
 		monitor.setState(state);
 	}
@@ -88,8 +95,7 @@ public class HTTPDownloader implements IDownloader {
 	 * @param el the element to load from
 	 * @throws MalformedURLException if the URL in the XML is wrong or missing
 	 */
-	public HTTPDownloader(Element el) throws MalformedURLException {
-		super();		
+	public void setDownloader(Element el) throws MalformedURLException {
 		String tUrl = el.getAttribute("url");
 		if (!"".equals(tUrl))
 			url = new URL(tUrl);
@@ -172,7 +178,7 @@ public class HTTPDownloader implements IDownloader {
 		}
 	}
 	
-	private void setState(DLState state) {
+	void setState(DLState state) {
 		this.state = state;
 		monitor.setState(state);
 	}
@@ -309,7 +315,6 @@ public class HTTPDownloader implements IDownloader {
 			while (pause && !abort);
 			if (abort) return;
             HttpClient http = new HttpClient();
-            Preferences prefs = Preferences.getInstance();
             if (prefs.usingProxy()) {
                 HostConfiguration hostConf = new HostConfiguration();
                 hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
@@ -325,8 +330,18 @@ public class HTTPDownloader implements IDownloader {
 			InputStream in;
 			try {
 				int statusCode = http.executeMethod(get);
-				if (!((statusCode == HttpStatus.SC_OK && !needToResume) ||
-						(statusCode == HttpStatus.SC_PARTIAL_CONTENT && needToResume))) {
+				if (statusCode == HttpStatus.SC_OK && needToResume) {
+					// we've got an 'OK' code, rather than a 'partial content'
+					// code. This means resume isn't supported, so we 
+					// start the download again.
+					needToResume = false;
+					resumePoint = 0;
+					out.close();
+					out = new BufferedOutputStream(new FileOutputStream(partFile, needToResume));
+				}
+				// If not a code we expect, abort
+				if (statusCode != HttpStatus.SC_OK && 
+						statusCode != HttpStatus.SC_PARTIAL_CONTENT) {
 					get.abort();
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "+statusCode);

@@ -22,8 +22,9 @@
 package nz.net.kallisti.emusicj.updater;
 
 import java.io.IOException;
+import java.net.URL;
 
-import nz.net.kallisti.emusicj.controller.Preferences;
+import nz.net.kallisti.emusicj.controller.IPreferences;
 
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
@@ -31,6 +32,8 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+
+import com.google.inject.Inject;
 
 
 /**
@@ -45,26 +48,33 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
  *
  * @author robin
  */
-public class UpdateCheck {
+public class UpdateCheck implements IUpdateCheck {
 
 	private IUpdateCheckListener listener;
-	private String updateUrl;
+	private URL updateUrl;
+	private final IPreferences prefs;
 
-	/**
-	 * Creates an instance of the class
-	 * @param listener the object to notify when we find out if there is an
-	 * update available
-	 * @param updateUrl the URL to check 
-	 */
-	public UpdateCheck(IUpdateCheckListener listener, String updateUrl) {
-		this.listener = listener;
-		this.updateUrl = updateUrl;
+	@Inject
+	public UpdateCheck(IPreferences prefs) {
+		this.prefs = prefs;
 	}
 
-	/**
-	 * Initiates the version check.
-	 * @param currVersion the current version of the application to check 
-	 * against
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.updater.IUpdateCheck#setListener(nz.net.kallisti.emusicj.updater.IUpdateCheckListener)
+	 */
+	public void setListener(IUpdateCheckListener listener) {
+		this.listener = listener;
+	}
+	
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.updater.IUpdateCheck#setUpdateUrl(java.lang.String)
+	 */
+	public void setUpdateUrl(URL updateUrl) {
+		this.updateUrl = updateUrl;
+	}
+	
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.updater.IUpdateCheck#check(java.lang.String)
 	 */
 	public void check(String currVersion) {
 		UpdateCheckThread updateThread = new UpdateCheckThread(currVersion);
@@ -89,7 +99,6 @@ public class UpdateCheck {
 		
 		public void run() {
 			setName("Update Check");
-            Preferences prefs = Preferences.getInstance();
             HttpClient http = new HttpClient();
             if (!prefs.getProxyHost().equals("")) {
                 HostConfiguration hostConf = new HostConfiguration();
@@ -99,7 +108,7 @@ public class UpdateCheck {
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received
 			params.setSoTimeout(120000);
-			HttpMethod get = new GetMethod(updateUrl);
+			HttpMethod get = new GetMethod(updateUrl.toString());
 			get.setParams(params);
 			int statusCode;
 			try {

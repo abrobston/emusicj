@@ -42,6 +42,12 @@ public class MusicDownloadMonitor extends HTTPDownloadMonitor
 	}
 	
 	public String getName() {
+		// This is a bit of a hack to make the artist name not displayed if
+		// it shouldn't be.
+		if ("Not used".equalsIgnoreCase(getMusicDownloader().getArtistName())) {
+			return getMusicDownloader().getTrackName()+" - "+
+			getMusicDownloader().getAlbumName();
+		}
 		return getMusicDownloader().getTrackName()+" - "+
 		getMusicDownloader().getAlbumName() + " - "+
 		getMusicDownloader().getArtistName();
@@ -80,7 +86,9 @@ public class MusicDownloadMonitor extends HTTPDownloadMonitor
 		int i=0;
 		res[i][0] = "Title"; res[i++][1] = getTrackName();
 		res[i][0] = "Album"; res[i++][1] = getAlbumName();
-		res[i][0] = "Artist"; res[i++][1] = getArtistName();
+		if (!"Not used".equals(getArtistName())) {
+			res[i][0] = "Artist"; res[i++][1] = getArtistName();
+		}
 		String genre = ((IMusicDownloader)downloader).getGenre();
 		if (genre != null)
 			res[i][0] = "Genre"; res[i++][1] = genre;

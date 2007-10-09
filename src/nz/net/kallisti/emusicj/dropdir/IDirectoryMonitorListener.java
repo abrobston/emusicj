@@ -38,6 +38,6 @@ public interface IDirectoryMonitorListener {
 	 * @param mon the monitor that detected the file
 	 * @param file the file that it found
 	 */
-	public void newFile(DirectoryMonitor mon, File file);
+	public void newFile(IDirectoryMonitor mon, File file);
 	
 }

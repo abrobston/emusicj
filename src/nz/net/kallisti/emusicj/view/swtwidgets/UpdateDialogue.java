@@ -21,8 +21,10 @@
  */
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
-import nz.net.kallisti.emusicj.Constants;
-import nz.net.kallisti.emusicj.controller.Preferences;
+import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.misc.BrowserLauncher;
+import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
@@ -49,22 +51,28 @@ public class UpdateDialogue {
 	private Shell dialog;
 	private Button againButton;
 	private final SWTView view;
-	private final Preferences prefs = Preferences.getInstance();
+	private final IPreferences prefs;
+	private final IStrings strings;
+	private final IURLFactory urlFactory;
 
-	public UpdateDialogue(Shell shell, SWTView view, String newVersion) {
+	public UpdateDialogue(Shell shell, SWTView view, String newVersion, IPreferences prefs,
+			IStrings strings, IURLFactory urlFactory) {
 		this.shell = shell;
 		this.view = view;
 		this.newVersion = newVersion;
+		this.prefs = prefs;
+		this.strings = strings;
+		this.urlFactory = urlFactory;
 	}
 
 	public void open() {
 		dialog = new Shell (shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.setLayout (new GridLayout(3,false));
-		dialog.setText("New Version of "+Constants.APPNAME);
+		dialog.setText("New Version Available");
 		Label textLabel = new Label(dialog, SWT.WRAP);
-		textLabel.setText("A new version of "+Constants.APPNAME+" is available.\n" +
+		textLabel.setText("A new version of "+strings.getAppName()+" is available.\n" +
 				"Version "+newVersion+" has been released.\n"+
-				"It can be downloaded from "+Constants.APPURL);
+				"It can be downloaded from "+urlFactory.getAppURL());
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		textLabel.setLayoutData(gd);
@@ -118,13 +126,12 @@ public class UpdateDialogue {
      * Copies the application URL to the clipboard
      */
     protected void copyToClip() {
-        String textData = Constants.APPURL;
+        String textData = urlFactory.getAppURL().toString();
         TextTransfer textTransfer = TextTransfer.getInstance();
         SWTView.getClipboard().setContents(new Object[]{textData}, new Transfer[]{textTransfer});
     }
 
     public void close() {
-		final Preferences prefs = Preferences.getInstance();
 		prefs.setCheckForUpdates(!againButton.getSelection());
 		dialog.dispose();
 		new Thread() { public void run() { prefs.save(); } }.start();
@@ -133,18 +140,12 @@ public class UpdateDialogue {
     public void openPageInBrowser() {
 		new Thread() {
 			public void run() {
-				String browserCmd = prefs.getBrowserCommand(Constants.APPURL);
 				try {
-					Process p = Runtime.getRuntime().exec(browserCmd);
-					p.waitFor();
-					if (p.exitValue() != 0)
-						throw new Exception();
-				}catch (InterruptedException e) {
-					e.printStackTrace();
+					BrowserLauncher.openURL(urlFactory.getAppURL());
 				} catch (Exception e) {
 					view.error("Error launching browser", "There seemed to be a " +
 							"problem launching the browser. The user manual can" +
-							"be found at "+Constants.APPURL);
+							"be found at "+urlFactory.getAppURL());
 				}				
 			}
 		}.start();

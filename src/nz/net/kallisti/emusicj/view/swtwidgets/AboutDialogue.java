@@ -21,8 +21,9 @@
  */
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
-import nz.net.kallisti.emusicj.Constants;
+import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -48,25 +49,28 @@ public class AboutDialogue {
 
 	private Shell shell;
 	private Shell dialog;
+	private final IStrings strings;
+	private final IImageFactory imageFactory;
 
 	/**
 	 * @param shell
 	 */
-	public AboutDialogue(Shell shell) {
+	public AboutDialogue(Shell shell, IStrings strings, IImageFactory imageFactory) {
 		super();
-		this.shell = shell;		
+		this.shell = shell;
+		this.strings = strings;
+		this.imageFactory = imageFactory;
 	}
 	
 	public void open() {
 		dialog = new Shell (shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.setLayout (new GridLayout(2,false));
-		dialog.setText("About "+Constants.APPNAME);
+		dialog.setText("About");
 		
 		/* left bit is where the logo goes */
 		Composite leftBit = new Composite(dialog, SWT.NONE);
 		leftBit.setLayout(new GridLayout(1, false));
-		final Image aboutLogoImg = new Image(SWTView.getDisplay(), 
-				AboutDialogue.class.getResourceAsStream("emusicj-about.png"));
+		final Image aboutLogoImg = imageFactory.getAboutLogo();
 		Label logoLabel = new Label(leftBit, SWT.NONE);
 		logoLabel.setImage(aboutLogoImg);
 		
@@ -76,7 +80,7 @@ public class AboutDialogue {
  		rightBit.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
  		
 		Label version = new Label(rightBit, SWT.NONE);
-		version.setText(Constants.APPNAME+" v"+Constants.VERSION);
+		version.setText(strings.getAppName()+" v"+strings.getVersion());
 		/* This magic makes the text field bold */
 		Font initialFont = version.getFont();
 		FontData[] fontData = initialFont.getFontData();
@@ -88,7 +92,7 @@ public class AboutDialogue {
 		
 		Text textField = new Text(rightBit, SWT.MULTI | SWT.WRAP | 
 				SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
-		textField.setText(Constants.ABOUT_BOX_TEXT);
+		textField.setText(strings.getAboutBoxText());
 		textField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		Button closeButton = new Button(dialog, SWT.PUSH);

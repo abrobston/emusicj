@@ -1,0 +1,47 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>lib\classicsonline.jar</jar>
+  <outfile>Classicsonline.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <icon>images/classicsonline.ico</icon>
+  <classPath>
+    <mainClass>nz.net.kallisti.emusicj.ClassicsOnline</mainClass>
+    <cp>lib\swt.jar</cp>
+    <cp>lib\commons-logging-api.jar</cp>
+    <cp>lib\commons-codec-1.3.jar</cp>
+    <cp>lib\commons-httpclient-3.0-rc4.jar</cp>
+	<cp>lib\guice-1.0.jar</cp>
+	<cp>lib\MRJAdapter.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <minVersion>1.5.0</minVersion>
+    <maxVersion></maxVersion>
+    <dontUsePrivateJres>false</dontUsePrivateJres>
+    <initialHeapSize>0</initialHeapSize>
+    <maxHeapSize>0</maxHeapSize>
+    <opt>-Djava.library.path=lib</opt>
+    <opt>-Denv.http_proxy=%HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyServer%</opt>
+    <opt>-Denv.http_proxy_enabled=%HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable%</opt>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.20.0.0</fileVersion>
+    <txtFileVersion>0.20-naxos-svn</txtFileVersion>
+    <fileDescription>Classicsonline Download Manager</fileDescription>
+    <copyright>Robin Sheat, 2007</copyright>
+    <productVersion>0.20.0.0</productVersion>
+    <txtProductVersion>0.20-naxos-svn</txtProductVersion>
+    <productName>Classicsonline Download Manager</productName>
+    <companyName></companyName>
+    <internalName>emusicj-naxos</internalName>
+    <originalFilename>Classicsonline.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>

@@ -30,22 +30,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nz.net.kallisti.emusicj.Constants;
+import nz.net.kallisti.emusicj.bindingtypes.WatchFiles;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
-import nz.net.kallisti.emusicj.dropdir.DirectoryMonitor;
+import nz.net.kallisti.emusicj.dropdir.IDirectoryMonitor;
 import nz.net.kallisti.emusicj.dropdir.IDirectoryMonitorListener;
+import nz.net.kallisti.emusicj.ipc.IIPCListener;
 import nz.net.kallisti.emusicj.ipc.IPCServerClient;
-import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
+import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
-import nz.net.kallisti.emusicj.misc.EMPFilenameFilter;
-import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
+import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.IUpdateCheckListener;
-import nz.net.kallisti.emusicj.updater.UpdateCheck;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.IEMusicView;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>This is the main controller for the application. It routes stuff around,
@@ -58,34 +63,55 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  */
 public class EMusicController implements IEMusicController, 
 IDownloadMonitorListener, IDownloadsModelListener, IUpdateCheckListener, 
-IDirectoryMonitorListener, IPreferenceChangeListener {
+IDirectoryMonitorListener, IPreferenceChangeListener, IIPCListener {
 	
 	private IEMusicView view;
-	private IDownloadsModel downloadsModel = new DownloadsModel();
+	private IDownloadsModel downloadsModel;
 	private boolean noAutoStartDownloads = false;
-	private Preferences prefs = Preferences.getInstance();
+	private IPreferences prefs;
 	private boolean shuttingDown = false;
 	private IPCServerClient server;
 	private PollDownloads pollThread;
-	private DirectoryMonitor dropDirMon;
+	private IDirectoryMonitor dropDirMon;
 	private int maxDownloadFailures;
 	private Boolean monitorStateChangedIsRunning=false;
-	
-	public EMusicController() {
-		super();
-	}
-	
-	public void setView(IEMusicView view) {
+	private final IMetafileLoader metafileLoader;
+	private final IUpdateCheck updateCheck;
+	private final IURLFactory urlFactory;
+	private final IStrings strings;
+
+	@Inject
+	public EMusicController(IEMusicView view, IPreferences preferences,
+			IDownloadsModel downloadsModel, @WatchFiles Provider<IDirectoryMonitor> dropDirMonProvider,
+			IMetafileLoader metafileLoader, IUpdateCheck updateCheck, IURLFactory urlFactory,
+			IStrings strings) {
 		this.view = view;
-		view.setController(this);
+		this.prefs = preferences;
+		this.downloadsModel = downloadsModel;
+		this.urlFactory = urlFactory;
+		this.strings = strings;
+		this.dropDirMon = dropDirMonProvider.get();
+		this.dropDirMon.setListener(this);
+		this.metafileLoader = metafileLoader;
+		this.updateCheck = updateCheck;
 	}
 	
 	public void run(String[] args) {
 		// Initialise the system
 		prefs.addListener(this);
+		// Preprocess the args array
+		// If something starts with -psn we want to ignore it,
+		// it's a strange Mac thing.
+//		ArrayList<String> argsList = new ArrayList<String>();
+//		for (String arg : args) {
+//			if (!arg.startsWith("-psn")) {
+//				argsList.add(arg);
+//			}
+//		}
+//		args = argsList.toArray(args);
 		if (!prefs.getProperty("noServer","0").equals("1")) { 
 			// First see if another instance is running, if so, pass our args on
-			server = new IPCServerClient(this);
+			server = new IPCServerClient(this, new File(prefs.getStatePath()+"port"));
 			if (server.getState() == IPCServerClient.CONNECTED) {
 				// we just pass the args in and quit
 				server.sendData(args);
@@ -103,7 +129,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 		if (view != null)
 			view.setState(IEMusicView.ViewState.STARTUP);
 		try {
-			downloadsModel.loadState(new FileInputStream(prefs.statePath+"downloads.xml"));
+			downloadsModel.loadState(new FileInputStream(prefs.getStatePath()+"downloads.xml"));
 		} catch (FileNotFoundException e) {	}
 		downloadsModel.addListener(this);
 		pollThread = new PollDownloads();
@@ -116,7 +142,8 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 		// Start the drop directory monitoring, if that's what we want to do.
 		String dd = prefs.getDropDir();
 		if (dd != null && !dd.equals("")) {
-			dropDirMon = new DirectoryMonitor(this, new EMPFilenameFilter(), new File(dd));
+//			dropDirMon.setListener(this);
+			dropDirMon.setDirToMonitor(new File(dd));
 		}
 		// Pass the system state on to the view to ensure it's up to date
 		if (view != null) {
@@ -128,13 +155,16 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 		monitorStateChanged(null);
 		// Check for updates
 		if (prefs.checkForUpdates()) {
-			UpdateCheck update = new UpdateCheck(this, Constants.UPDATE_URL);
-			update.check(Constants.VERSION);
+			updateCheck.setListener(this);
+			updateCheck.setUpdateUrl(urlFactory.getUpdateURL());
+			updateCheck.check(strings.getVersion());
 		}
+		
 		// Call the view's event loop
 		if (view != null)
 			view.processEvents(this);
 		// Clean up the program
+		System.out.println("Controller shutting down");
 		shutdown();
 	}
 	
@@ -149,7 +179,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 		if (dropDirMon != null)
 			dropDirMon.stopMonitor();
 		try {
-			downloadsModel.saveState(new FileOutputStream(prefs.statePath+"downloads.xml"));
+			downloadsModel.saveState(new FileOutputStream(prefs.getStatePath()+"downloads.xml"));
 		} catch (FileNotFoundException e) {
 			System.err.println("Warning: error saving download information");
 			e.printStackTrace();
@@ -160,6 +190,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 			dl.hardStop();
 		}
 		prefs.save();
+		System.exit(0);
 	}
 	
 	/**
@@ -168,7 +199,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 	 */
 	public void loadMetafile(String file) {
 		try {
-			newDownloads(MetafileLoader.load(this, new File(file)));
+			newDownloads(metafileLoader.load(this, new File(file)));
 		} catch (IOException e) {
 			error("Error reading file",e.getMessage());
 		} catch (UnknownFileException e) {
@@ -365,7 +396,7 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 			view.updateAvailable(newVersion);
 	}
 
-	public void newFile(DirectoryMonitor mon, File file) {
+	public void newFile(IDirectoryMonitor mon, File file) {
 		loadMetafile(file.toString());
 		file.delete();
 	}
@@ -407,6 +438,18 @@ IDirectoryMonitorListener, IPreferenceChangeListener {
 			this.interrupt();
 		}
 		
+	}
+
+
+	/**
+	 * Catch data coming over the IPC system, load it as files. It's possible for
+	 * other options to be in here too, although not yet.
+	 * @param data the data
+	 */
+	public void ipcData(String[] data) {
+		for (String file : data) {
+			loadMetafile(file);
+		}
 	}
 	
 }

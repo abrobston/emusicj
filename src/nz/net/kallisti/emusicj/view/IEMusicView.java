@@ -62,14 +62,6 @@ public interface IEMusicView {
     public void setDownloadsModel(IDownloadsModel model);
     
     /**
-	 * Sets the controller instance that the view should communicate with. 
-	 * If this isn't set by the time the view needs to talk to the controller,
-	 * <code>NullPointerExceptions</code> will be generated.
-	 * @param controller the controller instance the view talks to
-	 */
-	public void setController(IEMusicController controller);
-
-    /**
      * Tells the view to display an error message
      * @param msgTitle the title of the error
      * @param msg the content of the error

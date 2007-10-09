@@ -26,7 +26,6 @@ import java.util.List;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
-import nz.net.kallisti.emusicj.view.IEMusicView;
 
 /**
  * <p>This interface defines the functions that need to be provided by a
@@ -39,14 +38,6 @@ import nz.net.kallisti.emusicj.view.IEMusicView;
  * @author robin
  */
 public interface IEMusicController {
-
-    /**
-     * Ties a view in to the controller. If the view isn't present, then the
-     * controller should do something sensible, such as not try to talk to it,
-     * abort on a call to run(), or run in some form of headless mode.
-     * @param view the view used to interact with the user
-     */
-    public void setView(IEMusicView view);
 
     /**
      * This starts the controller running. It will perform any initialisation 

@@ -22,7 +22,12 @@
 package nz.net.kallisti.emusicj.download;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import nz.net.kallisti.emusicj.download.mime.IMimeType;
+
+import org.w3c.dom.Element;
 
 
 /**
@@ -65,5 +70,21 @@ public interface IDownloader {
     public int getFailureCount();
     
     public void resetFailureCount();
+
+	/**
+	 * Initialise, but do not start, the downloader
+	 * @param url the URL to download
+	 * @param outputFile the file to save the output to
+	 * @param mimeType the MIME type to restrict the downloading to. Anything
+	 * else will be considered an error.
+	 */
+	public void setDownloader(URL url, File outputFile, IMimeType[] mimeType);
+
+	/**
+	 * Loads the downloader state from the provided element
+	 * @param el the element to load from
+	 * @throws MalformedURLException if the URL in the XML is wrong or missing
+	 */
+	public void setDownloader(Element el) throws MalformedURLException;
     
 }

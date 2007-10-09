@@ -33,8 +33,8 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
-import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.controller.Preferences;
 
 /**
@@ -55,18 +55,18 @@ public class IPCServerClient {
 	public static final int CONNECTED = 1;
 	public static final int FAILED = 2;
 	public static final int LISTENING = 3;
-	private IEMusicController controller;
+	private IIPCListener listener;
 	private Socket connection;
 	private int state;
 	private ServerThread serverThread;
-	private File portFile = 
-		new File(Preferences.getInstance().statePath+"port");
+	private File portFile; 
 
 	/**
-	 * @param controller
+	 * @param listener
 	 */
-	public IPCServerClient(IEMusicController controller) {
-		this.controller = controller;
+	public IPCServerClient(IIPCListener listener, File portFile) {
+		this.listener = listener;
+		this.portFile = portFile;
 		if (!portFile.exists()) {		
 			startServer();
 			return;
@@ -88,6 +88,42 @@ public class IPCServerClient {
 			return;
 		}
 		state = CONNECTED;
+	}
+	
+	/**
+	 * If you don't want to start the server, only send data, then use this
+	 * static method.
+	 * @param portFile the file that contains the port number to use.
+	 * @param data the data to be sent
+	 * @throws IOException if a connection can't be made, either the file is
+	 * unreadable or a connection to the other end can't be made.
+	 */
+	public static void sendOnly(File portFile, String[] data) throws IOException {
+		// Form the connection
+		BufferedReader in = new BufferedReader(new FileReader(portFile));
+		String port = in.readLine();
+        try { in.close(); } catch (IOException e) {}
+		String loopback = null;
+		Socket connection = new Socket(loopback,Integer.parseInt(port));
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// Mostly ignore this
+			e.printStackTrace();
+		}
+		if (!connection.isConnected()) {
+			connection.close();
+			throw new IOException("Unable to form a stable connection to the client");
+		}
+		// Send the data
+		OutputStream out;
+		out = connection.getOutputStream();
+		for (String d : data) {
+			out.write(d.getBytes());
+			out.write('\r');
+		}
+		out.close();
+		connection.close();
 	}
 	
 	public void startServer() {
@@ -180,22 +216,24 @@ public class IPCServerClient {
 				ssocket.setSoTimeout(5000);
 				while (!done) {
 					try {
-					Socket s = ssocket.accept();
-					BufferedInputStream in = 
-						new BufferedInputStream(s.getInputStream());
-					boolean eof = false;
-					while (!eof) {
-						StringBuffer line = new StringBuffer();
-						int c = in.read();
-						while (c != -1 && c != '\n' && c != '\r') {
-							line.append((char)c);
-							c = in.read();
+						Socket s = ssocket.accept();
+						BufferedInputStream in = 
+							new BufferedInputStream(s.getInputStream());
+						boolean eof = false;
+						ArrayList<String> lines = new ArrayList<String>();
+						while (!eof) {
+							StringBuffer line = new StringBuffer();
+							int c = in.read();
+							while (c != -1 && c != '\n' && c != '\r') {
+								line.append((char)c);
+								c = in.read();
+							}
+							if (c == -1) eof = true;
+							if (line.length() != 0)
+								lines.add(line.toString());
 						}
-						if (c == -1) eof = true;
-						if (line.length() != 0)
-							controller.loadMetafile(line.toString());
-					}
-					in.close();
+						in.close();
+						listener.ipcData(lines.toArray(new String[] {}));
 					} catch (InterruptedIOException e) {}
 				}
 			} catch (IOException e) {

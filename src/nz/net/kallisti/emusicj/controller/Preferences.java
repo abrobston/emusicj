@@ -35,8 +35,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
+import nz.net.kallisti.emusicj.strings.IStrings;
+
+import com.google.inject.Inject;
 
 /**
  * <p>This is a singleton class that tracks the application preferences.
@@ -49,29 +51,33 @@ import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
  *
  * @author robin
  */
-public class Preferences {
+public abstract class Preferences implements IPreferences {
     
     private static final String PROXY_PORT = "proxyPort";
     private static final String PROXY_HOST = "proxyHost";
     private static final String USE_PROXY = "useProxy";
-    private static final String DEFAULT_BROWSER = "firefox -new-tab %s";
-    private static Preferences instance;
     
-    public final String statePath = System.getProperty("user.home")+
-            File.separatorChar+Constants.STATE_DIR+File.separatorChar;
-    private String path = System.getProperty("user.home")+File.separatorChar+
-            "mp3"+File.separatorChar+"emusic";
-    private String filePattern = "%b"+File.separatorChar+"%a"+
-            File.separatorChar+"%n %t";
+    public final String statePath;
+    private String path;
+    private String filePattern;
     private int minDownloads = 2;
     private Properties props;
     private String proxyHost="";
     private int proxyPort=0;
     private List<IPreferenceChangeListener> listeners =
             Collections.synchronizedList(new ArrayList<IPreferenceChangeListener>());
+	private final IStrings strings;
+	private boolean firstLaunch = false;
 
-    private Preferences() {
+    @Inject
+    public Preferences(IStrings strings) {
         super();
+		this.strings = strings;
+		this.path = System.getProperty("user.home") + File.separatorChar
+				+ "mp3" + File.separatorChar + strings.getAppPathname();
+		this.statePath = System.getProperty("user.home") + File.separatorChar
+				+ "." +strings.getAppPathname()+File.separatorChar;
+		this.filePattern = strings.getDefaultFilePattern();
         // Make sure the state path exists, as other things may need it
         new File(statePath).mkdirs();
         // Set the proxy variables
@@ -80,33 +86,28 @@ public class Preferences {
             proxyHost = url.getHost();
             proxyPort = url.getPort();
         } catch (MalformedURLException e) {}
-    }
-    
-    public synchronized static Preferences getInstance() {
-        if (instance == null)
-            instance = new Preferences();
-        instance.loadProps();
-        return instance;
+        loadProps();
     }
     
     private void loadProps() {
         props = new Properties();
         try {
-            InputStream in = new FileInputStream(System.getProperty("user.home")+
-                    File.separatorChar+Constants.STATE_DIR+File.separatorChar+
-                    "emusicj.prop");
+            InputStream in = new FileInputStream(statePath+strings.getAppPathname()+".prop");
             props.load(in);
             path = props.getProperty("savePath", path);
             filePattern = props.getProperty("savePattern", filePattern);
             // Compatibility fix if moving from <0.07 to >=0.07
             // TODO remove this some time in the future (31/10/05)
-            if (filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
+            if (filePattern.length() > 4 && filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
                 filePattern = filePattern.substring(0,filePattern.length()-4);
             minDownloads = Integer.parseInt(props.getProperty("minDownloads", minDownloads+""));
             proxyHost = props.getProperty(PROXY_HOST,proxyHost);
             proxyPort = Integer.parseInt(props.getProperty(PROXY_PORT,proxyPort+""));
         } catch (IOException e) {
             // We don't care, it'll just use the defaults
+        	// but do remember that this is the first execution, other things
+        	// may be interested in that.
+        	firstLaunch = true;
         }
     }
     
@@ -115,13 +116,11 @@ public class Preferences {
      */
     public synchronized void save() {
         try {
-            File outFile = new File(System.getProperty("user.home")+
-                    File.separatorChar+Constants.STATE_DIR+File.separatorChar+
-                    "emusicj.prop");
+            File outFile = new File(statePath+strings.getAppPathname()+".prop");
             File dir = outFile.getParentFile();
             dir.mkdirs();
             OutputStream out = new FileOutputStream(outFile);
-            props.store(out,Constants.APPNAME);
+            props.store(out,strings.getShortAppName());
             out.close();
         } catch (IOException e) {
             System.err.println("There was an error saving the preferences:");
@@ -172,7 +171,7 @@ public class Preferences {
     /**
      * @param str
      */
-    private void cleanName(StringBuffer str) {
+    void cleanName(StringBuffer str) {
         for (int i=0; i<str.length(); i++) {
             char c = str.charAt(i);
             if (c < ' ' || c == '/' || c == '\\' || c > '~' || c == ':' || 
@@ -192,6 +191,10 @@ public class Preferences {
     
     public synchronized String getSavePath() {
         return path;
+    }
+    
+    public String getStatePath() {
+    	return statePath;
     }
     
     /**
@@ -274,13 +277,13 @@ public class Preferences {
         return "TRUE".equalsIgnoreCase(props.getProperty(USE_PROXY));
     }
     
-    private synchronized void setProxyHost(String host) {
+    synchronized void setProxyHost(String host) {
         proxyHost = host;
         props.setProperty(PROXY_HOST, host);
         notify(Pref.PROXY_HOST);
     }
     
-    private synchronized void setProxyPort(int port) {
+    synchronized void setProxyPort(int port) {
         proxyPort = port;
         props.setProperty(PROXY_PORT, port+"");
         notify(Pref.PROXY_PORT);
@@ -320,22 +323,8 @@ public class Preferences {
         }
     }
 
-	/**
-	 * Gets the browser command that would open the browser to the specified URL.
-	 * If the command contains '%s', the URL is places there, otherwise it is
-	 * appended.
-	 * @param url the URL to open
-	 * @return the command line to open the browser
-	 */
-	public String getBrowserCommand(String url) {
-		String browser = props.getProperty("browserCommand", DEFAULT_BROWSER);
-		if (browser.indexOf("%s") != -1) {
-			browser = browser.replace("%s", url);
-		} else {
-			browser += " "+url;
-		}
-		return browser;
+	public boolean isFirstLaunch() {
+		return firstLaunch;
 	}
 
-    
 }

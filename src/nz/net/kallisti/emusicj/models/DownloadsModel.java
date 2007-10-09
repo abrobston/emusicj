@@ -42,15 +42,20 @@ import javax.xml.transform.stream.StreamResult;
 
 import nz.net.kallisti.emusicj.download.CoverDownloader;
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
-import nz.net.kallisti.emusicj.download.MusicDownloader;
+import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
-import nz.net.kallisti.emusicj.download.test.TestDownloadMonitor;
+import nz.net.kallisti.emusicj.download.IMusicDownloader;
+import nz.net.kallisti.emusicj.download.MusicDownloader;
+import nz.net.kallisti.emusicj.strings.IStrings;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>This is the download model. It keeps tabs on what downloads exists
@@ -75,24 +80,27 @@ public class DownloadsModel implements IDownloadsModel {
      * be kept synchronous with {@link downloads} at all times. 
      */
     private Set<IDownloader> dlsHash;
+	private final Provider<IMusicDownloader> musicDownloaderProvider;
+	private final Provider<ICoverDownloader> coverDownloaderProvider;
+	private final Provider<IDownloader> downloaderProvider;
+	private final IStrings strings;
     
 	/**
-	 * Initialise the class, and create some {@link TestDownloadMonitor}s.
-	 * @param n the number of monitors to create
+	 * Initialise the class, Guice supplies providers to create the instances
+	 * of things when it needs to
 	 */
-	public DownloadsModel() {
+    @Inject
+	public DownloadsModel(Provider<IMusicDownloader> musicDownloaderProvider,
+			Provider<ICoverDownloader> coverDownloaderProvider,
+			Provider<IDownloader> downloaderProvider,
+			IStrings strings) {
+		this.musicDownloaderProvider = musicDownloaderProvider;
+		this.coverDownloaderProvider = coverDownloaderProvider;
+		this.downloaderProvider = downloaderProvider;
+		this.strings = strings;
 		downloads = Collections.synchronizedList(new ArrayList<IDownloader>());
 		dlsHash = Collections.synchronizedSet(new HashSet<IDownloader>());
 		listeners = Collections.synchronizedList(new ArrayList<IDownloadsModelListener>());
-	}
-	
-	/**
-	 * Restores the download model from an XML element. Only the downloaders
-	 * are restored. (Note: not actually implemented yet)
-	 * @param el the element to do the restore from
-	 */
-	public DownloadsModel(Element el) {
-		
 	}
 	
 	/**
@@ -112,7 +120,7 @@ public class DownloadsModel implements IDownloadsModel {
 			return false;
 		}
 		Document doc = builder.newDocument();
-	    Element el = doc.createElement("emusicj-state");
+	    Element el = doc.createElement(strings.getXMLBaseNodeName());
 		IDownloader[] dls = new IDownloader[downloads.size()];
 		dls = downloads.toArray(dls);
 		for (int i=0; i<dls.length; i++) {
@@ -162,7 +170,7 @@ public class DownloadsModel implements IDownloadsModel {
 			Document doc = builder.parse(str);
 			Node root = doc.getDocumentElement();
 			if (!(root.getNodeType() == Node.ELEMENT_NODE &&
-					root.getNodeName().equals("emusicj-state"))) {
+					root.getNodeName().equals(strings.getXMLBaseNodeName()))) {
 				return;
 			}
 			if (!root.hasChildNodes()) {
@@ -176,15 +184,18 @@ public class DownloadsModel implements IDownloadsModel {
 				}
 				if (dlNode.getNodeName().equals("MusicDownloader") ||
 						(dlNode.getNodeName().equals("HTTPMusicDownloader"))) { // backwards compatibility after class rename
-					MusicDownloader dl = new MusicDownloader((Element)dlNode);
+					IMusicDownloader dl = musicDownloaderProvider.get(); 
+					dl.setDownloader((Element)dlNode);
 				    downloads.add(dl);
 					dlsHash.add(dl);
 				} else if (dlNode.getNodeName().equals("CoverDownloader")) {
-					CoverDownloader dl = new CoverDownloader((Element)dlNode);
+					ICoverDownloader dl = coverDownloaderProvider.get(); 
+					dl.setDownloader((Element)dlNode);
 				    downloads.add(dl);
 					dlsHash.add(dl);					
                 } else if (dlNode.getNodeName().equals("HTTPDownloader")) {
-                		HTTPDownloader dl = new HTTPDownloader((Element)dlNode);
+                		IDownloader dl = downloaderProvider.get(); 
+                		dl.setDownloader((Element)dlNode);
                     downloads.add(dl);
                     dlsHash.add(dl);
                 }

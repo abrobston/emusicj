@@ -10,135 +10,294 @@ view  - Displays Javadoc documentation in a browser.
 
 Type `ant target' to run a target or `ant' to run the default target. -->
  
-<project name="emusicj" default="all" basedir=".">
+<project name="emusicj" default="emusicj" basedir=".">
+	
+	<description>A Java eMusic.com download program.</description>
+	
+	<property name="src.dir" value="src"/>
+	<property name="osx.src.dir" value="macsrc" />
+	<property name="build.dir" value="${basedir}/bin"/>
+	<property name="osx.build.dir" value="${basedir}/osx-bin"/>
+	<property name="doc.dir" value="${build.dir}/docs"/>
+	<property name="doc.index" value="${doc.dir}/index.html"/>
+	<property name="images.dir" value="${basedir}/images" />
+	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="lib.i686.dir" value="${lib.dir}/i686"/>
+	<property name="lib.x86_64.dir" value="${lib.dir}/x86_64"/>
+	<property name="lib.win32.dir" value="${lib.dir}/win32"/>
+	<property name="lib.osx.dir" value="${lib.dir}/Power Macintosh"/>
+	<property name="lib.ppc_linux.dir" value="${lib.dir}/ppc_linux"/>
+	<property name="sun.api" value="http://java.sun.com/j2se/1.5/docs/api"/>
+	
+	<target name="all" depends="emusicj, naxos"/>
+	
+	<target name="emusicj">
+		<property name="main.class" value="nz.net.kallisti.emusicj.EMusicJ"/>
+		<property name="dist.dir" value="${basedir}/dist/emusicj"/>
+		<property name="jar.name" value="${basedir}/emusicj.jar"/>
+		<property name="osx.jar.name" value="${basedir}/osx-emusicj.jar"/>
+		<property name="app.name" value="emusicj" />
+		<property name="app.name.caps" value="eMusicJ" />
+		<property name="exe.name" value="emusicj.exe" />
+		<antcall target="compile"/>
+		<antcall target="jar" />
+		<antcall target="dist-i686" />
+		<antcall target="dist-x86_64" />
+		<antcall target="dist-win32" />
+		<antcall target="dist-osx" />
+		<antcall target="dist-ppc_linux" />
+	</target>
 
-<description>A Java eMusic.com download program.</description>
+	<target name="naxos">
+		<property name="main.class" value="nz.net.kallisti.emusicj.ClassicsOnline"/>
+		<property name="dist.dir" value="${basedir}/dist/classicsonline"/>
+		<property name="jar.name" value="${basedir}/classicsonline.jar"/>
+		<property name="osx.jar.name" value="${basedir}/osx-classicsonline.jar"/>
+		<property name="app.name" value="classicsonline" />
+		<property name="app.name.caps" value="Classicsonline" />
+		<property name="exe.name" value="Classicsonline.exe" />
+		<antcall target="compile"/>
+		<antcall target="jar" />
+		<antcall target="dist-i686" />
+		<antcall target="dist-x86_64" />
+		<antcall target="dist-win32" />
+		<antcall target="dist-osx" />
+	</target>
+	
+	<target name="compile">
+		<mkdir dir="${build.dir}"/>
+		
+		<!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
+		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="yes" nowarn="on"
+			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar"/>
+		
+		<!-- copy the images in. A way to combine this into one statement would
+			be nice -->
+		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/emusicj">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/emusicj/*.png"/>
+		</copy>
+		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/naxos">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/naxos/*.png"/>
+		</copy>
+	</target>
+	
+	<target name="jar" description="Creates a runnable jar file.">
+		<jar jarfile="${jar.name}">
+			<fileset dir="${build.dir}"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="dist-i686" description="Copy the stuff for Linux i686 to the dist dir">
+		<delete dir="${dist.dir}/i686/${app.name}-linux/"/>
+		<copy todir="${dist.dir}/i686/${app.name}-linux/lib">
+			<fileset file="${lib.dir}/*.jar"/>
+			<fileset file="${lib.dir}/i686/*"/>
+			<fileset file="${jar.name}" />
+			<fileset file="${lib.dir}/${app.name}.properties" />
+		</copy>
+		<copy todir="${dist.dir}/i686/${app.name}-linux">
+			<fileset file="${basedir}/${app.name}"/>
+			<fileset file="${basedir}/doc/COPYING"/>
+			<fileset file="${basedir}/doc/README-${app.name}.txt"/>
+		</copy>
+		
+		<!-- if on a UNIX-like OS, we need to preserve the executable permission-->
+		<exec executable="chmod" dir="${dist.dir}/i686/${app.name}-linux" os="Linux">
+			<arg line="+x ${app.name}"/>
+		</exec>
+		<!-- create an .xpm icon from the app icon PNG file. If you get an error here,
+		install ImageMagick -->
+		<exec executable="convert" dir="${images.dir}" os="Linux">
+			<arg
+				line="${app.name}_64.png ${dist.dir}/i686/${app.name}-linux/${app.name}.xpm"/>
+		</exec>		
+	</target>
+	
+	<target name="dist-x86_64" description="Copy the stuff for Linux x86_64 to the dist dir">
+		<delete dir="${dist.dir}/x86_64/${app.name}-linux/"/>
+		<copy todir="${dist.dir}/x86_64/${app.name}-linux/lib">
+			<fileset file="${lib.dir}/*.jar"/>
+			<fileset file="${lib.dir}/x86_64/*"/>
+			<fileset file="${jar.name}" />
+			<fileset file="${lib.dir}/${app.name}.properties" />
+		</copy>
+		<copy todir="${dist.dir}/x86_64/${app.name}-linux">
+			<fileset file="${basedir}/${app.name}"/>
+			<fileset file="${basedir}/doc/COPYING"/>
+			<fileset file="${basedir}/doc/README-${app.name}.txt"/>
+		</copy>
+		
+		<!-- if on a UNIX-like OS, we need to preserve the executable permission-->
+		<exec executable="chmod" dir="${dist.dir}/x86_64/${app.name}-linux" os="Linux">
+			<arg line="+x ${app.name}"/>
+		</exec>
+		<!-- create an .xpm icon from the app icon PNG file. If you get an error here,
+		install ImageMagick -->
+		<exec executable="convert" dir="${images.dir}" os="Linux">
+			<arg
+				line="${app.name}_64.png ${dist.dir}/x86_64/${app.name}-linux/${app.name}.xpm"/>
+		</exec>		
+	</target>
 
-<property name="main.class" value="nz.net.kallisti.emusicj.EMusicJ"/>
-<property name="src.dir" value="."/>   <!-- the directory this file is in -->
-<property name="build.dir" value="${basedir}/bin"/>
-<property name="doc.dir" value="${build.dir}/docs"/>
-<property name="doc.index" value="${doc.dir}/index.html"/>
-<property name="dist.dir" value="${basedir}/dist"/>
-<property name="lib.dir" value="${basedir}/lib"/>
-<property name="lib.i686.dir" value="${lib.dir}/i686"/>
-<property name="jar.name" value="${basedir}/${ant.project.name}.jar"/>
-<property name="sun.api" value="http://java.sun.com/j2se/1.5/docs/api"/>
+        <target name="dist-ppc_linux" description="Copy the stuff for Linux PPC to the dist dir">
+                <delete dir="${dist.dir}/ppc_linux/${app.name}-linux/"/>
+                <copy todir="${dist.dir}/ppc_linux/${app.name}-linux/lib">
+                        <fileset file="${lib.dir}/*.jar"/>
+                        <fileset file="${lib.dir}/ppc_linux/*"/>
+                        <fileset file="${jar.name}" />
+                        <fileset file="${lib.dir}/${app.name}.properties" />
+                </copy>
+                <copy todir="${dist.dir}/ppc_linux/${app.name}-linux">
+                        <fileset file="${basedir}/${app.name}"/>
+                        <fileset file="${basedir}/doc/COPYING"/>
+                        <fileset file="${basedir}/doc/README-${app.name}.txt"/>
+                </copy>
 
-<target name="all" depends="compile, jar, weave, copy" />
+                <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
+                <exec executable="chmod" dir="${dist.dir}/ppc_linux/${app.name}-linux" os="Linux">
+                        <arg line="+x ${app.name}"/>
+                </exec>
+                <!-- create an .xpm icon from the app icon PNG file. If you get an error here,
+                install ImageMagick -->
+                <exec executable="convert" dir="${images.dir}" os="Linux">
+                        <arg
+                                line="${app.name}_64.png ${dist.dir}/ppc_linux/${app.name}-linux/${app.name}.xpm"/>
+                </exec>
+        </target>
+	
+	<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask"
+		classpath="lib/buildonly/launch4j.jar
+        :lib/buildonly/xstream.jar"/>
 
-<target name="compile">
-  <mkdir dir="${build.dir}"/>
-  <!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
-  <javac srcdir="${src.dir}" destdir="${build.dir}" debug="yes" nowarn="on" 
-  	classpath="${lib.dir}/i686/swt.jar:${lib.dir}/commons-codec-1.3.jar:
-  	${lib.dir}/commons-httpclient-3.0-rc4.jar"/>
-  <copy todir="${build.dir}/nz/net/kallisti/emusicj/view">
-<!--	<fileset file="${src.dir}/src/nz/net/kallisti/emusicj/view/*.gif" />-->
-        <fileset file="${src.dir}/src/nz/net/kallisti/emusicj/view/*.png" />
-  </copy>
-</target>
+	<target name="dist-win32" description="Copy the stuff for Windows to the dist dir">
+		<delete dir="${dist.dir}/win32/${app.name}-win32/"/>
+		<copy todir="${dist.dir}/win32/${app.name}-win32/lib">
+			<fileset file="${lib.dir}/*.jar"/>
+			<fileset file="${lib.dir}/win32/*"/>
+			<fileset file="${jar.name}" />
+			<fileset file="${lib.dir}/${app.name}.properties" />
+		</copy>
+		<copy todir="${dist.dir}/win32/${app.name}-win32">
+			<fileset file="${basedir}/doc/COPYING"/>
+			<fileset file="${basedir}/doc/README-${app.name}.txt"/>
+		</copy>
+		<launch4j configFile="${basedir}/windows_launch4j_${app.name}.xml"/>
+		<copy file="${basedir}/${exe.name}"
+			todir="${dist.dir}/win32/${app.name}-win32/"/>
+		<copy file="${basedir}/${app.name}.nsi"
+			todir="${dist.dir}/win32/${app.name}-win32/"/>
+		<exec executable="makensis" dir="${dist.dir}/win32/${app.name}-win32">
+			<arg line="${app.name}.nsi" />
+		</exec>
+	</target>
+	
+	<target name="compile-osx" description="Does a compile including the mac stuff">
+		<mkdir dir="${osx.build.dir}"/>
+		
+		<!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
+		<javac destdir="${osx.build.dir}" debug="yes" nowarn="on"
+			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar">
+			<src path="${src.dir}" />
+			<src path="${osx.src.dir}" />			
+		</javac>
+		
+		<!-- copy the images in. A way to combine this into one statement would
+			be nice -->
+		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/emusicj">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/emusicj/*.png"/>
+		</copy>
+		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/naxos">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/naxos/*.png"/>
+		</copy>
+		<!-- now create a jar -->
+		<jar jarfile="${osx.jar.name}">
+			<fileset dir="${osx.build.dir}"/>
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="${main.class}"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="dist-osx" depends="compile-osx">
+		<delete dir="${dist.dir}/osx/${app.name.caps}.app/"/>
+		<mkdir dir="${dist.dir}/osx" />
+		<copy todir="${dist.dir}/osx/${app.name.caps}.app">
+			<fileset dir="${lib.dir}/Power Macintosh/template.app" />
+		</copy>
+	
+		<!-- Jar files -->
+		<copy todir="${dist.dir}/osx/${app.name.caps}.app/Contents/Resources/Java">
+			<fileset file="${lib.dir}/*.jar"/>
+			<fileset file="${lib.dir}/Power Macintosh/*.jar"/>
+			<fileset file="${osx.jar.name}" />
+		</copy>
+		
+		<!-- Libraries -->
+		<copy todir="${dist.dir}/osx/${app.name.caps}.app/Contents/Resources/Java/dll">
+			<fileset file="${lib.dir}/Power Macintosh/*.jnilib" />
+		</copy>
+		
+		<!-- Docs -->
+		<copy todir="${dist.dir}/osx/${app.name.caps}.app/Contents">
+			<fileset file="${basedir}/doc/COPYING"/>
+			<fileset file="${basedir}/doc/README-${app.name}.txt"/>
+		</copy>
+		
+		<!-- Info.plist -->
+		<copy file="${lib.dir}/${app.name}-Info.plist"
+			tofile="${dist.dir}/osx/${app.name.caps}.app/Contents/Info.plist"/>
 
-<target name="check">
-  <echo message="${basedir}"/>
-  <echo message="${os.name}"/>
-</target>
+		<!-- Properties file -->
+		<copy file="${lib.dir}/${app.name}.properties" failonerror="false"
+			todir="${dist.dir}/osx/${app.name.caps}.app/Contents/Resources/Java/lib" />
+		
+		<!-- Icons -->
+		<copy file="${basedir}/images/${app.name}.icns"
+			todir="${dist.dir}/osx/${app.name.caps}.app/Contents/Resources" />
+		
+		<!-- Java launcher must be executable -->
+		<exec executable="chmod" dir="${dist.dir}/osx/${app.name.caps}.app/Contents/MacOS" os="Linux,Mac OS X">
+			<arg line="+x JavaApplicationStub"/>
+		</exec>
 
-<target name="jar" description="Creates a runnable jar file.">
-  <jar jarfile="${jar.name}">
-  <fileset dir="${build.dir}"/>
-  <manifest>
-    <attribute name="Built-By" value="${user.name}"/>
-    <attribute name="Main-Class" value="${main.class}"/>
-  </manifest>
-  </jar>
-</target>
-
-<target name="copy" description="Copies the files to the dist directory">
-  <!-- copy in for i686 -->
-  <copy todir="${dist.dir}/i686/emusicj-linux/lib">
-  	<fileset file="${lib.dir}/*.jar"/>
-  	<fileset file="${lib.dir}/i686/*"/>
-  </copy>
-  <copy todir="${dist.dir}/i686/emusicj-linux">
-	<fileset file="${basedir}/emusicj" />
-<!--	<fileset file="${basedir}/emusicj.jar" /> -->
-	<fileset file="${basedir}/doc/COPYING" />
-	<fileset file="${basedir}/doc/README" />
-  </copy>
-  <copy file="${basedir}/emusicj-14.jar" tofile="${dist.dir}/i686/emusicj-linux/emusicj.jar" />
-  <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
-  <exec executable="chmod" dir="${dist.dir}/i686/emusicj-linux" os="Linux">
-  	<arg line="+x emusicj"/>
-  </exec>
-  <!-- create an .xpm icon from the app icon PNG file. If you get an error here,
-       install ImageMagick -->
-  <exec executable="convert" dir="${src.dir}/images" os="Linux">
-	<arg line="emusicj_64.png ${dist.dir}/i686/emusicj-linux/emusicj.xpm"/>
-  </exec>
-  <!-- end i686 -->
-
-  <!-- copy in for x86_64 -->
-  <copy todir="${dist.dir}/x86_64/emusicj-linux/lib">
-        <fileset file="${lib.dir}/*.jar"/>
-        <fileset file="${lib.dir}/x86_64/*"/>
-  </copy>
-  <copy todir="${dist.dir}/x86_64/emusicj-linux">
- 	<fileset file="${basedir}/emusicj" />
-<!--	<fileset file="${basedir}/emusicj.jar" /> -->
-	<fileset file="${basedir}/doc/COPYING" />
-	<fileset file="${basedir}/doc/README" />
-  </copy>
-  <copy file="${basedir}/emusicj-14.jar" tofile="${dist.dir}/x86_64/emusicj-linux/emusicj.jar" />
-  <!-- if on a UNIX-like OS, we need to preserve the executable permission-->
-  <exec executable="chmod" dir="${dist.dir}/x86_64/emusicj-linux/" os="Linux">
-        <arg line="+x emusicj"/>
-  </exec>
-  <!-- create an .xpm icon from the app icon PNG file. If you get an error here,
-       install ImageMagick -->
-  <exec executable="convert" dir="${src.dir}/images" os="Linux">
-        <arg line="emusicj_64.png ${dist.dir}/x86_64/emusicj-linux/emusicj.xpm"/>
-  </exec>
-  <!-- end amd64 -->
-
-</target>
-
-<taskdef name="retroweaver" classname="com.rc.retroweaver.ant.RetroWeaverTask">
-  <classpath>
-    <fileset dir="${lib.dir}" includes="**/*"/>
-  </classpath>
-</taskdef>
-
-<target name="weave">
-  <retroweaver outputjar="emusicj-14.jar" inputjar="emusicj.jar" target="1.4"/>
-</target>
-
-<target name="view" description="Displays Javadoc documentation in a browser.">
-  <available file="${doc.index}" property="doc.index.present"/>
-  <antcall target="docs"/>
-  <exec executable="view-in-mozilla.sh">
-    <arg line="file://${doc.index}"/>
-  </exec>
-</target>
-
-<target name="docs" unless="doc.index.present"
-    description="Runs the Javadoc tool on all source files.">
-  <delete dir="${doc.dir}"/>
-  <javadoc destdir="${doc.dir}" author="true" access="private"
-      windowtitle="${ant.project.name} API">
-    <fileset dir="${src.dir}"/>
-    <!-- <link href="${local.api}"/> -->
-  </javadoc>
-</target>
-
-<!-- BEWARE!!! A line like <delete dir="${src.dir}" /> would delete all
-of your files without giving you a warning. -->
-<target name="clean"
-    description="Deletes all generated files, and any ~ files.">
-  <delete>
-    <fileset dir="." includes="**/*~,${jar.name}" defaultexcludes="no"/>
-  </delete>
-  <delete dir="${build.dir}"/>
-</target>
-
+	</target>
+	
+	<target name="view"
+		description="Displays Javadoc documentation in a browser.">
+		<available file="${doc.index}" property="doc.index.present"/>
+		<antcall target="docs"/>
+		<exec executable="view-in-mozilla.sh">
+			<arg line="file://${doc.index}"/>
+		</exec>
+	</target>
+	
+	<target name="docs" unless="doc.index.present"
+		description="Runs the Javadoc tool on all source files.">
+		<delete dir="${doc.dir}"/>
+		<javadoc destdir="${doc.dir}" author="true" access="private"
+			windowtitle="${ant.project.name} API">
+			<fileset dir="${src.dir}"/>
+			<!-- <link href="${local.api}"/> -->
+		</javadoc>
+	</target>
+	
+	<!-- BEWARE!!! A line like <delete dir="${src.dir}" /> would delete all
+	of your files without giving you a warning. -->
+	<target name="clean"
+		description="Deletes all generated files, and any ~ files.">
+		<delete>
+			<fileset dir="." includes="**/*~,${jar.name}" defaultexcludes="no"/>
+		</delete>
+		<delete dir="${build.dir}"/>
+	</target>
+	
 </project>

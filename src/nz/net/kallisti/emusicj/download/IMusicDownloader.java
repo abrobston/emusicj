@@ -22,6 +22,10 @@
 package nz.net.kallisti.emusicj.download;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.w3c.dom.Element;
 
 /**
  * <p></p>
@@ -51,5 +55,13 @@ public interface IMusicDownloader extends IDownloader {
     public int getDuration();
     
     public IMusicDownloadMonitor getMusicDownloadMonitor();
+
+	public void setDownloader(URL url, File outputFile, int trackNum,
+			String songName, String album, String artist);
+
+	public void setDownloader(URL url, File outputFile, File coverArt,
+			int trackNum, String songName, String album, String artist);
+
+	public void setDownloader(Element el) throws MalformedURLException;
     
 }

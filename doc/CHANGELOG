@@ -1,4 +1,31 @@
+V1.0
+* [Naxos] Version bump of the Classicsonline version
 V0.20-svn
+* [Naxos] Added the macsrc directory which contains seperate code to support
+  OpenDoc events on Mac OS X.
+* [Naxos] Allowed 'save files as:' part of preferences to not be shown by 
+  program varients.
+* [Naxos] Fixed bug where program will crash if the 'save files as' field
+  is too short.
+* [Naxos] The XML download state root node name now comes from the strings
+  factory.
+* [Naxos] Built a windows builder/installer
+* [Naxos] The downloader now detects if the server doesn't support resume, and
+  if it doesn't, the download is restarted from the beginning.
+* [Naxos] If this is the first launch, open the preferences window.
+* [Naxos] Improved robustness of metafile type detection.
+* [Naxos] Removed the undocumented browser configuration thing, added a much better
+  way which will open the default browser on many platforms.
+* [Naxos] Moved image creation to a factory, create an emusic/j one and 
+  a naxos one.
+* [Naxos] Moved version-specific strings to a class to aid in splitting the
+  two versions
+* [Naxos] Changed the system to use dependency injection using Guice
+* [Naxos] Changed the formatting hints on the toolbar so that it doesn't look
+  ugly in windows.
+* [Naxos] Added build system to create a windows .exe
+* [Naxos] Added a new metafile format that is like the .emp format, but
+  without the encryption.
 * Patch by Paul Focke to make the server URL in the .emp file respected. This
   is better for European users who now have their own server.
 * Improved error handling in a few situations. Things that previously crashed

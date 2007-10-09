@@ -35,12 +35,14 @@ public abstract class MimeTypes {
 	public static MimeType IMAGES;
 	public static MimeType AUDIO;
 	public static MimeType APP_OCTET;
+	public static MimeType PDF;
 
 	static {
 		try {
 			IMAGES = new MimeType("image/*");
 			AUDIO = new MimeType("audio/*");
 			APP_OCTET = new MimeType("application/octet-stream");
+			PDF = new MimeType("application/pdf");
 		} catch (MimeTypeParseException e) {
 			e.printStackTrace();
 		}

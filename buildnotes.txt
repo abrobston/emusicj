@@ -1,0 +1,55 @@
+Build Notes for eMusic/J / Classicsonline download manager
+
+http://www.kallisti.net.nz/EMusicJ/HomePage
+
+Compiling this from source is relatively simple, there is an ant build
+script that will compile and output four versions of the program:
+Linux i686 (32-bit), Linux x86_64 (64-bit), win32 and Mac OS X.
+
+It requires Sun Java JDK 1.5 or above, and pretty much any recent version of Ant
+to build. The source is configured as an Eclipse project, so using this will 
+probably be the easiest method of working on it. When running, it is required
+that the java library path be set with -Djava.library.path, in order to find
+the SWT libraries. See the .launch files for examples of this.  
+
+This ant script has two targets, the default one (emusicj) will produce
+eMusic/J, and 'naxos' will produce the Classicsonline version. These will be
+output into the dist subdirectory.
+
+Building is currently configured to work on Linux only, however it can be
+easily modified to also work on OS X. Building on Windows is more problematic
+as Windows doesn't support the executable bit on files that is needed by both
+the Linux and Mac OS X versions. However it can be done if those versions are
+then moved to a Linux or Mac OS X machine, and the executable bit applied to
+the launch script (either 'emusicj' or 'classicsonline') in the case of
+Linux, and 'JavaApplicationStub' on Mac OS X.
+
+One dependency (other than Java and Ant) is required to build:
+NSIS, this produces the installer for windows (see the note in 
+lib/buildonly/nsis about this when using a distro-supplied version on Linux)
+
+Also, launch4j is included in the repository to produce a Windows .exe file. 
+This doesn't seem to work on the Mac, but it is likely that it is simply a 
+different version that is required.
+
+When building for Windows, a complete installer is produced, which can be
+directly given to people.
+
+When building for Mac, an app bundle is created. A .dmg isn't created from this
+as it seems that it's only possible to do this when running on OSX itself.
+
+The Linux version is simply the application in its unpackaged form, it is ready
+for tarballing up and distributing.
+
+The latest version of this source can be downloaded using Subversion, currently
+at the URL: https://www.kallisti.net.nz/svn/emusicj/branches/Naxos
+
+Adapting this code to create a customised version is fairly easy, see the 
+Naxos related Java and config files versus the EMusicJ ones to see how this is
+done. Of course, if you do create and distribute a custom version, the source
+must be made available, as per the GPL.
+
+Unless otherwise noted, the source code contained here is under the GNU
+General Public Licence (see doc/COPYING).
+
+-- Robin Sheat <robin@kallisti.net.nz>, 1 May 2007

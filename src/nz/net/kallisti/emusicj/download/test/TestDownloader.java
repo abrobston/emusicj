@@ -22,11 +22,15 @@
 package nz.net.kallisti.emusicj.download.test;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.w3c.dom.Element;
 
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.download.mime.IMimeType;
 
 /**
  * <p>This simulates a download in progress</p>
@@ -193,6 +197,22 @@ public class TestDownloader implements IDownloader {
 	 * @see nz.net.kallisti.emusicj.download.IDownloader#resetFailureCount()
 	 */
 	public void resetFailureCount() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloader#setDownloader(java.net.URL, java.io.File, nz.net.kallisti.emusicj.download.mime.IMimeType[])
+	 */
+	public void setDownloader(URL url, File outputFile, IMimeType[] mimeType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see nz.net.kallisti.emusicj.download.IDownloader#setDownloader(org.w3c.dom.Element)
+	 */
+	public void setDownloader(Element el) throws MalformedURLException {
 		// TODO Auto-generated method stub
 		
 	}

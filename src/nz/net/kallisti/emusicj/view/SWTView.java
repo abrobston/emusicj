@@ -25,15 +25,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
-import nz.net.kallisti.emusicj.controller.Preferences;
+import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
+import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
@@ -69,6 +72,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tray;
 
+import com.google.inject.Inject;
+
 /**
  * <p>This is the main class for providing the user interface. It uses SWT to
  * do it, and interacts with the controller to receive updates on the system
@@ -85,7 +90,7 @@ SelectionListener, ControlListener {
 	private static Display display;
     private static Clipboard clipboard;
 	private Shell shell;
-	private IEMusicController controller;
+	private final IEMusicController controller;
 	private IDownloadsModel downloadsModel;
 	private ScrolledComposite downloadsList;
 	private ViewState state;
@@ -97,7 +102,7 @@ SelectionListener, ControlListener {
 	private ToolItem runButton;
 	private ToolItem pauseButton;
 	private ToolItem cancelButton;
-	private Preferences prefs = Preferences.getInstance();
+	private final IPreferences prefs;
 	private boolean running = false;
 	private Rectangle windowLoc;
 	private ToolItem requeueButton;
@@ -113,9 +118,19 @@ SelectionListener, ControlListener {
     private StatusLine statusLine;
 	private boolean pausedState=false;
 	private MenuItem pauseSysTrayMenuItem;
+	private final IStrings strings;
+	private final IImageFactory imageFactory;
+	private final IURLFactory urlFactory;
 	
-	public SWTView() {
+	@Inject
+	public SWTView(IPreferences prefs, IStrings strings, IEMusicController controller,
+			IImageFactory imageFactory, IURLFactory urlFactory) {
 		super();
+		this.prefs = prefs;
+		this.strings = strings;
+		this.controller = controller;
+		this.imageFactory = imageFactory;
+		this.urlFactory = urlFactory;
 	}
 	
 	public void setState(ViewState state) {
@@ -124,8 +139,9 @@ SelectionListener, ControlListener {
 			// TODO do a splashscreen or something
 		} else if (state.equals(ViewState.RUNNING)) {
 			display =new Display();
+			imageFactory.setDisplay(display);
 			shell =new Shell(display);
-			shell.setText(Constants.APPNAME);
+			shell.setText(strings.getAppName());
 			buildMenuBar(shell);
 			int topAmount = 60;
 			int bottomAmount = 40;
@@ -148,6 +164,13 @@ SelectionListener, ControlListener {
 				shell.setSize (400, 400);
 			}
 			shell.open();
+			defer(new Runnable() {
+				public void run() {
+					if (prefs.isFirstLaunch()) {
+						displayPreferences();
+					}
+				}
+			});
 		}
 	}
 	
@@ -213,15 +236,13 @@ SelectionListener, ControlListener {
 	 */
 	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
 		setAppIcon(shell);
-		downloadingIcon = new Image(display, 
-				SWTView.class.getResourceAsStream("emusicj-dl-16.png"));
-		notDownloadingIcon = new Image(display, 
-				SWTView.class.getResourceAsStream("emusicj-nodl-16.png"));
+		downloadingIcon = imageFactory.getDownloadingIcon();
+		notDownloadingIcon = imageFactory.getNotDownloadingIcon();
 		buildSystemTray(this, notDownloadingIcon);
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
-		ToolBar toolBar = new ToolBar (shell, SWT.FLAT | SWT.BORDER);
+		ToolBar toolBar = new ToolBar (shell, SWT.FLAT);
 		buildToolBar(toolBar);
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
 		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
@@ -265,7 +286,7 @@ SelectionListener, ControlListener {
 	private void buildSystemTray(SWTView view, Image icon) {
 		Tray tray = display.getSystemTray();
 		if (tray != null) {
-			sysTray = new SystemTrayManager(view, icon, tray, Constants.APPNAME);
+			sysTray = new SystemTrayManager(view, icon, tray, strings.getShortAppName());
 			Menu menu = sysTray.getMenu();
 			SWTUtils.createMenuItem(menu, "Show/Hide", SWT.NONE, view, "trayClicked");
 			if (!pausedState) {
@@ -286,18 +307,7 @@ SelectionListener, ControlListener {
 	 */
 	private void setAppIcon(Shell shell) {
 		//shell.setImage(appIcon);
-		shell.setImages(new Image[] {
-				new Image(display, 
-						SWTView.class.getResourceAsStream("emusicj-app-16.png")),
-				new Image(display, 
-						SWTView.class.getResourceAsStream("emusicj-app-32.png")),
-				new Image(display, 
-						SWTView.class.getResourceAsStream("emusicj-app-48.png")),
-				new Image(display, 
-						SWTView.class.getResourceAsStream("emusicj-app-64.png")),
-				new Image(display, 
-						SWTView.class.getResourceAsStream("emusicj-app-128.png"))
-		});
+		shell.setImages(imageFactory.getAppIcons());
 	}
 
 	/**
@@ -305,23 +315,19 @@ SelectionListener, ControlListener {
 	 * @param toolBar the toolbar to add stuff to
 	 */
 	private void buildToolBar(ToolBar toolBar) {
-		final Image runIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("start.png"));
+		final Image runIconImg = imageFactory.getStartIcon();
 		runButton = SWTUtils.createToolItem(toolBar, runIconImg, 
 				"Start the selected download right now", this, "runSelectedDownload");
 		
-		final Image requeueIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("requeue.png"));
+		final Image requeueIconImg = imageFactory.getRequeueIcon();
 		requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg, 
 				"Requeue the selected download", this, "requeueSelectedDownload");
 		
-		final Image pauseIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("pause.png"));
+		final Image pauseIconImg = imageFactory.getPauseIcon();
 		pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg, 
 				"Pause the selected download", this, "pauseSelectedDownload");
 		
-		final Image cancelIconImg = new Image(display, 
-				SWTView.class.getResourceAsStream("cancel.png"));
+		final Image cancelIconImg = imageFactory.getCancelIcon();
 		cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg, 
 				"Cancel the selected download", this, "cancelSelectedDownload");
 		
@@ -455,7 +461,7 @@ SelectionListener, ControlListener {
 	 */
 	public void displayPreferences() {
 		PreferencesDialogue prefs = new PreferencesDialogue(shell,
-				Preferences.getInstance());
+				this.prefs, strings);
 		prefs.open();
 	}
 	
@@ -506,8 +512,8 @@ SelectionListener, ControlListener {
 	
 	public void openFile() {
 		FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
-		dialog.setFilterNames (new String [] {"eMusic files (*.emp)","All Files (*.*)"});
-		dialog.setFilterExtensions (new String [] {"*.emp", "*.*"});
+		dialog.setFilterNames (strings.getOpenDialogueFilterNames());
+		dialog.setFilterExtensions (strings.getOpenDialogueFilterExtensions());
 		dialog.setFilterPath(prefs.getProperty("openDefaultPath"));
 		String file = dialog.open();
 		if (file != null) {
@@ -521,25 +527,19 @@ SelectionListener, ControlListener {
 	}
 	
 	public void aboutBox() {
-		AboutDialogue about = new AboutDialogue(shell);
+		AboutDialogue about = new AboutDialogue(shell, strings, imageFactory);
 		about.open();
 	}
 	
 	public void userManual() {
 		new Thread() {
 			public void run() {
-				String browserCmd = prefs.getBrowserCommand(Constants.USER_MANUAL_URL);
 				try {
-					Process p = Runtime.getRuntime().exec(browserCmd);
-					p.waitFor();
-					if (p.exitValue() != 0)
-						throw new Exception();
-				}catch (InterruptedException e) {
-					e.printStackTrace();
+					BrowserLauncher.openURL(urlFactory.getManualURL());
 				} catch (Exception e) {
 					error("Error launching browser", "There seemed to be a " +
 							"problem launching the browser. The user manual can" +
-							"be found at "+Constants.APPURL);
+							"be found at "+urlFactory.getManualURL());
 				}				
 			}
 		}.start();
@@ -582,10 +582,6 @@ SelectionListener, ControlListener {
 		prefs.setProperty("topRatio",sashTop+"");
 		prefs.setProperty("bottomRatio",sashBottom+"");
 		prefs.save();
-	}
-	
-	public void setController(IEMusicController controller) {
-		this.controller = controller;
 	}
 	
 	public void setDownloadsModel(IDownloadsModel model) {
@@ -654,7 +650,8 @@ SelectionListener, ControlListener {
 	public void updateAvailable(final String newVersion) {
 		defer(new Runnable() {
 			public void run() {
-				UpdateDialogue dialogue = new UpdateDialogue(shell, SWTView.this, newVersion);
+				UpdateDialogue dialogue = new UpdateDialogue(shell,
+						SWTView.this, newVersion, prefs, strings, urlFactory);
 				dialogue.open();
 			}
 		});
@@ -703,15 +700,16 @@ SelectionListener, ControlListener {
 	 * @see nz.net.kallisti.emusicj.view.IEMusicView#downloadCount(int, int, int)
 	 */
 	public void downloadCount(final int dl, final int finished, final int total) {
-		defer(new Runnable() {
-			public void run() {				
-				sysTray.setText(Constants.APPNAME+": "+dl+" downloading, "+finished+
-						" finished, "+total+" total");
-				if (dl == 0)
-					sysTray.setImage(notDownloadingIcon);
-				else
-					sysTray.setImage(downloadingIcon);
-			}});
+		if (sysTray != null)
+			defer(new Runnable() {
+				public void run() {
+					sysTray.setText(strings.getShortAppName()+": "+dl+" downloading, "+finished+
+							" finished, "+total+" total");
+					if (dl == 0)
+						sysTray.setImage(notDownloadingIcon);
+					else
+						sysTray.setImage(downloadingIcon);
+				}});
 	}
 	
 	/**
@@ -736,10 +734,12 @@ SelectionListener, ControlListener {
     		pausedState = state;
         if (state) {
             statusLine.setText("All Downloads Paused");
-            pauseSysTrayMenuItem.setText("Resume downloads");
+            if (pauseSysTrayMenuItem != null) // on mac this will be null
+            	pauseSysTrayMenuItem.setText("Resume downloads");
         } else {
-            statusLine.unsetText();
-            pauseSysTrayMenuItem.setText("Pause downloads");
+        	statusLine.unsetText();
+        	if (pauseSysTrayMenuItem != null)
+        		pauseSysTrayMenuItem.setText("Pause downloads");
         }
     }
 

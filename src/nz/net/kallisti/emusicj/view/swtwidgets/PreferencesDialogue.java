@@ -21,8 +21,8 @@
  */
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
-import nz.net.kallisti.emusicj.Constants;
-import nz.net.kallisti.emusicj.controller.Preferences;
+import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.strings.IStrings;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -51,7 +51,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class PreferencesDialogue {
 
-	private Preferences prefs;
+	private IPreferences prefs;
 	private Shell shell;
 	private Shell dialog;
 	protected String filePattern;
@@ -67,14 +67,16 @@ public class PreferencesDialogue {
 	private boolean dropDirModified = false;
 	private boolean removeCompletedDownloads;
 	private Button autoCleanup;
+	private final IStrings strings;
 
 	/**
 	 * @param display
 	 * @param instance
 	 */
-	public PreferencesDialogue(Shell shell, Preferences prefs) {
+	public PreferencesDialogue(Shell shell, IPreferences prefs, IStrings strings) {
 		this.shell = shell;
 		this.prefs = prefs;
+		this.strings = strings;
 		filePath = prefs.getSavePath();
 		filePattern = prefs.getFilePattern();
 		minDL = prefs.getMinDownloads();
@@ -88,7 +90,7 @@ public class PreferencesDialogue {
 	public void open() {
 		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.setLayout(new GridLayout(1, false));
-		dialog.setText(Constants.APPNAME + " Preferences");
+		dialog.setText("Preferences");
 		Group files = new Group(dialog, SWT.NONE);
 		files.setLayout(new GridLayout(3, false));
 		files.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -120,32 +122,33 @@ public class PreferencesDialogue {
 			}
 		});
 
-		Label fileName = new Label(files, SWT.NONE);
-		fileName.setText("Save files as:");
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		pathLabel.setLayoutData(gd);
-		final Text savePattern = new Text(files, SWT.BORDER);
-		gd = new GridData(SWT.FILL, SWT.NONE, true, false);
-		gd.horizontalSpan = 3;
-		savePattern.setLayoutData(gd);
-		savePattern.setText(prefs.getFilePattern());
-		savePattern.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				filePattern = ((Text) e.getSource()).getText();
-			}
-		});
-		Label savePatternKey = new Label(files, SWT.NONE);
-		savePatternKey.setText("%a=album, %b=artist, %n=track number, %t=track name\n" + "Note: '.mp3' will be attached to the end of this");
-		gd = new GridData();
-		gd.horizontalSpan = 3;
-		savePatternKey.setLayoutData(gd);
-
+		if (prefs.allowSaveFileAs()) {
+			Label fileName = new Label(files, SWT.NONE);
+			fileName.setText("Save files as:");
+			gd = new GridData();
+			gd.horizontalSpan = 3;
+			pathLabel.setLayoutData(gd);
+			final Text savePattern = new Text(files, SWT.BORDER);
+			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+			gd.horizontalSpan = 3;
+			savePattern.setLayoutData(gd);
+			savePattern.setText(prefs.getFilePattern());
+			savePattern.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					filePattern = ((Text) e.getSource()).getText();
+				}
+			});
+			Label savePatternKey = new Label(files, SWT.NONE);
+			savePatternKey.setText(strings.getFileNamingDetails());
+			gd = new GridData();
+			gd.horizontalSpan = 3;
+			savePatternKey.setLayoutData(gd);
+		}
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		Label dropDirLabel = new Label(files, SWT.NONE);
 		dropDirLabel.setLayoutData(gd);
-		dropDirLabel.setText("Automatically load .emp files from:");
+		dropDirLabel.setText(strings.getAutoLoadDescription());
 		dropDir = new Text(files, SWT.READ_ONLY);
 		dropDir.setText(prefs.getProperty("dropDir", ""));
 		dropDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -287,7 +290,8 @@ public class PreferencesDialogue {
 	 * Close the dialog and save the preferences
 	 */
 	public void close() {
-		prefs.setFilePattern(filePattern);
+		if (prefs.allowSaveFileAs())
+			prefs.setFilePattern(filePattern);
 		prefs.setSavePath(filePath);
 		prefs.setMinDownloads(minDL);
 		prefs.setCheckForUpdates(updatesButton.getSelection());
