@@ -67,6 +67,8 @@ public class NaxosMetafile extends BaseEMusicMetafile {
 	 * @throws IOException if the file can't be read
 	 */
 	public static boolean canParse(File file) throws IOException {
+		if (!file.getName().endsWith(".col") && !file.getName().endsWith(".COL"))
+			return false;
 		FileInputStream stream = new FileInputStream(file);
 		// just look at the first Kb
 		byte[] buff = new byte[1024];

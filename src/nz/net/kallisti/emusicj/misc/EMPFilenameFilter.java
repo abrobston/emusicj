@@ -25,17 +25,21 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- * <p>Used to recognise emusic metafiles by name. Looks for '.emp' and '.EMP'
- * extensions.</p>
+ * <p>
+ * Used to recognise emusic metafiles by name. Looks for '.emp' and '.EMP'
+ * extensions.
+ * </p>
  * 
- * <p>$Id$</p>
- *
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author robin
  */
 public class EMPFilenameFilter implements FilenameFilter {
 
 	/**
-	 * Default constructor 
+	 * Default constructor
 	 */
 	public EMPFilenameFilter() {
 		super();
@@ -44,8 +48,9 @@ public class EMPFilenameFilter implements FilenameFilter {
 	/**
 	 * Returns true if the name matches the scheme of an eMusic metafile.
 	 */
-	public boolean accept(File dir, String name) {		
-		return name.endsWith(".emp") || name.endsWith(".EMP");
+	public boolean accept(File dir, String name) {
+		return name.endsWith(".emp") || name.endsWith(".EMP")
+				|| name.endsWith(".emx") || name.endsWith(".EMX");
 	}
 
 }

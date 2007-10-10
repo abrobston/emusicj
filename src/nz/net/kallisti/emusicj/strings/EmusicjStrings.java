@@ -42,11 +42,11 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String[] getOpenDialogueFilterExtensions() {
-		return new String [] {"eMusic files (*.emp)","All Files (*.*)"};
+		return new String [] {"*.emx", "*.emp", "*.*"};
 	}
 
 	public String[] getOpenDialogueFilterNames() {
-		return new String [] {"*.emp", "*.*"};
+		return new String [] {"eMusic files (*.emx)", "eMusic files (*.emp)","All Files (*.*)"};
 	}
 
 	public String getAutoLoadDescription() {
@@ -76,7 +76,7 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String getVersion() {
-		return "0.20-svn";
+		return "0.21";
 	}
 
 }

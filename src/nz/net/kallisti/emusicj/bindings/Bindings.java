@@ -22,6 +22,7 @@
 package nz.net.kallisti.emusicj.bindings;
 
 import nz.net.kallisti.emusicj.bindingtypes.Emusic;
+import nz.net.kallisti.emusicj.bindingtypes.EmusicEmx;
 import nz.net.kallisti.emusicj.bindingtypes.Naxos;
 import nz.net.kallisti.emusicj.bindingtypes.PlainText;
 import nz.net.kallisti.emusicj.controller.EMusicController;
@@ -33,6 +34,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
+import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
 import nz.net.kallisti.emusicj.metafiles.IMetafile;
 import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
@@ -73,6 +75,7 @@ public class Bindings extends AbstractModule {
 		bind(IMetafile.class).annotatedWith(Emusic.class).to(EMPMetafile.class);
 		bind(IMetafile.class).annotatedWith(Naxos.class).to(NaxosMetafile.class);
 		bind(IMetafile.class).annotatedWith(PlainText.class).to(PlainTextMetafile.class);
+		bind(IMetafile.class).annotatedWith(EmusicEmx.class).to(EMXMetaFile.class);
 		bind(IUpdateCheck.class).to(UpdateCheck.class);
 	}
 

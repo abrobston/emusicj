@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.List;
 
 import nz.net.kallisti.emusicj.bindingtypes.Emusic;
+import nz.net.kallisti.emusicj.bindingtypes.EmusicEmx;
 import nz.net.kallisti.emusicj.bindingtypes.Naxos;
 import nz.net.kallisti.emusicj.bindingtypes.PlainText;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
@@ -49,14 +50,17 @@ public class MetafileLoader implements IMetafileLoader {
 	private final Provider<IMetafile> emusicProvider;
 	private final Provider<IMetafile> naxosProvider;
 	private final Provider<IMetafile> plainTextProvider;
+	private final Provider<IMetafile> emxEmusicProvider;
 
 	@Inject
 	public MetafileLoader(@Emusic Provider<IMetafile> emusicProvider,
 			@Naxos Provider<IMetafile> naxosProvider,
-			@PlainText Provider<IMetafile> plainTextProvider) {
+			@PlainText Provider<IMetafile> plainTextProvider,
+			@EmusicEmx Provider<IMetafile> emxEmusicProvider) {
 		this.emusicProvider = emusicProvider;
 		this.naxosProvider = naxosProvider;
 		this.plainTextProvider = plainTextProvider;
+		this.emxEmusicProvider = emxEmusicProvider;
 	}
 
     /* (non-Javadoc)
@@ -72,6 +76,8 @@ public class MetafileLoader implements IMetafileLoader {
         	meta = emusicProvider.get();
         } else if (NaxosMetafile.canParse(filename)) {
         	meta = naxosProvider.get();
+        } else if (EMXMetaFile.canParse(filename)) {
+        	meta = emxEmusicProvider.get();
         } else if (PlainTextMetafile.canParse(filename)) { 
             meta = plainTextProvider.get();
         }

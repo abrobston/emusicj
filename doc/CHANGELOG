@@ -1,4 +1,7 @@
-V1.0
+V0.20
+* Added patch by Michael MacDonald to give it support for eMusic's new .emx
+  file format
+V1.0 (Naxos only)
 * [Naxos] Version bump of the Classicsonline version
 V0.20-svn
 * [Naxos] Added the macsrc directory which contains seperate code to support
