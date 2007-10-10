@@ -13,6 +13,7 @@
 			<array>
 				<string>col</string>
 				<string>emp</string>
+				<string>emx</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>eMusic download file</string>
