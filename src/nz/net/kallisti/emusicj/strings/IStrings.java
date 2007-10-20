@@ -95,4 +95,10 @@ public interface IStrings {
 	 * @return the version of the application
 	 */
 	public String getVersion();
+	
+	/**
+	 * This provides the base name (without extension) for cover art files
+	 * @return the base name for cover art files
+	 */
+	public String getCoverArtName();
 }

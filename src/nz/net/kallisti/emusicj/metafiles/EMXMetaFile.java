@@ -21,6 +21,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.strings.IStrings;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -49,12 +50,14 @@ public class EMXMetaFile implements IMetafile {
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
+	private final IStrings strings;
 
 	@Inject
-	public EMXMetaFile(IPreferences prefs,
+	public EMXMetaFile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider) {
 		this.prefs = prefs;
+		this.strings = strings;
 		this.musicDownloaderProvider = musicDownloaderProvider;
 		this.coverDownloaderProvider = coverDownloaderProvider;
 	}
@@ -198,7 +201,7 @@ public class EMXMetaFile implements IMetafile {
 			String filetype = coverArt.substring(dotPos);
 			if (filetype.equalsIgnoreCase(".jpeg"))
 				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension anyway?
-			coverFile = new File(savePath,"cover"+filetype);
+			coverFile = new File(savePath,strings.getCoverArtName()+filetype);
 		} else {
 			return null;
 		}

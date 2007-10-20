@@ -2,6 +2,8 @@ package nz.net.kallisti.emusicj.strings;
 
 import java.io.File;
 
+import nz.net.kallisti.emusicj.controller.IPreferences;
+
 import com.google.inject.Inject;
 
 /**
@@ -13,8 +15,11 @@ import com.google.inject.Inject;
  */
 public class NaxosStrings implements IStrings {
 	
+	private final IPreferences prefs;
+
 	@Inject
-	public NaxosStrings() {
+	public NaxosStrings(IPreferences prefs) {
+		this.prefs = prefs;
 	}
 
 	public String getAppName() {
@@ -66,6 +71,19 @@ public class NaxosStrings implements IStrings {
 	
 	public String getVersion() {
 		return "1.1";
+	}
+
+	public String getCoverArtName() {
+		String userDefined = prefs.getCoverArtFilename();
+		if (userDefined != null)
+			return userDefined;
+		// If we're on windows or mac, we return 'folder.jpg'
+		String os = System.getProperty("os.name");
+		if (os != null && (os.toLowerCase().contains("windows")
+				|| os.toLowerCase().contains("mac os x"))) {
+			return "folder";
+		}
+		return "cover";
 	}
 
 }

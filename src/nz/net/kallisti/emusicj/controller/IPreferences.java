@@ -114,4 +114,12 @@ public interface IPreferences {
 	 */
 	public boolean allowSaveFileAs();
 
+	/**
+	 * Gets the user-defined cover art filename.
+	 * 
+	 * @return the user-defined cover art filename, or <code>null</code> if
+	 *         none has been defined.
+	 */
+	public String getCoverArtFilename();
+
 }

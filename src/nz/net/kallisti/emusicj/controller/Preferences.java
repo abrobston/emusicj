@@ -68,6 +68,7 @@ public abstract class Preferences implements IPreferences {
             Collections.synchronizedList(new ArrayList<IPreferenceChangeListener>());
 	private final IStrings strings;
 	private boolean firstLaunch = false;
+	private String coverArtFilename;
 
     @Inject
     public Preferences(IStrings strings) {
@@ -96,6 +97,7 @@ public abstract class Preferences implements IPreferences {
             props.load(in);
             path = props.getProperty("savePath", path);
             filePattern = props.getProperty("savePattern", filePattern);
+            coverArtFilename = props.getProperty("coverArtFilename");
             // Compatibility fix if moving from <0.07 to >=0.07
             // TODO remove this some time in the future (31/10/05)
             if (filePattern.length() > 4 && filePattern.substring(filePattern.length()-4).equalsIgnoreCase(".mp3"))
@@ -325,6 +327,10 @@ public abstract class Preferences implements IPreferences {
 
 	public boolean isFirstLaunch() {
 		return firstLaunch;
+	}
+	
+	public String getCoverArtFilename() {
+		return coverArtFilename;
 	}
 
 }

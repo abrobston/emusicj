@@ -29,6 +29,7 @@ import java.io.InputStream;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
+import nz.net.kallisti.emusicj.strings.IStrings;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -50,10 +51,10 @@ public class NaxosMetafile extends BaseEMusicMetafile {
 	 * @param coverDownloaderProvider
 	 */
 	@Inject
-	public NaxosMetafile(IPreferences prefs,
+	public NaxosMetafile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider) {
-		super(prefs, musicDownloaderProvider, coverDownloaderProvider);
+		super(prefs, strings, musicDownloaderProvider, coverDownloaderProvider);
 	}
 
 	protected InputStream getFileStream(File file) throws IOException {

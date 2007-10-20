@@ -100,6 +100,12 @@ Section "File Associations" SecFA
     WriteRegStr HKCR ".emp" "backup_val" $1 
 "${Index}-NoBackup:"
   WriteRegStr HKCR ".emp" "" "eMusicJ_DLM.AlbumFile"
+  ReadRegStr $1 HKCR ".emx" ""
+  StrCmp $1 "" "${Index}emx-NoBackup"
+    StrCmp $1 "eMusicJ_DLM.AlbumFile" "${Index}emx-NoBackup"
+    WriteRegStr HKCR ".emx" "backup_val" $1 
+"${Index}emx-NoBackup:"
+  WriteRegStr HKCR ".emx" "" "eMusicJ_DLM.AlbumFile"
   ReadRegStr $0 HKCR "eMusicJ_DLM.AlbumFile" ""
   StrCmp $0 "" 0 "${Index}-Skip"
 	WriteRegStr HKCR "eMusicJ_DLM.AlbumFile" "" "eMusic Album File"
@@ -124,7 +130,7 @@ SectionEnd
   ;Language strings
   LangString DESC_SecCOL ${LANG_ENGLISH} "eMusic/J Download Manager"
   LangString DESC_SecSMS ${LANG_ENGLISH} "Start Menu Shortcuts"
-  LangString DESC_SecFA ${LANG_ENGLISH} "Associates .emp files with this program"
+  LangString DESC_SecFA ${LANG_ENGLISH} "Associates .emp and .emx files with this program"
   LangString DESC_SecIJ ${LANG_ENGLISH} "Checks to see if Java is installed, and if not downloads and installs it"
 
   ;Assign language strings to sections
@@ -169,6 +175,21 @@ Section "Uninstall"
 "${Index}-Restore:"
       WriteRegStr HKCR ".emp" "" $1
       DeleteRegValue HKCR ".emp" "backup_val"
+   
+    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+"${Index}-NoOwn:"
+!undef Index
+
+!define Index "Line${__LINE__}"
+  ReadRegStr $1 HKCR ".emx" ""
+  StrCmp $1 "eMusicJ_DLM.AlbumFile" 0 "${Index}-NoOwn" ; only do this if we own it
+    ReadRegStr $1 HKCR ".emx" "backup_val"
+    StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
+      DeleteRegKey HKCR ".emx"
+    Goto "${Index}-NoOwn"
+"${Index}-Restore:"
+      WriteRegStr HKCR ".emx" "" $1
+      DeleteRegValue HKCR ".emx" "backup_val"
    
     DeleteRegKey HKCR "eMusicJ_DLM.AlbumFile" ;Delete key with association settings
  

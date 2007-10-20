@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.google.inject.Inject;
 
+import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 
 /**
@@ -18,12 +19,14 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
 public class EmusicjStrings implements IStrings {
 
 	private final IURLFactory urlFactory;
+	private final IPreferences prefs;
 
 	@Inject
-	public EmusicjStrings(IURLFactory urlFactory) {
+	public EmusicjStrings(IURLFactory urlFactory, IPreferences prefs) {
 		this.urlFactory = urlFactory;
+		this.prefs = prefs;
 	}
-	
+
 	public String getAppName() {
 		return "eMusic/J Download Manager";
 	}
@@ -42,11 +45,12 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String[] getOpenDialogueFilterExtensions() {
-		return new String [] {"*.emx", "*.emp", "*.*"};
+		return new String[] { "*.emx", "*.emp", "*.*" };
 	}
 
 	public String[] getOpenDialogueFilterNames() {
-		return new String [] {"eMusic files (*.emx)", "eMusic files (*.emp)","All Files (*.*)"};
+		return new String[] { "eMusic files (*.emx)", "eMusic files (*.emp)",
+				"All Files (*.*)" };
 	}
 
 	public String getAutoLoadDescription() {
@@ -54,21 +58,23 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String getAboutBoxText() {
-		return 	"This program was written by Robin Sheat <robin@kallisti.net.nz> "+
-		"[eMusic.com username: Eythian]\n\n" +
-		"Thanks to:\n" +
-		"Curtis Cooley (code)\n"+
-		"Liron Tocker <http://lironbot.com> [eMusic: Liron] (artwork)\n"+
-		"James Elwood [eMusic: jelwood01] (artwork)\n"+
-		"\nCheck "+urlFactory.getAppURL()+" for updates and "+
-		"information.\n"+
-		"\nThe program may be freely distributed under the terms of the GNU GPL.\n"+
-		"\nNote that this program is not affiliated in any way with eMusic.com\n";
+		return "This program was written by Robin Sheat <robin@kallisti.net.nz> "
+				+ "[eMusic.com username: Eythian]\n\n"
+				+ "Thanks to:\n"
+				+ "Curtis Cooley (code)\n"
+				+ "Liron Tocker <http://lironbot.com> [eMusic: Liron] (artwork)\n"
+				+ "James Elwood [eMusic: jelwood01] (artwork)\n"
+				+ "\nCheck "
+				+ urlFactory.getAppURL()
+				+ " for updates and "
+				+ "information.\n"
+				+ "\nThe program may be freely distributed under the terms of the GNU GPL.\n"
+				+ "\nNote that this program is not affiliated in any way with eMusic.com\n";
 
 	}
-	
+
 	public String getDefaultFilePattern() {
-		return "%b"+File.separatorChar+"%a"+File.separatorChar+"%n %t";
+		return "%b" + File.separatorChar + "%a" + File.separatorChar + "%n %t";
 	}
 
 	public String getXMLBaseNodeName() {
@@ -76,7 +82,20 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String getVersion() {
-		return "0.21";
+		return "0.21-svn";
+	}
+
+	public String getCoverArtName() {
+		String userDefined = prefs.getCoverArtFilename();
+		if (userDefined != null)
+			return userDefined;
+		// If we're on windows or mac, we return 'folder.jpg'
+		String os = System.getProperty("os.name");
+		if (os != null && (os.toLowerCase().contains("windows")
+				|| os.toLowerCase().contains("mac os x"))) {
+			return "folder";
+		}
+		return "cover";
 	}
 
 }

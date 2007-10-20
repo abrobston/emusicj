@@ -42,6 +42,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.strings.IStrings;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -52,12 +53,16 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * <p>Loads a file in the format of an eMusic.com file. The source of the file
- * is provided by the subclass. This is because the Naxos format is identical
- * but without the encryption.</p>
+ * <p>
+ * Loads a file in the format of an eMusic.com file. The source of the file is
+ * provided by the subclass. This is because the Naxos format is identical but
+ * without the encryption.
+ * </p>
  * 
- * <p>$Id: EMPMetafile.java 147 2006-12-28 07:21:53Z robin $</p>
- *
+ * <p>
+ * $Id: EMPMetafile.java 147 2006-12-28 07:21:53Z robin $
+ * </p>
+ * 
  * @author Robin Sheat <robin@kallisti.net.nz>
  * @author Paul Focke <paul.focke@gmail.com>
  */
@@ -69,15 +74,18 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
+	private final IStrings strings;
 
 	@Inject
-	public BaseEMusicMetafile(IPreferences prefs, Provider<IMusicDownloader> musicDownloaderProvider,
+	public BaseEMusicMetafile(IPreferences prefs, IStrings strings,
+			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider) {
-				this.prefs = prefs;
-				this.musicDownloaderProvider = musicDownloaderProvider;
-				this.coverDownloaderProvider = coverDownloaderProvider;
+		this.prefs = prefs;
+		this.strings = strings;
+		this.musicDownloaderProvider = musicDownloaderProvider;
+		this.coverDownloaderProvider = coverDownloaderProvider;
 	}
-	
+
 	public void setMetafile(File file) throws IOException {
 		DocumentBuilder builder;
 		try {
@@ -89,37 +97,39 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 		try {
 			doc = builder.parse(getFileStream(file));
 		} catch (SAXException e) {
-			throw new UnknownFileException("I wasn't able to load this file. " +
-					"Perhaps try downloading it again", e);
+			throw new UnknownFileException("I wasn't able to load this file. "
+					+ "Perhaps try downloading it again", e);
 		}
 		Node root = doc.getDocumentElement();
-		if (!(root.getNodeType() == Node.ELEMENT_NODE &&
-				root.getNodeName().equalsIgnoreCase("package"))) {
+		if (!(root.getNodeType() == Node.ELEMENT_NODE && root.getNodeName()
+				.equalsIgnoreCase("package"))) {
 			throw new UnknownFileException("Unknown file type");
 		}
 		if (!root.hasChildNodes()) {
-			throw new UnknownFileException("File appears to contain no downloads");
+			throw new UnknownFileException(
+					"File appears to contain no downloads");
 		}
-		NodeList pkg = root.getChildNodes(); 
-		
-		
+		NodeList pkg = root.getChildNodes();
+
 		for (int count = 0; count < pkg.getLength(); count++) {
 			Node node = pkg.item(count);
-			if (node.getNodeType() == Node.ELEMENT_NODE &&
-					node.getNodeName().equalsIgnoreCase("tracklist")) {
+			if (node.getNodeType() == Node.ELEMENT_NODE
+					&& node.getNodeName().equalsIgnoreCase("tracklist")) {
 				loadTrackList(node);
-			} else if (node.getNodeType() == Node.ELEMENT_NODE &&
-					node.getNodeName().equalsIgnoreCase("server")) {
+			} else if (node.getNodeType() == Node.ELEMENT_NODE
+					&& node.getNodeName().equalsIgnoreCase("server")) {
 				server = new EMPServer(node);
-			}		
+			}
 		}
 
 	}
-	
+
 	/**
-	 * This takes the filename that was provided and turns it into a stream
-	 * that will provide the raw XML.
-	 * @param file the filename to process
+	 * This takes the filename that was provided and turns it into a stream that
+	 * will provide the raw XML.
+	 * 
+	 * @param file
+	 *            the filename to process
 	 * @return an input stream providing the EMP file content
 	 */
 	protected abstract InputStream getFileStream(File file) throws IOException;
@@ -128,17 +138,17 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 		NodeList tracklist = tracklistNode.getChildNodes();
 		for (int count = 0; count < tracklist.getLength(); count++) {
 			Node node = tracklist.item(count);
-			if (!(node.getNodeType() == Node.ELEMENT_NODE &&
-					node.getNodeName().equalsIgnoreCase("track"))) {
+			if (!(node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName()
+					.equalsIgnoreCase("track"))) {
 				continue;
 			}
 			loadTrack(node);
-		}		
+		}
 	}
 
 	/**
 	 * @param node
-	 * @throws MalformedURLException 
+	 * @throws MalformedURLException
 	 */
 	private void loadTrack(Node trackNode) {
 		NodeList track = trackNode.getChildNodes();
@@ -159,15 +169,15 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			if (node.getNodeName().equalsIgnoreCase("trackid"))
 				id = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("tracknum"))
-				num = node.getFirstChild().getNodeValue();				
+				num = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("title"))
 				title = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("album"))
-				album = node.getFirstChild().getNodeValue();				
+				album = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("artist"))
-				artist = node.getFirstChild().getNodeValue();				
+				artist = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("filename"))
-				filename = node.getFirstChild().getNodeValue();	
+				filename = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("format"))
 				format = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("albumart"))
@@ -175,7 +185,7 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			else if (node.getNodeName().equalsIgnoreCase("genre"))
 				genre = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("duration"))
-				duration = node.getFirstChild().getNodeValue();			
+				duration = node.getFirstChild().getNodeValue();
 		}
 		URL url;
 		try {
@@ -184,56 +194,65 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			throw new UnknownFileException(e);
 		}
 		int trackNum = Integer.parseInt(num);
-		File outputFile = new File(prefs.getFilename(trackNum, title, album, 
+		File outputFile = new File(prefs.getFilename(trackNum, title, album,
 				artist, format));
 		File coverArtFile = null;
-		if (coverArt != null) 
-			coverArtFile = getCoverArtCached(coverArt, prefs, trackNum, 
-				title, album, artist);
+		if (coverArt != null)
+			coverArtFile = getCoverArtCached(coverArt, prefs, trackNum, title,
+					album, artist);
 		IMusicDownloader dl = musicDownloaderProvider.get();
-		dl.setDownloader(url, outputFile, coverArtFile, trackNum, 
-				title, album, artist);
+		dl.setDownloader(url, outputFile, coverArtFile, trackNum, title, album,
+				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
 		try {
 			dl.setDuration(Integer.parseInt(duration));
-		} catch (NumberFormatException e) { 
-//			 do nothing
+		} catch (NumberFormatException e) {
+			// do nothing
 		}
 	}
 
 	/**
-	 * This is passed a String URL of where to find the coverart for a track.
-	 * It turns it into a filename. If the file doesn't exist, and we haven't
-	 * already created a downloader for it, then a download is added to the 
-	 * list. 
-	 * @param coverArt the string form of the URL to load
-	 * @param artist the artist this cover is for
-	 * @param album the album it's from
-	 * @param title the title of the track
-	 * @param trackNum the number of the track
-	 * @return a file corresponding the coverart. It may not exist yet, but 
-	 * that is where it eventually will be.
+	 * This is passed a String URL of where to find the coverart for a track. It
+	 * turns it into a filename. If the file doesn't exist, and we haven't
+	 * already created a downloader for it, then a download is added to the
+	 * list.
+	 * 
+	 * @param coverArt
+	 *            the string form of the URL to load
+	 * @param artist
+	 *            the artist this cover is for
+	 * @param album
+	 *            the album it's from
+	 * @param title
+	 *            the title of the track
+	 * @param trackNum
+	 *            the number of the track
+	 * @return a file corresponding the coverart. It may not exist yet, but that
+	 *         is where it eventually will be.
 	 */
-	private File getCoverArtCached(final String coverArt, IPreferences prefs, 
+	private File getCoverArtCached(final String coverArt, IPreferences prefs,
 			int trackNum, String title, String album, String artist) {
 		if (coverArtCache == null)
 			coverArtCache = new Hashtable<String, File>();
 		File cachedFile = coverArtCache.get(coverArt);
-		if (cachedFile != null) 
+		if (cachedFile != null)
 			return cachedFile;
 		URL coverUrl;
 		try {
 			coverUrl = new URL(coverArt);
-		} catch (MalformedURLException e) { return null; }
+		} catch (MalformedURLException e) {
+			return null;
+		}
 		File coverFile;
 		File savePath = prefs.getPathFor(trackNum, title, album, artist);
 		int dotPos = coverArt.lastIndexOf(".");
 		if (dotPos != -1) {
 			String filetype = coverArt.substring(dotPos);
 			if (filetype.equalsIgnoreCase(".jpeg"))
-				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension anyway?
-			coverFile = new File(savePath,"cover"+filetype);
+				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension
+									// anyway?
+			coverFile = new File(savePath, strings.getCoverArtName()+ filetype);
 		} else {
 			return null;
 		}
@@ -247,8 +266,8 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			mon.addStateListener(new IDownloadMonitorListener() {
 				// This is a bt icky, but it'll do the job in 99% of cases.
 				public void monitorStateChanged(IDownloadMonitor monitor) {
-					if (monitor.getDownloadState() == DLState.CANCELLED ||
-							monitor.getDownloadState() == DLState.FINISHED) {
+					if (monitor.getDownloadState() == DLState.CANCELLED
+							|| monitor.getDownloadState() == DLState.FINISHED) {
 						coverArtCache.remove(coverArt);
 					}
 				}
@@ -262,70 +281,77 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	public List<IDownloader> getDownloaders() {
 		return downloaders;
 	}
-	
+
 	private static class EMPServer {
-		
-		private final String protocol = "http"; 
+
+		private final String protocol = "http";
 		private final String name;
 		private final String desc;
 		private final String server;
 		private final String location;
 		private final String key;
-		
-		public EMPServer(String name, String desc, String server, String location, String key){
+
+		public EMPServer(String name, String desc, String server,
+				String location, String key) {
 			this.name = name;
 			this.desc = desc;
 			this.server = server;
 			this.location = location;
-			this.key = key;		
+			this.key = key;
 		}
-		public EMPServer(Node serverNode){
+
+		public EMPServer(Node serverNode) {
 			String nname = "";
 			String ndesc = "";
 			String nserver = "";
 			String nlocation = "";
 			String nkey = "";
 			NodeList nodeList = serverNode.getChildNodes();
-			for(int i = 0; i < nodeList.getLength(); i++){
+			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
 				if (node.getFirstChild() == null)
 					continue;
 				if (node.getNodeName().equalsIgnoreCase("name"))
-					nname=node.getFirstChild().getNodeValue();
+					nname = node.getFirstChild().getNodeValue();
 				else if (node.getNodeName().equalsIgnoreCase("desc"))
-					ndesc=node.getFirstChild().getNodeValue();
+					ndesc = node.getFirstChild().getNodeValue();
 				else if (node.getNodeName().equalsIgnoreCase("netname"))
-					nserver=node.getFirstChild().getNodeValue();
+					nserver = node.getFirstChild().getNodeValue();
 				else if (node.getNodeName().equalsIgnoreCase("location"))
-					nlocation=node.getFirstChild().getNodeValue();
+					nlocation = node.getFirstChild().getNodeValue();
 				else if (node.getNodeName().equalsIgnoreCase("key"))
-					nkey=node.getFirstChild().getNodeValue();
+					nkey = node.getFirstChild().getNodeValue();
 			}
-			
+
 			name = nname;
 			desc = ndesc;
 			server = nserver;
 			location = nlocation;
-			key = nkey;			
+			key = nkey;
 		}
-		public URL createDownloadURL(String id, String filename) throws MalformedURLException{
-			String filelocation = new String (location);
+
+		public URL createDownloadURL(String id, String filename)
+				throws MalformedURLException {
+			String filelocation = new String(location);
 			filelocation = filelocation.replaceAll("%fid", id);
 			filelocation = filelocation.replaceAll("%f", filename);
-			return new URL(protocol, server, filelocation);			
+			return new URL(protocol, server, filelocation);
 		}
+
 		/**
 		 * @return Returns the desc.
 		 */
 		public String getDesc() {
 			return desc;
 		}
+
 		/**
 		 * @return Returns the key.
 		 */
 		public String getKey() {
 			return key;
 		}
+
 		/**
 		 * @return Returns the name.
 		 */

@@ -14,6 +14,8 @@ available from the website.
 
 Credits:
 Code: Curtis Cooley
+Code: Paul Focke
+Code: Michael MacDonald
 Artwork: Liron Tucker
 Artwork: James Elwood
 
