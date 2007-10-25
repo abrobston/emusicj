@@ -1,3 +1,9 @@
+V0.22-svn
+* Added quotes around $@ in launch script to make it work better with some
+  temp file names
+* Changed default cover art name for windows and mac to 'folder.jpg'
+* Cover art filename can be overridden by coverArtFilename option in
+  prefs file
 V0.21
 * Added patch by Michael MacDonald to give it support for eMusic's new .emx
   file format
