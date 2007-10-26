@@ -4,6 +4,10 @@ V0.22-svn
 * Changed default cover art name for windows and mac to 'folder.jpg'
 * Cover art filename can be overridden by coverArtFilename option in
   prefs file
+* Current download list saves when files are added, this means that the computer
+  crashing won't lose the current progress (#35)
+* Added " and & to the stripped out characters, they may be causing issues
+  on some file systems (#29 maybe)
 V0.21
 * Added patch by Michael MacDonald to give it support for eMusic's new .emx
   file format
