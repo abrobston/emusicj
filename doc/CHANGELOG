@@ -1,4 +1,4 @@
-V0.22-svn
+V0.22
 * Added quotes around $@ in launch script to make it work better with some
   temp file names
 * Changed default cover art name for windows and mac to 'folder.jpg'
