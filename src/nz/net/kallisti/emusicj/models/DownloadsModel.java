@@ -58,11 +58,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * <p>This is the download model. It keeps tabs on what downloads exists
- * and notifies listeners of changes.</p> 
+ * <p>
+ * This is the download model. It keeps tabs on what downloads exists and
+ * notifies listeners of changes.
+ * </p>
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
 public class DownloadsModel implements IDownloadsModel {
@@ -70,47 +72,48 @@ public class DownloadsModel implements IDownloadsModel {
 	/**
 	 * Contains the downloads as an ordered list
 	 */
-	private List<IDownloader> downloads;
+	private final List<IDownloader> downloads;
 	/**
 	 * Contains the listeners listening to changes in the state of the model
 	 */
-    private List<IDownloadsModelListener> listeners;
-    /**
-     * Contains the download in a way that can be searched quickly. <i>Must</i>
-     * be kept synchronous with {@link downloads} at all times. 
-     */
-    private Set<IDownloader> dlsHash;
+	private final List<IDownloadsModelListener> listeners;
+	/**
+	 * Contains the download in a way that can be searched quickly. <i>Must</i>
+	 * be kept synchronous with {@link downloads} at all times.
+	 */
+	private final Set<IDownloader> dlsHash;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
 	private final Provider<IDownloader> downloaderProvider;
 	private final IStrings strings;
-    
+
 	/**
-	 * Initialise the class, Guice supplies providers to create the instances
-	 * of things when it needs to
+	 * Initialise the class, Guice supplies providers to create the instances of
+	 * things when it needs to
 	 */
-    @Inject
+	@Inject
 	public DownloadsModel(Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			Provider<IDownloader> downloaderProvider,
-			IStrings strings) {
+			Provider<IDownloader> downloaderProvider, IStrings strings) {
 		this.musicDownloaderProvider = musicDownloaderProvider;
 		this.coverDownloaderProvider = coverDownloaderProvider;
 		this.downloaderProvider = downloaderProvider;
 		this.strings = strings;
 		downloads = Collections.synchronizedList(new ArrayList<IDownloader>());
 		dlsHash = Collections.synchronizedSet(new HashSet<IDownloader>());
-		listeners = Collections.synchronizedList(new ArrayList<IDownloadsModelListener>());
+		listeners = Collections
+				.synchronizedList(new ArrayList<IDownloadsModelListener>());
 	}
-	
+
 	/**
-	 * Writes the state of the downloaders into the provided stream. Note that 
-	 * currently only {@link MusicDownloader} is supported. The output
+	 * Writes the state of the downloaders into the provided stream. The output
 	 * into the stream is XML.
-	 * @param str the stream to save to
+	 * 
+	 * @param str
+	 *            the stream to save to
 	 * @return true if everything was OK
 	 */
-	public boolean saveState(OutputStream str) {		
+	public boolean saveState(OutputStream str) {
 		DocumentBuilder builder;
 		try {
 			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -120,27 +123,26 @@ public class DownloadsModel implements IDownloadsModel {
 			return false;
 		}
 		Document doc = builder.newDocument();
-	    Element el = doc.createElement(strings.getXMLBaseNodeName());
+		Element el = doc.createElement(strings.getXMLBaseNodeName());
 		IDownloader[] dls = new IDownloader[downloads.size()];
 		dls = downloads.toArray(dls);
-		for (int i=0; i<dls.length; i++) {
+		for (int i = 0; i < dls.length; i++) {
 			if (dls[i] instanceof MusicDownloader) {
 				Element dlEl = doc.createElement("MusicDownloader");
-				((MusicDownloader)dls[i]).saveTo(dlEl, doc);
+				((MusicDownloader) dls[i]).saveTo(dlEl, doc);
 				el.appendChild(dlEl);
 			} else if (dls[i] instanceof CoverDownloader) {
 				Element dlEl = doc.createElement("CoverDownloader");
-				((CoverDownloader)dls[i]).saveTo(dlEl, doc);
-				el.appendChild(dlEl);				
+				((CoverDownloader) dls[i]).saveTo(dlEl, doc);
+				el.appendChild(dlEl);
 			} else if (dls[i] instanceof HTTPDownloader) {
-                Element dlEl = doc.createElement("HTTPDownloader");
-                ((HTTPDownloader)dls[i]).saveTo(dlEl, doc);
-                el.appendChild(dlEl);
-            }
+				Element dlEl = doc.createElement("HTTPDownloader");
+				((HTTPDownloader) dls[i]).saveTo(dlEl, doc);
+				el.appendChild(dlEl);
+			}
 		}
 		doc.appendChild(el);
-		TransformerFactory tFactory =
-			TransformerFactory.newInstance();
+		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer;
 		try {
 			transformer = tFactory.newTransformer();
@@ -160,45 +162,51 @@ public class DownloadsModel implements IDownloadsModel {
 		}
 		try {
 			str.close();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+		}
 		return true;
 	}
-	
+
 	public void loadState(InputStream str) {
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+					.newDocumentBuilder();
 			Document doc = builder.parse(str);
 			Node root = doc.getDocumentElement();
-			if (!(root.getNodeType() == Node.ELEMENT_NODE &&
-					root.getNodeName().equals(strings.getXMLBaseNodeName()))) {
+			if (!(root.getNodeType() == Node.ELEMENT_NODE && root.getNodeName()
+					.equals(strings.getXMLBaseNodeName()))) {
 				return;
 			}
 			if (!root.hasChildNodes()) {
 				return;
 			}
-			NodeList dlList = root.getChildNodes(); 
+			NodeList dlList = root.getChildNodes();
 			for (int count = 0; count < dlList.getLength(); count++) {
 				Node dlNode = dlList.item(count);
 				if (!(dlNode.getNodeType() == Node.ELEMENT_NODE)) {
 					continue;
 				}
-				if (dlNode.getNodeName().equals("MusicDownloader") ||
-						(dlNode.getNodeName().equals("HTTPMusicDownloader"))) { // backwards compatibility after class rename
-					IMusicDownloader dl = musicDownloaderProvider.get(); 
-					dl.setDownloader((Element)dlNode);
-				    downloads.add(dl);
+				if (dlNode.getNodeName().equals("MusicDownloader")
+						|| (dlNode.getNodeName().equals("HTTPMusicDownloader"))) { // backwards
+																					// compatibility
+																					// after
+																					// class
+																					// rename
+					IMusicDownloader dl = musicDownloaderProvider.get();
+					dl.setDownloader((Element) dlNode);
+					downloads.add(dl);
 					dlsHash.add(dl);
 				} else if (dlNode.getNodeName().equals("CoverDownloader")) {
-					ICoverDownloader dl = coverDownloaderProvider.get(); 
-					dl.setDownloader((Element)dlNode);
-				    downloads.add(dl);
-					dlsHash.add(dl);					
-                } else if (dlNode.getNodeName().equals("HTTPDownloader")) {
-                		IDownloader dl = downloaderProvider.get(); 
-                		dl.setDownloader((Element)dlNode);
-                    downloads.add(dl);
-                    dlsHash.add(dl);
-                }
+					ICoverDownloader dl = coverDownloaderProvider.get();
+					dl.setDownloader((Element) dlNode);
+					downloads.add(dl);
+					dlsHash.add(dl);
+				} else if (dlNode.getNodeName().equals("HTTPDownloader")) {
+					IDownloader dl = downloaderProvider.get();
+					dl.setDownloader((Element) dlNode);
+					downloads.add(dl);
+					dlsHash.add(dl);
+				}
 			}
 		} catch (Exception e) {
 			System.err.println("An error occurred loading the downloads state");
@@ -206,66 +214,73 @@ public class DownloadsModel implements IDownloadsModel {
 			return;
 		}
 		notifyListeners();
-	}	
+	}
+
 	public void addListener(IDownloadsModelListener listener) {
-	    listeners.add(listener);
+		listeners.add(listener);
 	}
 
 	public void removeListener(IDownloadsModelListener listener) {
-	    listeners.remove(listener);
+		listeners.remove(listener);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#getDownloaders()
 	 */
-	public List<IDownloader> getDownloaders() {		
+	public List<IDownloader> getDownloaders() {
 		return Collections.unmodifiableList(downloads);
 	}
 
 	public List<IDownloadMonitor> getDownloadMonitors() {
-        ArrayList<IDownloadMonitor> dm = new ArrayList<IDownloadMonitor>();
-        for (IDownloader d : downloads)
-            dm.add(d.getMonitor());
+		ArrayList<IDownloadMonitor> dm = new ArrayList<IDownloadMonitor>();
+		for (IDownloader d : downloads)
+			dm.add(d.getMonitor());
 		return dm;
 	}
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti.emusicj.download.IMusicDownloader)
-     */
-    public void addDownload(IDownloader dl) {
-    		if (!dlsHash.contains(dl)) {
-    			downloads.add(dl);
-    			dlsHash.add(dl);
-    			notifyListeners();
-    		}
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti.emusicj.download.IMusicDownloader)
+	 */
+	public void addDownload(IDownloader dl) {
+		if (!dlsHash.contains(dl)) {
+			downloads.add(dl);
+			dlsHash.add(dl);
+			notifyListeners();
+		}
+	}
 
-    /* (non-Javadoc)
-     * @see nz.net.kallisti.emusicj.models.IDownloadsModel#removeDownloads(java.util.List)
-     */
-    public void removeDownloads(List<IDownloader> toRemove) {
-        if (toRemove.size() != 0) {
-            for (IDownloader dl : toRemove) {
-            		if (dlsHash.contains(dl)) {
-            			downloads.remove(dl);
-            			dlsHash.remove(dl);
-            		}
-            }
-            notifyListeners();
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#removeDownloads(java.util.List)
+	 */
+	public void removeDownloads(List<IDownloader> toRemove) {
+		if (toRemove.size() != 0) {
+			for (IDownloader dl : toRemove) {
+				if (dlsHash.contains(dl)) {
+					downloads.remove(dl);
+					dlsHash.remove(dl);
+				}
+			}
+			notifyListeners();
+		}
+	}
 
-    public void removeDownload(IDownloader dl) {
-    		if (dlsHash.contains(dl)) {
-    			downloads.remove(dl);
-    			dlsHash.remove(dl);
-    			notifyListeners();
-    		}
-    }
-    
-    private void notifyListeners() {
-        for (IDownloadsModelListener l : listeners)
-            l.downloadsModelChanged(this);
-    }
+	public void removeDownload(IDownloader dl) {
+		if (dlsHash.contains(dl)) {
+			downloads.remove(dl);
+			dlsHash.remove(dl);
+			notifyListeners();
+		}
+	}
+
+	private void notifyListeners() {
+		for (IDownloadsModelListener l : listeners)
+			l.downloadsModelChanged(this);
+	}
 
 }
