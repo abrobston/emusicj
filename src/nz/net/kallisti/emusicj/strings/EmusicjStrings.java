@@ -2,10 +2,10 @@ package nz.net.kallisti.emusicj.strings;
 
 import java.io.File;
 
-import com.google.inject.Inject;
-
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
+
+import com.google.inject.Inject;
 
 /**
  * <p>
@@ -82,7 +82,7 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String getVersion() {
-		return "0.21-svn";
+		return "0.22";
 	}
 
 	public String getCoverArtName() {
@@ -91,8 +91,9 @@ public class EmusicjStrings implements IStrings {
 			return userDefined;
 		// If we're on windows or mac, we return 'folder.jpg'
 		String os = System.getProperty("os.name");
-		if (os != null && (os.toLowerCase().contains("windows")
-				|| os.toLowerCase().contains("mac os x"))) {
+		if (os != null
+				&& (os.toLowerCase().contains("windows") || os.toLowerCase()
+						.contains("mac os x"))) {
 			return "folder";
 		}
 		return "cover";
