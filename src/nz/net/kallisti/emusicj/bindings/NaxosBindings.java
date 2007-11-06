@@ -19,21 +19,27 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 /**
- * <p>Bindings that are specific to the Naxos variant of the program</p>
+ * <p>
+ * Bindings that are specific to the Naxos variant of the program
+ * </p>
  * 
  * $Id:$
- *
+ * 
  * @author robin
  */
 public class NaxosBindings extends AbstractModule {
 
+	@Override
 	public void configure() {
-		bind(FilenameFilter.class).annotatedWith(WatchFiles.class).to(NaxosFilenameFilter.class);
-		bind(IDirectoryMonitor.class).annotatedWith(WatchFiles.class).toProvider(WatchFilesDirectoryMonitorProvider.class);
+		bind(FilenameFilter.class).annotatedWith(WatchFiles.class).to(
+				NaxosFilenameFilter.class);
+		bind(IDirectoryMonitor.class).annotatedWith(WatchFiles.class)
+				.toProvider(WatchFilesDirectoryMonitorProvider.class);
 		bind(IStrings.class).to(NaxosStrings.class).in(Scopes.SINGLETON);
-		bind(IImageFactory.class).to(NaxosImageFactory.class).in(Scopes.SINGLETON);
+		bind(IImageFactory.class).to(NaxosImageFactory.class).in(
+				Scopes.SINGLETON);
 		bind(IURLFactory.class).to(NaxosURLFactory.class).in(Scopes.SINGLETON);
-		bind(IPreferences.class).to(NaxosPreferences.class).in(Scopes.SINGLETON);
+		bind(IPreferences.class).to(NaxosPreferences.class).asEagerSingleton();
 	}
 
 }

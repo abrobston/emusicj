@@ -31,40 +31,50 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 
 /**
- * <p>This is the main class for the eMusic/J downloader. It doesn't do a
- * whole lot except for start the other parts of the system going. This
- * involves creating an instance of the controller, and giving it a view
- * to use.</p>
+ * <p>
+ * This is the main class for the eMusic/J downloader. It doesn't do a whole lot
+ * except for start the other parts of the system going. This involves creating
+ * an instance of the controller, and giving it a view to use.
+ * </p>
  * 
- * <p>$Id$</p>
- *
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author robin
  */
 public class EMusicJ {
 
-    /**
-     * Initialises the components of the system.
-     * @param args command line parameters.
-     */
-    public EMusicJ(String[] args) {
-    	Injector injector = Guice.createInjector(Stage.PRODUCTION, new Bindings(), new EmusicjBindings());
-        IEMusicView view = injector.getInstance(IEMusicView.class);
-        view.setState(IEMusicView.ViewState.STARTUP);
-        IEMusicController controller = injector.getInstance(IEMusicController.class);
-        controller.run(args);
-    }
+	/**
+	 * Initialises the components of the system.
+	 * 
+	 * @param args
+	 *            command line parameters.
+	 */
+	public EMusicJ(String[] args) {
+		Injector injector = Guice.createInjector(Stage.PRODUCTION,
+				new Bindings(), new EmusicjBindings());
+		IEMusicView view = injector.getInstance(IEMusicView.class);
+		view.setState(IEMusicView.ViewState.STARTUP);
+		IEMusicController controller = injector
+				.getInstance(IEMusicController.class);
+		controller.run(args);
+	}
 
-    /**
-     * This may be overridden to provide custom starters for other platforms
-     * @param controller the application controller
-     * @param args the command line arguments
-     */
-    public void startApp(IEMusicController controller, String[] args) {
-        controller.run(args);
-    }
-    
-    public static void main(String[] args) {
-    	new EMusicJ(args);
-    }
+	/**
+	 * This may be overridden to provide custom starters for other platforms
+	 * 
+	 * @param controller
+	 *            the application controller
+	 * @param args
+	 *            the command line arguments
+	 */
+	public void startApp(IEMusicController controller, String[] args) {
+		controller.run(args);
+	}
+
+	public static void main(String[] args) {
+		new EMusicJ(args);
+	}
 
 }
