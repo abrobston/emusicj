@@ -402,14 +402,11 @@ public class HTTPDownloader implements IDownloader {
 								hParts[1].length() - 2));
 						fileLength = contentLength + resumePoint;
 						// resumePoint will be 0 if no resume
-						logger
-								.log(
-										Level.FINER,
-										this
-												+ ": Content-Length header tells us there will be "
-												+ contentLength
-												+ " bytes of content, making a total filesize of "
-												+ fileLength);
+						logger.log(Level.FINER, this
+								+ ": Content-Length header "
+								+ "tells us there will be " + contentLength
+								+ " bytes of content, making a "
+								+ "total filesize of " + fileLength);
 
 					}
 					// if (hParts[0].equals("Content-Disposition:")) {
@@ -434,7 +431,8 @@ public class HTTPDownloader implements IDownloader {
 						}
 					}
 				}
-				if (contentLength == 0 && !isFile) {
+				if (contentLength == 0 && !isFile
+						&& statusCode == HttpStatus.SC_PARTIAL_CONTENT) {
 					// This hopefully fixes an odd issue where if you request
 					// an already complete file from emusic, it will not
 					// provide a MIME header. This makes a small amount of
@@ -443,8 +441,8 @@ public class HTTPDownloader implements IDownloader {
 					// failure when it wasn't really.
 					isFile = true;
 					logger.log(Level.FINER, this + ": we're pretending a file "
-							+ "was given when it wasn't, due to emusic server "
-							+ "strangeness");
+							+ "was given when it wasn't, indicating an "
+							+ "already complete file");
 				}
 				if (!isFile) {
 					downloadError("Result isn't a file");

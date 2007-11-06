@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +62,7 @@ public abstract class Preferences implements IPreferences {
 	private static final String PROXY_PORT = "proxyPort";
 	private static final String PROXY_HOST = "proxyHost";
 	private static final String USE_PROXY = "useProxy";
-	private static final String DEBUG_MODE = "debugMode";
+	private static final String LOG_LEVEL = "logLevel";
 
 	public final String statePath;
 	private String path;
@@ -117,7 +119,7 @@ public abstract class Preferences implements IPreferences {
 			proxyHost = props.getProperty(PROXY_HOST, proxyHost);
 			proxyPort = Integer.parseInt(props.getProperty(PROXY_PORT,
 					proxyPort + ""));
-			setDebugLevel(props.getProperty(DEBUG_MODE, "INFO"));
+			setDebugLevel(props.getProperty(LOG_LEVEL, "INFO"));
 		} catch (IOException e) {
 			// We don't care, it'll just use the defaults
 			// but do remember that this is the first execution, other things
@@ -361,30 +363,37 @@ public abstract class Preferences implements IPreferences {
 	 * what is specified by 'level'. If level is an unknown value, it defaults
 	 * to 'INFO'.
 	 * 
-	 * @param level
+	 * @param levelStr
 	 *            one of the logging levels defined in {@link Level},
 	 *            case-insensitive
 	 */
-	private void setDebugLevel(String level) {
+	private void setDebugLevel(String levelStr) {
 		Logger logger = Logger.getLogger("nz.net.kallisti.emusicj");
-		if (level.equalsIgnoreCase("severe")) {
-			logger.setLevel(Level.SEVERE);
-		} else if (level.equalsIgnoreCase("warning")) {
-			logger.setLevel(Level.WARNING);
-		} else if (level.equalsIgnoreCase("info")) {
-			logger.setLevel(Level.INFO);
-		} else if (level.equalsIgnoreCase("config")) {
-			logger.setLevel(Level.CONFIG);
-		} else if (level.equalsIgnoreCase("fine")) {
-			logger.setLevel(Level.FINE);
-		} else if (level.equalsIgnoreCase("finer")) {
-			logger.setLevel(Level.FINER);
-		} else if (level.equalsIgnoreCase("finest")) {
-			logger.setLevel(Level.FINEST);
-		} else if (level.equalsIgnoreCase("off")) {
-			logger.setLevel(Level.OFF);
+		Level level = null;
+		if (levelStr.equalsIgnoreCase("severe")) {
+			level = Level.SEVERE;
+		} else if (levelStr.equalsIgnoreCase("warning")) {
+			level = Level.WARNING;
+		} else if (levelStr.equalsIgnoreCase("info")) {
+			level = Level.INFO;
+		} else if (levelStr.equalsIgnoreCase("config")) {
+			level = Level.CONFIG;
+		} else if (levelStr.equalsIgnoreCase("fine")) {
+			level = Level.FINE;
+		} else if (levelStr.equalsIgnoreCase("finer")) {
+			level = Level.FINER;
+		} else if (levelStr.equalsIgnoreCase("finest")) {
+			level = Level.FINEST;
+		} else if (levelStr.equalsIgnoreCase("off")) {
+			level = Level.OFF;
+		} else if (levelStr.equalsIgnoreCase("all")) {
+			level = Level.ALL;
 		} else
-			logger.setLevel(Level.INFO);
+			level = Level.INFO;
+		logger.setLevel(level);
+		Handler handler = new ConsoleHandler();
+		handler.setLevel(level);
+		logger.addHandler(handler);
 	}
 
 }
