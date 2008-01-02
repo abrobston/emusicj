@@ -159,13 +159,13 @@ public abstract class Preferences implements IPreferences {
 		StringBuffer convPattern = new StringBuffer(filePattern);
 		int pos;
 		while ((pos = convPattern.indexOf("%a")) != -1)
-			convPattern.replace(pos, pos + 2, albumB.toString());
+			convPattern.replace(pos, pos + 2, albumB.toString().trim());
 		while ((pos = convPattern.indexOf("%b")) != -1)
-			convPattern.replace(pos, pos + 2, artistB.toString());
+			convPattern.replace(pos, pos + 2, artistB.toString().trim());
 		while ((pos = convPattern.indexOf("%n")) != -1)
 			convPattern.replace(pos, pos + 2, df.format(track));
 		while ((pos = convPattern.indexOf("%t")) != -1)
-			convPattern.replace(pos, pos + 2, songB.toString());
+			convPattern.replace(pos, pos + 2, songB.toString().trim());
 		String fname = path + File.separatorChar + convPattern + format;
 		return fname;
 	}
