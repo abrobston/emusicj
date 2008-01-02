@@ -62,6 +62,7 @@ public class EmusicjStrings implements IStrings {
 				+ "[eMusic.com username: Eythian]\n\n"
 				+ "Thanks to:\n"
 				+ "Curtis Cooley (code)\n"
+				+ "Michael MacDonald (code)\n"
 				+ "Liron Tocker <http://lironbot.com> [eMusic: Liron] (artwork)\n"
 				+ "James Elwood [eMusic: jelwood01] (artwork)\n"
 				+ "\nCheck "
@@ -82,7 +83,7 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String getVersion() {
-		return "0.22";
+		return "0.23-svn";
 	}
 
 	public String getCoverArtName() {

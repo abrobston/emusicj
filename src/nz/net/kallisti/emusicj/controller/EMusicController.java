@@ -146,6 +146,9 @@ public class EMusicController implements IEMusicController,
 			loadMetafile(file);
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 			mon.addStateListener(this);
+			// add an auto-remove timer if we need to (fixes #41)
+			if (mon.getDownloadState() == DLState.FINISHED)
+				attachAutoRemoveTimer(mon.getDownloader());
 		}
 		// Start the drop directory monitoring, if that's what we want to do.
 		String dd = prefs.getDropDir();
@@ -308,19 +311,7 @@ public class EMusicController implements IEMusicController,
 					&& monitor.getDownloadState() == DLState.FINISHED
 					&& prefs.removeCompletedDownloads()) {
 				final IDownloader downloader = monitor.getDownloader();
-				Thread removalThread = new Thread() {
-					@Override
-					public void run() {
-						try {
-							// Wait 30 seconds
-							Thread.sleep(30000);
-							downloadsModel.removeDownload(downloader);
-						} catch (InterruptedException e) {
-						}
-					}
-				};
-				removalThread.setDaemon(true);
-				removalThread.start();
+				attachAutoRemoveTimer(downloader);
 			}
 			int count = 0, finished = 0;
 			int total = downloadsModel.getDownloadMonitors().size();
@@ -358,6 +349,29 @@ public class EMusicController implements IEMusicController,
 		} finally {
 			monitorStateChangedIsRunning = false;
 		}
+	}
+
+	/**
+	 * This adds a timer thread that will automatically remove the provided
+	 * downloader from the system after 30 seconds.
+	 * 
+	 * @param downloader
+	 *            the download that will be removed
+	 */
+	private void attachAutoRemoveTimer(final IDownloader downloader) {
+		Thread removalThread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					// Wait 30 seconds
+					Thread.sleep(30000);
+					downloadsModel.removeDownload(downloader);
+				} catch (InterruptedException e) {
+				}
+			}
+		};
+		removalThread.setDaemon(true);
+		removalThread.start();
 	}
 
 	public void startDownload(IDownloader dl) {

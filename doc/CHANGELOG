@@ -1,3 +1,6 @@
+V0.23-svn
+ * Adds auto-remove timer to tracks that were finished when the program 
+   started (#41)
 V0.22
 * Added quotes around $@ in launch script to make it work better with some
   temp file names
