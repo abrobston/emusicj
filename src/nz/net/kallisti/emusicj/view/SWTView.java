@@ -23,13 +23,13 @@ package nz.net.kallisti.emusicj.view;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
-import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
@@ -45,6 +45,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
+import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -75,29 +76,31 @@ import org.eclipse.swt.widgets.Tray;
 import com.google.inject.Inject;
 
 /**
- * <p>This is the main class for providing the user interface. It uses SWT to
- * do it, and interacts with the controller to receive updates on the system
- * state and to notify it of user requests. It doesn't actually change any
- * state itself.</p>
+ * <p>
+ * This is the main class for providing the user interface. It uses SWT to do
+ * it, and interacts with the controller to receive updates on the system state
+ * and to notify it of user requests. It doesn't actually change any state
+ * itself.
+ * </p>
  * 
- * <p>$Id$</p>
- *
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author robin
  */
-public class SWTView implements IEMusicView, IDownloadsModelListener, 
-SelectionListener, ControlListener {
-	
+public class SWTView implements IEMusicView, IDownloadsModelListener,
+		SelectionListener, ControlListener {
+
 	private static Display display;
-    private static Clipboard clipboard;
+	private static Clipboard clipboard;
 	private Shell shell;
 	private final IEMusicController controller;
 	private IDownloadsModel downloadsModel;
 	private ScrolledComposite downloadsList;
 	private ViewState state;
-	private ArrayList<IDownloadMonitor> dlMonitors = 
-		new ArrayList<IDownloadMonitor>();
-	private ArrayList<DownloadDisplay> dlDisplays =
-		new ArrayList<DownloadDisplay>();
+	private ArrayList<IDownloadMonitor> dlMonitors = new ArrayList<IDownloadMonitor>();
+	private final ArrayList<DownloadDisplay> dlDisplays = new ArrayList<DownloadDisplay>();
 	private SelectableComposite downloadsListComp;
 	private ToolItem runButton;
 	private ToolItem pauseButton;
@@ -108,23 +111,23 @@ SelectionListener, ControlListener {
 	private ToolItem requeueButton;
 	private FileInfoPanel fileInfo;
 	private SashForm mainArea;
-	private int sashTop=50;
-	private int sashBottom=50;
+	private int sashTop = 50;
+	private int sashBottom = 50;
 	private SystemTrayManager sysTray;
 	private Image downloadingIcon;
 	private Image notDownloadingIcon;
-	private ArrayList<Runnable> deferredList =
-		new ArrayList<Runnable>();
-    private StatusLine statusLine;
-	private boolean pausedState=false;
+	private final ArrayList<Runnable> deferredList = new ArrayList<Runnable>();
+	private StatusLine statusLine;
+	private boolean pausedState = false;
 	private MenuItem pauseSysTrayMenuItem;
 	private final IStrings strings;
 	private final IImageFactory imageFactory;
 	private final IURLFactory urlFactory;
-	
+
 	@Inject
-	public SWTView(IPreferences prefs, IStrings strings, IEMusicController controller,
-			IImageFactory imageFactory, IURLFactory urlFactory) {
+	public SWTView(IPreferences prefs, IStrings strings,
+			IEMusicController controller, IImageFactory imageFactory,
+			IURLFactory urlFactory) {
 		super();
 		this.prefs = prefs;
 		this.strings = strings;
@@ -132,23 +135,25 @@ SelectionListener, ControlListener {
 		this.imageFactory = imageFactory;
 		this.urlFactory = urlFactory;
 	}
-	
+
 	public void setState(ViewState state) {
 		this.state = state;
 		if (state.equals(ViewState.STARTUP)) {
 			// TODO do a splashscreen or something
 		} else if (state.equals(ViewState.RUNNING)) {
-			display =new Display();
+			display = new Display();
 			imageFactory.setDisplay(display);
-			shell =new Shell(display);
+			shell = new Shell(display);
 			shell.setText(strings.getAppName());
 			buildMenuBar(shell);
 			int topAmount = 60;
 			int bottomAmount = 40;
 			try {
 				topAmount = Integer.parseInt(prefs.getProperty("topRatio"));
-				bottomAmount = Integer.parseInt(prefs.getProperty("bottomRatio"));
-			} catch (Exception e) { }
+				bottomAmount = Integer.parseInt(prefs
+						.getProperty("bottomRatio"));
+			} catch (Exception e) {
+			}
 			buildInterface(shell, topAmount, bottomAmount);
 			updateListFromModel();
 			shell.layout();
@@ -161,7 +166,7 @@ SelectionListener, ControlListener {
 				Rectangle r = new Rectangle(x, y, width, height);
 				shell.setBounds(r);
 			} catch (Exception e) {
-				shell.setSize (400, 400);
+				shell.setSize(400, 400);
 			}
 			shell.open();
 			defer(new Runnable() {
@@ -173,28 +178,32 @@ SelectionListener, ControlListener {
 			});
 		}
 	}
-	
+
 	/**
 	 * Updates the list view to ensure that it reflects the model.
 	 */
 	private void updateListFromModel() {
 		if (downloadsModel == null || state != ViewState.RUNNING)
 			return;
-		final java.util.List<IDownloadMonitor> downloads = 
-			downloadsModel.getDownloadMonitors();
+		final java.util.List<IDownloadMonitor> downloads = downloadsModel
+				.getDownloadMonitors();
 		// We need to compare this new set of download monitors, and work out
 		// what has been added and what has been removed.
-		Set<IDownloadMonitor> origMons = new HashSet<IDownloadMonitor>(dlMonitors);
-		Set<IDownloadMonitor> currMons = new HashSet<IDownloadMonitor>(downloads);
-		final Set<IDownloadMonitor> addedMons = new HashSet<IDownloadMonitor>(currMons);
+		Set<IDownloadMonitor> origMons = new HashSet<IDownloadMonitor>(
+				dlMonitors);
+		Set<IDownloadMonitor> currMons = new HashSet<IDownloadMonitor>(
+				downloads);
+		final Set<IDownloadMonitor> addedMons = new HashSet<IDownloadMonitor>(
+				currMons);
 		for (IDownloadMonitor mon : origMons)
 			addedMons.remove(mon);
-		final Set<IDownloadMonitor> removedMons = new HashSet<IDownloadMonitor>(origMons);
+		final Set<IDownloadMonitor> removedMons = new HashSet<IDownloadMonitor>(
+				origMons);
 		for (IDownloadMonitor mon : currMons)
 			removedMons.remove(mon);
 		dlMonitors = new ArrayList<IDownloadMonitor>(downloads);
-		display.asyncExec (new Runnable () {
-			public void run () {
+		display.asyncExec(new Runnable() {
+			public void run() {
 				if (!shell.isDisposed()) {
 					// Now go through the list of DownloadDisplays we have, and
 					// if its monitor is in the removed list, dispose it
@@ -205,34 +214,39 @@ SelectionListener, ControlListener {
 						}
 					}
 					// Now go through the list of downloads, and if one of these
-					// is in addedMons, we add it (done this way to keep the order
+					// is in addedMons, we add it (done this way to keep the
+					// order
 					// correct)
-					for (IDownloadMonitor mon : downloads) 
+					for (IDownloadMonitor mon : downloads)
 						if (addedMons.contains(mon)) {
 							DownloadDisplay disp = new DownloadDisplay(
 									downloadsListComp, SWT.NONE, display);
 							downloadsListComp.addSelectableControl(disp);
-							disp.setLayoutData(new GridData(SWT.FILL, 
+							disp.setLayoutData(new GridData(SWT.FILL,
 									SWT.BEGINNING, true, false));
 							disp.setDownloadMonitor(mon);
 							dlDisplays.add(disp);
-							mon.addStateListener(new IDownloadMonitorListener() {
-								public void monitorStateChanged(IDownloadMonitor monitor) {
-									setButtonsState();
-								}
-							});
+							mon
+									.addStateListener(new IDownloadMonitorListener() {
+										public void monitorStateChanged(
+												IDownloadMonitor monitor) {
+											setButtonsState();
+										}
+									});
 						}
 					downloadsListComp.pack();
-				}					
+				}
 			}
 		});
 	}
-	
+
 	/**
-	 * Builds the interface. This consists of a top list view containing each
-	 * of the download states. Eventually it will also have a lower panel
-	 * that shows info on the selected item.
-	 * @param shell the shell to build the interface on
+	 * Builds the interface. This consists of a top list view containing each of
+	 * the download states. Eventually it will also have a lower panel that
+	 * shows info on the selected item.
+	 * 
+	 * @param shell
+	 *            the shell to build the interface on
 	 */
 	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
 		setAppIcon(shell);
@@ -242,190 +256,222 @@ SelectionListener, ControlListener {
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
-		ToolBar toolBar = new ToolBar (shell, SWT.FLAT);
+		ToolBar toolBar = new ToolBar(shell, SWT.FLAT);
 		buildToolBar(toolBar);
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
-		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
-				true, true));	
-		downloadsList = new ScrolledComposite(mainArea, SWT.V_SCROLL | SWT.BORDER);
+		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		downloadsList = new ScrolledComposite(mainArea, SWT.V_SCROLL
+				| SWT.BORDER);
 		downloadsList.setExpandHorizontal(true);
 		downloadsListComp = new SelectableComposite(downloadsList, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		downloadsListComp.setLayout(layout);
 		downloadsListComp.addSelectionListener(this);
-		downloadsList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
-				true, true));
+		downloadsList
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		downloadsList.setContent(downloadsListComp);
 		setButtonsState();
-		ScrolledComposite fileInfoPlace = new ScrolledComposite(mainArea, SWT.V_SCROLL | 
-				SWT.H_SCROLL | SWT.BORDER );
-		/*GridData layoutData = new GridData();
-		layoutData.grabExcessHorizontalSpace=true;
-		fileInfo.setLayoutData(layoutData);*/
+		ScrolledComposite fileInfoPlace = new ScrolledComposite(mainArea,
+				SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+		/*
+		 * GridData layoutData = new GridData();
+		 * layoutData.grabExcessHorizontalSpace=true;
+		 * fileInfo.setLayoutData(layoutData);
+		 */
 		fileInfoPlace.setExpandHorizontal(true);
-		fileInfoPlace.setLayoutData(new GridData(SWT.FILL, SWT.FILL, 
-				true, false));
+		fileInfoPlace.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false));
 		fileInfo = new FileInfoPanel(fileInfoPlace, SWT.NONE, display);
 		fileInfoPlace.setContent(fileInfo);
-		mainArea.setWeights(new int[] {topAmount, bottomAmount});
-		shell.addListener (SWT.Close, new Listener () {
-		    public void handleEvent (Event event) {
-		        windowMovedOrResized();
-		        event.doit = true;
-		    }
+		mainArea.setWeights(new int[] { topAmount, bottomAmount });
+		shell.addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event) {
+				windowMovedOrResized();
+				event.doit = true;
+			}
 		});
-        statusLine = new StatusLine(shell, SWT.NONE);
+		statusLine = new StatusLine(shell, SWT.NONE);
 	}
-	
+
 	/**
 	 * Creates the system tray icon and controller object
-	 * @param view this, i.e. the SWTView that gets the events
-	 * @param icon the image to use as the system tray icon
+	 * 
+	 * @param view
+	 *            this, i.e. the SWTView that gets the events
+	 * @param icon
+	 *            the image to use as the system tray icon
 	 */
 	private void buildSystemTray(SWTView view, Image icon) {
 		Tray tray = display.getSystemTray();
 		if (tray != null) {
-			sysTray = new SystemTrayManager(view, icon, tray, strings.getShortAppName());
+			sysTray = new SystemTrayManager(view, icon, tray, strings
+					.getShortAppName());
 			Menu menu = sysTray.getMenu();
-			SWTUtils.createMenuItem(menu, "Show/Hide", SWT.NONE, view, "trayClicked");
+			SWTUtils.createMenuItem(menu, "Show/Hide", SWT.NONE, view,
+					"trayClicked");
 			if (!pausedState) {
-				pauseSysTrayMenuItem = 
-					SWTUtils.createMenuItem(menu, "Pause downloads", SWT.NONE, view, "togglePaused");
+				pauseSysTrayMenuItem = SWTUtils.createMenuItem(menu,
+						"Pause downloads", SWT.NONE, view, "togglePaused");
 			} else {
-				pauseSysTrayMenuItem = 
-					SWTUtils.createMenuItem(menu, "Resume downloads", SWT.NONE, view, "togglePaused");				
+				pauseSysTrayMenuItem = SWTUtils.createMenuItem(menu,
+						"Resume downloads", SWT.NONE, view, "togglePaused");
 			}
-			SWTUtils.createMenuItem(menu, "Quit", SWT.NONE, view, "quitProgram");
+			SWTUtils
+					.createMenuItem(menu, "Quit", SWT.NONE, view, "quitProgram");
 			sysTray.buildMenu();
 		}
 	}
 
 	/**
 	 * Sets up the application icon stuff
-	 * @param shell the application's shell
+	 * 
+	 * @param shell
+	 *            the application's shell
 	 */
 	private void setAppIcon(Shell shell) {
-		//shell.setImage(appIcon);
+		// shell.setImage(appIcon);
 		shell.setImages(imageFactory.getAppIcons());
 	}
 
 	/**
 	 * Builds the toolbar contents and events
-	 * @param toolBar the toolbar to add stuff to
+	 * 
+	 * @param toolBar
+	 *            the toolbar to add stuff to
 	 */
 	private void buildToolBar(ToolBar toolBar) {
 		final Image runIconImg = imageFactory.getStartIcon();
-		runButton = SWTUtils.createToolItem(toolBar, runIconImg, 
-				"Start the selected download right now", this, "runSelectedDownload");
-		
+		runButton = SWTUtils.createToolItem(toolBar, runIconImg,
+				"Start the selected download right now", this,
+				"runSelectedDownload");
+
 		final Image requeueIconImg = imageFactory.getRequeueIcon();
-		requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg, 
-				"Requeue the selected download", this, "requeueSelectedDownload");
-		
+		requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg,
+				"Requeue the selected download", this,
+				"requeueSelectedDownload");
+
 		final Image pauseIconImg = imageFactory.getPauseIcon();
-		pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg, 
+		pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg,
 				"Pause the selected download", this, "pauseSelectedDownload");
-		
+
 		final Image cancelIconImg = imageFactory.getCancelIcon();
-		cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg, 
+		cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg,
 				"Cancel the selected download", this, "cancelSelectedDownload");
-		
-		toolBar.pack ();
+
+		toolBar.pack();
 	}
-	
+
 	public void cancelSelectedDownload() {
-		if (downloadsListComp == null || 
-				downloadsListComp.getSelectedControl() == null)
+		if (downloadsListComp == null)
 			return;
-		IDownloader dl = 
-			((DownloadDisplay)downloadsListComp.getSelectedControl()).
-			getDownloadMonitor().getDownloader();
-		controller.stopDownload(dl);
+		List<ISelectableControl> selected = downloadsListComp.getSelected();
+		for (ISelectableControl control : selected) {
+			IDownloadMonitor mon = ((DownloadDisplay) control)
+					.getDownloadMonitor();
+			DLState st = mon.getDownloadState();
+			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
+					|| st == DLState.NOTSTARTED || st == DLState.PAUSED)
+				controller.stopDownload(mon.getDownloader());
+		}
 		setButtonsState();
 	}
-	
+
 	public void pauseSelectedDownload() {
-		if (downloadsListComp == null || 
-				downloadsListComp.getSelectedControl() == null)
+		if (downloadsListComp == null)
 			return;
-		IDownloader dl = 
-			((DownloadDisplay)downloadsListComp.getSelectedControl()).
-			getDownloadMonitor().getDownloader();
-		controller.pauseDownload(dl);		
+		List<ISelectableControl> selected = downloadsListComp.getSelected();
+		for (ISelectableControl control : selected) {
+			IDownloadMonitor mon = ((DownloadDisplay) control)
+					.getDownloadMonitor();
+			DLState st = mon.getDownloadState();
+			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
+					|| st == DLState.NOTSTARTED)
+				controller.pauseDownload(mon.getDownloader());
+		}
 		setButtonsState();
 	}
-	
+
 	public void runSelectedDownload() {
-		if (downloadsListComp == null || 
-				downloadsListComp.getSelectedControl() == null)
+		if (downloadsListComp == null)
 			return;
-		IDownloader dl = 
-			((DownloadDisplay)downloadsListComp.getSelectedControl()).
-			getDownloadMonitor().getDownloader();
-		controller.startDownload(dl);
+		List<ISelectableControl> selected = downloadsListComp.getSelected();
+		for (ISelectableControl control : selected) {
+			IDownloadMonitor mon = ((DownloadDisplay) control)
+					.getDownloadMonitor();
+			DLState st = mon.getDownloadState();
+			if (st == DLState.NOTSTARTED || st == DLState.PAUSED
+					|| st == DLState.CANCELLED)
+				controller.startDownload(mon.getDownloader());
+		}
 		setButtonsState();
 	}
-	
+
 	public void requeueSelectedDownload() {
-		if (downloadsListComp == null || 
-				downloadsListComp.getSelectedControl() == null)
+		if (downloadsListComp == null)
 			return;
-		IDownloader dl = 
-			((DownloadDisplay)downloadsListComp.getSelectedControl()).
-			getDownloadMonitor().getDownloader();
-		controller.requeueDownload(dl);
+		List<ISelectableControl> selected = downloadsListComp.getSelected();
+		for (ISelectableControl control : selected) {
+			IDownloadMonitor mon = ((DownloadDisplay) control)
+					.getDownloadMonitor();
+			DLState st = mon.getDownloadState();
+			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
+					|| st == DLState.PAUSED || st == DLState.CANCELLED)
+				controller.requeueDownload(mon.getDownloader());
+		}
 		setButtonsState();
 	}
-	
+
 	/**
 	 * Builds the menu bar for the application
-	 * @param shell the shell to display it on
+	 * 
+	 * @param shell
+	 *            the shell to display it on
 	 */
 	private void buildMenuBar(Shell shell) {
-		Menu bar = new Menu (shell, SWT.BAR);
-		shell.setMenuBar (bar);
+		Menu bar = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(bar);
 		// --- File menu ---
 		Menu fileMenu = SWTUtils.createDropDown(shell, bar, "&File");
-		SWTUtils.createMenuItem(fileMenu, "&Open...\tCtrl-O", SWT.CTRL+'O', this, 
-		"openFile");        
+		SWTUtils.createMenuItem(fileMenu, "&Open...\tCtrl-O", SWT.CTRL + 'O',
+				this, "openFile");
 		new MenuItem(fileMenu, SWT.SEPARATOR);
-		SWTUtils.createMenuItem(fileMenu, "&Quit\tCtrl-Q", SWT.CTRL+'Q', this, 
-		"quitProgram");
+		SWTUtils.createMenuItem(fileMenu, "&Quit\tCtrl-Q", SWT.CTRL + 'Q',
+				this, "quitProgram");
 		// --- Downloads menu ---
 		Menu downloadsMenu = SWTUtils.createDropDown(shell, bar, "&Downloads");
-		SWTUtils.createMenuItem(downloadsMenu, "&Pause downloads\tCtrl-P", SWT.CTRL+'P', 
-				this, "pauseDownloads");
-		SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads\tCtrl-R", SWT.CTRL+'R', 
-				this, "resumeDownloads");
-        SWTUtils.createMenuItem(downloadsMenu, "Cancel &all downloads", SWT.NONE, 
-                this, "cancelAllDownloads");
+		SWTUtils.createMenuItem(downloadsMenu, "&Pause downloads\tCtrl-P",
+				SWT.CTRL + 'P', this, "pauseDownloads");
+		SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads\tCtrl-R",
+				SWT.CTRL + 'R', this, "resumeDownloads");
+		SWTUtils.createMenuItem(downloadsMenu, "Cancel &all downloads",
+				SWT.NONE, this, "cancelAllDownloads");
 		new MenuItem(downloadsMenu, SWT.SEPARATOR);
-		SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads\tCtrl-C", SWT.CTRL+'C', 
-				this, "cleanUpDownloads");
+		SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads\tCtrl-C",
+				SWT.CTRL + 'C', this, "cleanUpDownloads");
 		// --- Settings menu
 		Menu settingsMenu = SWTUtils.createDropDown(shell, bar, "&Settings");
-		SWTUtils.createMenuItem(settingsMenu, "&Preferences...", SWT.NONE, 
-				this, "displayPreferences");        
+		SWTUtils.createMenuItem(settingsMenu, "&Preferences...", SWT.NONE,
+				this, "displayPreferences");
 		// --- Help menu ---
 		Menu aboutMenu = SWTUtils.createDropDown(shell, bar, "&Help");
-		SWTUtils.createMenuItem(aboutMenu, "&User Manual...", SWT.NONE, 
-				this, "userManual");
-		SWTUtils.createMenuItem(aboutMenu, "&About...", SWT.NONE, 
-				this, "aboutBox");
+		SWTUtils.createMenuItem(aboutMenu, "&User Manual...", SWT.NONE, this,
+				"userManual");
+		SWTUtils.createMenuItem(aboutMenu, "&About...", SWT.NONE, this,
+				"aboutBox");
 	}
-	
+
 	/**
-	 * Tell the controller to pause all the current downloads, and not
-	 * start any more.
+	 * Tell the controller to pause all the current downloads, and not start any
+	 * more.
 	 */
 	public void pauseDownloads() {
 		controller.pauseDownloads();
 	}
-	
+
 	/**
-	 * Tell the controller to restart all paused downloads, and allow more
-	 * to be automatically started.
+	 * Tell the controller to restart all paused downloads, and allow more to be
+	 * automatically started.
 	 */
 	public void resumeDownloads() {
 		controller.resumeDownloads();
@@ -438,36 +484,36 @@ SelectionListener, ControlListener {
 			pauseDownloads();
 		}
 	}
-	
-    /**
-     * Tell the controller to cancel all downloads
-     */
-    public void cancelAllDownloads() {
-        controller.cancelDownloads();
-    }
-	
+
 	/**
-	 * Tell the controller to remove any stopped or finished downloads from
-	 * the model
+	 * Tell the controller to cancel all downloads
+	 */
+	public void cancelAllDownloads() {
+		controller.cancelDownloads();
+	}
+
+	/**
+	 * Tell the controller to remove any stopped or finished downloads from the
+	 * model
 	 */
 	public void cleanUpDownloads() {
 		controller.removeDownloads(DLState.FINISHED);
 		controller.removeDownloads(DLState.CANCELLED);
-		//controller.removeDownloads(DLState.FAILED);
+		// controller.removeDownloads(DLState.FAILED);
 	}
-	
+
 	/**
 	 * Brings up the preferences dialogue
 	 */
 	public void displayPreferences() {
-		PreferencesDialogue prefs = new PreferencesDialogue(shell,
-				this.prefs, strings);
+		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
+				strings);
 		prefs.open();
 	}
-	
+
 	/**
 	 * Enables and disables the buttons depending on the state of the selected
-	 * download 
+	 * download
 	 */
 	private void setButtonsState() {
 		if (display.isDisposed())
@@ -476,87 +522,101 @@ SelectionListener, ControlListener {
 			public void run() {
 				if (downloadsListComp == null)
 					return;
-				if (runButton.isDisposed() || pauseButton.isDisposed() ||
-						cancelButton.isDisposed())
+				if (runButton.isDisposed() || pauseButton.isDisposed()
+						|| cancelButton.isDisposed()
+						|| requeueButton.isDisposed())
 					return;
-				if (downloadsListComp.getSelectedControl() == null) {
+				List<ISelectableControl> selected = downloadsListComp
+						.getSelected();
+
+				if (selected.size() == 0) {
 					runButton.setEnabled(false);
 					pauseButton.setEnabled(false);
 					cancelButton.setEnabled(false);
 					requeueButton.setEnabled(false);
 					return;
 				}
-				IDownloadMonitor mon = 
-					((DownloadDisplay)downloadsListComp.getSelectedControl()).
-					getDownloadMonitor();
-				if (mon.getDownloadState() == DLState.CONNECTING ||
-						mon.getDownloadState() == DLState.DOWNLOADING) {
-					runButton.setEnabled(false);
-					pauseButton.setEnabled(true);
-					cancelButton.setEnabled(true);
-					requeueButton.setEnabled(true);
-				} else if (mon.getDownloadState() == DLState.FINISHED) {
-					runButton.setEnabled(false);
-					pauseButton.setEnabled(false);
-					cancelButton.setEnabled(false);
-					requeueButton.setEnabled(false);
-				} else {
-					runButton.setEnabled(true);
-					pauseButton.setEnabled(false);
-					cancelButton.setEnabled(true);
-					requeueButton.setEnabled(true);
+				boolean runBtn = false;
+				boolean pauseBtn = false;
+				boolean cancelBtn = false;
+				boolean requeueBtn = false;
+				for (ISelectableControl control : selected) {
+					IDownloadMonitor mon = ((DownloadDisplay) control)
+							.getDownloadMonitor();
+					if (mon.getDownloadState() == DLState.CONNECTING
+							|| mon.getDownloadState() == DLState.DOWNLOADING) {
+						pauseBtn = true;
+						cancelBtn = true;
+						requeueBtn = true;
+					} else if (mon.getDownloadState() == DLState.CANCELLED) {
+						runBtn = true;
+						requeueBtn = true;
+					} else if (mon.getDownloadState() != DLState.FINISHED) {
+						runBtn = true;
+						cancelBtn = true;
+						requeueBtn = true;
+					}
 				}
+				runButton.setEnabled(runBtn);
+				pauseButton.setEnabled(pauseBtn);
+				cancelButton.setEnabled(cancelBtn);
+				requeueButton.setEnabled(requeueBtn);
 			}
 		});
 	}
-	
+
 	public void openFile() {
-		FileDialog dialog = new FileDialog (shell, SWT.OPEN | SWT.MULTI);
-		dialog.setFilterNames (strings.getOpenDialogueFilterNames());
-		dialog.setFilterExtensions (strings.getOpenDialogueFilterExtensions());
+		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI);
+		dialog.setFilterNames(strings.getOpenDialogueFilterNames());
+		dialog.setFilterExtensions(strings.getOpenDialogueFilterExtensions());
 		dialog.setFilterPath(prefs.getProperty("openDefaultPath"));
 		String file = dialog.open();
 		if (file != null) {
 			prefs.setProperty("openDefaultPath", file);
-			controller.loadMetafile(dialog.getFilterPath(),dialog.getFileNames());
+			controller.loadMetafile(dialog.getFilterPath(), dialog
+					.getFileNames());
 		}
 	}
-	
+
 	public void quitProgram() {
 		shell.dispose();
 	}
-	
+
 	public void aboutBox() {
 		AboutDialogue about = new AboutDialogue(shell, strings, imageFactory);
 		about.open();
 	}
-	
+
 	public void userManual() {
 		new Thread() {
+			@Override
 			public void run() {
 				try {
 					BrowserLauncher.openURL(urlFactory.getManualURL());
 				} catch (Exception e) {
-					error("Error launching browser", "There seemed to be a " +
-							"problem launching the browser. The user manual can" +
-							"be found at "+urlFactory.getManualURL());
-				}				
+					error(
+							"Error launching browser",
+							"There seemed to be a "
+									+ "problem launching the browser. The user manual can"
+									+ "be found at "
+									+ urlFactory.getManualURL());
+				}
 			}
 		}.start();
 	}
-	
+
 	public void processEvents(IEMusicController controller) {
 		try {
 			shell.addControlListener(this);
-			running  = true;
+			running = true;
 			windowMovedOrResized();
 			synchronized (deferredList) {
 				for (Runnable r : deferredList)
 					asyncExec(r);
 				deferredList.clear();
 			}
-			while (!shell.isDisposed()){
-				if (!display.readAndDispatch()){
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
@@ -565,7 +625,8 @@ SelectionListener, ControlListener {
 				display.dispose();
 			// Tell the DownloadDisplay instances to finish up
 		} catch (SWTException e) {
-			// If a GUI error occurs hopefully we can shut down somewhat gracefully
+			// If a GUI error occurs hopefully we can shut down somewhat
+			// gracefully
 			System.err.println("A GUI error occurred. Shutting down.");
 			e.printStackTrace();
 		}
@@ -575,15 +636,15 @@ SelectionListener, ControlListener {
 	}
 
 	private void saveWindowState() {
-		prefs.setProperty("winLocX",windowLoc.x+"");
-		prefs.setProperty("winLocY",windowLoc.y+"");
-		prefs.setProperty("winHeight",windowLoc.height+"");
-		prefs.setProperty("winWidth",windowLoc.width+"");
-		prefs.setProperty("topRatio",sashTop+"");
-		prefs.setProperty("bottomRatio",sashBottom+"");
+		prefs.setProperty("winLocX", windowLoc.x + "");
+		prefs.setProperty("winLocY", windowLoc.y + "");
+		prefs.setProperty("winHeight", windowLoc.height + "");
+		prefs.setProperty("winWidth", windowLoc.width + "");
+		prefs.setProperty("topRatio", sashTop + "");
+		prefs.setProperty("bottomRatio", sashBottom + "");
 		prefs.save();
 	}
-	
+
 	public void setDownloadsModel(IDownloadsModel model) {
 		if (model != downloadsModel && downloadsModel != null)
 			downloadsModel.removeListener(this);
@@ -591,30 +652,34 @@ SelectionListener, ControlListener {
 		if (model != null)
 			model.addListener(this);
 	}
-	
+
 	public void downloadsModelChanged(IDownloadsModel model) {
-		assert model == downloadsModel : "Received event for unknown IDownloadsModel";		
+		assert model == downloadsModel : "Received event for unknown IDownloadsModel";
 		updateListFromModel();
 	}
-	
+
 	/**
-	 * A handy util so that the display object down't have to be passed 
+	 * A handy util so that the display object down't have to be passed
 	 * everywhere.
-	 * @param runner the Runnable to invoke
+	 * 
+	 * @param runner
+	 *            the Runnable to invoke
 	 */
 	public static void asyncExec(Runnable runner) {
 		display.asyncExec(runner);
 	}
-	
+
 	/**
 	 * Gets the system color for the supplied constant from the display
-	 * @param color the SWT constant corresponding to the colour we want
+	 * 
+	 * @param color
+	 *            the SWT constant corresponding to the colour we want
 	 * @return a Color object of that colour
 	 */
 	public static Color getSystemColor(int color) {
 		return display.getSystemColor(color);
 	}
-	
+
 	/**
 	 * This listens to events from the components of the display. At the moment
 	 * this is only triggered by the downloads list. When this happens, the
@@ -623,23 +688,24 @@ SelectionListener, ControlListener {
 	public void widgetSelected(SelectionEvent e) {
 		if (e.widget == downloadsListComp) {
 			setButtonsState();
-			if (downloadsListComp.getSelectedControl() != null)
-				fileInfo.setDownloader(((DownloadDisplay)downloadsListComp.getSelectedControl()).
-						getDownloadMonitor());
-            else
-                // It's null if it is unselected, eg by cleaning up downloads
-                fileInfo.setDownloader(null);
+			if (downloadsListComp.getLastSelectedControl() != null)
+				fileInfo.setDownloader(((DownloadDisplay) downloadsListComp
+						.getLastSelectedControl()).getDownloadMonitor());
+			else
+				// It's null if it is unselected, eg by cleaning up downloads
+				fileInfo.setDownloader(null);
 		}
 	}
-	
+
 	public void widgetDefaultSelected(SelectionEvent e) {
 		widgetSelected(e);
 	}
-	
+
 	public void error(final String msgTitle, final String msg) {
 		defer(new Runnable() {
 			public void run() {
-				MessageBox about = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+				MessageBox about = new MessageBox(shell, SWT.ICON_ERROR
+						| SWT.OK);
 				about.setText(msgTitle);
 				about.setMessage(msg);
 				about.open();
@@ -657,18 +723,18 @@ SelectionListener, ControlListener {
 		});
 	}
 
-    /**
-     * @return
-     */
-    public static synchronized Clipboard getClipboard() {
-        if (clipboard == null) 
-            clipboard = new Clipboard(display);
-        return clipboard;
-    }
-    
-    public Shell getShell() {
-    		return shell;
-    }
+	/**
+	 * @return
+	 */
+	public static synchronized Clipboard getClipboard() {
+		if (clipboard == null)
+			clipboard = new Clipboard(display);
+		return clipboard;
+	}
+
+	public Shell getShell() {
+		return shell;
+	}
 
 	public void windowMovedOrResized() {
 		windowLoc = shell.getBounds();
@@ -685,44 +751,57 @@ SelectionListener, ControlListener {
 	}
 
 	/**
-	 * This method should be called to indicate a system tray icon has been 
+	 * This method should be called to indicate a system tray icon has been
 	 * clicked. It will determine what needs to happen as a result.
 	 */
 	public void trayClicked() {
-		// Note that the order of checks here is fairly important, making a shell
+		// Note that the order of checks here is fairly important, making a
+		// shell
 		// not visible causes an implicit minimisation
-		if (shell.isVisible()) shell.setVisible(false);
-		else if (!shell.isVisible()) {shell.setVisible(true); shell.setMinimized(false);} 
-		else if (shell.getMinimized()) {shell.setMinimized(false); shell.setActive();}
+		if (shell.isVisible())
+			shell.setVisible(false);
+		else if (!shell.isVisible()) {
+			shell.setVisible(true);
+			shell.setMinimized(false);
+		} else if (shell.getMinimized()) {
+			shell.setMinimized(false);
+			shell.setActive();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.view.IEMusicView#downloadCount(int, int, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see nz.net.kallisti.emusicj.view.IEMusicView#downloadCount(int, int,
+	 *      int)
 	 */
 	public void downloadCount(final int dl, final int finished, final int total) {
 		if (sysTray != null)
 			defer(new Runnable() {
 				public void run() {
-					sysTray.setText(strings.getShortAppName()+": "+dl+" downloading, "+finished+
-							" finished, "+total+" total");
+					sysTray.setText(strings.getShortAppName() + ": " + dl
+							+ " downloading, " + finished + " finished, "
+							+ total + " total");
 					if (dl == 0)
 						sysTray.setImage(notDownloadingIcon);
 					else
 						sysTray.setImage(downloadingIcon);
-				}});
+				}
+			});
 	}
-	
+
 	/**
 	 * Allows execution of something to be deferred until later. Later usually
 	 * means when the view has been initialised (to allow recieving and
 	 * processing events when starting up, but actually executing them later),
 	 * or next time the event thread comes around. Deferred events will always
 	 * be executed during the UI thread, so can happily make GUI modifications.
+	 * 
 	 * @param code
 	 */
 	public void defer(Runnable code) {
 		if (running) {
-			asyncExec(code);			
+			asyncExec(code);
 		} else {
 			synchronized (deferredList) {
 				deferredList.add(code);
@@ -730,21 +809,22 @@ SelectionListener, ControlListener {
 		}
 	}
 
-    public void pausedStateChanged(boolean state) {
-    		pausedState = state;
-        if (state) {
-            statusLine.setText("All Downloads Paused");
-            if (pauseSysTrayMenuItem != null) // on mac this will be null
-            	pauseSysTrayMenuItem.setText("Resume downloads");
-        } else {
-        	statusLine.unsetText();
-        	if (pauseSysTrayMenuItem != null)
-        		pauseSysTrayMenuItem.setText("Pause downloads");
-        }
-    }
+	public void pausedStateChanged(boolean state) {
+		pausedState = state;
+		if (state) {
+			statusLine.setText("All Downloads Paused");
+			if (pauseSysTrayMenuItem != null) // on mac this will be null
+				pauseSysTrayMenuItem.setText("Resume downloads");
+		} else {
+			statusLine.unsetText();
+			if (pauseSysTrayMenuItem != null)
+				pauseSysTrayMenuItem.setText("Pause downloads");
+		}
+	}
 
 	/**
 	 * Allows other things to have access to the display
+	 * 
 	 * @return the current display
 	 */
 	public static Display getDisplay() {

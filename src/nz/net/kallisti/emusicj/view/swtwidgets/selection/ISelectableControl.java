@@ -19,34 +19,38 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
  */
-package nz.net.kallisti.emusicj.view.swtwidgets;
+package nz.net.kallisti.emusicj.view.swtwidgets.selection;
 
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 
 /**
- * This makes the widgetSelected and widgetDefaultSelected methods both call
- * action(), which removes the need for a lot of pointless boilerplate in
- * handling selection events.
+ * 
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
-public abstract class SelectionAdapter implements SelectionListener {
+public interface ISelectableControl {
 
-	public SelectionAdapter() {
-		super();
-	}
+	/**
+	 * Tells the object that it is selected
+	 */
+	void select();
 
-	public void widgetSelected(SelectionEvent ev) {
-		action(ev);
-	}
+	/**
+	 * Tells the object that it is not selected
+	 */
+	void unselect();
 
-	public void widgetDefaultSelected(SelectionEvent ev) {
-		action(ev);
-	}
+	/**
+	 * Add a selection listener. Note that when the event is triggered, the
+	 * SelectableControl doesn't assume that it will be selected. It requires a
+	 * call to {@link select()} to establish that.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	void addSelectionListener(ISelectionListener listener);
 
-	public abstract void action(SelectionEvent ev);
-	
+	void removeSelectionListener(ISelectionListener listener);
+
 }

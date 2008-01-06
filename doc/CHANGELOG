@@ -1,6 +1,9 @@
 V0.23-svn
- * Adds auto-remove timer to tracks that were finished when the program 
-   started (#41)
+* Allow multiple tracks to be selected (#42)
+* Adds auto-remove timer to tracks that were finished when the program 
+  started (#41)
+* Trim spaces from ends of album/track/artist names as vfat doesn't like them
+  (#40) 
 V0.22
 * Added quotes around $@ in launch script to make it work better with some
   temp file names

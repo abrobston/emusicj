@@ -147,7 +147,8 @@ public class EMusicController implements IEMusicController,
 		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 			mon.addStateListener(this);
 			// add an auto-remove timer if we need to (fixes #41)
-			if (mon.getDownloadState() == DLState.FINISHED)
+			if (mon.getDownloadState() == DLState.FINISHED
+					&& prefs.removeCompletedDownloads())
 				attachAutoRemoveTimer(mon.getDownloader());
 		}
 		// Start the drop directory monitoring, if that's what we want to do.
