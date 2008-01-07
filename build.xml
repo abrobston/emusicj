@@ -63,6 +63,22 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<antcall target="dist-win32" />
 		<antcall target="dist-osx" />
 	</target>
+
+	<target name="reggaecountry">
+		<property name="main.class" value="nz.net.kallisti.emusicj.ReggaeCountry"/>
+		<property name="dist.dir" value="${basedir}/dist/reggaecountry"/>
+		<property name="jar.name" value="${basedir}/reggaecountry.jar"/>
+		<property name="osx.jar.name" value="${basedir}/osx-reggaecountry.jar"/>
+		<property name="app.name" value="reggaecountry" />
+		<property name="app.name.caps" value="ReggaeCountry" />
+		<property name="exe.name" value="ReggaeCountry.exe" />
+		<antcall target="compile"/>
+		<antcall target="jar" />
+		<antcall target="dist-i686" />
+		<antcall target="dist-x86_64" />
+		<antcall target="dist-win32" />
+		<antcall target="dist-osx" />
+	</target>
 	
 	<target name="compile">
 		<mkdir dir="${build.dir}"/>
@@ -80,6 +96,10 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/naxos">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/naxos/*.png"/>
+		</copy>
+		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry/*.png"/>
 		</copy>
 	</target>
 	
@@ -216,6 +236,10 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/naxos">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/naxos/*.png"/>
+		</copy>
+		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry/*.png"/>
 		</copy>
 		<!-- now create a jar -->
 		<jar jarfile="${osx.jar.name}">
