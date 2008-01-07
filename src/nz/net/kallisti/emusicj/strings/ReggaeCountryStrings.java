@@ -71,7 +71,7 @@ public class ReggaeCountryStrings implements IStrings {
 	}
 
 	public String getVersion() {
-		return "0.23-svn";
+		return "1.0";
 	}
 
 	public String getCoverArtName() {
