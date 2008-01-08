@@ -54,12 +54,12 @@ public class ReggaeCountryStrings implements IStrings {
 	}
 
 	public String getAboutBoxText() {
-		return "Reggaecountry Downloader v1.0, Copyright (C) 2006, 2007 Robin Sheat <robin@kallisti.net.nz>\n\n"
+		return "Reggaecountry Downloader v1.0, Copyright (C) 2006-2008 Robin Sheat <robin@kallisti.net.nz>\n\n"
 				+ "The Reggaecountry Downloader comes with ABSOLUTELY NO WARRANTY. "
 				+ "This is free software, and you are welcome to redistribute it under the "
 				+ "terms of the GNU General Public License. A copy of this is contained in "
 				+ "the file 'COPYING'.\n\n"
-				+ "Artwork Copyright (C) 2007 Reggaecountry.com";
+				+ "Artwork Copyright (C) 2008 Reggaecountry.com";
 	}
 
 	public String getDefaultFilePattern() {

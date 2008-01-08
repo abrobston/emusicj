@@ -176,7 +176,6 @@ public class EMusicController implements IEMusicController,
 		if (view != null)
 			view.processEvents(this);
 		// Clean up the program
-		System.out.println("Controller shutting down");
 		shutdown();
 	}
 
