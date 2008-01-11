@@ -159,8 +159,8 @@ public class EMXMetaFile implements IMetafile {
 			coverArtFile = getCoverArtCached(coverArt, prefs, trackNum, title,
 					album, artist);
 		IMusicDownloader dl = musicDownloaderProvider.get();
-		dl.setDownloader(url, outputFile, coverArtFile,
-				trackNum, title, album, artist);
+		dl.setDownloader(url, outputFile, coverArtFile, trackNum, title, album,
+				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
 		try {
@@ -171,37 +171,46 @@ public class EMXMetaFile implements IMetafile {
 	}
 
 	/**
-	 * This is passed a String URL of where to find the coverart for a track.
-	 * It turns it into a filename. If the file doesn't exist, and we haven't
-	 * already created a downloader for it, then a download is added to the 
-	 * list. 
-	 * @param coverArt the string form of the URL to load
-	 * @param artist the artist this cover is for
-	 * @param album the album it's from
-	 * @param title the title of the track
-	 * @param trackNum the number of the track
-	 * @return a file corresponding the coverart. It may not exist yet, but 
-	 * that is where it eventually will be.
+	 * This is passed a String URL of where to find the coverart for a track. It
+	 * turns it into a filename. If the file doesn't exist, and we haven't
+	 * already created a downloader for it, then a download is added to the
+	 * list.
+	 * 
+	 * @param coverArt
+	 *            the string form of the URL to load
+	 * @param artist
+	 *            the artist this cover is for
+	 * @param album
+	 *            the album it's from
+	 * @param title
+	 *            the title of the track
+	 * @param trackNum
+	 *            the number of the track
+	 * @return a file corresponding the coverart. It may not exist yet, but that
+	 *         is where it eventually will be.
 	 */
-	private File getCoverArtCached(final String coverArt, IPreferences prefs, 
+	private File getCoverArtCached(final String coverArt, IPreferences prefs,
 			int trackNum, String title, String album, String artist) {
 		if (coverArtCache == null)
 			coverArtCache = new Hashtable<String, File>();
 		File cachedFile = coverArtCache.get(coverArt);
-		if (cachedFile != null) 
+		if (cachedFile != null)
 			return cachedFile;
 		URL coverUrl;
 		try {
 			coverUrl = new URL(coverArt);
-		} catch (MalformedURLException e) { return null; }
+		} catch (MalformedURLException e) {
+			return null;
+		}
 		File coverFile;
 		File savePath = prefs.getPathFor(trackNum, title, album, artist);
 		int dotPos = coverArt.lastIndexOf(".");
 		if (dotPos != -1) {
 			String filetype = coverArt.substring(dotPos);
 			if (filetype.equalsIgnoreCase(".jpeg"))
-				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension anyway?
-			coverFile = new File(savePath,strings.getCoverArtName()+filetype);
+				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension
+			// anyway?
+			coverFile = new File(savePath, strings.getCoverArtName() + filetype);
 		} else {
 			return null;
 		}
@@ -215,8 +224,8 @@ public class EMXMetaFile implements IMetafile {
 			mon.addStateListener(new IDownloadMonitorListener() {
 				// This is a bt icky, but it'll do the job in 99% of cases.
 				public void monitorStateChanged(IDownloadMonitor monitor) {
-					if (monitor.getDownloadState() == DLState.CANCELLED ||
-							monitor.getDownloadState() == DLState.FINISHED) {
+					if (monitor.getDownloadState() == DLState.CANCELLED
+							|| monitor.getDownloadState() == DLState.FINISHED) {
 						coverArtCache.remove(coverArt);
 					}
 				}
@@ -237,7 +246,10 @@ public class EMXMetaFile implements IMetafile {
 	 *             if the file can't be read
 	 */
 	public static boolean canParse(File file) throws IOException {
-		if (!file.getName().endsWith(".emx") && !file.getName().endsWith(".EMX"))
+		if (!file.getName().endsWith(".emx")
+				&& !file.getName().endsWith(".EMX")
+				&& !file.getName().endsWith(".rcm")
+				&& !file.getName().endsWith(".RCM"))
 			return false;
 		FileInputStream stream = new FileInputStream(file);
 		// just look at the first Kb
