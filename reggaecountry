@@ -35,7 +35,7 @@ else
         echo "You seem to have set an invalid PROGRAM_DIR, unable to continue!"
         exit 1
     elif ! (echo ${PROGRAM_DIR}/*.jar | grep emusicj.jar >/dev/null 2>&1 ); then
-        echo "Unable to locate emusicj.jar in $PROGRAM_DIR, aborting!"
+        echo "Unable to locate reggaecountry.jar in $PROGRAM_DIR, aborting!"
         exit 1
     fi
 fi
@@ -47,10 +47,10 @@ check_version
 # checked-out tree versus a dist build
 MY_CLASSPATH="${PROGRAM_DIR}/lib/${MACHINE}/swt.jar:${PROGRAM_DIR}/lib/swt.jar:${PROGRAM_DIR}/lib/commons-codec-1.3.jar:${PROGRAM_DIR}/lib/commons-httpclient-3.0-rc4.jar:${PROGRAM_DIR}/lib/commons-logging-api.jar:${PROGRAM_DIR}/lib/retroweaver-rt-1.2.4.jar:${PROGRAM_DIR}/lib/guice-1.0.jar:${PROGRAM_DIR}/lib/MRJAdapter.jar:$CLASSPATH"
 
-if [ -e ${PROGRAM_DIR}/bin/nz/net/kallisti/emusicj/EMusicJ.class ] ; then
+if [ -e ${PROGRAM_DIR}/bin/nz/net/kallisti/emusicj/ReggaeCountry.class ] ; then
         java -cp "${PROGRAM_DIR}/bin:$MY_CLASSPATH" "-Djava.library.path=${PROGRAM_DIR}/lib/${MACHINE}" -Denv.http_proxy=${http_proxy} nz.net.kallisti.emusicj.ReggaeCountry "$@"
-elif [ -e ${PROGRAM_DIR}/lib/emusicj.jar ] ; then
-	java -cp "${PROGRAM_DIR}/lib/emusicj.jar:$MY_CLASSPATH" "-Djava.library.path=${PROGRAM_DIR}/lib" -Denv.http_proxy=${http_proxy} nz.net.kallisti.emusicj.ReggaeCountry "$@"
+elif [ -e ${PROGRAM_DIR}/lib/reggaecountry.jar ] ; then
+	java -cp "${PROGRAM_DIR}/lib/reggaecountry.jar:$MY_CLASSPATH" "-Djava.library.path=${PROGRAM_DIR}/lib" -Denv.http_proxy=${http_proxy} nz.net.kallisti.emusicj.ReggaeCountry "$@"
 else
         echo "Couldn't find the compiled Java program.";
 fi
