@@ -87,7 +87,7 @@ Section "Start Menu Shortcuts" SecSMS
 
   CreateDirectory "$SMPROGRAMS\ReggaeCountry"
   CreateShortCut "$SMPROGRAMS\ReggaeCountry\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\ReggaeCountry\ReggaeCountry.lnk" "$INSTDIR\ReggaeCountry.exe" "" "$INSTDIR\Classicsonline.exe" 0
+  CreateShortCut "$SMPROGRAMS\ReggaeCountry\ReggaeCountry.lnk" "$INSTDIR\ReggaeCountry.exe" "" "$INSTDIR\ReggaeCountry.exe" 0
   
 SectionEnd
 

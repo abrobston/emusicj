@@ -1,4 +1,4 @@
-Build Notes for eMusic/J / Classicsonline download manager
+Build Notes for eMusic/J / Classicsonline / Reggae Country download manager
 
 http://www.kallisti.net.nz/EMusicJ/HomePage
 
@@ -12,17 +12,19 @@ probably be the easiest method of working on it. When running, it is required
 that the java library path be set with -Djava.library.path, in order to find
 the SWT libraries. See the .launch files for examples of this.  
 
-This ant script has two targets, the default one (emusicj) will produce
-eMusic/J, and 'naxos' will produce the Classicsonline version. These will be
-output into the dist subdirectory.
+This ant script has the following targets:
+ * emusicj - the default target, this produces eMusic/J
+ * naxos - this produces the Classicsonline download manager
+ * reggaecountry - this produces the Reggaecountry download manager
+When built, the resulting applications appear in the 'dist' subdirectory.
 
 Building is currently configured to work on Linux only, however it can be
 easily modified to also work on OS X. Building on Windows is more problematic
 as Windows doesn't support the executable bit on files that is needed by both
 the Linux and Mac OS X versions. However it can be done if those versions are
 then moved to a Linux or Mac OS X machine, and the executable bit applied to
-the launch script (either 'emusicj' or 'classicsonline') in the case of
-Linux, and 'JavaApplicationStub' on Mac OS X.
+the launch script (e.g. 'emusicj') in the case of Linux, and 
+'JavaApplicationStub' on Mac OS X.
 
 One dependency (other than Java and Ant) is required to build:
 NSIS, this produces the installer for windows (see the note in 
@@ -42,7 +44,7 @@ The Linux version is simply the application in its unpackaged form, it is ready
 for tarballing up and distributing.
 
 The latest version of this source can be downloaded using Subversion, currently
-at the URL: https://www.kallisti.net.nz/svn/emusicj/branches/Naxos
+at the URL: https://www.kallisti.net.nz/svn/emusicj/trunk
 
 Adapting this code to create a customised version is fairly easy, see the 
 Naxos related Java and config files versus the EMusicJ ones to see how this is
@@ -52,4 +54,4 @@ must be made available, as per the GPL.
 Unless otherwise noted, the source code contained here is under the GNU
 General Public Licence (see doc/COPYING).
 
--- Robin Sheat <robin@kallisti.net.nz>, 1 May 2007
+-- Robin Sheat <robin@kallisti.net.nz>, 13 January 2008
