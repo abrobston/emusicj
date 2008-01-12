@@ -81,8 +81,7 @@ public abstract class Preferences implements IPreferences {
 	public Preferences(IStrings strings) {
 		super();
 		this.strings = strings;
-		this.path = System.getProperty("user.home") + File.separatorChar
-				+ "mp3" + File.separatorChar + strings.getAppPathname();
+		this.path = buildDefaultSavePath();
 		this.statePath = System.getProperty("user.home") + File.separatorChar
 				+ "." + strings.getAppPathname() + File.separatorChar;
 		this.filePattern = strings.getDefaultFilePattern();
@@ -96,6 +95,20 @@ public abstract class Preferences implements IPreferences {
 		} catch (MalformedURLException e) {
 		}
 		loadProps();
+	}
+
+	private String buildDefaultSavePath() {
+		this.path = System.getProperty("user.home") + File.separatorChar
+				+ "mp3" + File.separatorChar + strings.getAppPathname();
+		String home = System.getProperty("user.home");
+		String[] check = { "My Music", "Music" };
+		for (String dir : check) {
+			if (new File(home, dir).exists())
+				return home + File.separatorChar + dir + File.separatorChar
+						+ strings.getAppPathname();
+		}
+		return home + File.separatorChar + check[check.length - 1]
+				+ File.separatorChar + strings.getAppPathname();
 	}
 
 	private void loadProps() {
