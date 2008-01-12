@@ -3,7 +3,9 @@ V0.23-svn
 * Adds auto-remove timer to tracks that were finished when the program 
   started (#41)
 * Trim spaces from ends of album/track/artist names as vfat doesn't like them
-  (#40) 
+  (#40)
+* Changed default save location of files to ~/Music or ~/My Music (whichever 
+  exists), defaulting to the first one if neither do 
 V0.22
 * Added quotes around $@ in launch script to make it work better with some
   temp file names
