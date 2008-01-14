@@ -1,4 +1,4 @@
-V0.23-svn
+V0.23
 * Allow multiple tracks to be selected (#42)
 * Adds auto-remove timer to tracks that were finished when the program 
   started (#41)
