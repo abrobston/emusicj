@@ -5,7 +5,10 @@ V0.23-svn
 * Trim spaces from ends of album/track/artist names as vfat doesn't like them
   (#40)
 * Changed default save location of files to ~/Music or ~/My Music (whichever 
-  exists), defaulting to the first one if neither do 
+  exists), defaulting to the first one if neither do
+* [Reggae Country] added customisation for reggaecountry.com
+* Fixed an infinite loop if the album/artist/track names contain a path
+  wildcard (e.g. %t). Thanks to Hugh Brackett for spotting this one.
 V0.22
 * Added quotes around $@ in launch script to make it work better with some
   temp file names
