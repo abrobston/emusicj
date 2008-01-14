@@ -34,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -404,9 +402,9 @@ public abstract class Preferences implements IPreferences {
 		} else
 			level = Level.INFO;
 		logger.setLevel(level);
-		Handler handler = new ConsoleHandler();
-		handler.setLevel(level);
-		logger.addHandler(handler);
+		// Handler handler = new ConsoleHandler();
+		// handler.setLevel(level);
+		// logger.addHandler(handler);
 	}
 
 }

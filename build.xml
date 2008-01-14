@@ -78,6 +78,7 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<antcall target="dist-x86_64" />
 		<antcall target="dist-win32" />
 		<antcall target="dist-osx" />
+		<antcall target="dist-ppc_linux" />
 	</target>
 	
 	<target name="compile">
