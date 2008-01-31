@@ -74,7 +74,7 @@ Section "Reggae Country Download Manager" SecCOL
   WriteRegStr HKLM SOFTWARE\ReggaeCountry_DLM "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "DisplayName" "Classicsonline"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "DisplayName" "Reggae Country DLM"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "NoRepair" 1
@@ -181,7 +181,7 @@ Section "Uninstall"
   DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "UninstallString"
   DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "NoModify"
   DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM" "NoRepair"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Classicsonline_DLM"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ReggaeCountry_DLM"
 
 SectionEnd
 
