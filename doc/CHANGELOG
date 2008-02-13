@@ -1,3 +1,6 @@
+V0.24
+* Truncate the pathname to save files to if it gets too long on windows (which
+  has stupidly low limits) (#49)
 V0.23
 * Allow multiple tracks to be selected (#42)
 * Adds auto-remove timer to tracks that were finished when the program 

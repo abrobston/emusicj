@@ -83,7 +83,7 @@ public class EmusicjStrings implements IStrings {
 	}
 
 	public String getVersion() {
-		return "0.23";
+		return "0.24";
 	}
 
 	public String getCoverArtName() {

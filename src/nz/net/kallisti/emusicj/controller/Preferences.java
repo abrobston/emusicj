@@ -61,6 +61,7 @@ public abstract class Preferences implements IPreferences {
 	private static final String PROXY_HOST = "proxyHost";
 	private static final String USE_PROXY = "useProxy";
 	private static final String LOG_LEVEL = "logLevel";
+	private static final String WINDOWS_MAX_PATH_LENGTH = "windowsMaxPathLength";
 
 	public final String statePath;
 	private String path;
@@ -74,6 +75,7 @@ public abstract class Preferences implements IPreferences {
 	private final IStrings strings;
 	private boolean firstLaunch = false;
 	private String coverArtFilename;
+	private int windowsMaxPathLength = 250;
 
 	@Inject
 	public Preferences(IStrings strings) {
@@ -131,6 +133,8 @@ public abstract class Preferences implements IPreferences {
 			proxyPort = Integer.parseInt(props.getProperty(PROXY_PORT,
 					proxyPort + ""));
 			setDebugLevel(props.getProperty(LOG_LEVEL, "INFO"));
+			windowsMaxPathLength = Integer.parseInt(props.getProperty(
+					WINDOWS_MAX_PATH_LENGTH, windowsMaxPathLength + ""));
 		} catch (IOException e) {
 			// We don't care, it'll just use the defaults
 			// but do remember that this is the first execution, other things
@@ -177,8 +181,14 @@ public abstract class Preferences implements IPreferences {
 			convPattern.replace(pos, pos + 2, df.format(track));
 		while ((pos = convPattern.indexOf("%t")) != -1)
 			convPattern.replace(pos, pos + 2, songB.toString().trim());
-		String fname = path + File.separatorChar + convPattern + format;
-		return fname;
+		String fname = path + File.separatorChar + convPattern;
+		String os = System.getProperty("os.name");
+		if (os.toLowerCase().contains("windows")) {
+			if (fname.length() < windowsMaxPathLength) {
+				fname = fname.substring(0, windowsMaxPathLength);
+			}
+		}
+		return fname + format;
 	}
 
 	/**
