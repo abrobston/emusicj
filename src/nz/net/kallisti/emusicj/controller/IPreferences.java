@@ -122,4 +122,11 @@ public interface IPreferences {
 	 */
 	public String getCoverArtFilename();
 
+	/**
+	 * This will return true if cover art should be downloaded
+	 * 
+	 * @return true if the cover art should be downloaded, false otherwise
+	 */
+	public boolean downloadCoverArt();
+
 }

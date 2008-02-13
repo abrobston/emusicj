@@ -62,6 +62,7 @@ public abstract class Preferences implements IPreferences {
 	private static final String USE_PROXY = "useProxy";
 	private static final String LOG_LEVEL = "logLevel";
 	private static final String WINDOWS_MAX_PATH_LENGTH = "windowsMaxPathLength";
+	private static final String DOWNLOAD_COVER_ART = "downloadCoverArt";
 
 	public final String statePath;
 	private String path;
@@ -76,6 +77,7 @@ public abstract class Preferences implements IPreferences {
 	private boolean firstLaunch = false;
 	private String coverArtFilename;
 	private int windowsMaxPathLength = 250;
+	private boolean dlCoverArt = true;
 
 	@Inject
 	public Preferences(IStrings strings) {
@@ -129,6 +131,8 @@ public abstract class Preferences implements IPreferences {
 						.substring(0, filePattern.length() - 4);
 			minDownloads = Integer.parseInt(props.getProperty("minDownloads",
 					minDownloads + ""));
+			dlCoverArt = Boolean.parseBoolean(props.getProperty(
+					DOWNLOAD_COVER_ART, "true"));
 			proxyHost = props.getProperty(PROXY_HOST, proxyHost);
 			proxyPort = Integer.parseInt(props.getProperty(PROXY_PORT,
 					proxyPort + ""));
@@ -343,6 +347,10 @@ public abstract class Preferences implements IPreferences {
 	public synchronized void setDropDir(String dd) {
 		props.setProperty("dropDir", dd);
 		notify(Pref.DROP_DIR);
+	}
+
+	public boolean downloadCoverArt() {
+		return dlCoverArt;
 	}
 
 	public void addListener(IPreferenceChangeListener l) {

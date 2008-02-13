@@ -229,10 +229,13 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	 * @param trackNum
 	 *            the number of the track
 	 * @return a file corresponding the coverart. It may not exist yet, but that
-	 *         is where it eventually will be.
+	 *         is where it eventually will be. If we aren't going to be
+	 *         downloading the cover art, this will return <code>null</code>.
 	 */
 	private File getCoverArtCached(final String coverArt, IPreferences prefs,
 			int trackNum, String title, String album, String artist) {
+		if (!prefs.downloadCoverArt())
+			return null;
 		if (coverArtCache == null)
 			coverArtCache = new Hashtable<String, File>();
 		File cachedFile = coverArtCache.get(coverArt);
@@ -251,8 +254,8 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			String filetype = coverArt.substring(dotPos);
 			if (filetype.equalsIgnoreCase(".jpeg"))
 				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension
-									// anyway?
-			coverFile = new File(savePath, strings.getCoverArtName()+ filetype);
+			// anyway?
+			coverFile = new File(savePath, strings.getCoverArtName() + filetype);
 		} else {
 			return null;
 		}
