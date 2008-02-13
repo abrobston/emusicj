@@ -4,6 +4,8 @@ V0.24
 * Added option to allow the user to specify that they don't want cover art to
   be downloaded. This is done by adding the line 'downloadCoverArt=false' to
   ~/.emusicj/emusicj.props (#38)
+* Updated build.xml to allow more flexible compiles, such as not always creating
+  a dist build (#47)
 V0.23
 * Allow multiple tracks to be selected (#42)
 * Adds auto-remove timer to tracks that were finished when the program 

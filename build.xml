@@ -2,13 +2,18 @@
 
 <!-- 
 Available targets:
-
-clean - Deletes all generated files, and any ~ files.
-docs  - Runs Javadoc tool on all source files.
-jar   - Compiles all source files and creates a runnable jar file (the default).
-view  - Displays Javadoc documentation in a browser.
-
-Type `ant target' to run a target or `ant' to run the default target. -->
+	emusicj,naxos,reggaecountry - compile and create dist for the particular
+		project
+	emusicj_props - load the properties specific to this project (same for the
+		others)
+	buildjar - create a .jar file, needs to have the appropriate properties
+		loaded first
+		
+	e.g. 
+		* 'ant naxos_props buildjar' will create the jar file for the naxos
+			project
+		* 'ant emusicj' will compile, jar, and make the dist for emusicj
+ -->
  
 <project name="emusicj" default="emusicj" basedir=".">
 	
@@ -29,9 +34,13 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 	<property name="lib.ppc_linux.dir" value="${lib.dir}/ppc_linux"/>
 	<property name="sun.api" value="http://java.sun.com/j2se/1.5/docs/api"/>
 	
-	<target name="all" depends="emusicj, naxos"/>
+	<target name="all" depends="emusicj, naxos, reggaecountry"/>
 	
-	<target name="emusicj">
+	<target name="emusicj" 	depends="emusicj_props,builddist" />
+	<target name="naxos"	depends="naxos_props,builddist" />
+	<target name="reggaecountry"	depends="reggaecountry_props,builddist" />
+	
+	<target name="emusicj_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.EMusicJ"/>
 		<property name="dist.dir" value="${basedir}/dist/emusicj"/>
 		<property name="jar.name" value="${basedir}/emusicj.jar"/>
@@ -39,8 +48,14 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<property name="app.name" value="emusicj" />
 		<property name="app.name.caps" value="eMusicJ" />
 		<property name="exe.name" value="emusicj.exe" />
+	</target>
+	
+	<target name="buildjar">
 		<antcall target="compile"/>
 		<antcall target="jar" />
+	</target>
+	
+	<target name="builddist" depends="buildjar">
 		<antcall target="dist-i686" />
 		<antcall target="dist-x86_64" />
 		<antcall target="dist-win32" />
@@ -48,7 +63,7 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<antcall target="dist-ppc_linux" />
 	</target>
 
-	<target name="naxos">
+	<target name="naxos_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.ClassicsOnline"/>
 		<property name="dist.dir" value="${basedir}/dist/classicsonline"/>
 		<property name="jar.name" value="${basedir}/classicsonline.jar"/>
@@ -56,15 +71,9 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<property name="app.name" value="classicsonline" />
 		<property name="app.name.caps" value="Classicsonline" />
 		<property name="exe.name" value="Classicsonline.exe" />
-		<antcall target="compile"/>
-		<antcall target="jar" />
-		<antcall target="dist-i686" />
-		<antcall target="dist-x86_64" />
-		<antcall target="dist-win32" />
-		<antcall target="dist-osx" />
 	</target>
 
-	<target name="reggaecountry">
+	<target name="reggaecountry_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.ReggaeCountry"/>
 		<property name="dist.dir" value="${basedir}/dist/reggaecountry"/>
 		<property name="jar.name" value="${basedir}/reggaecountry.jar"/>
@@ -72,13 +81,6 @@ Type `ant target' to run a target or `ant' to run the default target. -->
 		<property name="app.name" value="reggaecountry" />
 		<property name="app.name.caps" value="ReggaeCountry" />
 		<property name="exe.name" value="ReggaeCountry.exe" />
-		<antcall target="compile"/>
-		<antcall target="jar" />
-		<antcall target="dist-i686" />
-		<antcall target="dist-x86_64" />
-		<antcall target="dist-win32" />
-		<antcall target="dist-osx" />
-		<antcall target="dist-ppc_linux" />
 	</target>
 	
 	<target name="compile">
