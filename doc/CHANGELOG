@@ -1,6 +1,9 @@
 V0.24
 * Truncate the pathname to save files to if it gets too long on windows (which
   has stupidly low limits) (#49)
+* Added option to allow the user to specify that they don't want cover art to
+  be downloaded. This is done by adding the line 'downloadCoverArt=false' to
+  ~/.emusicj/emusicj.props (#38)
 V0.23
 * Allow multiple tracks to be selected (#42)
 * Adds auto-remove timer to tracks that were finished when the program 
