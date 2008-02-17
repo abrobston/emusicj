@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -230,9 +232,15 @@ public class EMusicController implements IEMusicController,
 			error("Error reading file", "The file is of an unknown type\n"
 					+ file);
 		} catch (Exception e) {
+//			error("Error reading file", "Something failed while reading the "
+//					+ "file\n" + file
+//					+ "\nError details have been written to the " + "terminal.");
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
 			error("Error reading file", "Something failed while reading the "
 					+ "file\n" + file
-					+ "\nError details have been written to the " + "terminal.");
+					+ "\nError details are below:\n"+sw.toString());
 			e.printStackTrace();
 		}
 		// this means that if the machine crashes, the downloads in progress

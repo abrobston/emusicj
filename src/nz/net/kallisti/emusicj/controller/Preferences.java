@@ -189,7 +189,7 @@ public abstract class Preferences implements IPreferences {
 		String os = System.getProperty("os.name");
 		if (os.toLowerCase().contains("windows")) {
 			if (fname.length() < windowsMaxPathLength) {
-				fname = fname.substring(0, windowsMaxPathLength);
+				fname = fname.substring(0, fname.length() > windowsMaxPathLength ? windowsMaxPathLength : fname.length());
 			}
 		}
 		return fname + format;
