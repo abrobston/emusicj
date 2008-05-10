@@ -1,3 +1,8 @@
+V0.25
+* Overhauled the filename cleaning stuff, hopefully finally fixing issues on
+  windows. (#56)
+* If the option 'spacesToUnderscore' is 'true' then spaces will be converted to
+  underscores in filenames. (#55)
 V0.24
 * Truncate the pathname to save files to if it gets too long on windows (which
   has stupidly low limits) (#49)

@@ -40,6 +40,8 @@ import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.NaxosMetafile;
 import nz.net.kallisti.emusicj.metafiles.PlainTextMetafile;
+import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
+import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.updater.IUpdateCheck;
@@ -51,32 +53,38 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
 /**
- * <p>This contains the dependency injection bindings for Guice. It maps
- * interface to implementations. Branding-specific bindings shouldn't be
- * included in here, they should be added to a seperate module which is 
- * conditionally loaded.</p>
+ * <p>
+ * This contains the dependency injection bindings for Guice. It maps interface
+ * to implementations. Branding-specific bindings shouldn't be included in here,
+ * they should be added to a seperate module which is conditionally loaded.
+ * </p>
  * 
  * $Id:$
- *
+ * 
  * @author robin
  */
 public class Bindings extends AbstractModule {
 
+	@Override
 	public void configure() {
 		bind(IEMusicView.class).to(SWTView.class).in(Scopes.SINGLETON);
-		bind(IEMusicController.class).to(EMusicController.class).in(Scopes.SINGLETON);
-		//bind(MacSupport.class).asEagerSingleton();
-		
+		bind(IEMusicController.class).to(EMusicController.class).in(
+				Scopes.SINGLETON);
+		// bind(MacSupport.class).asEagerSingleton();
+
 		bind(IDownloadsModel.class).to(DownloadsModel.class);
 		bind(IDownloader.class).to(HTTPDownloader.class);
 		bind(IMusicDownloader.class).to(MusicDownloader.class);
 		bind(ICoverDownloader.class).to(CoverDownloader.class);
 		bind(IMetafileLoader.class).to(MetafileLoader.class);
 		bind(IMetafile.class).annotatedWith(Emusic.class).to(EMPMetafile.class);
-		bind(IMetafile.class).annotatedWith(Naxos.class).to(NaxosMetafile.class);
-		bind(IMetafile.class).annotatedWith(PlainText.class).to(PlainTextMetafile.class);
-		bind(IMetafile.class).annotatedWith(EmusicEmx.class).to(EMXMetaFile.class);
+		bind(IMetafile.class).annotatedWith(Naxos.class)
+				.to(NaxosMetafile.class);
+		bind(IMetafile.class).annotatedWith(PlainText.class).to(
+				PlainTextMetafile.class);
+		bind(IMetafile.class).annotatedWith(EmusicEmx.class).to(
+				EMXMetaFile.class);
 		bind(IUpdateCheck.class).to(UpdateCheck.class);
+		bind(IFileNameCleaner.class).to(FileNameCleaner.class);
 	}
-
 }

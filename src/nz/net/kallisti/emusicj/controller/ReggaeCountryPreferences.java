@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.controller;
 
+import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.strings.IStrings;
 
 import com.google.inject.Inject;
@@ -17,8 +18,9 @@ import com.google.inject.Inject;
 public class ReggaeCountryPreferences extends Preferences {
 
 	@Inject
-	public ReggaeCountryPreferences(IStrings strings) {
-		super(strings);
+	public ReggaeCountryPreferences(IStrings strings,
+			IFileNameCleaner nameCleaner) {
+		super(strings, nameCleaner);
 	}
 
 	public boolean allowSaveFileAs() {

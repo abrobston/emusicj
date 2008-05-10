@@ -38,6 +38,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
+import nz.net.kallisti.emusicj.misc.ListUtils;
+import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.strings.IStrings;
 
 import com.google.inject.Inject;
@@ -78,11 +80,13 @@ public abstract class Preferences implements IPreferences {
 	private String coverArtFilename;
 	private int windowsMaxPathLength = 250;
 	private boolean dlCoverArt = true;
+	private final IFileNameCleaner nameCleaner;
 
 	@Inject
-	public Preferences(IStrings strings) {
+	public Preferences(IStrings strings, IFileNameCleaner nameCleaner) {
 		super();
 		this.strings = strings;
+		this.nameCleaner = nameCleaner;
 		this.path = buildDefaultSavePath();
 		this.statePath = System.getProperty("user.home") + File.separatorChar
 				+ "." + strings.getAppPathname() + File.separatorChar;
@@ -168,31 +172,42 @@ public abstract class Preferences implements IPreferences {
 	public String getFilename(int track, String song, String album,
 			String artist, String format) {
 		DecimalFormat df = new DecimalFormat("00");
-		StringBuffer songB = new StringBuffer(song);
-		StringBuffer albumB = new StringBuffer(album);
-		StringBuffer artistB = new StringBuffer(artist);
-		// Remove any bad characters from the names
-		cleanName(songB);
-		cleanName(albumB);
-		cleanName(artistB);
-		StringBuffer convPattern = new StringBuffer(filePattern);
-		int pos;
-		while ((pos = convPattern.indexOf("%a")) != -1)
-			convPattern.replace(pos, pos + 2, albumB.toString().trim());
-		while ((pos = convPattern.indexOf("%b")) != -1)
-			convPattern.replace(pos, pos + 2, artistB.toString().trim());
-		while ((pos = convPattern.indexOf("%n")) != -1)
-			convPattern.replace(pos, pos + 2, df.format(track));
-		while ((pos = convPattern.indexOf("%t")) != -1)
-			convPattern.replace(pos, pos + 2, songB.toString().trim());
+		String[] filePatternParts;
+		if (File.separator.equals("\\")) {
+			// avoid issues with windows and regex split
+			filePatternParts = filePattern.split("\\\\");
+		} else {
+			filePatternParts = filePattern.split(File.separator);
+		}
+		List<String> nameParts = new ArrayList<String>();
+		for (String part : filePatternParts) {
+			StringBuffer convPattern = new StringBuffer(part);
+			int pos;
+			while ((pos = convPattern.indexOf("%a")) != -1)
+				convPattern.replace(pos, pos + 2, album.trim());
+			while ((pos = convPattern.indexOf("%b")) != -1)
+				convPattern.replace(pos, pos + 2, artist.trim());
+			while ((pos = convPattern.indexOf("%n")) != -1)
+				convPattern.replace(pos, pos + 2, df.format(track));
+			while ((pos = convPattern.indexOf("%t")) != -1)
+				convPattern.replace(pos, pos + 2, song.trim());
+			nameParts.add(convPattern.toString());
+		}
+		List<String> finalNameParts = nameCleaner.cleanName(nameParts, "true"
+				.equals(props.getProperty("spacesToUnderscore", "false")));
+		String convPattern = ListUtils.join(finalNameParts, File.separator);
 		String fname = path + File.separatorChar + convPattern;
 		String os = System.getProperty("os.name");
 		if (os.toLowerCase().contains("windows")) {
 			if (fname.length() < windowsMaxPathLength) {
-				fname = fname.substring(0, fname.length() > windowsMaxPathLength ? windowsMaxPathLength : fname.length());
+				fname = fname
+						.substring(
+								0,
+								fname.length() > windowsMaxPathLength ? windowsMaxPathLength
+										: fname.length());
 			}
 		}
-		return fname + format;
+		return fname.toString() + format;
 	}
 
 	/**
@@ -210,18 +225,6 @@ public abstract class Preferences implements IPreferences {
 		File file = new File(filename);
 		File path = new File(file.getParent());
 		return path;
-	}
-
-	/**
-	 * @param str
-	 */
-	void cleanName(StringBuffer str) {
-		for (int i = 0; i < str.length(); i++) {
-			char c = str.charAt(i);
-			if (c < ' ' || c == '/' || c == '\\' || c > '~' || c == ':'
-					|| c == '*' || c == '?' || c == '"' || c == '&' || c == '%')
-				str.setCharAt(i, '_');
-		}
 	}
 
 	/**
