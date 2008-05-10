@@ -28,8 +28,29 @@ check_version()
 
 
 if [ -z "$PROGRAM_DIR" ]; then
-    PROGRAM_DIR=`dirname "$0"`
-    PROGRAM_DIR=`cd "$PROGRAM_DIR"; pwd`
+  ## resolve links - $0 may be a link to eMusicJ's home
+  PRG="$0"
+
+  # need this for relative symlinks
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '/.*' > /dev/null; then
+      PRG="$link"
+    else
+      PRG="`dirname "$PRG"`/$link"
+    fi
+  done
+
+  saveddir=`pwd`
+
+  PROGRAM_DIR=`dirname "$PRG"`
+
+  # make it fully qualified
+  PROGRAM_DIR=`cd "$PROGRAM_DIR" && pwd`
+
+  cd "$saveddir"
+  echo Using emusicj at $PROGRAM_DIR
 else
     if [ "$(echo ${PROGRAM_DIR}/*.jar)" = "${PROGRAM_DIR}/*.jar" ]; then
         echo "You seem to have set an invalid PROGRAM_DIR, unable to continue!"

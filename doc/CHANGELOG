@@ -3,6 +3,8 @@ V0.25
   windows. (#56)
 * If the option 'spacesToUnderscore' is 'true' then spaces will be converted to
   underscores in filenames. (#55)
+* Handle the case where the emusicj script is a symlink to the real location,
+  and use that to find the program directory (#54)
 V0.24
 * Truncate the pathname to save files to if it gets too long on windows (which
   has stupidly low limits) (#49)
