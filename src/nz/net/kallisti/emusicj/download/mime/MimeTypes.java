@@ -36,6 +36,7 @@ public abstract class MimeTypes {
 	public static MimeType AUDIO;
 	public static MimeType APP_OCTET;
 	public static MimeType PDF;
+	public static MimeType OGG;
 
 	static {
 		try {
@@ -43,6 +44,7 @@ public abstract class MimeTypes {
 			AUDIO = new MimeType("audio/*");
 			APP_OCTET = new MimeType("application/octet-stream");
 			PDF = new MimeType("application/pdf");
+			OGG = new MimeType("application/ogg");
 		} catch (MimeTypeParseException e) {
 			e.printStackTrace();
 		}
