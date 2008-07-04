@@ -2,8 +2,8 @@
 
 <!-- 
 Available targets:
-	emusicj,naxos,reggaecountry - compile and create dist for the particular
-		project
+	emusicj,naxos,reggaecountry,bluepie - compile and create dist for the 
+		particular project
 	emusicj_props - load the properties specific to this project (same for the
 		others)
 	buildjar - create a .jar file, needs to have the appropriate properties
@@ -39,6 +39,7 @@ Available targets:
 	<target name="emusicj" 	depends="emusicj_props,builddist" />
 	<target name="naxos"	depends="naxos_props,builddist" />
 	<target name="reggaecountry"	depends="reggaecountry_props,builddist" />
+	<target name="bluepie"	depends="bluepie_props,builddist" />
 	
 	<target name="emusicj_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.EMusicJ"/>
@@ -81,6 +82,16 @@ Available targets:
 		<property name="app.name" value="reggaecountry" />
 		<property name="app.name.caps" value="ReggaeCountry" />
 		<property name="exe.name" value="ReggaeCountry.exe" />
+	</target>
+	
+	<target name="bluepie_props">
+		<property name="main.class" value="nz.net.kallisti.emusicj.BluePie"/>
+		<property name="dist.dir" value="${basedir}/dist/bluepie"/>
+		<property name="jar.name" value="${basedir}/bluepie.jar"/>
+		<property name="osx.jar.name" value="${basedir}/osx-bluepie.jar"/>
+		<property name="app.name" value="bluepie" />
+		<property name="app.name.caps" value="BluePie" />
+		<property name="exe.name" value="BluePie.exe" />
 	</target>
 	
 	<target name="compile">
