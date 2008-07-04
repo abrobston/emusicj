@@ -252,7 +252,9 @@ public class EMXMetaFile implements IMetafile {
 		if (!file.getName().endsWith(".emx")
 				&& !file.getName().endsWith(".EMX")
 				&& !file.getName().endsWith(".rcm")
-				&& !file.getName().endsWith(".RCM"))
+				&& !file.getName().endsWith(".RCM")
+				&& !file.getName().endsWith(".bpm")
+				&& !file.getName().endsWith(".BPM"))
 			return false;
 		FileInputStream stream = new FileInputStream(file);
 		// just look at the first Kb
