@@ -25,11 +25,11 @@ public class BluePieStrings implements IStrings {
 	}
 
 	public String getAppName() {
-		return "Blue Pie Download Manager";
+		return "BluePie Download Manager";
 	}
 
 	public String getShortAppName() {
-		return "Blue Pie";
+		return "BluePie";
 	}
 
 	public String getAppPathname() {
@@ -42,20 +42,20 @@ public class BluePieStrings implements IStrings {
 	}
 
 	public String[] getOpenDialogueFilterExtensions() {
-		return new String[] { "*.bpm", "*.*" };
+		return new String[] { "*.pie", "*.*" };
 	}
 
 	public String[] getOpenDialogueFilterNames() {
-		return new String[] { "Blue Pie files (*.bpm)", "All Files (*.*)" };
+		return new String[] { "BluePie files (*.pie)", "All Files (*.*)" };
 	}
 
 	public String getAutoLoadDescription() {
-		return "Automatically load .bpm files from:";
+		return "Automatically load .pie files from:";
 	}
 
 	public String getAboutBoxText() {
-		return "Blue Pie Download Manager v1.0, Copyright (C) 2006-2008 Robin Sheat <robin@kallisti.net.nz>\n\n"
-				+ "The Blue Pie Download Manager comes with ABSOLUTELY NO WARRANTY. "
+		return "BluePie Download Manager v1.0, Copyright (C) 2006-2008 Robin Sheat <robin@kallisti.net.nz>\n\n"
+				+ "The BluePie Download Manager comes with ABSOLUTELY NO WARRANTY. "
 				+ "This is free software, and you are welcome to redistribute it under the "
 				+ "terms of the GNU General Public License. A copy of this is contained in "
 				+ "the file 'COPYING'.\n\n"

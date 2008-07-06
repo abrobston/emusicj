@@ -11,13 +11,13 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>col</string>
 				<string>emp</string>
 				<string>emx</string>
-				<string>bpm</string>
+				<string>pie</string>
+				<string>rcm</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Blue Pie download file</string>
+			<string>BluePie download file</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>

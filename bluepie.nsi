@@ -8,7 +8,7 @@
 !include "MUI.nsh"
 
 ; The name of the installer
-Name "Blue Pie Download Manager"
+Name "BluePie Download Manager"
 
 ; The file to write
 OutFile "BluePie-installer.exe"
@@ -24,10 +24,10 @@ InstallDirRegKey HKLM "Software\BluePie_DLM" "Install_Dir"
 ; Interface Settings
 !define MUI_ABORTWARNING
 
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Setup will install the Blue Pie Download Manager in the following folder. To install in a different folder, click Browse and select another folder. Click Install to start the installation. If you are not an administrator on this computer, make sure the folder selected is one you have permissions to save files in."
+!define MUI_DIRECTORYPAGE_TEXT_TOP "Setup will install the BluePie Download Manager in the following folder. To install in a different folder, click Browse and select another folder. Click Install to start the installation. If you are not an administrator on this computer, make sure the folder selected is one you have permissions to save files in."
 
 !define MUI_FINISHPAGE_RUN $INSTDIR\BluePie.exe
-!define MUI_FINISHPAGE_LINK "Go to the Blue Pie website"
+!define MUI_FINISHPAGE_LINK "Go to the BluePie website"
 !define MUI_FINISHPAGE_LINK_LOCATION http://www.bluepie.org
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
 
@@ -57,7 +57,7 @@ InstallDirRegKey HKLM "Software\BluePie_DLM" "Install_Dir"
 
 ;--------------------------------
 ; The stuff to install
-Section "Blue Pie Download Manager" SecCOL
+Section "BluePie Download Manager" SecCOL
   SectionIn RO
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
@@ -74,7 +74,7 @@ Section "Blue Pie Download Manager" SecCOL
   WriteRegStr HKLM SOFTWARE\BluePie_DLM "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BluePie_DLM" "DisplayName" "Blue Pie DLM"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BluePie_DLM" "DisplayName" "BluePie DLM"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BluePie_DLM" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BluePie_DLM" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BluePie_DLM" "NoRepair" 1
@@ -94,15 +94,15 @@ SectionEnd
 Section "File Associations" SecFA
 
 !define Index "Line${__LINE__}"
-  ReadRegStr $1 HKCR ".bpm" ""
+  ReadRegStr $1 HKCR ".pie" ""
   StrCmp $1 "" "${Index}-NoBackup"
     StrCmp $1 "BluePieDLM.AlbumFile" "${Index}-NoBackup"
-    WriteRegStr HKCR ".bpm" "backup_val" $1 
+    WriteRegStr HKCR ".pie" "backup_val" $1 
 "${Index}-NoBackup:"
-  WriteRegStr HKCR ".bpm" "" "BluePieDLM.AlbumFile"
+  WriteRegStr HKCR ".pie" "" "BluePieDLM.AlbumFile"
   ReadRegStr $0 HKCR "BluePieDLM.AlbumFile" ""
   StrCmp $0 "" 0 "${Index}-Skip"
-	WriteRegStr HKCR "BluePieDLM.AlbumFile" "" "Blue Pie Album File"
+	WriteRegStr HKCR "BluePieDLM.AlbumFile" "" "BluePie Album File"
 	WriteRegStr HKCR "BluePieDLM.AlbumFile\shell" "" "open"
 	WriteRegStr HKCR "BluePieDLM.AlbumFile\DefaultIcon" "" "$INSTDIR\BluePie.exe,0" 
 "${Index}-Skip:"
@@ -122,9 +122,9 @@ SectionEnd
 ;Descriptions
 
   ;Language strings
-  LangString DESC_SecCOL ${LANG_ENGLISH} "Blue Pie Download Manager"
+  LangString DESC_SecCOL ${LANG_ENGLISH} "BluePie Download Manager"
   LangString DESC_SecSMS ${LANG_ENGLISH} "Start Menu Shortcuts"
-  LangString DESC_SecFA ${LANG_ENGLISH} "Associates .bpm files with this program"
+  LangString DESC_SecFA ${LANG_ENGLISH} "Associates .pie files with this program"
   LangString DESC_SecIJ ${LANG_ENGLISH} "Checks to see if Java is installed and, if not, downloads and installs it"
 
   ;Assign language strings to sections
@@ -160,15 +160,15 @@ Section "Uninstall"
   RMDir "$PROFILE\.bluepie"
 
 !define Index "Line${__LINE__}"
-  ReadRegStr $1 HKCR ".bpm" ""
+  ReadRegStr $1 HKCR ".pie" ""
   StrCmp $1 "BluePieDLM.AlbumFile" 0 "${Index}-NoOwn" ; only do this if we own it
-    ReadRegStr $1 HKCR ".bpm" "backup_val"
+    ReadRegStr $1 HKCR ".pie" "backup_val"
     StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
-      DeleteRegKey HKCR ".bpm"
+      DeleteRegKey HKCR ".pie"
     Goto "${Index}-NoOwn"
 "${Index}-Restore:"
-      WriteRegStr HKCR ".bpm" "" $1
-      DeleteRegValue HKCR ".bpm" "backup_val"
+      WriteRegStr HKCR ".pie" "" $1
+      DeleteRegValue HKCR ".pie" "backup_val"
    
     DeleteRegKey HKCR "BluePieDLM.AlbumFile" ;Delete key with association settings
  
@@ -188,7 +188,7 @@ SectionEnd
 ;--------------------------------
 ; Functions
 Function GetJRE
-        MessageBox MB_OK "The Blue Pie Download Manager uses Java 1.5, it will now \
+        MessageBox MB_OK "The BluePie Download Manager uses Java 1.5, it will now \
                          be downloaded and installed"
  
         StrCpy $2 "$TEMP\Java Runtime Environment.exe"
