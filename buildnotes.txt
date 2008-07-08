@@ -12,10 +12,16 @@ probably be the easiest method of working on it. When running, it is required
 that the java library path be set with -Djava.library.path, in order to find
 the SWT libraries. See the .launch files for examples of this.  
 
+Also note that sometimes I'm working on a 64-bit machine, sometimes on 32.
+The SWT libraries don't work if you are loading the wrong one, so if you
+see strange errors coming from SWT (especially relating to 'mmov'), you may
+need to switch the classpath that you are using to the appropriate platform.
+
 This ant script has the following targets:
  * emusicj - the default target, this produces eMusic/J
  * naxos - this produces the Classicsonline download manager
  * reggaecountry - this produces the Reggaecountry download manager
+ * bluepie - this produces the BluePie download manager
 When built, the resulting applications appear in the 'dist' subdirectory.
 
 Building is currently configured to work on Linux only, however it can be
@@ -54,4 +60,4 @@ must be made available, as per the GPL.
 Unless otherwise noted, the source code contained here is under the GNU
 General Public Licence (see doc/COPYING).
 
--- Robin Sheat <robin@kallisti.net.nz>, 13 January 2008
+-- Robin Sheat <robin@kallisti.net.nz>, 8 July 2008
