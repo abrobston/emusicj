@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.mac;
 
+import nz.net.kallisti.emusicj.BluePie;
 import nz.net.kallisti.emusicj.ReggaeCountry;
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.mac.OpenDocHandler;
@@ -15,7 +16,7 @@ import nz.net.kallisti.emusicj.mac.OpenDocHandler;
  * 
  * @author robin
  */
-public class BluePieMac extends ReggaeCountry {
+public class BluePieMac extends BluePie {
 
 	public BluePieMac(String[] args) {
 		super(args);
