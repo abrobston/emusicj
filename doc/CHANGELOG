@@ -1,6 +1,7 @@
 V0.25-svn
 * Added application/ogg to the list of recognised MIME types.
 * [Blue Pie] Added customisation for bluepie.org version
+* Allowed canceling of failed tracks (#59)
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

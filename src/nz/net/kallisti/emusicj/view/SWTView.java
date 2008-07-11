@@ -371,7 +371,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 					.getDownloadMonitor();
 			DLState st = mon.getDownloadState();
 			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
-					|| st == DLState.NOTSTARTED || st == DLState.PAUSED)
+					|| st == DLState.NOTSTARTED || st == DLState.PAUSED
+					|| st == DLState.FAILED)
 				controller.stopDownload(mon.getDownloader());
 		}
 		setButtonsState();
