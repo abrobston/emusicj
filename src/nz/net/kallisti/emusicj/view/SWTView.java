@@ -61,9 +61,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -242,8 +244,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 
 	/**
 	 * Builds the interface. This consists of a top list view containing each of
-	 * the download states. Eventually it will also have a lower panel that
-	 * shows info on the selected item.
+	 * the download states, an information area detailing the current selection,
+	 * buttons, and a status line.
 	 * 
 	 * @param shell
 	 *            the shell to build the interface on
@@ -256,8 +258,31 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		GridLayout shellLayout = new GridLayout();
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
-		ToolBar toolBar = new ToolBar(shell, SWT.FLAT);
+
+		// This contains the toolbar, and lets us put an image on the right
+		// side
+		Composite toolbarRow = new Composite(shell, SWT.NONE);
+		// This griddata is for the toolbar row within the shell
+		GridData toolbarGridData = new GridData();
+		toolbarGridData.grabExcessHorizontalSpace = true;
+		toolbarGridData.horizontalAlignment = SWT.FILL;
+		toolbarRow.setLayoutData(toolbarGridData);
+		GridLayout toolbarLayout = new GridLayout(2, false);
+		toolbarRow.setLayout(toolbarLayout);
+
+		ToolBar toolBar = new ToolBar(toolbarRow, SWT.FLAT);
 		buildToolBar(toolBar);
+		// This griddata is for the components within the toolbar row
+		GridData toolbarRowData = new GridData();
+		toolbarRowData.horizontalAlignment = SWT.LEFT;
+		toolBar.setLayoutData(toolbarRowData);
+		Label iconLabel = new Label(toolbarRow, SWT.NONE);
+		toolbarRowData = new GridData();
+		toolbarRowData.grabExcessHorizontalSpace = true;
+		toolbarRowData.horizontalAlignment = SWT.RIGHT;
+		iconLabel.setLayoutData(toolbarRowData);
+		iconLabel.setImage(imageFactory.getApplicationLogo());
+
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
 		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		downloadsList = new ScrolledComposite(mainArea, SWT.V_SCROLL

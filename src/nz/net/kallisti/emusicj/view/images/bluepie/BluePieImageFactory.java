@@ -72,4 +72,9 @@ public class BluePieImageFactory implements IImageFactory {
 				.getResourceAsStream("bp-about.png"));
 	}
 
+	public Image getApplicationLogo() {
+		return new Image(display, this.getClass().getResourceAsStream(
+				"bp-app-32.png"));
+	}
+
 }

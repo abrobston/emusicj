@@ -72,4 +72,9 @@ public class ReggaeCountryImageFactory implements IImageFactory {
 				.getResourceAsStream("rc-about.png"));
 	}
 
+	public Image getApplicationLogo() {
+		return new Image(display, this.getClass().getResourceAsStream(
+				"rc-app-32.png"));
+	}
+
 }

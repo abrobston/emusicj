@@ -4,20 +4,24 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * <p>Implementations of this create the images to be used in the view.</p>
+ * <p>
+ * Implementations of this create the images to be used in the view.
+ * </p>
  * 
  * $Id:$
- *
+ * 
  * @author robin
  */
 public interface IImageFactory {
 
 	/**
 	 * Sets the display the images will use
-	 * @param display the display images will be created for
+	 * 
+	 * @param display
+	 *            the display images will be created for
 	 */
 	public void setDisplay(Display display);
-	
+
 	/**
 	 * @return the system tray icon that indicates downloading is happening
 	 */
@@ -57,7 +61,10 @@ public interface IImageFactory {
 	 * @return the image for the about box logo
 	 */
 	public Image getAboutLogo();
-	
-	
+
+	/**
+	 * @return the image that appears to the right of the button bar
+	 */
+	public Image getApplicationLogo();
 
 }
