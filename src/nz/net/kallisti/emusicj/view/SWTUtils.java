@@ -143,5 +143,27 @@ public class SWTUtils {
 			}
 		});
 	}
+
+	/**
+	 * SWT labels will convert '&' in a string to a hotkey, and underline the
+	 * following letter. This doubles any '&' found, so that it shows up
+	 * normally.
+	 * 
+	 * @param string
+	 *            the string to de-mnemonic
+	 * @return the de-mnemoniced string
+	 */
+	public static String deMonic(String string) {
+		StringBuilder sb = new StringBuilder();
+		int lastP = 0;
+		int p = -1;
+		while ((p = string.indexOf('&', p + 1)) != -1) {
+			sb.append(string.substring(lastP, p));
+			sb.append("&&");
+			lastP = p + 1;
+		}
+		sb.append(string.substring(lastP));
+		return sb.toString();
+	}
 	
 }

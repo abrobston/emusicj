@@ -27,6 +27,7 @@ import java.util.Set;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.view.SWTUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectionEvent;
@@ -225,7 +226,7 @@ public class DownloadDisplay extends Composite implements
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
 					if (!titleLabel.isDisposed())
-						titleLabel.setText(lblName);
+						titleLabel.setText(SWTUtils.deMonic(lblName));
 					if (!statusLabel.isDisposed())
 						statusLabel.setText(text.toString());
 					if (!DownloadDisplay.this.isDisposed()) {
