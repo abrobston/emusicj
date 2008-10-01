@@ -52,10 +52,10 @@ if [ -z "$PROGRAM_DIR" ]; then
   cd "$saveddir"
   echo Using emusicj at $PROGRAM_DIR
 else
-    if [ "$(echo ${PROGRAM_DIR}/*.jar)" = "${PROGRAM_DIR}/*.jar" ]; then
+    if [ "$(echo ${PROGRAM_DIR}/lib/*.jar)" = "${PROGRAM_DIR}/lib/*.jar" ]; then
         echo "You seem to have set an invalid PROGRAM_DIR, unable to continue!"
         exit 1
-    elif ! (echo ${PROGRAM_DIR}/*.jar | grep emusicj.jar >/dev/null 2>&1 ); then
+    elif ! (echo ${PROGRAM_DIR}/lib/*.jar | grep emusicj.jar >/dev/null 2>&1 ); then
         echo "Unable to locate emusicj.jar in $PROGRAM_DIR, aborting!"
         exit 1
     fi
