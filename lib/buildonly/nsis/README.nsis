@@ -1,6 +1,6 @@
-This directory contains the System.dll which isn't included in Debian due
-to compilation issues on GCC. It should be copied into /usr/share/nsis/Plugins
-(after apt-get install nsis) to allow the windows installer to be built on
-Linux.
+This directory contains a System.dll which contains more functions than that 
+included in Debian and Ubuntu, due to compilation issues on GCC. It should be 
+copied into /usr/share/nsis/Plugins (after apt-get install nsis), overwriting 
+the pre-existing one to allow the windows installer to be built on Linux.
 
- --Robin, 15/04/2007
+ --Robin, 24/10/2008
