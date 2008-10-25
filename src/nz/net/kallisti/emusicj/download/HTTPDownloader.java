@@ -341,10 +341,6 @@ public class HTTPDownloader implements IDownloader {
 						needToResume));
 			} catch (FileNotFoundException e) {
 				downloadError(e);
-				try {
-					out.close();
-				} catch (Exception e2) {
-				}
 				return;
 			}
 			if (abort)
@@ -377,7 +373,8 @@ public class HTTPDownloader implements IDownloader {
 							+ ": we expected to resume, but aren't");
 					needToResume = false;
 					resumePoint = 0;
-					out.close();
+					if (out != null)
+						out.close();
 					out = new BufferedOutputStream(new FileOutputStream(
 							partFile, needToResume));
 				}
@@ -388,7 +385,8 @@ public class HTTPDownloader implements IDownloader {
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "
 							+ statusCode);
-					out.close();
+					if (out != null)
+						out.close();
 					return;
 				}
 				Header[] responseHeaders = get.getResponseHeaders();
