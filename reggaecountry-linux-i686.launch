@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/eMusicJ/src/nz/net/kallisti/emusicj/EMusicJ.java"/>
+<listEntry value="/eMusicJ/src/nz/net/kallisti/emusicj/ReggaeCountry.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -13,7 +13,7 @@
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry id=&quot;org.eclipse.jdt.launching.classpathentry.defaultClasspath&quot;&gt;&#10;&lt;memento exportedEntriesOnly=&quot;false&quot; project=&quot;eMusicJ&quot;/&gt;&#10;&lt;/runtimeClasspathEntry&gt;&#10;"/>
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="nz.net.kallisti.emusicj.EMusicJ"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="nz.net.kallisti.emusicj.ReggaeCountry"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="eMusicJ"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.library.path=${workspace_loc:eMusicJ}/lib/i686 -ea"/>
 </launchConfiguration>
