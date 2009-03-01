@@ -48,6 +48,9 @@ import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.swtwidgets.network.SWTCredentialsProvider;
+
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -86,5 +89,7 @@ public class Bindings extends AbstractModule {
 				EMXMetaFile.class);
 		bind(IUpdateCheck.class).to(UpdateCheck.class);
 		bind(IFileNameCleaner.class).to(FileNameCleaner.class);
+		bind(CredentialsProvider.class).to(SWTCredentialsProvider.class).in(
+				Scopes.SINGLETON);
 	}
 }

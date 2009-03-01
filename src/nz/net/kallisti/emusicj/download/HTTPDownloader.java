@@ -43,6 +43,7 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
@@ -74,10 +75,13 @@ public class HTTPDownloader implements IDownloader {
 	IMimeType[] mimeType;
 	protected IPreferences prefs;
 	protected Logger logger;
+	private final CredentialsProvider proxyCredsProvider;
 
 	@Inject
-	public HTTPDownloader(IPreferences prefs) {
+	public HTTPDownloader(IPreferences prefs,
+			CredentialsProvider proxyCredsProvider) {
 		this.prefs = prefs;
+		this.proxyCredsProvider = proxyCredsProvider;
 		this.logger = Logger.getLogger("nz.net.kallisti.emusicj.download");
 		createMonitor();
 	}
@@ -350,6 +354,8 @@ public class HTTPDownloader implements IDownloader {
 				HostConfiguration hostConf = new HostConfiguration();
 				hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
 				http.setHostConfiguration(hostConf);
+				http.getParams().setParameter(CredentialsProvider.PROVIDER,
+						proxyCredsProvider);
 			}
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received

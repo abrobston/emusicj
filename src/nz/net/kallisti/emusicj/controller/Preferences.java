@@ -371,11 +371,7 @@ public abstract class Preferences implements IPreferences {
 
 	public synchronized void setProxy(boolean noProxy, String host, String port) {
 		if (noProxy) {
-			// props.remove(PROXY_HOST);
-			// props.remove(PROXY_PORT);
 			props.setProperty(USE_PROXY, "FALSE");
-			// proxyHost = "";
-			// proxyPort = 0;
 		} else {
 			setProxyHost(host);
 			props.setProperty(USE_PROXY, "TRUE");

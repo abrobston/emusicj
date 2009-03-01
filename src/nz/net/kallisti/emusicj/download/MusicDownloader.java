@@ -29,6 +29,7 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -54,8 +55,9 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 			MimeTypes.PDF, MimeTypes.OGG };
 
 	@Inject
-	public MusicDownloader(IPreferences prefs) {
-		super(prefs);
+	public MusicDownloader(IPreferences prefs,
+			CredentialsProvider proxyCredsProvider) {
+		super(prefs, proxyCredsProvider);
 	}
 
 	public void setDownloader(URL url, File outputFile, int trackNum,
@@ -77,6 +79,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		this.coverArt = coverArt;
 	}
 
+	@Override
 	public void setDownloader(Element el) throws MalformedURLException {
 		super.setDownloader(el);
 		String tNum = el.getAttribute("tracknum");
@@ -103,6 +106,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		monitor = new MusicDownloadMonitor(this);
 	}
 
+	@Override
 	public void saveTo(Element el, Document doc) {
 		super.saveTo(el, doc);
 		el.setAttribute("tracknum", trackNum + "");
@@ -139,6 +143,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		return (IMusicDownloadMonitor) monitor;
 	}
 
+	@Override
 	public IDownloadMonitor getMonitor() {
 		return monitor;
 	}

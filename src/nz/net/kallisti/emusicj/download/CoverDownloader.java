@@ -29,43 +29,47 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.w3c.dom.Element;
 
 import com.google.inject.Inject;
 
 /**
- *
+ * 
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
 public class CoverDownloader extends HTTPDownloader implements ICoverDownloader {
 
 	@Inject
-	public CoverDownloader(IPreferences prefs) {
-		super(prefs);
+	public CoverDownloader(IPreferences prefs,
+			CredentialsProvider proxyCredsProvider) {
+		super(prefs, proxyCredsProvider);
 	}
-	
+
 	/**
 	 * @param url
 	 * @param outputFile
 	 */
 	public void setDownloader(URL url, File outputFile) {
-		super.setDownloader(url, outputFile, new IMimeType[] {MimeTypes.IMAGES});
+		super.setDownloader(url, outputFile,
+				new IMimeType[] { MimeTypes.IMAGES });
 	}
 
 	/**
 	 * @param el
 	 * @throws MalformedURLException
 	 */
+	@Override
 	public void setDownloader(Element el) throws MalformedURLException {
 		super.setDownloader(el);
 	}
 
-    @Override
-    protected void createMonitor() {
-        monitor = new CoverDownloadMonitor(this);
-    }
-    
+	@Override
+	protected void createMonitor() {
+		monitor = new CoverDownloadMonitor(this);
+	}
+
 }
