@@ -188,20 +188,33 @@ public class SelectableComposite extends Composite implements
 					markSelected2 = null;
 
 				} else {
-					for (ISelectableControl control : selected) {
-						if (control != src)
-							control.unselect();
-					}
-					selected.clear();
-					selected.add(src);
-					src.select();
-					lastSelected = src;
-					markSelected = src;
-					markSelected2 = null;
+					// Normal case: no modifiers
+					selectOnly(src);
 				}
 				notifyListeners(SWT.Selection, new Event());
 			}
 		}
+	}
+
+	/**
+	 * This selects the specified control, and deselects anything else.
+	 * 
+	 * @param selCtrl
+	 *            the control to select. If this is <code>null</code>,
+	 *            everything will be deselected.
+	 */
+	private void selectOnly(ISelectableControl selCtrl) {
+		for (ISelectableControl control : selected) {
+			if (control != selCtrl)
+				control.unselect();
+		}
+		selected.clear();
+		if (selCtrl != null)
+			selected.add(selCtrl);
+		selCtrl.select();
+		lastSelected = selCtrl;
+		markSelected = selCtrl;
+		markSelected2 = null;
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
