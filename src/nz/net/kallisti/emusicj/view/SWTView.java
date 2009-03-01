@@ -288,6 +288,9 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		downloadsList = new ScrolledComposite(mainArea, SWT.V_SCROLL
 				| SWT.BORDER);
 		downloadsList.setExpandHorizontal(true);
+		// By default the scroll increments are tiny
+		downloadsList.getVerticalBar().setIncrement(10);
+		downloadsList.getVerticalBar().setPageIncrement(100);
 		downloadsListComp = new SelectableComposite(downloadsList, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
