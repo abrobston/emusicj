@@ -173,11 +173,15 @@ public abstract class Preferences implements IPreferences {
 			String artist, String format) {
 		DecimalFormat df = new DecimalFormat("00");
 		String[] filePatternParts;
+		// Ticket #70 - turn '/' and '\' to whatever is appropriate on this
+		// platform to prevent confusion.
+		String pattern = filePattern.replace('/', File.separatorChar).replace(
+				'\\', File.separatorChar);
 		if (File.separator.equals("\\")) {
 			// avoid issues with windows and regex split
-			filePatternParts = filePattern.split("\\\\");
+			filePatternParts = pattern.split("\\\\");
 		} else {
-			filePatternParts = filePattern.split(File.separator);
+			filePatternParts = pattern.split(File.separator);
 		}
 		List<String> nameParts = new ArrayList<String>();
 		for (String part : filePatternParts) {
