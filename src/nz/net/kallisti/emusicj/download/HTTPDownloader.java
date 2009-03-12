@@ -255,8 +255,12 @@ public class HTTPDownloader implements IDownloader {
 		dlThread = null;
 	}
 
-	private void downloadError(String s) {
-		logger.log(Level.WARNING, dlThread + ": " + s);
+	private void downloadError(String s, Exception ex) {
+		if (ex == null) {
+			logger.log(Level.WARNING, dlThread + ": " + s);
+		} else {
+			logger.log(Level.WARNING, dlThread + ": " + s, ex);
+		}
 		failureCount++;
 		state = DLState.FAILED;
 		monitor.setState(state);
@@ -344,7 +348,8 @@ public class HTTPDownloader implements IDownloader {
 				out = new BufferedOutputStream(new FileOutputStream(partFile,
 						needToResume));
 			} catch (FileNotFoundException e) {
-				downloadError(e);
+				downloadError("needToResume=" + needToResume + " needToRename="
+						+ needToRename + " resumePoint=" + resumePoint, e);
 				return;
 			}
 			if (abort)
@@ -390,7 +395,7 @@ public class HTTPDownloader implements IDownloader {
 					get.abort();
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "
-							+ statusCode);
+							+ statusCode, null);
 					if (out != null)
 						out.close();
 					return;
@@ -449,7 +454,7 @@ public class HTTPDownloader implements IDownloader {
 							+ "already complete file");
 				}
 				if (!isFile) {
-					downloadError("Result isn't a file");
+					downloadError("Result isn't a file", null);
 					get.abort();
 					out.close();
 					get.releaseConnection();
@@ -468,7 +473,7 @@ public class HTTPDownloader implements IDownloader {
 					return;
 				}
 				if (fileLength == -1) {
-					downloadError("Didn't get a Content-Length: header.");
+					downloadError("Didn't get a Content-Length: header.", null);
 					get.abort();
 					out.close();
 					get.releaseConnection();
@@ -548,11 +553,10 @@ public class HTTPDownloader implements IDownloader {
 					// it'll
 					// be tried again later
 					// setState(DLState.FAILED);
-					downloadError("File downloaded not the size it should have "
-							+ "been: got "
-							+ bytesDown
-							+ ", expected "
-							+ fileLength);
+					downloadError(
+							"File downloaded not the size it should have "
+									+ "been: got " + bytesDown + ", expected "
+									+ fileLength, null);
 					out.close();
 					in.close();
 					get.releaseConnection();
