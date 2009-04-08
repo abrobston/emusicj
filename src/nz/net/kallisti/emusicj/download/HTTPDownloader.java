@@ -67,7 +67,7 @@ public class HTTPDownloader implements IDownloader {
 	URL url;
 	protected HTTPDownloadMonitor monitor;
 	File outputFile;
-	private DownloadThread dlThread;
+	private volatile DownloadThread dlThread;
 	protected volatile DLState state;
 	volatile long fileLength = -1;
 	volatile long bytesDown = 0;
@@ -84,6 +84,18 @@ public class HTTPDownloader implements IDownloader {
 		this.proxyCredsProvider = proxyCredsProvider;
 		this.logger = Logger.getLogger("nz.net.kallisti.emusicj.download");
 		createMonitor();
+	}
+
+	private static volatile int threadNumber = 0;
+
+	/**
+	 * This provides a new thread number. This is mostly used for debugging, in
+	 * order to see where threads get created.
+	 * 
+	 * @return a thread number. This will be different every time you call it.
+	 */
+	private synchronized static int getNextThreadNumber() {
+		return threadNumber++;
 	}
 
 	/**
@@ -188,7 +200,7 @@ public class HTTPDownloader implements IDownloader {
 		return monitor;
 	}
 
-	public void start() {
+	public synchronized void start() {
 		if (dlThread == null) {
 			dlThread = new DownloadThread();
 			dlThread.start();
@@ -202,7 +214,7 @@ public class HTTPDownloader implements IDownloader {
 		monitor.setState(state);
 	}
 
-	public void stop() {
+	public synchronized void stop() {
 		if (dlThread != null)
 			dlThread.finish();
 		state = DLState.CANCELLED;
@@ -210,7 +222,7 @@ public class HTTPDownloader implements IDownloader {
 		dlThread = null;
 	}
 
-	public void requeue() {
+	public synchronized void requeue() {
 		if (dlThread != null)
 			dlThread.finish();
 		state = DLState.NOTSTARTED;
@@ -218,7 +230,7 @@ public class HTTPDownloader implements IDownloader {
 		dlThread = null;
 	}
 
-	public void hardStop() {
+	public synchronized void hardStop() {
 		if (dlThread != null)
 			dlThread.hardFinish();
 		state = DLState.CANCELLED;
@@ -226,7 +238,7 @@ public class HTTPDownloader implements IDownloader {
 		dlThread = null;
 	}
 
-	public void pause() {
+	public synchronized void pause() {
 		if (dlThread != null)
 			dlThread.finish();
 		state = DLState.PAUSED;
@@ -247,7 +259,7 @@ public class HTTPDownloader implements IDownloader {
 		return outputFile;
 	}
 
-	private void downloadError(Exception e) {
+	private synchronized void downloadError(Exception e) {
 		logger.log(Level.WARNING, dlThread + ": A download error occurred", e);
 		failureCount++;
 		state = DLState.FAILED;
@@ -255,7 +267,7 @@ public class HTTPDownloader implements IDownloader {
 		dlThread = null;
 	}
 
-	private void downloadError(String s, Exception ex) {
+	private synchronized void downloadError(String s, Exception ex) {
 		if (ex == null) {
 			logger.log(Level.WARNING, dlThread + ": " + s);
 		} else {
@@ -314,7 +326,7 @@ public class HTTPDownloader implements IDownloader {
 
 		@Override
 		public void run() {
-			setName(outputFile.toString());
+			setName(outputFile.toString() + " (#" + getNextThreadNumber() + ")");
 			setState(DLState.CONNECTING);
 			BufferedOutputStream out = null;
 			File partFile;
@@ -549,10 +561,9 @@ public class HTTPDownloader implements IDownloader {
 					if (needToRename)
 						partFile.renameTo(outputFile);
 					get.releaseConnection();
-				} else { // if we didn't get the whole file, mark it and
-					// it'll
+				} else {
+					// if we didn't get the whole file, mark it and it'll
 					// be tried again later
-					// setState(DLState.FAILED);
 					downloadError(
 							"File downloaded not the size it should have "
 									+ "been: got " + bytesDown + ", expected "
