@@ -107,16 +107,6 @@ public class EMusicController implements IEMusicController,
 	public void run(String[] args) {
 		// Initialise the system
 		prefs.addListener(this);
-		// Preprocess the args array
-		// If something starts with -psn we want to ignore it,
-		// it's a strange Mac thing.
-		// ArrayList<String> argsList = new ArrayList<String>();
-		// for (String arg : args) {
-		// if (!arg.startsWith("-psn")) {
-		// argsList.add(arg);
-		// }
-		// }
-		// args = argsList.toArray(args);
 		if (!prefs.getProperty("noServer", "0").equals("1")) {
 			// First see if another instance is running, if so, pass our args on
 			server = new IPCServerClient(this, new File(prefs.getStatePath()
@@ -127,6 +117,7 @@ public class EMusicController implements IEMusicController,
 				return;
 			}
 		}
+
 		try {
 			// allow max download failures to be overridden
 			maxDownloadFailures = Integer.parseInt(prefs.getProperty(
@@ -232,15 +223,15 @@ public class EMusicController implements IEMusicController,
 			error("Error reading file", "The file is of an unknown type\n"
 					+ file);
 		} catch (Exception e) {
-//			error("Error reading file", "Something failed while reading the "
-//					+ "file\n" + file
-//					+ "\nError details have been written to the " + "terminal.");
+			// error("Error reading file", "Something failed while reading the "
+			// + "file\n" + file
+			// + "\nError details have been written to the " + "terminal.");
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			error("Error reading file", "Something failed while reading the "
-					+ "file\n" + file
-					+ "\nError details are below:\n"+sw.toString());
+					+ "file\n" + file + "\nError details are below:\n"
+					+ sw.toString());
 			e.printStackTrace();
 		}
 		// this means that if the machine crashes, the downloads in progress

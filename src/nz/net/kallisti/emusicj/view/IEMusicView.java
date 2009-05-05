@@ -119,7 +119,8 @@ public interface IEMusicView {
 	/**
 	 * Gets the view to ask for the credentials. When they have been received
 	 * from the user, they are sent to the callback. It provides the details on
-	 * the proxy so that they can be displayed to the user.
+	 * the proxy so that they can be displayed to the user. If the view is not
+	 * yet active, then the request should be deferred until it is.
 	 * 
 	 * @param authScheme
 	 *            the authentication scheme for this proxy

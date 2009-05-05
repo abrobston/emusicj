@@ -34,6 +34,7 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
+import nz.net.kallisti.emusicj.network.proxy.ProxyCredentialsProvider.CredsCallback;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -41,12 +42,14 @@ import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
+import nz.net.kallisti.emusicj.view.swtwidgets.ProxyDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 
+import org.apache.commons.httpclient.auth.AuthScheme;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.SashForm;
@@ -858,6 +861,17 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 */
 	public static Display getDisplay() {
 		return display;
+	}
+
+	public void getProxyCredentials(final AuthScheme authScheme,
+			final String host, final int port, final CredsCallback credsCallback) {
+		defer(new Runnable() {
+			public void run() {
+				ProxyDialogue proxyDialogue = new ProxyDialogue(shell,
+						authScheme, host, port, credsCallback);
+				proxyDialogue.open();
+			}
+		});
 	}
 
 }

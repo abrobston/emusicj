@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.network.proxy;
 
+import java.util.concurrent.Semaphore;
+
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 import org.apache.commons.httpclient.Credentials;
@@ -31,6 +33,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 	 */
 	private volatile boolean userCancelled = false;
 	private final IEMusicView view;
+	private final Semaphore semaphore = new Semaphore(1);
 
 	/**
 	 * Default constructor that gets an instance of the view so that it can
@@ -47,8 +50,8 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 			throw new CredentialsNotAvailableException(
 					"Unable to handle authentication for things that aren't proxies");
 		}
-		if (authScheme == null)
-			return null;
+		// if (authScheme == null)
+		// return null;
 		if (userCancelled)
 			throw new CredentialsNotAvailableException(
 					"The user cancelled the request for proxy details");
@@ -59,15 +62,23 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 			// just send them on.
 			if (creds != null)
 				return creds;
+			// We know there will be one semaphore available, so we grab it now.
+			// It'll be released by the callback
+			try {
+				semaphore.acquire();
+			} catch (InterruptedException e1) {
+				throw new RuntimeException(
+						"A fatal error occurred: multiple threads are inside a synchronise block.",
+						e1);
+			}
 			// Ask for the credentials. Note that due to the design of the
 			// provider, this thread has to be blocked while we get them, but
 			// we still want to make it easy for the GUI code. So we allow
 			// ourselves to wait while the GUI goes and talks to the user.
-			view.getProxyCredentials(authScheme, host, port, new CredsCallback(
-					Thread.currentThread()));
+			view.getProxyCredentials(authScheme, host, port,
+					new CredsCallback());
 			try {
-				while (creds == null && !userCancelled)
-					wait();
+				semaphore.acquire();
 			} catch (InterruptedException e) {
 				if (creds == null)
 					throw new CredentialsNotAvailableException(
@@ -91,16 +102,6 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 	 */
 	public class CredsCallback {
 
-		private final Thread thread;
-
-		/**
-		 * This takes the thread that will be sent an interrupt once the
-		 * credentials have been set.
-		 */
-		public CredsCallback(Thread thread) {
-			this.thread = thread;
-		}
-
 		/**
 		 * This is to be called when the user has provided a username and
 		 * password for the proxy.
@@ -113,7 +114,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 		public synchronized void setUsernamePassword(String username,
 				String password) {
 			creds = new UsernamePasswordCredentials(username, password);
-			thread.notify();
+			semaphore.release();
 		}
 
 		/**
@@ -122,7 +123,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 		 */
 		public synchronized void userCancelled() {
 			userCancelled = true;
-			thread.notify();
+			semaphore.release();
 		}
 
 	}
