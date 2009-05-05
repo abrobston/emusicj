@@ -44,11 +44,11 @@ import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
+import nz.net.kallisti.emusicj.network.proxy.ProxyCredentialsProvider;
 import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 import nz.net.kallisti.emusicj.view.SWTView;
-import nz.net.kallisti.emusicj.view.swtwidgets.network.SWTCredentialsProvider;
 
 import org.apache.commons.httpclient.auth.CredentialsProvider;
 
@@ -89,7 +89,7 @@ public class Bindings extends AbstractModule {
 				EMXMetaFile.class);
 		bind(IUpdateCheck.class).to(UpdateCheck.class);
 		bind(IFileNameCleaner.class).to(FileNameCleaner.class);
-		bind(CredentialsProvider.class).to(SWTCredentialsProvider.class).in(
+		bind(CredentialsProvider.class).to(ProxyCredentialsProvider.class).in(
 				Scopes.SINGLETON);
 	}
 }
