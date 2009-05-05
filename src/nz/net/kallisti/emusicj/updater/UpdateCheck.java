@@ -30,22 +30,26 @@ import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import com.google.inject.Inject;
 
-
 /**
- * <p>Checks to see if there is a new version of the program available. Reads
- * the provided URL, which contains a string containing a space-seperated
- * list of versions that are considered current. If the current version isn't
- * on that list, then it notifies the provided {@link IUpdateCheckListener}.</p>
- * <p>Note that if the update request fails, this will fail silently (with
- * errors going to STDERR)</p>
+ * <p>
+ * Checks to see if there is a new version of the program available. Reads the
+ * provided URL, which contains a string containing a space-seperated list of
+ * versions that are considered current. If the current version isn't on that
+ * list, then it notifies the provided {@link IUpdateCheckListener}.
+ * </p>
+ * <p>
+ * Note that if the update request fails, this will fail silently (with errors
+ * going to STDERR)
+ * </p>
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
 public class UpdateCheck implements IUpdateCheck {
@@ -53,29 +57,22 @@ public class UpdateCheck implements IUpdateCheck {
 	private IUpdateCheckListener listener;
 	private URL updateUrl;
 	private final IPreferences prefs;
+	private final CredentialsProvider credsProvider;
 
 	@Inject
-	public UpdateCheck(IPreferences prefs) {
+	public UpdateCheck(IPreferences prefs, CredentialsProvider credsProvider) {
 		this.prefs = prefs;
+		this.credsProvider = credsProvider;
 	}
 
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.updater.IUpdateCheck#setListener(nz.net.kallisti.emusicj.updater.IUpdateCheckListener)
-	 */
 	public void setListener(IUpdateCheckListener listener) {
 		this.listener = listener;
 	}
-	
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.updater.IUpdateCheck#setUpdateUrl(java.lang.String)
-	 */
+
 	public void setUpdateUrl(URL updateUrl) {
 		this.updateUrl = updateUrl;
 	}
-	
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.updater.IUpdateCheck#check(java.lang.String)
-	 */
+
 	public void check(String currVersion) {
 		UpdateCheckThread updateThread = new UpdateCheckThread(currVersion);
 		updateThread.start();
@@ -85,26 +82,29 @@ public class UpdateCheck implements IUpdateCheck {
 		listener.updateAvailable(version);
 	}
 
-	
 	/**
-	 * <p>Performs the actual update checking, as a thread.
+	 * <p>
+	 * Performs the actual update checking, as a thread.
 	 */
 	public class UpdateCheckThread extends Thread {
 
 		private String currVersion = null;
-		
+
 		public UpdateCheckThread(String currVersion) {
 			this.currVersion = currVersion;
 		}
-		
+
+		@Override
 		public void run() {
 			setName("Update Check");
-            HttpClient http = new HttpClient();
-            if (!prefs.getProxyHost().equals("")) {
-                HostConfiguration hostConf = new HostConfiguration();
-                hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
-                http.setHostConfiguration(hostConf);
-            }
+			HttpClient http = new HttpClient();
+			http.getParams().setParameter(CredentialsProvider.PROVIDER,
+					credsProvider);
+			if (!prefs.getProxyHost().equals("")) {
+				HostConfiguration hostConf = new HostConfiguration();
+				hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
+				http.setHostConfiguration(hostConf);
+			}
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received
 			params.setSoTimeout(120000);
@@ -114,13 +114,14 @@ public class UpdateCheck implements IUpdateCheck {
 			try {
 				statusCode = http.executeMethod(get);
 			} catch (IOException e) {
-				System.err.println("Checking for updates failed [1]");				
+				System.err.println("Checking for updates failed [1]");
 				e.printStackTrace();
 				return;
 			}
 			if (statusCode != HttpStatus.SC_OK) {
 				get.releaseConnection();
-				System.err.println("Checking for updates failed [2], code: "+statusCode);
+				System.err.println("Checking for updates failed [2], code: "
+						+ statusCode);
 				return;
 			}
 			try {
@@ -128,8 +129,9 @@ public class UpdateCheck implements IUpdateCheck {
 				String[] versions = response.split("[ \n]");
 				if (versions.length == 0) {
 					get.releaseConnection();
-					System.err.println("Checking for updates failed [3]: no versions found in response");
-					return;					
+					System.err
+							.println("Checking for updates failed [3]: no versions found in response");
+					return;
 				}
 				boolean versionOK = false;
 				for (String v : versions) {
@@ -143,13 +145,13 @@ public class UpdateCheck implements IUpdateCheck {
 				}
 			} catch (IOException e) {
 				get.releaseConnection();
-				System.err.println("Checking for updates failed [4]");				
+				System.err.println("Checking for updates failed [4]");
 				e.printStackTrace();
 				return;
 			}
-			get.releaseConnection();			
+			get.releaseConnection();
 		}
 
 	}
-	
+
 }

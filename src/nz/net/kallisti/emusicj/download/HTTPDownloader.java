@@ -368,6 +368,8 @@ public class HTTPDownloader implements IDownloader {
 				return;
 			HttpClient http = new HttpClient();
 			if (prefs.usingProxy()) {
+				http.getParams().setParameter(CredentialsProvider.PROVIDER,
+						proxyCredsProvider);
 				HostConfiguration hostConf = new HostConfiguration();
 				hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
 				http.setHostConfiguration(hostConf);
