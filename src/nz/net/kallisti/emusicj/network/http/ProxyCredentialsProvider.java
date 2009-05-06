@@ -1,6 +1,7 @@
-package nz.net.kallisti.emusicj.network.proxy;
+package nz.net.kallisti.emusicj.network.http;
 
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
@@ -34,6 +35,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 	private volatile boolean userCancelled = false;
 	private final IEMusicView view;
 	private final Semaphore semaphore = new Semaphore(1);
+	private final AtomicInteger blockedCounter = new AtomicInteger();
 
 	/**
 	 * Default constructor that gets an instance of the view so that it can
@@ -57,11 +59,23 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 					"The user cancelled the request for proxy details");
 		if (creds != null)
 			return creds;
+		// This is so we can clear the creds object afterwards. This is so that
+		// if they get it wrong, we'll get asked again.
+		blockedCounter.incrementAndGet();
 		synchronized (this) {
 			// In case we were waiting for someone else to get the creds, we
 			// just send them on.
-			if (creds != null)
-				return creds;
+			if (userCancelled) {
+				blockedCounter.decrementAndGet();
+				throw new CredentialsNotAvailableException(
+						"The user cancelled the request for proxy details");
+			}
+			if (creds != null) {
+				Credentials lCreds = creds;
+				if (blockedCounter.decrementAndGet() == 0)
+					creds = null;
+				return lCreds;
+			}
 			// We know there will be one semaphore available, so we grab it now.
 			// It'll be released by the callback
 			try {
@@ -84,13 +98,18 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 					throw new CredentialsNotAvailableException(
 							"The thread was interrupted while waiting for the proxy information",
 							e);
+			} finally {
+				semaphore.release();
 			}
 			if (creds == null) {
 				// This probably means the user hit cancel
 				throw new CredentialsNotAvailableException(
 						"The proxy credentials are not available");
 			}
-			return creds;
+			Credentials lCreds = creds;
+			if (blockedCounter.decrementAndGet() == 0)
+				creds = null;
+			return lCreds;
 		}
 	}
 

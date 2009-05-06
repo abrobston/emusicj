@@ -44,7 +44,9 @@ import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
-import nz.net.kallisti.emusicj.network.proxy.ProxyCredentialsProvider;
+import nz.net.kallisti.emusicj.network.http.HttpClientProvider;
+import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
+import nz.net.kallisti.emusicj.network.http.ProxyCredentialsProvider;
 import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
@@ -90,6 +92,8 @@ public class Bindings extends AbstractModule {
 		bind(IUpdateCheck.class).to(UpdateCheck.class);
 		bind(IFileNameCleaner.class).to(FileNameCleaner.class);
 		bind(CredentialsProvider.class).to(ProxyCredentialsProvider.class).in(
+				Scopes.SINGLETON);
+		bind(IHttpClientProvider.class).to(HttpClientProvider.class).in(
 				Scopes.SINGLETON);
 	}
 }

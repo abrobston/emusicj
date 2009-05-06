@@ -24,13 +24,11 @@ package nz.net.kallisti.emusicj.updater;
 import java.io.IOException;
 import java.net.URL;
 
-import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
 
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
@@ -56,13 +54,11 @@ public class UpdateCheck implements IUpdateCheck {
 
 	private IUpdateCheckListener listener;
 	private URL updateUrl;
-	private final IPreferences prefs;
-	private final CredentialsProvider credsProvider;
+	private final IHttpClientProvider clientProvider;
 
 	@Inject
-	public UpdateCheck(IPreferences prefs, CredentialsProvider credsProvider) {
-		this.prefs = prefs;
-		this.credsProvider = credsProvider;
+	public UpdateCheck(IHttpClientProvider clientProvider) {
+		this.clientProvider = clientProvider;
 	}
 
 	public void setListener(IUpdateCheckListener listener) {
@@ -97,14 +93,7 @@ public class UpdateCheck implements IUpdateCheck {
 		@Override
 		public void run() {
 			setName("Update Check");
-			HttpClient http = new HttpClient();
-			http.getParams().setParameter(CredentialsProvider.PROVIDER,
-					credsProvider);
-			if (!prefs.getProxyHost().equals("")) {
-				HostConfiguration hostConf = new HostConfiguration();
-				hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
-				http.setHostConfiguration(hostConf);
-			}
+			HttpClient http = clientProvider.getHttpClient();
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received
 			params.setSoTimeout(120000);

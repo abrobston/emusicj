@@ -28,8 +28,8 @@ import java.net.URL;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
+import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
 
-import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,8 +56,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
-			CredentialsProvider proxyCredsProvider) {
-		super(prefs, proxyCredsProvider);
+			IHttpClientProvider clientProvider) {
+		super(prefs, clientProvider);
 	}
 
 	public void setDownloader(URL url, File outputFile, int trackNum,

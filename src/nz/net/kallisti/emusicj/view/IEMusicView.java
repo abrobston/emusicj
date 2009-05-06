@@ -23,7 +23,7 @@ package nz.net.kallisti.emusicj.view;
 
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
-import nz.net.kallisti.emusicj.network.proxy.ProxyCredentialsProvider.CredsCallback;
+import nz.net.kallisti.emusicj.network.http.ProxyCredentialsProvider.CredsCallback;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
 
