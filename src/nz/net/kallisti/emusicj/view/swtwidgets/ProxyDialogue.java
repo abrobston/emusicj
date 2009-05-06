@@ -65,14 +65,19 @@ public class ProxyDialogue {
 	 */
 	public void open() {
 		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		GridLayout dialogLayout = new GridLayout(1, false);
+		GridLayout dialogLayout = new GridLayout(2, false);
 		dialog.setLayout(dialogLayout);
 
 		// First is the text saying what this is about
+		new Composite(dialog, SWT.NONE); // spacer
 		Label lbl = new Label(dialog, SWT.WRAP);
 		lbl.setText("Log in to the proxy at " + this.host + ":" + this.port);
 
 		// Second is the username box
+		Label usernameLabel = new Label(dialog, SWT.NONE);
+		usernameLabel.setText("Username:");
+		usernameLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false));
 		usernameField = new Text(dialog, SWT.BORDER);
 		usernameField.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true,
 				false));
@@ -87,6 +92,10 @@ public class ProxyDialogue {
 		});
 
 		// Third is the password box
+		Label passwordLabel = new Label(dialog, SWT.NONE);
+		passwordLabel.setText("Password:");
+		passwordLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false));
 		passwordField = new Text(dialog, SWT.BORDER | SWT.PASSWORD);
 		passwordField.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true,
 				false));
@@ -108,6 +117,9 @@ public class ProxyDialogue {
 
 		GridLayout buttonsLayout = new GridLayout(2, true);
 		buttons.setLayout(buttonsLayout);
+		buttonsLayoutData = new GridData(SWT.END, SWT.CENTER, false, false);
+		buttonsLayoutData.horizontalSpan = 2;
+		buttons.setLayoutData(buttonsLayoutData);
 
 		Button okButton = new Button(buttons, SWT.PUSH);
 		okButton.setText("OK");
