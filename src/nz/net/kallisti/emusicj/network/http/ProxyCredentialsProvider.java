@@ -65,6 +65,11 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 		synchronized (this) {
 			// In case we were waiting for someone else to get the creds, we
 			// just send them on.
+			if (userCancelled) {
+				blockedCounter.decrementAndGet();
+				throw new CredentialsNotAvailableException(
+						"The user cancelled the request for proxy details");
+			}
 			if (creds != null) {
 				Credentials lCreds = creds;
 				if (blockedCounter.decrementAndGet() == 0)
