@@ -37,13 +37,12 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeType;
+import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
 
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.w3c.dom.Document;
@@ -54,10 +53,6 @@ import com.google.inject.Inject;
 /**
  * <p>
  * Downloads files from a URL from an HTTP server
- * </p>
- * 
- * <p>
- * $Id$
  * </p>
  * 
  * @author robin
@@ -75,13 +70,12 @@ public class HTTPDownloader implements IDownloader {
 	IMimeType[] mimeType;
 	protected IPreferences prefs;
 	protected Logger logger;
-	private final CredentialsProvider proxyCredsProvider;
+	private final IHttpClientProvider clientProvider;
 
 	@Inject
-	public HTTPDownloader(IPreferences prefs,
-			CredentialsProvider proxyCredsProvider) {
+	public HTTPDownloader(IPreferences prefs, IHttpClientProvider clientProvider) {
 		this.prefs = prefs;
-		this.proxyCredsProvider = proxyCredsProvider;
+		this.clientProvider = clientProvider;
 		this.logger = Logger.getLogger("nz.net.kallisti.emusicj.download");
 		createMonitor();
 	}
@@ -366,16 +360,7 @@ public class HTTPDownloader implements IDownloader {
 			}
 			if (abort)
 				return;
-			HttpClient http = new HttpClient();
-			if (prefs.usingProxy()) {
-				http.getParams().setParameter(CredentialsProvider.PROVIDER,
-						proxyCredsProvider);
-				HostConfiguration hostConf = new HostConfiguration();
-				hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
-				http.setHostConfiguration(hostConf);
-				http.getParams().setParameter(CredentialsProvider.PROVIDER,
-						proxyCredsProvider);
-			}
+			HttpClient http = clientProvider.getHttpClient();
 			HttpMethodParams params = new HttpMethodParams();
 			// Two minute timeout if no data is received
 			params.setSoTimeout(120000);

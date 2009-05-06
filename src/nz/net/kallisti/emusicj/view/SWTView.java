@@ -34,7 +34,7 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
-import nz.net.kallisti.emusicj.network.proxy.ProxyCredentialsProvider.CredsCallback;
+import nz.net.kallisti.emusicj.network.http.ProxyCredentialsProvider.CredsCallback;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
