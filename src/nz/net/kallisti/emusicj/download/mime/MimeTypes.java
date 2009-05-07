@@ -27,7 +27,7 @@ import java.awt.datatransfer.MimeTypeParseException;
  * This creates a few standard MIME types for easy access and pooling.
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
 public abstract class MimeTypes {
@@ -37,6 +37,7 @@ public abstract class MimeTypes {
 	public static MimeType APP_OCTET;
 	public static MimeType PDF;
 	public static MimeType OGG;
+	public static MimeType CUE;
 
 	static {
 		try {
@@ -45,9 +46,10 @@ public abstract class MimeTypes {
 			APP_OCTET = new MimeType("application/octet-stream");
 			PDF = new MimeType("application/pdf");
 			OGG = new MimeType("application/ogg");
+			CUE = new MimeType("application/cue");
 		} catch (MimeTypeParseException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

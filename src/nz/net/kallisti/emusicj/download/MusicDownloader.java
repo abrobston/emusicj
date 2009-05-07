@@ -52,7 +52,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	String genre;
 	int duration = -1;
 	static IMimeType[] mimeTypes = { MimeTypes.AUDIO, MimeTypes.APP_OCTET,
-			MimeTypes.PDF, MimeTypes.OGG };
+			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE };
 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
