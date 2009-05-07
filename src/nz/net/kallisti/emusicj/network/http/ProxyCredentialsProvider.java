@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 import org.apache.commons.httpclient.Credentials;
+import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScheme;
 import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
@@ -129,10 +130,21 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 		 *            the supplied username
 		 * @param password
 		 *            the supplied password
+		 * @param host
+		 *            the host that these credentials are for. Required for NTLM
+		 *            only, otherwise may be <code>null</code>.
+		 * @param domain
+		 *            if this is for an NTLM proxy, the domain needs to be
+		 *            provided. If it's just a regular one, then set this to
+		 *            <code>null</code>.
 		 */
 		public synchronized void setUsernamePassword(String username,
-				String password) {
-			creds = new UsernamePasswordCredentials(username, password);
+				String password, String host, String domain) {
+			if (domain == null) {
+				creds = new UsernamePasswordCredentials(username, password);
+			} else {
+				creds = new NTCredentials(username, password, host, domain);
+			}
 			semaphore.release();
 		}
 

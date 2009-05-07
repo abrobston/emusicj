@@ -4,6 +4,7 @@ import nz.net.kallisti.emusicj.network.http.ProxyCredentialsProvider.CredsCallba
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
+import org.apache.commons.httpclient.auth.NTLMScheme;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -37,6 +38,8 @@ public class ProxyDialogue {
 	private Text usernameField;
 	private Text passwordField;
 	private boolean isClosing = false;
+	private final boolean isNTLM;
+	private Text domainField;
 
 	/**
 	 * Initialises the proxy credentials dialogue
@@ -58,6 +61,7 @@ public class ProxyDialogue {
 		this.host = host;
 		this.port = port;
 		this.credsCallback = credsCallback;
+		this.isNTLM = (authScheme instanceof NTLMScheme);
 	}
 
 	/**
@@ -73,7 +77,28 @@ public class ProxyDialogue {
 		Label lbl = new Label(dialog, SWT.WRAP);
 		lbl.setText("Log in to the proxy at " + this.host + ":" + this.port);
 
-		// Second is the username box
+		// Domain box (NTLM only)
+		if (isNTLM) {
+			Label domainLabel = new Label(dialog, SWT.NONE);
+			domainLabel.setText("Domain:");
+			domainLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
+					false, false));
+			domainField = new Text(dialog, SWT.BORDER);
+			domainField.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true,
+					false));
+			domainField.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.character == SWT.CR)
+						domainField.traverse(SWT.TRAVERSE_TAB_NEXT);
+					else if (e.character == SWT.ESC)
+						cancelClicked();
+				}
+			});
+
+		}
+
+		// username box
 		Label usernameLabel = new Label(dialog, SWT.NONE);
 		usernameLabel.setText("Username:");
 		usernameLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
@@ -163,7 +188,8 @@ public class ProxyDialogue {
 			return;
 		isClosing = true;
 		credsCallback.setUsernamePassword(usernameField.getText(),
-				passwordField.getText());
+				passwordField.getText(), host, isNTLM ? domainField.getText()
+						: null);
 		dialog.close();
 	}
 
