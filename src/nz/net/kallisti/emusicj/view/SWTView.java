@@ -39,6 +39,7 @@ import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
+import nz.net.kallisti.emusicj.view.swtwidgets.AppIcon;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
@@ -68,7 +69,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -279,7 +279,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
 		toolBar.setLayoutData(toolbarRowData);
-		Label iconLabel = new Label(toolbarRow, SWT.NONE);
+		AppIcon iconLabel = new AppIcon(toolbarRow, SWT.NONE);
 		toolbarRowData = new GridData();
 		toolbarRowData.grabExcessHorizontalSpace = true;
 		toolbarRowData.horizontalAlignment = SWT.RIGHT;
@@ -805,7 +805,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 * (non-Javadoc)
 	 * 
 	 * @see nz.net.kallisti.emusicj.view.IEMusicView#downloadCount(int, int,
-	 *      int)
+	 * int)
 	 */
 	public void downloadCount(final int dl, final int finished, final int total) {
 		if (sysTray != null)
