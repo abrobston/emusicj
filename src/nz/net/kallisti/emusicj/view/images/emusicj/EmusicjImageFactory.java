@@ -1,10 +1,15 @@
 package nz.net.kallisti.emusicj.view.images.emusicj;
 
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
+import nz.net.kallisti.emusicj.view.images.IStreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -15,12 +20,15 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author robin
  */
-public class EmusicjImageFactory implements IImageFactory {
+public class EmusicjImageFactory extends AbstractImageFactory implements
+		IImageFactory {
 
-	private Display display;
+	private IStreamDynamicImageProvider appIconProvider;
 
-	public void setDisplay(Display display) {
-		this.display = display;
+	@Inject
+	public EmusicjImageFactory(
+			Provider<IStreamDynamicImageProvider> streamImageProvider) {
+		super(streamImageProvider);
 	}
 
 	public Image getDownloadingIcon() {
@@ -72,9 +80,10 @@ public class EmusicjImageFactory implements IImageFactory {
 				.getResourceAsStream("emusicj-about.png"));
 	}
 
-	public Image getApplicationLogo() {
-		return new Image(display, this.getClass().getResourceAsStream(
-				"emusicj-app-32.png"));
+	public IDynamicImageProvider getApplicationLogoProvider() {
+		appIconProvider = initStreamImageProvider(appIconProvider, this
+				.getClass().getResourceAsStream("emusicj-app-32.png"));
+		return appIconProvider;
 	}
 
 }

@@ -28,7 +28,7 @@ import java.net.URL;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
-import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
+import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.w3c.dom.Element;
 

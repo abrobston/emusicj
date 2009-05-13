@@ -37,7 +37,7 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeType;
-import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
+import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;

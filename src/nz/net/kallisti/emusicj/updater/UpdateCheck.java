@@ -24,7 +24,7 @@ package nz.net.kallisti.emusicj.updater;
 import java.io.IOException;
 import java.net.URL;
 
-import nz.net.kallisti.emusicj.network.http.IHttpClientProvider;
+import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;

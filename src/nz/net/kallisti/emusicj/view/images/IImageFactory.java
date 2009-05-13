@@ -65,7 +65,13 @@ public interface IImageFactory {
 	public Image getAboutLogo();
 
 	/**
-	 * @return the image that appears to the right of the button bar
+	 * Gets the application logo for display on the button bar
+	 * 
+	 * @param parent
+	 *            the parent widget for this one
+	 * @param style
+	 *            the SWT style
+	 * @return a label containing the logo
 	 */
 	public IDynamicImageProvider getApplicationLogoProvider();
 
