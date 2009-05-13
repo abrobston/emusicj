@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.view.images;
 
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -65,6 +67,6 @@ public interface IImageFactory {
 	/**
 	 * @return the image that appears to the right of the button bar
 	 */
-	public Image getApplicationLogo();
+	public IDynamicImageProvider getApplicationLogoProvider();
 
 }

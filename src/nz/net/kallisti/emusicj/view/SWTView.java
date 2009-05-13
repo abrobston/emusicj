@@ -39,8 +39,8 @@ import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
-import nz.net.kallisti.emusicj.view.swtwidgets.AppIcon;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
+import nz.net.kallisti.emusicj.view.swtwidgets.DynamicImage;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.ProxyDialogue;
@@ -279,12 +279,13 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
 		toolBar.setLayoutData(toolbarRowData);
-		AppIcon iconLabel = new AppIcon(toolbarRow, SWT.NONE);
+		DynamicImage toolbarIcon = new DynamicImage(toolbarRow, SWT.NONE,
+				urlFactory.getAppURL(), imageFactory
+						.getApplicationLogoProvider());
 		toolbarRowData = new GridData();
 		toolbarRowData.grabExcessHorizontalSpace = true;
 		toolbarRowData.horizontalAlignment = SWT.RIGHT;
-		iconLabel.setLayoutData(toolbarRowData);
-		iconLabel.setImage(imageFactory.getApplicationLogo());
+		toolbarIcon.setLayoutData(toolbarRowData);
 
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
 		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

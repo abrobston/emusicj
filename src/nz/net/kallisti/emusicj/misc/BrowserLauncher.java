@@ -31,10 +31,12 @@ public class BrowserLauncher {
 				Runtime.getRuntime().exec(
 						"rundll32 url.dll,FileProtocolHandler "
 								+ url.toString());
-			} else { // assume Unix or Linux
-				String[] browsers = { "gnome-www-browser", "sensible-browser",
-						"firefox", "opera", "konqueror", "epiphany", "mozilla",
-						"netscape" };
+			} else { // assume Unix or Linux - most modern distros should only
+						// need the first one, but
+				// it doesn't hurt to have the other ones there.
+				String[] browsers = { "xdg-open", "gnome-www-browser",
+						"sensible-browser", "firefox", "opera", "konqueror",
+						"epiphany", "mozilla", "netscape" };
 				String browser = null;
 				for (int count = 0; count < browsers.length && browser == null; count++)
 					if (Runtime.getRuntime().exec(

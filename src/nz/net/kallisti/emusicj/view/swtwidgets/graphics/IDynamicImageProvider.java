@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.view.images;
+package nz.net.kallisti.emusicj.view.swtwidgets.graphics;
 
 import org.eclipse.swt.graphics.Image;
 
