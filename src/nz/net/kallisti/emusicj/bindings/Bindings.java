@@ -44,6 +44,8 @@ import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
+import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
+import nz.net.kallisti.emusicj.network.http.downloader.SimpleDownloader;
 import nz.net.kallisti.emusicj.network.http.proxy.HttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
@@ -51,6 +53,10 @@ import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.images.IStreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.images.IURLDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.images.StreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.images.URLDynamicImageProvider;
 
 import org.apache.commons.httpclient.auth.CredentialsProvider;
 
@@ -61,7 +67,7 @@ import com.google.inject.Scopes;
  * <p>
  * This contains the dependency injection bindings for Guice. It maps interface
  * to implementations. Branding-specific bindings shouldn't be included in here,
- * they should be added to a seperate module which is conditionally loaded.
+ * they should be added to a separate module which is conditionally loaded.
  * </p>
  * 
  * $Id:$
@@ -95,5 +101,9 @@ public class Bindings extends AbstractModule {
 				Scopes.SINGLETON);
 		bind(IHttpClientProvider.class).to(HttpClientProvider.class).in(
 				Scopes.SINGLETON);
+		bind(IStreamDynamicImageProvider.class).to(
+				StreamDynamicImageProvider.class);
+		bind(IURLDynamicImageProvider.class).to(URLDynamicImageProvider.class);
+		bind(ISimpleDownloader.class).to(SimpleDownloader.class);
 	}
 }

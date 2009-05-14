@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.view.swtwidgets;
+package nz.net.kallisti.emusicj.view.swtwidgets.graphics;
 
 import java.net.URL;
 import java.util.logging.Level;
@@ -6,14 +6,15 @@ import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.misc.LogUtils;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageChangeListener;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 /**
@@ -26,7 +27,8 @@ import org.eclipse.swt.widgets.Label;
  * 
  * @author robin
  */
-public class DynamicImage extends Composite implements IDynamicImageChangeListener {
+public class DynamicImage extends Composite implements
+		IDynamicImageChangeListener {
 
 	private final Label lbl;
 	private final URL url;
@@ -78,14 +80,17 @@ public class DynamicImage extends Composite implements IDynamicImageChangeListen
 	 * @param dynImage
 	 *            the dynamic image provider
 	 */
-	public DynamicImage(Composite parent, int style, URL url,
+	public DynamicImage(Composite parent, int style, Display display, URL url,
 			IDynamicImageProvider dynImage) {
 		super(parent, style);
+		this.setLayout(new GridLayout(1, false));
 		this.url = url;
 		lbl = new Label(this, SWT.NONE);
 		dynImage.addListener(this);
-		lbl.setImage(dynImage.getImage());
+		newImage(dynImage, dynImage.getImage());
 		if (url != null) {
+			final Cursor cursor = new Cursor(display, SWT.CURSOR_HAND);
+			lbl.setCursor(cursor);
 			lbl.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseDown(MouseEvent e) {
@@ -97,6 +102,8 @@ public class DynamicImage extends Composite implements IDynamicImageChangeListen
 
 	public void newImage(IDynamicImageProvider dynImage, Image image) {
 		lbl.setImage(image);
+		layout();
+		pack();
 	}
 
 	/**

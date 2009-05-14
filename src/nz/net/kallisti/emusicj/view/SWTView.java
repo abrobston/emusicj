@@ -40,7 +40,6 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
-import nz.net.kallisti.emusicj.view.swtwidgets.DynamicImage;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.ProxyDialogue;
@@ -48,6 +47,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
@@ -280,7 +280,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
 		toolBar.setLayoutData(toolbarRowData);
 		DynamicImage toolbarIcon = new DynamicImage(toolbarRow, SWT.NONE,
-				urlFactory.getAppURL(), imageFactory
+				display, urlFactory.getAppURL(), imageFactory
 						.getApplicationLogoProvider());
 		toolbarRowData = new GridData();
 		toolbarRowData.grabExcessHorizontalSpace = true;

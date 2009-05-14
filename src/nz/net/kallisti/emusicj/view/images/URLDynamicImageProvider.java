@@ -34,7 +34,8 @@ import com.google.inject.Provider;
  * 
  * @author robin
  */
-public class URLDynamicImageProvider implements IDynamicImageProvider, IURLDynamicImageProvider {
+public class URLDynamicImageProvider implements IDynamicImageProvider,
+		IURLDynamicImageProvider {
 
 	private final List<IDynamicImageChangeListener> listeners;
 	private final Logger logger;
@@ -57,9 +58,6 @@ public class URLDynamicImageProvider implements IDynamicImageProvider, IURLDynam
 		logger = LogUtils.getLogger(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.view.images.IURLDynamicImageProvider#setParams(java.net.URL, java.io.File, org.eclipse.swt.widgets.Display)
-	 */
 	public void setParams(URL url, File cacheDir, Display display) {
 		this.display = display;
 		// First thing, check cache - files in the cache are known by an MD5 of
