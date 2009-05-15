@@ -58,6 +58,8 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 
 	public void setParams(URL url, File cacheDir, Display display) {
 		this.display = display;
+		if (cacheDir == null)
+			throw new IllegalArgumentException("cacheDir cannot be null");
 		// First thing, check cache - files in the cache are known by an MD5 of
 		// their URL.
 		MessageDigest md5;
@@ -83,6 +85,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 					setImage(file);
 				}
 			});
+			downloader.start();
 		} catch (NoSuchAlgorithmException e) {
 			logger
 					.log(

@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -33,6 +34,7 @@ public class DynamicImage extends Composite implements
 	private final Label lbl;
 	private final URL url;
 	private Logger logger;
+	private final SWTView view;
 
 	/**
 	 * Creates an instance of the application icon widget that uses a static
@@ -49,8 +51,10 @@ public class DynamicImage extends Composite implements
 	 * @param image
 	 *            the image to show
 	 */
-	public DynamicImage(Composite parent, int style, URL url, Image image) {
+	public DynamicImage(Composite parent, int style, URL url, Image image,
+			SWTView view) {
 		super(parent, style);
+		this.view = view;
 		logger = LogUtils.getLogger(this);
 		this.url = url;
 		lbl = new Label(this, SWT.NONE);
@@ -81,9 +85,14 @@ public class DynamicImage extends Composite implements
 	 *            the dynamic image provider
 	 */
 	public DynamicImage(Composite parent, int style, Display display, URL url,
-			IDynamicImageProvider dynImage) {
+			IDynamicImageProvider dynImage, SWTView view) {
 		super(parent, style);
-		this.setLayout(new GridLayout(1, false));
+		this.view = view;
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginWidth = 32; // I don't know exactly why this has to be 32,
+		// but it does.
+		layout.marginHeight = 0;
+		this.setLayout(layout);
 		this.url = url;
 		lbl = new Label(this, SWT.NONE);
 		dynImage.addListener(this);
@@ -100,10 +109,15 @@ public class DynamicImage extends Composite implements
 		}
 	}
 
-	public void newImage(IDynamicImageProvider dynImage, Image image) {
-		lbl.setImage(image);
-		layout();
-		pack();
+	public void newImage(IDynamicImageProvider dynImage, final Image image) {
+		view.deferViewEvent(new Runnable() {
+			public void run() {
+				lbl.setImage(image);
+				lbl.pack();
+				layout();
+				pack();
+			}
+		});
 	}
 
 	/**

@@ -4,7 +4,9 @@ import java.io.File;
 
 /**
  * <p>
- * Interface for the Preferences implementation
+ * Interface for the Preferences implementation. This is pretty much a utility
+ * class for providing information about the system and its (usually saved)
+ * state.
  * </p>
  * 
  * $Id:$
@@ -117,8 +119,8 @@ public interface IPreferences {
 	/**
 	 * Gets the user-defined cover art filename.
 	 * 
-	 * @return the user-defined cover art filename, or <code>null</code> if
-	 *         none has been defined.
+	 * @return the user-defined cover art filename, or <code>null</code> if none
+	 *         has been defined.
 	 */
 	public String getCoverArtFilename();
 
@@ -128,5 +130,12 @@ public interface IPreferences {
 	 * @return true if the cover art should be downloaded, false otherwise
 	 */
 	public boolean downloadCoverArt();
+
+	/**
+	 * Provides the directory that should be used for saving icons into.
+	 * 
+	 * @return a directory for caching icons in
+	 */
+	public File getIconCacheDir();
 
 }

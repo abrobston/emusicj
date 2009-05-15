@@ -1,10 +1,14 @@
 package nz.net.kallisti.emusicj.view.images.emusicj;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -23,12 +27,13 @@ import com.google.inject.Provider;
 public class EmusicjImageFactory extends AbstractImageFactory implements
 		IImageFactory {
 
-	private IStreamDynamicImageProvider appIconProvider;
+	private IURLDynamicImageProvider appIconProvider;
 
 	@Inject
 	public EmusicjImageFactory(
-			Provider<IStreamDynamicImageProvider> streamImageProvider) {
-		super(streamImageProvider);
+			Provider<IStreamDynamicImageProvider> streamImageProvider,
+			Provider<IURLDynamicImageProvider> urlImageProvider) {
+		super(streamImageProvider, urlImageProvider);
 	}
 
 	public Image getDownloadingIcon() {
@@ -80,9 +85,23 @@ public class EmusicjImageFactory extends AbstractImageFactory implements
 				.getResourceAsStream("emusicj-about.png"));
 	}
 
+	// public IDynamicImageProvider getApplicationLogoProvider() {
+	// appIconProvider = initStreamImageProvider(appIconProvider, this
+	// .getClass().getResourceAsStream("emusicj-app-32.png"));
+	// return appIconProvider;
+	// }
+
 	public IDynamicImageProvider getApplicationLogoProvider() {
-		appIconProvider = initStreamImageProvider(appIconProvider, this
-				.getClass().getResourceAsStream("emusicj-app-32.png"));
+		try {
+			appIconProvider = initURLImageProvider(appIconProvider, new URL(
+					"http://www.kallisti.net.nz/~robin/test.png"));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// appIconProvider = initStreamImageProvider(appIconProvider, this
+		// .getClass().getResourceAsStream("emusicj-app-32.png"));
 		return appIconProvider;
 	}
 
