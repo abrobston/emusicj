@@ -2,6 +2,8 @@ package nz.net.kallisti.emusicj.view.images;
 
 import java.io.InputStream;
 
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
+
 import org.eclipse.swt.widgets.Display;
 
 import com.google.inject.Provider;

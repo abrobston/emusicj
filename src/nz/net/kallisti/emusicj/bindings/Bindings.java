@@ -53,10 +53,10 @@ import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 import nz.net.kallisti.emusicj.view.SWTView;
-import nz.net.kallisti.emusicj.view.images.IStreamDynamicImageProvider;
-import nz.net.kallisti.emusicj.view.images.IURLDynamicImageProvider;
-import nz.net.kallisti.emusicj.view.images.StreamDynamicImageProvider;
-import nz.net.kallisti.emusicj.view.images.URLDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.StreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.URLDynamicImageProvider;
 
 import org.apache.commons.httpclient.auth.CredentialsProvider;
 

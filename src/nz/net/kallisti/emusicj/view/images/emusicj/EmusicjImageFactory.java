@@ -3,8 +3,8 @@ package nz.net.kallisti.emusicj.view.images.emusicj;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
-import nz.net.kallisti.emusicj.view.images.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
 

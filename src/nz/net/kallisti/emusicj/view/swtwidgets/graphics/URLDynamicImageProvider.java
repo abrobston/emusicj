@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.view.images;
+package nz.net.kallisti.emusicj.view.swtwidgets.graphics;
 
 import java.io.File;
 import java.net.URL;
@@ -13,8 +13,6 @@ import java.util.logging.Logger;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloadListener;
 import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageChangeListener;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.swt.graphics.Image;

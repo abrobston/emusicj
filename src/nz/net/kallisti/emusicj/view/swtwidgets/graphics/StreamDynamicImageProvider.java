@@ -1,9 +1,7 @@
-package nz.net.kallisti.emusicj.view.images;
+package nz.net.kallisti.emusicj.view.swtwidgets.graphics;
 
 import java.io.InputStream;
 
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageChangeListener;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;

@@ -1,9 +1,8 @@
-package nz.net.kallisti.emusicj.view.images;
+package nz.net.kallisti.emusicj.view.swtwidgets.graphics;
 
 import java.io.File;
 import java.net.URL;
 
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 
 import org.eclipse.swt.widgets.Display;
 
