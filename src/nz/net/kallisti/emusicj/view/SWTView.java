@@ -107,13 +107,10 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	private ArrayList<IDownloadMonitor> dlMonitors = new ArrayList<IDownloadMonitor>();
 	private final ArrayList<DownloadDisplay> dlDisplays = new ArrayList<DownloadDisplay>();
 	private SelectableComposite downloadsListComp;
-	private ToolItem runButton;
-	private ToolItem pauseButton;
-	private ToolItem cancelButton;
+	private ToolItem pauseResumeButton;
 	private final IPreferences prefs;
 	private boolean running = false;
 	private Rectangle windowLoc;
-	private ToolItem requeueButton;
 	private FileInfoPanel fileInfo;
 	private SashForm mainArea;
 	private int sashTop = 50;
@@ -376,22 +373,22 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 */
 	private void buildToolBar(ToolBar toolBar) {
 		final Image runIconImg = imageFactory.getStartIcon();
-		runButton = SWTUtils.createToolItem(toolBar, runIconImg,
+		pauseResumeButton = SWTUtils.createToolItem(toolBar, runIconImg,
 				"Start the selected download right now", this,
 				"runSelectedDownload");
 
-		final Image requeueIconImg = imageFactory.getRequeueIcon();
-		requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg,
-				"Requeue the selected download", this,
-				"requeueSelectedDownload");
+		// final Image requeueIconImg = imageFactory.getRequeueIcon();
+		// requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg,
+		// "Requeue the selected download", this,
+		// "requeueSelectedDownload");
 
-		final Image pauseIconImg = imageFactory.getPauseIcon();
-		pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg,
-				"Pause the selected download", this, "pauseSelectedDownload");
+		// final Image pauseIconImg = imageFactory.getPauseIcon();
+		// pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg,
+		// "Pause the selected download", this, "pauseSelectedDownload");
 
-		final Image cancelIconImg = imageFactory.getCancelIcon();
-		cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg,
-				"Cancel the selected download", this, "cancelSelectedDownload");
+		// final Image cancelIconImg = imageFactory.getCancelIcon();
+		// cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg,
+		// "Cancel the selected download", this, "cancelSelectedDownload");
 
 		toolBar.pack();
 	}
