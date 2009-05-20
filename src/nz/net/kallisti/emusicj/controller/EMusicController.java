@@ -89,8 +89,8 @@ public class EMusicController implements IEMusicController,
 
 	@Inject
 	public EMusicController(IEMusicView view, IPreferences preferences,
-			IDownloadsModel downloadsModel, @WatchFiles
-			Provider<IDirectoryMonitor> dropDirMonProvider,
+			IDownloadsModel downloadsModel,
+			@WatchFiles Provider<IDirectoryMonitor> dropDirMonProvider,
 			IMetafileLoader metafileLoader, IUpdateCheck updateCheck,
 			IURLFactory urlFactory, IStrings strings) {
 		this.view = view;
@@ -108,7 +108,8 @@ public class EMusicController implements IEMusicController,
 		// Initialise the system
 		prefs.addListener(this);
 		if (!prefs.getProperty("noServer", "0").equals("1")) {
-			// First see if another instance is running, if so, pass our args on
+			// First see if another instance is running, if so, pass our
+			// args on
 			server = new IPCServerClient(this, new File(prefs.getStatePath()
 					+ "port"));
 			if (server.getState() == IPCServerClient.CONNECTED) {
@@ -117,59 +118,66 @@ public class EMusicController implements IEMusicController,
 				return;
 			}
 		}
-
+		// Any number of errors can occur in here, so we at least allow a clean
+		// shutdown
 		try {
-			// allow max download failures to be overridden
-			maxDownloadFailures = Integer.parseInt(prefs.getProperty(
-					"maxDownloadFailures", Constants.MAX_FAILURES + ""));
-		} catch (Exception e) {
-			maxDownloadFailures = Constants.MAX_FAILURES;
-		}
-		if (view != null)
-			view.setState(IEMusicView.ViewState.STARTUP);
-		try {
-			downloadsModel.loadState(new FileInputStream(prefs.getStatePath()
-					+ "downloads.xml"));
-		} catch (FileNotFoundException e) {
-		}
-		downloadsModel.addListener(this);
-		pollThread = new PollDownloads();
-		pollThread.start();
-		for (String file : args)
-			loadMetafile(file);
-		for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
-			mon.addStateListener(this);
-			// add an auto-remove timer if we need to (fixes #41)
-			if (mon.getDownloadState() == DLState.FINISHED
-					&& prefs.removeCompletedDownloads())
-				attachAutoRemoveTimer(mon.getDownloader());
-		}
-		// Start the drop directory monitoring, if that's what we want to do.
-		String dd = prefs.getDropDir();
-		if (dd != null && !dd.equals("")) {
-			// dropDirMon.setListener(this);
-			dropDirMon.setDirToMonitor(new File(dd));
-		}
-		// Pass the system state on to the view to ensure it's up to date
-		if (view != null) {
-			view.setDownloadsModel(downloadsModel);
-			view.setState(IEMusicView.ViewState.RUNNING);
-			view.pausedStateChanged(noAutoStartDownloads);
-		}
 
-		monitorStateChanged(null);
-		// Check for updates
-		if (prefs.checkForUpdates()) {
-			updateCheck.setListener(this);
-			updateCheck.setUpdateUrl(urlFactory.getUpdateURL());
-			updateCheck.check(strings.getVersion());
-		}
+			try {
+				// allow max download failures to be overridden
+				maxDownloadFailures = Integer.parseInt(prefs.getProperty(
+						"maxDownloadFailures", Constants.MAX_FAILURES + ""));
+			} catch (Exception e) {
+				maxDownloadFailures = Constants.MAX_FAILURES;
+			}
+			if (view != null)
+				view.setState(IEMusicView.ViewState.STARTUP);
+			try {
+				downloadsModel.loadState(new FileInputStream(prefs
+						.getStatePath()
+						+ "downloads.xml"));
+			} catch (FileNotFoundException e) {
+			}
+			downloadsModel.addListener(this);
+			pollThread = new PollDownloads();
+			pollThread.start();
+			for (String file : args)
+				loadMetafile(file);
+			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
+				mon.addStateListener(this);
+				// add an auto-remove timer if we need to (fixes #41)
+				if (mon.getDownloadState() == DLState.FINISHED
+						&& prefs.removeCompletedDownloads())
+					attachAutoRemoveTimer(mon.getDownloader());
+			}
+			// Start the drop directory monitoring, if that's what we want to
+			// do.
+			String dd = prefs.getDropDir();
+			if (dd != null && !dd.equals("")) {
+				// dropDirMon.setListener(this);
+				dropDirMon.setDirToMonitor(new File(dd));
+			}
+			// Pass the system state on to the view to ensure it's up to date
+			if (view != null) {
+				view.setDownloadsModel(downloadsModel);
+				view.setState(IEMusicView.ViewState.RUNNING);
+				view.pausedStateChanged(noAutoStartDownloads);
+			}
 
-		// Call the view's event loop
-		if (view != null)
-			view.processEvents(this);
-		// Clean up the program
-		shutdown();
+			monitorStateChanged(null);
+			// Check for updates
+			if (prefs.checkForUpdates()) {
+				updateCheck.setListener(this);
+				updateCheck.setUpdateUrl(urlFactory.getUpdateURL());
+				updateCheck.check(strings.getVersion());
+			}
+
+			// Call the view's event loop
+			if (view != null)
+				view.processEvents(this);
+			// Clean up the program
+		} finally {
+			shutdown();
+		}
 	}
 
 	/**

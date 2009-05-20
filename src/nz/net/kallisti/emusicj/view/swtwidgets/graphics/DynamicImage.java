@@ -35,6 +35,8 @@ public class DynamicImage extends Composite implements
 	private final URL url;
 	private Logger logger;
 	private final SWTView view;
+	private GridLayout thisLayout;
+	protected final Composite parent;
 
 	/**
 	 * Creates an instance of the application icon widget that uses a static
@@ -54,6 +56,7 @@ public class DynamicImage extends Composite implements
 	public DynamicImage(Composite parent, int style, URL url, Image image,
 			SWTView view) {
 		super(parent, style);
+		this.parent = parent;
 		this.view = view;
 		logger = LogUtils.getLogger(this);
 		this.url = url;
@@ -87,12 +90,11 @@ public class DynamicImage extends Composite implements
 	public DynamicImage(Composite parent, int style, Display display, URL url,
 			IDynamicImageProvider dynImage, SWTView view) {
 		super(parent, style);
+		this.parent = parent;
 		this.view = view;
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginWidth = 32; // I don't know exactly why this has to be 32,
-		// but it does.
-		layout.marginHeight = 0;
-		this.setLayout(layout);
+		thisLayout = new GridLayout(1, false);
+		thisLayout.marginWidth = 0;
+		this.setLayout(thisLayout);
 		this.url = url;
 		lbl = new Label(this, SWT.NONE);
 		dynImage.addListener(this);
@@ -114,8 +116,9 @@ public class DynamicImage extends Composite implements
 			public void run() {
 				lbl.setImage(image);
 				lbl.pack();
-				layout();
 				pack();
+				layout();
+				parent.layout();
 			}
 		});
 	}

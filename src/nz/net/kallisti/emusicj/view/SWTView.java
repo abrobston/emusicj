@@ -281,7 +281,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
 		toolBar.setLayoutData(toolbarRowData);
 		DynamicImage toolbarIcon = new DynamicImage(toolbarRow, SWT.NONE,
-				display, urlFactory.getAppURL(), imageFactory
+				display, urlFactory.getToolbarIconClickURL(), imageFactory
 						.getApplicationLogoProvider(), this);
 		toolbarRowData = new GridData();
 		toolbarRowData.grabExcessHorizontalSpace = true;

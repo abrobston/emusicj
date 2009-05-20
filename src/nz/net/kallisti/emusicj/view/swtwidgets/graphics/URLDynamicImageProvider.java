@@ -60,6 +60,10 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 		this.display = display;
 		if (cacheDir == null)
 			throw new IllegalArgumentException("cacheDir cannot be null");
+		// If the URL is null, then we can't download anything. Really, we
+		// shouldn't be getting one in this case, but it happens.
+		if (url == null)
+			return;
 		// First thing, check cache - files in the cache are known by an MD5 of
 		// their URL.
 		MessageDigest md5;

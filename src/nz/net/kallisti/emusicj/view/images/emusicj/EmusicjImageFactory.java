@@ -1,8 +1,5 @@
 package nz.net.kallisti.emusicj.view.images.emusicj;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -27,7 +24,7 @@ import com.google.inject.Provider;
 public class EmusicjImageFactory extends AbstractImageFactory implements
 		IImageFactory {
 
-	private IURLDynamicImageProvider appIconProvider;
+	private IStreamDynamicImageProvider appIconProvider;
 
 	@Inject
 	public EmusicjImageFactory(
@@ -85,23 +82,9 @@ public class EmusicjImageFactory extends AbstractImageFactory implements
 				.getResourceAsStream("emusicj-about.png"));
 	}
 
-	// public IDynamicImageProvider getApplicationLogoProvider() {
-	// appIconProvider = initStreamImageProvider(appIconProvider, this
-	// .getClass().getResourceAsStream("emusicj-app-32.png"));
-	// return appIconProvider;
-	// }
-
 	public IDynamicImageProvider getApplicationLogoProvider() {
-		try {
-			appIconProvider = initURLImageProvider(appIconProvider, new URL(
-					"http://www.kallisti.net.nz/~robin/test.png"));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// appIconProvider = initStreamImageProvider(appIconProvider, this
-		// .getClass().getResourceAsStream("emusicj-app-32.png"));
+		appIconProvider = initStreamImageProvider(appIconProvider, this
+				.getClass().getResourceAsStream("emusicj-app-32.png"));
 		return appIconProvider;
 	}
 

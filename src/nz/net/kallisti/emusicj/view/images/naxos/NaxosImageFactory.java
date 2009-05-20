@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.view.images.naxos;
 
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
@@ -23,15 +24,19 @@ import com.google.inject.Provider;
  */
 public class NaxosImageFactory extends AbstractImageFactory {
 
+	private final IURLFactory urls;
+
 	@Inject
 	public NaxosImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
-			Provider<IURLDynamicImageProvider> urlImageProvider) {
+			Provider<IURLDynamicImageProvider> urlImageProvider,
+			IURLFactory urls) {
 		super(streamImageProvider, urlImageProvider);
+		this.urls = urls;
 	}
 
 	private Display display;
-	private IStreamDynamicImageProvider appIconProvider;
+	private IURLDynamicImageProvider appIconProvider;
 
 	@Override
 	public void setDisplay(Display display) {
@@ -88,8 +93,8 @@ public class NaxosImageFactory extends AbstractImageFactory {
 	}
 
 	public IDynamicImageProvider getApplicationLogoProvider() {
-		appIconProvider = initStreamImageProvider(appIconProvider, this
-				.getClass().getResourceAsStream("col-app-32.png"));
+		appIconProvider = initURLImageProvider(appIconProvider, urls
+				.getToolbarIconSourceURL());
 		return appIconProvider;
 	}
 
