@@ -34,7 +34,7 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
-import nz.net.kallisti.emusicj.network.http.ProxyCredentialsProvider.CredsCallback;
+import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.CredsCallback;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -47,6 +47,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
@@ -68,7 +69,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -148,6 +148,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		} else if (state.equals(ViewState.RUNNING)) {
 			display = new Display();
 			imageFactory.setDisplay(display);
+			imageFactory.setCacheDir(prefs.getIconCacheDir());
 			shell = new Shell(display);
 			shell.setText(strings.getAppName());
 			buildMenuBar(shell);
@@ -174,7 +175,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 				shell.setSize(400, 400);
 			}
 			shell.open();
-			defer(new Runnable() {
+			deferViewEvent(new Runnable() {
 				public void run() {
 					if (prefs.isFirstLaunch()) {
 						displayPreferences();
@@ -279,12 +280,14 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
 		toolBar.setLayoutData(toolbarRowData);
-		Label iconLabel = new Label(toolbarRow, SWT.NONE);
+		DynamicImage toolbarIcon = new DynamicImage(toolbarRow, SWT.NONE,
+				display, urlFactory.getToolbarIconClickURL(), imageFactory
+						.getApplicationLogoProvider(), this);
 		toolbarRowData = new GridData();
 		toolbarRowData.grabExcessHorizontalSpace = true;
 		toolbarRowData.horizontalAlignment = SWT.RIGHT;
-		iconLabel.setLayoutData(toolbarRowData);
-		iconLabel.setImage(imageFactory.getApplicationLogo());
+		toolbarRowData.verticalAlignment = SWT.TOP;
+		toolbarIcon.setLayoutData(toolbarRowData);
 
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
 		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -734,7 +737,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	}
 
 	public void error(final String msgTitle, final String msg) {
-		defer(new Runnable() {
+		deferViewEvent(new Runnable() {
 			public void run() {
 				MessageBox about = new MessageBox(shell, SWT.ICON_ERROR
 						| SWT.OK);
@@ -746,7 +749,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	}
 
 	public void updateAvailable(final String newVersion) {
-		defer(new Runnable() {
+		deferViewEvent(new Runnable() {
 			public void run() {
 				UpdateDialogue dialogue = new UpdateDialogue(shell,
 						SWTView.this, newVersion, prefs, strings, urlFactory);
@@ -805,11 +808,11 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 * (non-Javadoc)
 	 * 
 	 * @see nz.net.kallisti.emusicj.view.IEMusicView#downloadCount(int, int,
-	 *      int)
+	 * int)
 	 */
 	public void downloadCount(final int dl, final int finished, final int total) {
 		if (sysTray != null)
-			defer(new Runnable() {
+			deferViewEvent(new Runnable() {
 				public void run() {
 					sysTray.setText(strings.getShortAppName() + ": " + dl
 							+ " downloading, " + finished + " finished, "
@@ -831,7 +834,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 * 
 	 * @param code
 	 */
-	public void defer(Runnable code) {
+	public void deferViewEvent(Runnable code) {
 		if (running) {
 			asyncExec(code);
 		} else {
@@ -865,7 +868,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 
 	public void getProxyCredentials(final AuthScheme authScheme,
 			final String host, final int port, final CredsCallback credsCallback) {
-		defer(new Runnable() {
+		deferViewEvent(new Runnable() {
 			public void run() {
 				ProxyDialogue proxyDialogue = new ProxyDialogue(shell,
 						authScheme, host, port, credsCallback);

@@ -428,4 +428,8 @@ public abstract class Preferences implements IPreferences {
 		// logger.addHandler(handler);
 	}
 
+	public File getIconCacheDir() {
+		return new File(statePath, "iconcache");
+	}
+
 }

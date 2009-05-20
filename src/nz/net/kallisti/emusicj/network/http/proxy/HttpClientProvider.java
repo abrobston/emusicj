@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
  */
-package nz.net.kallisti.emusicj.network.http;
+package nz.net.kallisti.emusicj.network.http.proxy;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
 
@@ -56,7 +56,7 @@ public class HttpClientProvider implements IHttpClientProvider {
 		HttpState state = getState();
 		HttpClient client = new HttpClient();
 		client.setState(state);
-		if (!prefs.getProxyHost().equals("")) {
+		if (!prefs.getProxyHost().equals("") && prefs.usingProxy()) {
 			HostConfiguration hostConf = new HostConfiguration();
 			hostConf.setProxy(prefs.getProxyHost(), prefs.getProxyPort());
 			client.setHostConfiguration(hostConf);

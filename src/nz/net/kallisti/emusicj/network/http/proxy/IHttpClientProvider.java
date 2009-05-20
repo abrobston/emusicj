@@ -19,7 +19,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
  */
-package nz.net.kallisti.emusicj.network.http;
+package nz.net.kallisti.emusicj.network.http.proxy;
 
 import org.apache.commons.httpclient.HttpClient;
 

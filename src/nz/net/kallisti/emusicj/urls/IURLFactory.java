@@ -13,6 +13,12 @@ import java.net.URL;
  */
 public interface IURLFactory {
 
+	public static final String UPDATEURL_KEY = "updateurl";
+	public static final String MANUALURL_KEY = "manualurl";
+	public static final String APPURL_KEY = "appurl";
+	public static final String TOOLBARICONSOURCE_KEY = "toolbariconsrc";
+	public static final String TOOLBARICONDEST_KEY = "toolbaricondest";
+
 	/**
 	 * Gets the URL to check for updates
 	 * 
@@ -33,5 +39,21 @@ public interface IURLFactory {
 	 * @return the URL that is the user manual
 	 */
 	public URL getManualURL();
+
+	/**
+	 * Gets the URL that is the source for the application icon on the toolbar
+	 * 
+	 * @return the URL for the application icon. This may be <code>null</code>.
+	 */
+	public URL getToolbarIconSourceURL();
+
+	/**
+	 * Gets the URL that a browser is opened to when it app icon on the toolbar
+	 * is clicked.
+	 * 
+	 * @return the URL to open when the toolbar icon is clicked. May be
+	 *         <code>null</code>.
+	 */
+	public URL getToolbarIconClickURL();
 
 }

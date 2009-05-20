@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.network.http;
+package nz.net.kallisti.emusicj.network.http.proxy;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;

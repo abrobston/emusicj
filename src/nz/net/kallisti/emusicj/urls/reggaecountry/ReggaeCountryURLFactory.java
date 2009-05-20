@@ -78,4 +78,12 @@ public class ReggaeCountryURLFactory implements IURLFactory {
 		return null;
 	}
 
+	public URL getToolbarIconClickURL() {
+		return null;
+	}
+
+	public URL getToolbarIconSourceURL() {
+		return null;
+	}
+
 }

@@ -1,24 +1,40 @@
 package nz.net.kallisti.emusicj.view.images.bluepie;
 
 import nz.net.kallisti.emusicj.view.SWTView;
-import nz.net.kallisti.emusicj.view.images.IImageFactory;
+import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 /**
  * <p>
- * This image factory supplies the images that are used for eMusic/J
+ * This image factory supplies the images that are used for the Blue Pie
+ * branding
  * </p>
  * 
  * $Id$
  * 
  * @author robin
  */
-public class BluePieImageFactory implements IImageFactory {
+public class BluePieImageFactory extends AbstractImageFactory {
+
+	@Inject
+	public BluePieImageFactory(
+			Provider<IStreamDynamicImageProvider> streamImageProvider,
+			Provider<IURLDynamicImageProvider> urlImageProvider) {
+		super(streamImageProvider, urlImageProvider);
+	}
 
 	private Display display;
+	private IStreamDynamicImageProvider appIconProvider;
 
+	@Override
 	public void setDisplay(Display display) {
 		this.display = display;
 	}
@@ -72,9 +88,10 @@ public class BluePieImageFactory implements IImageFactory {
 				.getResourceAsStream("bp-about.png"));
 	}
 
-	public Image getApplicationLogo() {
-		return new Image(display, this.getClass().getResourceAsStream(
-				"bp-app-32.png"));
+	public IDynamicImageProvider getApplicationLogoProvider() {
+		appIconProvider = initStreamImageProvider(appIconProvider, this
+				.getClass().getResourceAsStream("bp-app-32.png"));
+		return appIconProvider;
 	}
 
 }

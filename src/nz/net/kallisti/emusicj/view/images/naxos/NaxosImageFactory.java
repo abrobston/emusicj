@@ -1,10 +1,17 @@
 package nz.net.kallisti.emusicj.view.images.naxos;
 
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.SWTView;
-import nz.net.kallisti.emusicj.view.images.IImageFactory;
+import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -15,10 +22,23 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author robin
  */
-public class NaxosImageFactory implements IImageFactory {
+public class NaxosImageFactory extends AbstractImageFactory {
+
+	private final IURLFactory urls;
+
+	@Inject
+	public NaxosImageFactory(
+			Provider<IStreamDynamicImageProvider> streamImageProvider,
+			Provider<IURLDynamicImageProvider> urlImageProvider,
+			IURLFactory urls) {
+		super(streamImageProvider, urlImageProvider);
+		this.urls = urls;
+	}
 
 	private Display display;
+	private IURLDynamicImageProvider appIconProvider;
 
+	@Override
 	public void setDisplay(Display display) {
 		this.display = display;
 	}
@@ -72,9 +92,10 @@ public class NaxosImageFactory implements IImageFactory {
 				.getResourceAsStream("col-about.png"));
 	}
 
-	public Image getApplicationLogo() {
-		return new Image(display, this.getClass().getResourceAsStream(
-				"col-app-32.png"));
+	public IDynamicImageProvider getApplicationLogoProvider() {
+		appIconProvider = initURLImageProvider(appIconProvider, urls
+				.getToolbarIconSourceURL());
+		return appIconProvider;
 	}
 
 }
