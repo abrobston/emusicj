@@ -22,7 +22,6 @@
 package nz.net.kallisti.emusicj.view;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -144,7 +143,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		if (state.equals(ViewState.STARTUP)) {
 			// TODO do a splashscreen or something
 		} else if (state.equals(ViewState.RUNNING)) {
-			System.err.println(new Date() + ": Starting");
 			display = new Display();
 			imageFactory.setDisplay(display);
 			imageFactory.setCacheDir(prefs.getIconCacheDir());
@@ -173,7 +171,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 			} catch (Exception e) {
 				shell.setSize(400, 400);
 			}
-			System.err.println(new Date() + ": Displaying");
 			shell.open();
 			deferViewEvent(new Runnable() {
 				public void run() {
@@ -367,11 +364,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the toolbar to add stuff to
 	 */
 	private void buildToolBar(ToolBar toolBar) {
-		// final Image runIconImg = imageFactory.getStartIcon();
-		// pauseResumeButton = SWTUtils.createToolItem(toolBar, runIconImg,
-		// "Start the selected download right now", this,
-		// "runSelectedDownload");
-
 		pauseResumeButton = new ToolItem(toolBar, SWT.CHECK);
 		final Image pauseImg = imageFactory.getPauseIcon();
 		pauseResumeButton.setImage(pauseImg);
