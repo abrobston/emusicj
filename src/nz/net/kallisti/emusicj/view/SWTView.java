@@ -666,11 +666,9 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	public void trayClicked() {
 		// Note that the order of checks here is fairly important, making a
 		// shell not visible causes an implicit minimisation
-		if (shell.isVisible() && shell.isFocusControl())
+		if (shell.isVisible())
 			shell.setVisible(false);
-		else if (shell.isVisible() && !shell.isFocusControl()) {
-			shell.setActive();
-		} else if (!shell.isVisible()) {
+		else if (!shell.isVisible()) {
 			shell.setVisible(true);
 			shell.setMinimized(false);
 		} else if (shell.getMinimized()) {
