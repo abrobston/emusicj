@@ -40,6 +40,11 @@ public interface IPreferences {
 	 */
 	public void setSavePath(String path);
 
+	/**
+	 * The path where downloaded files are saved to
+	 * 
+	 * @return the path where downloads go to
+	 */
 	public String getSavePath();
 
 	public String getStatePath();

@@ -384,6 +384,9 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		});
 		pauseResumeButton.setToolTipText("Pause or resume all downloads");
 
+		new ToolItem(toolBar, SWT.SEPARATOR);
+
+		// TODO add the directory opening button
 		toolBar.pack();
 	}
 
