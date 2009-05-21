@@ -382,6 +382,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 				}
 			}
 		});
+		pauseResumeButton.setToolTipText("Pause or resume all downloads");
 
 		toolBar.pack();
 	}
@@ -728,6 +729,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 			if (pauseSysTrayMenuItem != null)
 				pauseSysTrayMenuItem.setText("Pause downloads");
 		}
+		pauseResumeButton.setSelection(state);
 	}
 
 	/**
