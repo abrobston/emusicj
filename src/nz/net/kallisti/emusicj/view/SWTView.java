@@ -23,13 +23,11 @@ package nz.net.kallisti.emusicj.view;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
-import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
@@ -48,7 +46,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
-import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
+import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
 import org.eclipse.swt.SWT;
@@ -58,6 +56,8 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -107,13 +107,10 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	private ArrayList<IDownloadMonitor> dlMonitors = new ArrayList<IDownloadMonitor>();
 	private final ArrayList<DownloadDisplay> dlDisplays = new ArrayList<DownloadDisplay>();
 	private SelectableComposite downloadsListComp;
-	private ToolItem runButton;
-	private ToolItem pauseButton;
-	private ToolItem cancelButton;
+	private ToolItem pauseResumeButton;
 	private final IPreferences prefs;
 	private boolean running = false;
 	private Rectangle windowLoc;
-	private ToolItem requeueButton;
 	private FileInfoPanel fileInfo;
 	private SashForm mainArea;
 	private int sashTop = 50;
@@ -232,13 +229,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 									SWT.BEGINNING, true, false));
 							disp.setDownloadMonitor(mon);
 							dlDisplays.add(disp);
-							mon
-									.addStateListener(new IDownloadMonitorListener() {
-										public void monitorStateChanged(
-												IDownloadMonitor monitor) {
-											setButtonsState();
-										}
-									});
 						}
 					downloadsListComp.pack();
 				}
@@ -305,7 +295,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		downloadsList
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		downloadsList.setContent(downloadsListComp);
-		setButtonsState();
 		ScrolledComposite fileInfoPlace = new ScrolledComposite(mainArea,
 				SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		/*
@@ -375,86 +364,26 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the toolbar to add stuff to
 	 */
 	private void buildToolBar(ToolBar toolBar) {
-		final Image runIconImg = imageFactory.getStartIcon();
-		runButton = SWTUtils.createToolItem(toolBar, runIconImg,
-				"Start the selected download right now", this,
-				"runSelectedDownload");
-
-		final Image requeueIconImg = imageFactory.getRequeueIcon();
-		requeueButton = SWTUtils.createToolItem(toolBar, requeueIconImg,
-				"Requeue the selected download", this,
-				"requeueSelectedDownload");
-
-		final Image pauseIconImg = imageFactory.getPauseIcon();
-		pauseButton = SWTUtils.createToolItem(toolBar, pauseIconImg,
-				"Pause the selected download", this, "pauseSelectedDownload");
-
-		final Image cancelIconImg = imageFactory.getCancelIcon();
-		cancelButton = SWTUtils.createToolItem(toolBar, cancelIconImg,
-				"Cancel the selected download", this, "cancelSelectedDownload");
+		pauseResumeButton = new ToolItem(toolBar, SWT.CHECK);
+		final Image pauseImg = imageFactory.getPauseIcon();
+		pauseResumeButton.setImage(pauseImg);
+		pauseResumeButton.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				pauseImg.dispose();
+			}
+		});
+		pauseResumeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent ev) {
+				if (pauseResumeButton.getSelection()) {
+					pauseDownloads();
+				} else {
+					resumeDownloads();
+				}
+			}
+		});
 
 		toolBar.pack();
-	}
-
-	public void cancelSelectedDownload() {
-		if (downloadsListComp == null)
-			return;
-		List<ISelectableControl> selected = downloadsListComp.getSelected();
-		for (ISelectableControl control : selected) {
-			IDownloadMonitor mon = ((DownloadDisplay) control)
-					.getDownloadMonitor();
-			DLState st = mon.getDownloadState();
-			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
-					|| st == DLState.NOTSTARTED || st == DLState.PAUSED
-					|| st == DLState.FAILED)
-				controller.stopDownload(mon.getDownloader());
-		}
-		setButtonsState();
-	}
-
-	public void pauseSelectedDownload() {
-		if (downloadsListComp == null)
-			return;
-		List<ISelectableControl> selected = downloadsListComp.getSelected();
-		for (ISelectableControl control : selected) {
-			IDownloadMonitor mon = ((DownloadDisplay) control)
-					.getDownloadMonitor();
-			DLState st = mon.getDownloadState();
-			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
-					|| st == DLState.NOTSTARTED)
-				controller.pauseDownload(mon.getDownloader());
-		}
-		setButtonsState();
-	}
-
-	public void runSelectedDownload() {
-		if (downloadsListComp == null)
-			return;
-		List<ISelectableControl> selected = downloadsListComp.getSelected();
-		for (ISelectableControl control : selected) {
-			IDownloadMonitor mon = ((DownloadDisplay) control)
-					.getDownloadMonitor();
-			DLState st = mon.getDownloadState();
-			if (st == DLState.NOTSTARTED || st == DLState.PAUSED
-					|| st == DLState.CANCELLED)
-				controller.startDownload(mon.getDownloader());
-		}
-		setButtonsState();
-	}
-
-	public void requeueSelectedDownload() {
-		if (downloadsListComp == null)
-			return;
-		List<ISelectableControl> selected = downloadsListComp.getSelected();
-		for (ISelectableControl control : selected) {
-			IDownloadMonitor mon = ((DownloadDisplay) control)
-					.getDownloadMonitor();
-			DLState st = mon.getDownloadState();
-			if (st == DLState.CONNECTING || st == DLState.DOWNLOADING
-					|| st == DLState.PAUSED || st == DLState.CANCELLED)
-				controller.requeueDownload(mon.getDownloader());
-		}
-		setButtonsState();
 	}
 
 	/**
@@ -544,60 +473,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
 				strings);
 		prefs.open();
-	}
-
-	/**
-	 * Enables and disables the buttons depending on the state of the selected
-	 * download
-	 */
-	private void setButtonsState() {
-		if (display.isDisposed())
-			return;
-		asyncExec(new Runnable() {
-			public void run() {
-				if (downloadsListComp == null)
-					return;
-				if (runButton.isDisposed() || pauseButton.isDisposed()
-						|| cancelButton.isDisposed()
-						|| requeueButton.isDisposed())
-					return;
-				List<ISelectableControl> selected = downloadsListComp
-						.getSelected();
-
-				if (selected.size() == 0) {
-					runButton.setEnabled(false);
-					pauseButton.setEnabled(false);
-					cancelButton.setEnabled(false);
-					requeueButton.setEnabled(false);
-					return;
-				}
-				boolean runBtn = false;
-				boolean pauseBtn = false;
-				boolean cancelBtn = false;
-				boolean requeueBtn = false;
-				for (ISelectableControl control : selected) {
-					IDownloadMonitor mon = ((DownloadDisplay) control)
-							.getDownloadMonitor();
-					if (mon.getDownloadState() == DLState.CONNECTING
-							|| mon.getDownloadState() == DLState.DOWNLOADING) {
-						pauseBtn = true;
-						cancelBtn = true;
-						requeueBtn = true;
-					} else if (mon.getDownloadState() == DLState.CANCELLED) {
-						runBtn = true;
-						requeueBtn = true;
-					} else if (mon.getDownloadState() != DLState.FINISHED) {
-						runBtn = true;
-						cancelBtn = true;
-						requeueBtn = true;
-					}
-				}
-				runButton.setEnabled(runBtn);
-				pauseButton.setEnabled(pauseBtn);
-				cancelButton.setEnabled(cancelBtn);
-				requeueButton.setEnabled(requeueBtn);
-			}
-		});
 	}
 
 	public void openFile() {
@@ -722,7 +597,6 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 */
 	public void widgetSelected(SelectionEvent e) {
 		if (e.widget == downloadsListComp) {
-			setButtonsState();
 			if (downloadsListComp.getLastSelectedControl() != null)
 				fileInfo.setDownloader(((DownloadDisplay) downloadsListComp
 						.getLastSelectedControl()).getDownloadMonitor());
@@ -791,8 +665,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 */
 	public void trayClicked() {
 		// Note that the order of checks here is fairly important, making a
-		// shell
-		// not visible causes an implicit minimisation
+		// shell not visible causes an implicit minimisation
 		if (shell.isVisible())
 			shell.setVisible(false);
 		else if (!shell.isVisible()) {
