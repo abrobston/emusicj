@@ -22,6 +22,7 @@
 package nz.net.kallisti.emusicj.view;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -143,6 +144,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		if (state.equals(ViewState.STARTUP)) {
 			// TODO do a splashscreen or something
 		} else if (state.equals(ViewState.RUNNING)) {
+			System.err.println(new Date() + ": Starting");
 			display = new Display();
 			imageFactory.setDisplay(display);
 			imageFactory.setCacheDir(prefs.getIconCacheDir());
@@ -171,6 +173,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 			} catch (Exception e) {
 				shell.setSize(400, 400);
 			}
+			System.err.println(new Date() + ": Displaying");
 			shell.open();
 			deferViewEvent(new Runnable() {
 				public void run() {
@@ -670,11 +673,12 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 */
 	public void trayClicked() {
 		// Note that the order of checks here is fairly important, making a
-		// shell
-		// not visible causes an implicit minimisation
-		if (shell.isVisible())
+		// shell not visible causes an implicit minimisation
+		if (shell.isVisible() && shell.isFocusControl())
 			shell.setVisible(false);
-		else if (!shell.isVisible()) {
+		else if (shell.isVisible() && !shell.isFocusControl()) {
+			shell.setActive();
+		} else if (!shell.isVisible()) {
 			shell.setVisible(true);
 			shell.setMinimized(false);
 		} else if (shell.getMinimized()) {
