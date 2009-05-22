@@ -21,15 +21,21 @@
  */
 package nz.net.kallisti.emusicj.view;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.controller.IEMusicController;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
+import nz.net.kallisti.emusicj.misc.FolderOpener;
+import nz.net.kallisti.emusicj.misc.FolderOpenerException;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.CredsCallback;
@@ -125,6 +131,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	private final IStrings strings;
 	private final IImageFactory imageFactory;
 	private final IURLFactory urlFactory;
+	private final Logger logger;
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
@@ -136,6 +143,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		this.controller = controller;
 		this.imageFactory = imageFactory;
 		this.urlFactory = urlFactory;
+		logger = LogUtils.getLogger(this);
 	}
 
 	public void setState(ViewState state) {
@@ -386,7 +394,27 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
-		// TODO add the directory opening button
+		ToolItem openDownloadDir = new ToolItem(toolBar, SWT.PUSH);
+		final Image downloadDirImg = imageFactory.getFolderIcon();
+		openDownloadDir.setImage(downloadDirImg);
+		openDownloadDir.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				downloadDirImg.dispose();
+			}
+		});
+		openDownloadDir.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent ev) {
+				try {
+					FolderOpener.openDir(new File(prefs.getSavePath()));
+				} catch (FolderOpenerException e) {
+					logger.log(Level.WARNING, "Unable to open save path: "
+							+ prefs.getSavePath(), e);
+					error("Error", "Unable to open the download directory");
+				}
+			}
+		});
+		openDownloadDir.setToolTipText("Open download directory");
 		toolBar.pack();
 	}
 
