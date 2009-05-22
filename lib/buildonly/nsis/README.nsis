@@ -4,3 +4,8 @@ copied into /usr/share/nsis/Plugins (after apt-get install nsis), overwriting
 the pre-existing one to allow the windows installer to be built on Linux.
 
  --Robin, 24/10/2008
+
+More recent addendum: this missing call appears to be fixed in the NSIS package
+distributed with Ubuntu 9.04, so copying it over is not necessary any more.
+
+ --Robin, 22/5/2009
