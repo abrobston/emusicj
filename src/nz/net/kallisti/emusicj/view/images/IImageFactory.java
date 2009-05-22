@@ -87,4 +87,11 @@ public interface IImageFactory {
 	 */
 	public IDynamicImageProvider getApplicationLogoProvider();
 
+	/**
+	 * Gets the icon of a folder.
+	 * 
+	 * @return the folder icon
+	 */
+	public Image getFolderIcon();
+
 }

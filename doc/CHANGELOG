@@ -2,7 +2,7 @@ V0.25-svn
 * Fixed some paths in the startup script so that it looks for emusicj in the
   right place when EMUSICJ_HOME is defined (#62)
 * Added application icon showing up on the right-hand side of the toolbar
-* Added application/ogg to the list of recognised MIME types.
+* Added application/ogg to the list of recognised MIME types
 * [Blue Pie] Added customisation for bluepie.org version
 * Allowed canceling of failed tracks (#59)
 * Fixed display of track information that contains '&' (#57)
@@ -10,6 +10,11 @@ V0.25-svn
 * Improved synchronisation in download code, hopefully fixes some odd issues
 * Added (pretty basic) support for proxies that require authentication (#64)
 * Improved the scrolling distance of the list of tracks
+* Added support for CUE file format
+* Made the application logo at the top-right clickable, also able to be sourced
+  from a URL if desired in alternate brandings
+* Added a button to open the download directory straight from the application 
+  (#67)
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

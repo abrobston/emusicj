@@ -98,4 +98,9 @@ public class NaxosImageFactory extends AbstractImageFactory {
 		return appIconProvider;
 	}
 
+	public Image getFolderIcon() {
+		return new Image(display, this.getClass().getResourceAsStream(
+				"folder_32.png"));
+	}
+
 }
