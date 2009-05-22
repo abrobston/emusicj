@@ -21,7 +21,9 @@ Available targets:
 	
 	<property name="src.dir" value="src"/>
 	<property name="osx.src.dir" value="macsrc" />
-	<property name="build.dir" value="${basedir}/bin"/>
+	<!-- having a separate build dir prevents it picking up the eclipse-generated
+		class files, which causes problems if you're mixing up compiler versions. -->
+	<property name="build.dir" value="${basedir}/build"/>
 	<property name="osx.build.dir" value="${basedir}/osx-bin"/>
 	<property name="doc.dir" value="${build.dir}/docs"/>
 	<property name="doc.index" value="${doc.dir}/index.html"/>
