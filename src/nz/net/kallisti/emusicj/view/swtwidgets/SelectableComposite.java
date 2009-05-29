@@ -235,6 +235,24 @@ public class SelectableComposite extends Composite implements
 		return Collections.unmodifiableList(selected);
 	}
 
+	/**
+	 * <p>
+	 * Determines if the provided control is selected.
+	 * </p>
+	 * <p>
+	 * Implementation note: this isn't particularly efficient, so don't do it
+	 * lots.
+	 * </p>
+	 * 
+	 * @param control
+	 *            the control you want to know about
+	 * @return <code>true</code> if that control is in the set of controls that
+	 *         is selected, <code>false</code> otherwise.
+	 */
+	public boolean isSelected(ISelectableControl control) {
+		return selected.contains(control);
+	}
+
 	public void addSelectionListener(SelectionListener listener) {
 		addListener(SWT.Selection, new TypedListener(listener));
 	}

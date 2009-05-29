@@ -231,7 +231,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 					for (IDownloadMonitor mon : downloads)
 						if (addedMons.contains(mon)) {
 							DownloadDisplay disp = new DownloadDisplay(
-									downloadsListComp, SWT.NONE, display);
+									downloadsListComp, SWT.NONE, display,
+									SWTView.this);
 							downloadsListComp.addSelectableControl(disp);
 							disp.setLayoutData(new GridData(SWT.FILL,
 									SWT.BEGINNING, true, false));

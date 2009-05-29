@@ -50,11 +50,8 @@ import org.eclipse.swt.widgets.ProgressBar;
 /**
  * <p>
  * This is a SWT widget that displays the progress of a download. It consists of
- * a label, and below that a progress bar.
- * </p>
- * 
- * <p>
- * $Id$
+ * a label, and below that a progress bar. It also allows the download to be
+ * cancelled/requeued.
  * </p>
  * 
  * @author robin
@@ -77,53 +74,35 @@ public class DownloadDisplay extends Composite implements
 	private final Set<ISelectionListener> selectionListeners = new HashSet<ISelectionListener>(
 			1);
 	private boolean selected;
+	private final SWTView view;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
 	 * forth.
-	 * 
-	 * @param parent
-	 * @param style
 	 */
-	public DownloadDisplay(Composite parent, int style, Display display) {
+	public DownloadDisplay(Composite parent, int style, Display display,
+			SWTView view) {
 		super(parent, style);
+		this.view = view;
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
 		this.setLayout(gridLayout);
 		labelArea = new Composite(this, SWT.NONE);
-		labelArea.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		labelArea.addMouseListener(getMouseListener());
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		labelArea.setLayout(gridLayout);
 		labelArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
 				false));
 		titleLabel = new Label(labelArea, 0);
-		titleLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		titleLabel.addMouseListener(getMouseListener());
 		GridData gd = new GridData();
 		gd.horizontalAlignment = SWT.LEFT;
 		gd.grabExcessHorizontalSpace = true;
 		titleLabel.setLayoutData(gd);
 
 		statusLabel = new Label(labelArea, 0);
-		statusLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		statusLabel.addMouseListener(getMouseListener());
 		Font initialFont = statusLabel.getFont();
 		FontData[] fontData = initialFont.getFontData();
 		for (int i = 0; i < fontData.length; i++) {
@@ -138,25 +117,25 @@ public class DownloadDisplay extends Composite implements
 		gd.minimumWidth = SWT.DEFAULT;
 		statusLabel.setLayoutData(gd);
 
+		Composite progArea = new Composite(this, SWT.NONE);
+
 		progBar = new ProgressBar(this, SWT.SMOOTH | SWT.HORIZONTAL);
-		progBar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		progBar.addMouseListener(getMouseListener());
 		progBar
 				.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
 						false));
-		this.addMouseListener(new MouseAdapter() {
+		this.addMouseListener(getMouseListener());
+		layout();
+	}
+
+	private MouseAdapter getMouseListener() {
+		return new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				notifySelectionListeners(new SelectionFromMouseEvent(e,
 						DownloadDisplay.this));
 			}
-		});
-		layout();
+		};
 	}
 
 	public void setDownloadMonitor(IDownloadMonitor mon) {
@@ -170,7 +149,7 @@ public class DownloadDisplay extends Composite implements
 		if (pc != -1)
 			progBar.setSelection(pc);
 		// We now spin off a thread that polls the download progress every
-		// seconds or so and updates the progress bar
+		// second or so and updates the progress bar
 		if (pThread != null)
 			pThread.finish();
 		pThread = new PollThread(this);
