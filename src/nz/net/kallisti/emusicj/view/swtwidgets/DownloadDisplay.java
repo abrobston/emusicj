@@ -29,19 +29,23 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.view.SWTUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectionEvent;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectionListener;
+import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionFromMouseEvent;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -75,13 +79,14 @@ public class DownloadDisplay extends Composite implements
 			1);
 	private boolean selected;
 	private final SWTView view;
+	private final Button cancelButton;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
 	 * forth.
 	 */
 	public DownloadDisplay(Composite parent, int style, Display display,
-			SWTView view) {
+			SWTView view, IImageFactory images) {
 		super(parent, style);
 		this.view = view;
 		GridLayout gridLayout = new GridLayout();
@@ -118,12 +123,25 @@ public class DownloadDisplay extends Composite implements
 		statusLabel.setLayoutData(gd);
 
 		Composite progArea = new Composite(this, SWT.NONE);
-
-		progBar = new ProgressBar(this, SWT.SMOOTH | SWT.HORIZONTAL);
+		progArea.addMouseListener(getMouseListener());
+		gridLayout = new GridLayout(2, false);
+		progArea.setLayout(gridLayout);
+		progArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
+				false));
+		progBar = new ProgressBar(progArea, SWT.SMOOTH | SWT.HORIZONTAL);
 		progBar.addMouseListener(getMouseListener());
 		progBar
 				.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
 						false));
+
+		cancelButton = new Button(progArea, SWT.PUSH);
+		cancelButton.setImage(images.getCancelIcon());
+		cancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent ev) {
+				cancelClicked();
+			}
+		});
 		this.addMouseListener(getMouseListener());
 		layout();
 	}
@@ -136,6 +154,21 @@ public class DownloadDisplay extends Composite implements
 						DownloadDisplay.this));
 			}
 		};
+	}
+
+	private void cancelClicked() {
+		// If we're already cancelled, we want to resume, otherwise cancel
+		DLState state = monitor.getDownloadState();
+		switch (state) {
+		case CONNECTING:
+		case DOWNLOADING:
+		case NOTSTARTED:
+		case PAUSED:
+		case FAILED:
+			view.cancelDownload(this);
+		case CANCELLED:
+			view.requeueDownload(this);
+		}
 	}
 
 	public void setDownloadMonitor(IDownloadMonitor mon) {

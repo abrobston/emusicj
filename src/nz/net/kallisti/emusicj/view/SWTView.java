@@ -93,9 +93,9 @@ import com.google.inject.Inject;
  * and to notify it of user requests. It doesn't actually change any state
  * itself.
  * </p>
- * 
  * <p>
- * $Id$
+ * It's become a class with quite a lot of functionality. Splitting them out at
+ * some stage probably wouldn't go amiss.
  * </p>
  * 
  * @author robin
@@ -232,7 +232,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 						if (addedMons.contains(mon)) {
 							DownloadDisplay disp = new DownloadDisplay(
 									downloadsListComp, SWT.NONE, display,
-									SWTView.this);
+									SWTView.this, imageFactory);
 							downloadsListComp.addSelectableControl(disp);
 							disp.setLayoutData(new GridData(SWT.FILL,
 									SWT.BEGINNING, true, false));
@@ -782,6 +782,34 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 				proxyDialogue.open();
 			}
 		});
+	}
+
+	/**
+	 * This is triggered when the user asks a download display to cancel. It
+	 * understands how selections work and make sure that all that is handled
+	 * correctly, cancelling anything else selected if this one is selected, and
+	 * only things that can be cancelled.
+	 * 
+	 * @param download
+	 *            the <code>DownloadDisplay</code> that requested the cancel
+	 */
+	public void cancelDownload(DownloadDisplay download) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * This is triggered when the user asks a download display to requeue. It
+	 * understands how selections work and make sure that all that is handled
+	 * correctly, requeuing anything else selected if this one is selected, and
+	 * only things that can be requeued.
+	 * 
+	 * @param download
+	 *            the <code>DownloadDisplay</code> that requested the cancel
+	 */
+	public void requeueDownload(DownloadDisplay downloadDisplay) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
