@@ -107,7 +107,7 @@ public class DownloadDisplay extends Composite implements
 		gd.grabExcessHorizontalSpace = true;
 		titleLabel.setLayoutData(gd);
 
-		statusLabel = new Label(labelArea, 0);
+		statusLabel = new Label(labelArea, SWT.RIGHT);
 		statusLabel.addMouseListener(getMouseListener());
 		Font initialFont = statusLabel.getFont();
 		FontData[] fontData = initialFont.getFontData();
@@ -144,6 +144,7 @@ public class DownloadDisplay extends Composite implements
 			}
 		});
 		this.addMouseListener(getMouseListener());
+		labelArea.pack();
 		layout();
 	}
 
@@ -231,17 +232,19 @@ public class DownloadDisplay extends Composite implements
 		if (!isDisposed()) {
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
+					setRedraw(false); // needed to avoid flicker
 					if (!titleLabel.isDisposed())
 						titleLabel.setText(SWTUtils.deMonic(lblName));
 					if (!statusLabel.isDisposed())
 						statusLabel.setText(text.toString());
 					if (!DownloadDisplay.this.isDisposed()) {
-						DownloadDisplay.this.layout();
-						titleLabel.pack();
-						statusLabel.pack();
+						// DownloadDisplay.this.layout();
+						// titleLabel.pack();
+						// statusLabel.pack();
 						labelArea.pack();
 						layout();
 					}
+					setRedraw(true);
 				}
 			});
 		}

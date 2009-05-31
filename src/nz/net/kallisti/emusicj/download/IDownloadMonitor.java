@@ -36,13 +36,16 @@ package nz.net.kallisti.emusicj.download;
 public interface IDownloadMonitor {
 
 	public enum DLState {
-		NOTSTARTED(true), CONNECTING(true), DOWNLOADING(true), PAUSED(true), CANCELLED(
-				false), FINISHED(false), FAILED(true);
+		NOTSTARTED(true, false), CONNECTING(true, false), DOWNLOADING(true,
+				false), PAUSED(true, false), CANCELLED(false, true), FINISHED(
+				false, false), FAILED(true, true);
 
 		private final boolean cancellable;
+		private final boolean requeuable;
 
-		private DLState(boolean cancellable) {
+		private DLState(boolean cancellable, boolean requeuable) {
 			this.cancellable = cancellable;
+			this.requeuable = requeuable;
 		}
 
 		/**
@@ -54,6 +57,17 @@ public interface IDownloadMonitor {
 		 */
 		public boolean isCancellable() {
 			return cancellable;
+		}
+
+		/**
+		 * Returns whether it makes sense to requeue a download that is in this
+		 * state.
+		 * 
+		 * @return <code>true</code> if requeuing this download is meaningful,
+		 *         <code>false</code> otherwise.
+		 */
+		public boolean isRequeuable() {
+			return requeuable;
 		}
 
 	}

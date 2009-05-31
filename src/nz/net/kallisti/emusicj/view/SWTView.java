@@ -796,27 +796,17 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the <code>DownloadDisplay</code> that requested the cancel
 	 */
 	public void cancelDownload(DownloadDisplay download) {
-		if (downloadsListComp.isSelected(download)) {
-			// We need to find out what else is selected that can be cancelled,
-			// and cancel them too.
-			List<ISelectableControl> selected = downloadsListComp.getSelected();
-			for (ISelectableControl ctl : selected) {
-				if (!(ctl instanceof DownloadDisplay))
-					continue;
-				DownloadDisplay dd = (DownloadDisplay) ctl;
-				if (dd.getDownloadMonitor().getDownloadState().isCancellable())
-					controller.cancelDownload(dd.getDownloadMonitor()
-							.getDownloader());
-			}
-
-		} else {
-			// This is the easy case: we select it, and perform the action.
-			downloadsListComp.setSelected(download);
-			if (download.getDownloadMonitor().getDownloadState()
-					.isCancellable())
+		operateOnDownload(new IDownloadOperationTest() {
+			public void performOperation(DownloadDisplay download) {
 				controller.cancelDownload(download.getDownloadMonitor()
 						.getDownloader());
-		}
+			}
+
+			public boolean testOperation(DownloadDisplay download) {
+				return download.getDownloadMonitor().getDownloadState()
+						.isCancellable();
+			}
+		}, download);
 	}
 
 	/**
@@ -829,8 +819,57 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the <code>DownloadDisplay</code> that requested the cancel
 	 */
 	public void requeueDownload(DownloadDisplay downloadDisplay) {
-		// TODO Auto-generated method stub
+		operateOnDownload(new IDownloadOperationTest() {
+			public void performOperation(DownloadDisplay download) {
+				controller.requeueDownload(download.getDownloadMonitor()
+						.getDownloader());
+			}
 
+			public boolean testOperation(DownloadDisplay download) {
+				return download.getDownloadMonitor().getDownloadState()
+						.isRequeuable();
+			}
+		}, downloadDisplay);
+	}
+
+	/**
+	 * This performs an operation on the supplied download display. If it is
+	 * part of a selection, then the same operation is applied to all items in
+	 * that selection. For each item to have the operation performed, the test
+	 * is applied, and the operation is only applied if the test passes.
+	 * 
+	 * @param test
+	 *            this contains a test to determine if the operation should be
+	 *            applied, and also the operation that is actually applied.
+	 * @param download
+	 *            the download that the operation was requested for
+	 */
+	private void operateOnDownload(IDownloadOperationTest test,
+			DownloadDisplay download) {
+		if (downloadsListComp.isSelected(download)) {
+			// We need to find out what else is selected that can be operated
+			// on, and apply the operation to them
+			List<ISelectableControl> selected = downloadsListComp.getSelected();
+			for (ISelectableControl ctl : selected) {
+				if (!(ctl instanceof DownloadDisplay))
+					continue;
+				DownloadDisplay dd = (DownloadDisplay) ctl;
+				if (test.testOperation(dd))
+					test.performOperation(dd);
+			}
+		} else {
+			// This is the easy case: we select it, and perform the action.
+			downloadsListComp.setSelected(download);
+			if (test.testOperation(download))
+				test.performOperation(download);
+		}
+
+	}
+
+	private interface IDownloadOperationTest {
+		public boolean testOperation(DownloadDisplay download);
+
+		public void performOperation(DownloadDisplay download);
 	}
 
 }
