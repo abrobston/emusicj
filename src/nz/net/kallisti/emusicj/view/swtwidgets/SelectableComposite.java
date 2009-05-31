@@ -204,17 +204,19 @@ public class SelectableComposite extends Composite implements
 	 *            everything will be deselected.
 	 */
 	private void selectOnly(ISelectableControl selCtrl) {
-		for (ISelectableControl control : selected) {
-			if (control != selCtrl)
-				control.unselect();
+		synchronized (selected) {
+			for (ISelectableControl control : selected) {
+				if (control != selCtrl)
+					control.unselect();
+			}
+			selected.clear();
+			if (selCtrl != null)
+				selected.add(selCtrl);
+			selCtrl.select();
+			lastSelected = selCtrl;
+			markSelected = selCtrl;
+			markSelected2 = null;
 		}
-		selected.clear();
-		if (selCtrl != null)
-			selected.add(selCtrl);
-		selCtrl.select();
-		lastSelected = selCtrl;
-		markSelected = selCtrl;
-		markSelected2 = null;
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -233,6 +235,17 @@ public class SelectableComposite extends Composite implements
 	 */
 	public List<ISelectableControl> getSelected() {
 		return Collections.unmodifiableList(selected);
+	}
+
+	/**
+	 * This selects the supplied control, unselecting anything else.
+	 * 
+	 * @param control
+	 *            the control to select. Attempting to select a control that is
+	 *            not a child of this widget is undefined.
+	 */
+	public void setSelected(ISelectableControl control) {
+		selectOnly(control);
 	}
 
 	/**

@@ -24,6 +24,7 @@ package nz.net.kallisti.emusicj.view;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
+import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
@@ -794,8 +796,27 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the <code>DownloadDisplay</code> that requested the cancel
 	 */
 	public void cancelDownload(DownloadDisplay download) {
-		// TODO Auto-generated method stub
+		if (downloadsListComp.isSelected(download)) {
+			// We need to find out what else is selected that can be cancelled,
+			// and cancel them too.
+			List<ISelectableControl> selected = downloadsListComp.getSelected();
+			for (ISelectableControl ctl : selected) {
+				if (!(ctl instanceof DownloadDisplay))
+					continue;
+				DownloadDisplay dd = (DownloadDisplay) ctl;
+				if (dd.getDownloadMonitor().getDownloadState().isCancellable())
+					controller.cancelDownload(dd.getDownloadMonitor()
+							.getDownloader());
+			}
 
+		} else {
+			// This is the easy case: we select it, and perform the action.
+			downloadsListComp.setSelected(download);
+			if (download.getDownloadMonitor().getDownloadState()
+					.isCancellable())
+				controller.cancelDownload(download.getDownloadMonitor()
+						.getDownloader());
+		}
 	}
 
 	/**

@@ -390,7 +390,7 @@ public class EMusicController implements IEMusicController,
 		dl.pause();
 	}
 
-	public void stopDownload(IDownloader dl) {
+	public void cancelDownload(IDownloader dl) {
 		dl.stop();
 	}
 

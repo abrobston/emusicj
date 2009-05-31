@@ -80,6 +80,7 @@ public class DownloadDisplay extends Composite implements
 	private boolean selected;
 	private final SWTView view;
 	private final Button cancelButton;
+	private final Composite progArea;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
@@ -122,7 +123,7 @@ public class DownloadDisplay extends Composite implements
 		gd.minimumWidth = SWT.DEFAULT;
 		statusLabel.setLayoutData(gd);
 
-		Composite progArea = new Composite(this, SWT.NONE);
+		progArea = new Composite(this, SWT.NONE);
 		progArea.addMouseListener(getMouseListener());
 		gridLayout = new GridLayout(2, false);
 		progArea.setLayout(gridLayout);
@@ -130,12 +131,12 @@ public class DownloadDisplay extends Composite implements
 				false));
 		progBar = new ProgressBar(progArea, SWT.SMOOTH | SWT.HORIZONTAL);
 		progBar.addMouseListener(getMouseListener());
-		progBar
-				.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
-						false));
+		progBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
 		cancelButton = new Button(progArea, SWT.PUSH);
 		cancelButton.setImage(images.getCancelIcon());
+		cancelButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
+				false));
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void action(SelectionEvent ev) {
@@ -157,16 +158,9 @@ public class DownloadDisplay extends Composite implements
 	}
 
 	private void cancelClicked() {
-		// If we're already cancelled, we want to resume, otherwise cancel
-		DLState state = monitor.getDownloadState();
-		switch (state) {
-		case CONNECTING:
-		case DOWNLOADING:
-		case NOTSTARTED:
-		case PAUSED:
-		case FAILED:
+		if (monitor.getDownloadState().isCancellable()) {
 			view.cancelDownload(this);
-		case CANCELLED:
+		} else {
 			view.requeueDownload(this);
 		}
 	}
@@ -348,6 +342,11 @@ public class DownloadDisplay extends Composite implements
 		setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		labelArea.setBackground(SWTView
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		progArea
+				.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		cancelButton.setBackground(SWTView
+				.getSystemColor(SWT.COLOR_LIST_SELECTION));
+
 		// progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		titleLabel.setBackground(SWTView
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
@@ -365,6 +364,8 @@ public class DownloadDisplay extends Composite implements
 		selected = false;
 		setBackground(oldBG);
 		labelArea.setBackground(oldBG);
+		progArea.setBackground(oldBG);
+		cancelButton.setBackground(oldBG);
 		// progBar.setBackground(oldProgBG);
 		titleLabel.setBackground(oldLabelBG);
 		titleLabel.setForeground(oldLabelFG);
