@@ -81,6 +81,7 @@ public class DownloadDisplay extends Composite implements
 	private final SWTView view;
 	private final Button cancelButton;
 	private final Composite progArea;
+	private final Button requeueButton;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
@@ -92,11 +93,13 @@ public class DownloadDisplay extends Composite implements
 		this.view = view;
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
+		gridLayout.verticalSpacing = 1;
 		this.setLayout(gridLayout);
 		labelArea = new Composite(this, SWT.NONE);
 		labelArea.addMouseListener(getMouseListener());
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
+		gridLayout.verticalSpacing = 0;
 		labelArea.setLayout(gridLayout);
 		labelArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
 				false));
@@ -125,7 +128,9 @@ public class DownloadDisplay extends Composite implements
 
 		progArea = new Composite(this, SWT.NONE);
 		progArea.addMouseListener(getMouseListener());
-		gridLayout = new GridLayout(2, false);
+		gridLayout = new GridLayout(3, false);
+		gridLayout.horizontalSpacing = 1;
+		gridLayout.verticalSpacing = 1;
 		progArea.setLayout(gridLayout);
 		progArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
 				false));
@@ -133,10 +138,23 @@ public class DownloadDisplay extends Composite implements
 		progBar.addMouseListener(getMouseListener());
 		progBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
+		requeueButton = new Button(progArea, SWT.PUSH);
+		requeueButton.setImage(images.getRequeueIcon());
+		requeueButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
+				false));
+		requeueButton.setToolTipText("Add download back into the queue");
+		requeueButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent ev) {
+				requeueClicked();
+			}
+		});
+
 		cancelButton = new Button(progArea, SWT.PUSH);
 		cancelButton.setImage(images.getCancelIcon());
 		cancelButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
 				false));
+		cancelButton.setToolTipText("Cancel download");
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void action(SelectionEvent ev) {
@@ -159,11 +177,11 @@ public class DownloadDisplay extends Composite implements
 	}
 
 	private void cancelClicked() {
-		if (monitor.getDownloadState().isCancellable()) {
-			view.cancelDownload(this);
-		} else {
-			view.requeueDownload(this);
-		}
+		view.cancelDownload(this);
+	}
+
+	private void requeueClicked() {
+		view.requeueDownload(this);
 	}
 
 	public void setDownloadMonitor(IDownloadMonitor mon) {
@@ -222,6 +240,7 @@ public class DownloadDisplay extends Composite implements
 		if (pThread != null)
 			pThread.interrupt();
 		displayLabel();
+		setButtonStates();
 	}
 
 	private void displayLabel() {
@@ -238,9 +257,6 @@ public class DownloadDisplay extends Composite implements
 					if (!statusLabel.isDisposed())
 						statusLabel.setText(text.toString());
 					if (!DownloadDisplay.this.isDisposed()) {
-						// DownloadDisplay.this.layout();
-						// titleLabel.pack();
-						// statusLabel.pack();
 						labelArea.pack();
 						layout();
 					}
@@ -249,6 +265,18 @@ public class DownloadDisplay extends Composite implements
 			});
 		}
 
+	}
+
+	private void setButtonStates() {
+		if (!isDisposed()) {
+			SWTView.asyncExec(new Runnable() {
+				public void run() {
+					DLState state = monitor.getDownloadState();
+					cancelButton.setEnabled(state.isCancellable());
+					requeueButton.setEnabled(state.isRequeuable());
+				}
+			});
+		}
 	}
 
 	/**
@@ -349,6 +377,8 @@ public class DownloadDisplay extends Composite implements
 				.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		cancelButton.setBackground(SWTView
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		requeueButton.setBackground(SWTView
+				.getSystemColor(SWT.COLOR_LIST_SELECTION));
 
 		// progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		titleLabel.setBackground(SWTView
@@ -369,6 +399,7 @@ public class DownloadDisplay extends Composite implements
 		labelArea.setBackground(oldBG);
 		progArea.setBackground(oldBG);
 		cancelButton.setBackground(oldBG);
+		requeueButton.setBackground(oldBG);
 		// progBar.setBackground(oldProgBG);
 		titleLabel.setBackground(oldLabelBG);
 		titleLabel.setForeground(oldLabelFG);
