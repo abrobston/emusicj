@@ -24,6 +24,7 @@ package nz.net.kallisti.emusicj.view;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
+import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.apache.commons.httpclient.auth.AuthScheme;
@@ -93,9 +95,9 @@ import com.google.inject.Inject;
  * and to notify it of user requests. It doesn't actually change any state
  * itself.
  * </p>
- * 
  * <p>
- * $Id$
+ * It's become a class with quite a lot of functionality. Splitting them out at
+ * some stage probably wouldn't go amiss.
  * </p>
  * 
  * @author robin
@@ -177,7 +179,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 				Rectangle r = new Rectangle(x, y, width, height);
 				shell.setBounds(r);
 			} catch (Exception e) {
-				shell.setSize(400, 400);
+				shell.setSize(550, 550);
 			}
 			shell.open();
 			deferViewEvent(new Runnable() {
@@ -231,7 +233,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 					for (IDownloadMonitor mon : downloads)
 						if (addedMons.contains(mon)) {
 							DownloadDisplay disp = new DownloadDisplay(
-									downloadsListComp, SWT.NONE, display);
+									downloadsListComp, SWT.NONE, display,
+									SWTView.this, imageFactory);
 							downloadsListComp.addSelectableControl(disp);
 							disp.setLayoutData(new GridData(SWT.FILL,
 									SWT.BEGINNING, true, false));
@@ -781,6 +784,92 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 				proxyDialogue.open();
 			}
 		});
+	}
+
+	/**
+	 * This is triggered when the user asks a download display to cancel. It
+	 * understands how selections work and make sure that all that is handled
+	 * correctly, cancelling anything else selected if this one is selected, and
+	 * only things that can be cancelled.
+	 * 
+	 * @param download
+	 *            the <code>DownloadDisplay</code> that requested the cancel
+	 */
+	public void cancelDownload(DownloadDisplay download) {
+		operateOnDownload(new IDownloadOperationTest() {
+			public void performOperation(DownloadDisplay download) {
+				controller.cancelDownload(download.getDownloadMonitor()
+						.getDownloader());
+			}
+
+			public boolean testOperation(DownloadDisplay download) {
+				return download.getDownloadMonitor().getDownloadState()
+						.isCancellable();
+			}
+		}, download);
+	}
+
+	/**
+	 * This is triggered when the user asks a download display to requeue. It
+	 * understands how selections work and make sure that all that is handled
+	 * correctly, requeuing anything else selected if this one is selected, and
+	 * only things that can be requeued.
+	 * 
+	 * @param download
+	 *            the <code>DownloadDisplay</code> that requested the cancel
+	 */
+	public void requeueDownload(DownloadDisplay downloadDisplay) {
+		operateOnDownload(new IDownloadOperationTest() {
+			public void performOperation(DownloadDisplay download) {
+				controller.requeueDownload(download.getDownloadMonitor()
+						.getDownloader());
+			}
+
+			public boolean testOperation(DownloadDisplay download) {
+				return download.getDownloadMonitor().getDownloadState()
+						.isRequeuable();
+			}
+		}, downloadDisplay);
+	}
+
+	/**
+	 * This performs an operation on the supplied download display. If it is
+	 * part of a selection, then the same operation is applied to all items in
+	 * that selection. For each item to have the operation performed, the test
+	 * is applied, and the operation is only applied if the test passes.
+	 * 
+	 * @param test
+	 *            this contains a test to determine if the operation should be
+	 *            applied, and also the operation that is actually applied.
+	 * @param download
+	 *            the download that the operation was requested for
+	 */
+	private void operateOnDownload(IDownloadOperationTest test,
+			DownloadDisplay download) {
+		if (downloadsListComp.isSelected(download)) {
+			// We need to find out what else is selected that can be operated
+			// on, and apply the operation to them
+			List<ISelectableControl> selected = downloadsListComp.getSelected();
+			for (ISelectableControl ctl : selected) {
+				if (!(ctl instanceof DownloadDisplay))
+					continue;
+				DownloadDisplay dd = (DownloadDisplay) ctl;
+				if (test.testOperation(dd))
+					test.performOperation(dd);
+			}
+		} else {
+			// This is the easy case: we select it, and perform the action.
+			downloadsListComp.setSelected(download);
+			if (test.testOperation(download))
+				test.performOperation(download);
+		}
+
+	}
+
+	private interface IDownloadOperationTest {
+		public boolean testOperation(DownloadDisplay download);
+
+		public void performOperation(DownloadDisplay download);
 	}
 
 }

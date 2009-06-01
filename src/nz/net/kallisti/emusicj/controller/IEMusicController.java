@@ -80,7 +80,7 @@ public interface IEMusicController {
 	 * be displayed differently, and more likely to be removed)
 	 * @param dl
 	 */
-	public void stopDownload(IDownloader dl);
+	public void cancelDownload(IDownloader dl);
 
 	/**
 	 * Tells the download to be put back into the waiting state

@@ -29,19 +29,23 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.view.SWTUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectionEvent;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectionListener;
+import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionFromMouseEvent;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -50,11 +54,8 @@ import org.eclipse.swt.widgets.ProgressBar;
 /**
  * <p>
  * This is a SWT widget that displays the progress of a download. It consists of
- * a label, and below that a progress bar.
- * </p>
- * 
- * <p>
- * $Id$
+ * a label, and below that a progress bar. It also allows the download to be
+ * cancelled/requeued.
  * </p>
  * 
  * @author robin
@@ -77,53 +78,40 @@ public class DownloadDisplay extends Composite implements
 	private final Set<ISelectionListener> selectionListeners = new HashSet<ISelectionListener>(
 			1);
 	private boolean selected;
+	private final SWTView view;
+	private final Button cancelButton;
+	private final Composite progArea;
+	private final Button requeueButton;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
 	 * forth.
-	 * 
-	 * @param parent
-	 * @param style
 	 */
-	public DownloadDisplay(Composite parent, int style, Display display) {
+	public DownloadDisplay(Composite parent, int style, Display display,
+			SWTView view, IImageFactory images) {
 		super(parent, style);
+		this.view = view;
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
+		gridLayout.verticalSpacing = 1;
 		this.setLayout(gridLayout);
 		labelArea = new Composite(this, SWT.NONE);
-		labelArea.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		labelArea.addMouseListener(getMouseListener());
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
+		gridLayout.verticalSpacing = 0;
 		labelArea.setLayout(gridLayout);
 		labelArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
 				false));
 		titleLabel = new Label(labelArea, 0);
-		titleLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		titleLabel.addMouseListener(getMouseListener());
 		GridData gd = new GridData();
 		gd.horizontalAlignment = SWT.LEFT;
 		gd.grabExcessHorizontalSpace = true;
 		titleLabel.setLayoutData(gd);
 
-		statusLabel = new Label(labelArea, 0);
-		statusLabel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
-			}
-		});
+		statusLabel = new Label(labelArea, SWT.RIGHT);
+		statusLabel.addMouseListener(getMouseListener());
 		Font initialFont = statusLabel.getFont();
 		FontData[] fontData = initialFont.getFontData();
 		for (int i = 0; i < fontData.length; i++) {
@@ -138,25 +126,62 @@ public class DownloadDisplay extends Composite implements
 		gd.minimumWidth = SWT.DEFAULT;
 		statusLabel.setLayoutData(gd);
 
-		progBar = new ProgressBar(this, SWT.SMOOTH | SWT.HORIZONTAL);
-		progBar.addMouseListener(new MouseAdapter() {
+		progArea = new Composite(this, SWT.NONE);
+		progArea.addMouseListener(getMouseListener());
+		gridLayout = new GridLayout(3, false);
+		gridLayout.horizontalSpacing = 1;
+		gridLayout.verticalSpacing = 1;
+		progArea.setLayout(gridLayout);
+		progArea.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
+				false));
+		progBar = new ProgressBar(progArea, SWT.SMOOTH | SWT.HORIZONTAL);
+		progBar.addMouseListener(getMouseListener());
+		progBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		requeueButton = new Button(progArea, SWT.PUSH);
+		requeueButton.setImage(images.getRequeueIcon());
+		requeueButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
+				false));
+		requeueButton.setToolTipText("Add download back into the queue");
+		requeueButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
+			public void action(SelectionEvent ev) {
+				requeueClicked();
 			}
 		});
-		progBar
-				.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true,
-						false));
-		this.addMouseListener(new MouseAdapter() {
+
+		cancelButton = new Button(progArea, SWT.PUSH);
+		cancelButton.setImage(images.getCancelIcon());
+		cancelButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
+				false));
+		cancelButton.setToolTipText("Cancel download");
+		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
-				notifySelectionListeners(new SelectionFromMouseEvent(e,
-						DownloadDisplay.this));
+			public void action(SelectionEvent ev) {
+				cancelClicked();
 			}
 		});
+		this.addMouseListener(getMouseListener());
+		labelArea.pack();
 		layout();
+	}
+
+	private MouseAdapter getMouseListener() {
+		return new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				notifySelectionListeners(new SelectionFromMouseEvent(e,
+						DownloadDisplay.this));
+			}
+		};
+	}
+
+	private void cancelClicked() {
+		view.cancelDownload(this);
+	}
+
+	private void requeueClicked() {
+		view.requeueDownload(this);
 	}
 
 	public void setDownloadMonitor(IDownloadMonitor mon) {
@@ -170,7 +195,7 @@ public class DownloadDisplay extends Composite implements
 		if (pc != -1)
 			progBar.setSelection(pc);
 		// We now spin off a thread that polls the download progress every
-		// seconds or so and updates the progress bar
+		// second or so and updates the progress bar
 		if (pThread != null)
 			pThread.finish();
 		pThread = new PollThread(this);
@@ -215,6 +240,7 @@ public class DownloadDisplay extends Composite implements
 		if (pThread != null)
 			pThread.interrupt();
 		displayLabel();
+		setButtonStates();
 	}
 
 	private void displayLabel() {
@@ -225,21 +251,32 @@ public class DownloadDisplay extends Composite implements
 		if (!isDisposed()) {
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
+					setRedraw(false); // needed to avoid flicker
 					if (!titleLabel.isDisposed())
 						titleLabel.setText(SWTUtils.deMonic(lblName));
 					if (!statusLabel.isDisposed())
 						statusLabel.setText(text.toString());
 					if (!DownloadDisplay.this.isDisposed()) {
-						DownloadDisplay.this.layout();
-						titleLabel.pack();
-						statusLabel.pack();
 						labelArea.pack();
 						layout();
 					}
+					setRedraw(true);
 				}
 			});
 		}
 
+	}
+
+	private void setButtonStates() {
+		if (!isDisposed()) {
+			SWTView.asyncExec(new Runnable() {
+				public void run() {
+					DLState state = monitor.getDownloadState();
+					cancelButton.setEnabled(state.isCancellable());
+					requeueButton.setEnabled(state.isRequeuable());
+				}
+			});
+		}
 	}
 
 	/**
@@ -336,6 +373,13 @@ public class DownloadDisplay extends Composite implements
 		setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		labelArea.setBackground(SWTView
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		progArea
+				.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		cancelButton.setBackground(SWTView
+				.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		requeueButton.setBackground(SWTView
+				.getSystemColor(SWT.COLOR_LIST_SELECTION));
+
 		// progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		titleLabel.setBackground(SWTView
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
@@ -353,6 +397,9 @@ public class DownloadDisplay extends Composite implements
 		selected = false;
 		setBackground(oldBG);
 		labelArea.setBackground(oldBG);
+		progArea.setBackground(oldBG);
+		cancelButton.setBackground(oldBG);
+		requeueButton.setBackground(oldBG);
 		// progBar.setBackground(oldProgBG);
 		titleLabel.setBackground(oldLabelBG);
 		titleLabel.setForeground(oldLabelFG);

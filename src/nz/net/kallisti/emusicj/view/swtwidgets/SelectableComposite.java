@@ -204,17 +204,19 @@ public class SelectableComposite extends Composite implements
 	 *            everything will be deselected.
 	 */
 	private void selectOnly(ISelectableControl selCtrl) {
-		for (ISelectableControl control : selected) {
-			if (control != selCtrl)
-				control.unselect();
+		synchronized (selected) {
+			for (ISelectableControl control : selected) {
+				if (control != selCtrl)
+					control.unselect();
+			}
+			selected.clear();
+			if (selCtrl != null)
+				selected.add(selCtrl);
+			selCtrl.select();
+			lastSelected = selCtrl;
+			markSelected = selCtrl;
+			markSelected2 = null;
 		}
-		selected.clear();
-		if (selCtrl != null)
-			selected.add(selCtrl);
-		selCtrl.select();
-		lastSelected = selCtrl;
-		markSelected = selCtrl;
-		markSelected2 = null;
 	}
 
 	public void widgetDefaultSelected(SelectionEvent e) {
@@ -233,6 +235,35 @@ public class SelectableComposite extends Composite implements
 	 */
 	public List<ISelectableControl> getSelected() {
 		return Collections.unmodifiableList(selected);
+	}
+
+	/**
+	 * This selects the supplied control, unselecting anything else.
+	 * 
+	 * @param control
+	 *            the control to select. Attempting to select a control that is
+	 *            not a child of this widget is undefined.
+	 */
+	public void setSelected(ISelectableControl control) {
+		selectOnly(control);
+	}
+
+	/**
+	 * <p>
+	 * Determines if the provided control is selected.
+	 * </p>
+	 * <p>
+	 * Implementation note: this isn't particularly efficient, so don't do it
+	 * lots.
+	 * </p>
+	 * 
+	 * @param control
+	 *            the control you want to know about
+	 * @return <code>true</code> if that control is in the set of controls that
+	 *         is selected, <code>false</code> otherwise.
+	 */
+	public boolean isSelected(ISelectableControl control) {
+		return selected.contains(control);
 	}
 
 	public void addSelectionListener(SelectionListener listener) {
