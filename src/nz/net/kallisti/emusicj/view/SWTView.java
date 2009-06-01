@@ -179,7 +179,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 				Rectangle r = new Rectangle(x, y, width, height);
 				shell.setBounds(r);
 			} catch (Exception e) {
-				shell.setSize(400, 400);
+				shell.setSize(550, 550);
 			}
 			shell.open();
 			deferViewEvent(new Runnable() {
