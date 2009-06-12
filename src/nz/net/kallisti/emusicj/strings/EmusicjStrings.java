@@ -16,15 +16,14 @@ import com.google.inject.Inject;
  * 
  * @author robin
  */
-public class EmusicjStrings implements IStrings {
+public class EmusicjStrings extends AbstractStrings {
 
 	private final IURLFactory urlFactory;
-	private final IPreferences prefs;
 
 	@Inject
 	public EmusicjStrings(IURLFactory urlFactory, IPreferences prefs) {
+		super(prefs);
 		this.urlFactory = urlFactory;
-		this.prefs = prefs;
 	}
 
 	public String getAppName() {
@@ -84,20 +83,6 @@ public class EmusicjStrings implements IStrings {
 
 	public String getVersion() {
 		return "0.25-svn";
-	}
-
-	public String getCoverArtName() {
-		String userDefined = prefs.getCoverArtFilename();
-		if (userDefined != null)
-			return userDefined;
-		// If we're on windows or mac, we return 'folder.jpg'
-		String os = System.getProperty("os.name");
-		if (os != null
-				&& (os.toLowerCase().contains("windows") || os.toLowerCase()
-						.contains("mac os x"))) {
-			return "folder";
-		}
-		return "cover";
 	}
 
 }
