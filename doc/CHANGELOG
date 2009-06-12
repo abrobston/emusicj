@@ -18,6 +18,7 @@ V0.25-svn
 * Fixed that annoying flicker of the download status that was happening (#10)
 * Added a 'pause all downloads' toolbar button
 * Cancel/requeue buttons on downloads themselves
+* [Naxos] cover art now saves with the base name 'album' by default
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

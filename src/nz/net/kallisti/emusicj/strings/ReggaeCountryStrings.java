@@ -15,13 +15,11 @@ import com.google.inject.Inject;
  * 
  * @author robin
  */
-public class ReggaeCountryStrings implements IStrings {
-
-	private final IPreferences prefs;
+public class ReggaeCountryStrings extends AbstractStrings {
 
 	@Inject
 	public ReggaeCountryStrings(IPreferences prefs) {
-		this.prefs = prefs;
+		super(prefs);
 	}
 
 	public String getAppName() {
@@ -72,20 +70,6 @@ public class ReggaeCountryStrings implements IStrings {
 
 	public String getVersion() {
 		return "1.1";
-	}
-
-	public String getCoverArtName() {
-		String userDefined = prefs.getCoverArtFilename();
-		if (userDefined != null)
-			return userDefined;
-		// If we're on windows or mac, we return 'folder.jpg'
-		String os = System.getProperty("os.name");
-		if (os != null
-				&& (os.toLowerCase().contains("windows") || os.toLowerCase()
-						.contains("mac os x"))) {
-			return "folder";
-		}
-		return "cover";
 	}
 
 }
