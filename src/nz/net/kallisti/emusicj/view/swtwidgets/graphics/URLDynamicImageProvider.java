@@ -40,6 +40,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 	private final Provider<ISimpleDownloader> downloaderProvider;
 	private Display display;
 	private Image image;
+	private File cacheDir;
 
 	/**
 	 * <p>
@@ -57,9 +58,22 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 	}
 
 	public void setParams(URL url, File cacheDir, Display display) {
+		this.cacheDir = cacheDir;
 		this.display = display;
 		if (cacheDir == null)
 			throw new IllegalArgumentException("cacheDir cannot be null");
+		downloadImage(url);
+	}
+
+	/**
+	 * Downloads the image and sets it all up. If there's a cached version
+	 * already there, this will display it first, and notify listeners.
+	 * Otherwise, listeners will be notified when it's ready.
+	 * 
+	 * @param url
+	 *            the URL to source the image from
+	 */
+	private void downloadImage(URL url) {
 		// If the URL is null, then we can't download anything. Really, we
 		// shouldn't be getting one in this case, but it happens.
 		if (url == null)
@@ -72,7 +86,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 			md5.update(url.toString().getBytes());
 			Base64 base64 = new Base64();
 			String filename = new String(base64.encode(md5.digest()));
-			File cacheFile = new File(cacheDir, filename);
+			File cacheFile = new File(this.cacheDir, filename);
 			if (cacheFile.exists()) {
 				setImage(cacheFile);
 			}
@@ -97,6 +111,12 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 							"Unable to use cache to save images - missing hashing algorithm",
 							e);
 		}
+	}
+
+	public void changeURL(URL url) {
+		if (cacheDir == null)
+			throw new IllegalArgumentException("setParams must be called first");
+		downloadImage(url);
 	}
 
 	/**
