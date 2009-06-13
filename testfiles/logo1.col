@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- This tests the logo setting of the classicsonline file format (1). -->
+<PACKAGE>
+  <TITLE>DownloadPackage_RS63614_613200913121.col</TITLE>
+  <ACTION>download</ACTION>
+  <TARGET>Not used</TARGET>
+  <EXP_DATE>06/14/2009 13:12:01</EXP_DATE>
+  <LOGO>http://www.kallisti.net.nz/~robin/test1.png</LOGO>
+  <PROVIDER>
+    <AUTHOR>CLASSICSONLINE.com</AUTHOR>
+    <NAME>CLASSICSONLINE.com</NAME>
+    <URL>http://www.classicsonline.com</URL>
+    <COPYRIGHT>Portions Copyright (C) 2004 Naxos Global Distribution Ltd.; see http://www.naxos.com for more details</COPYRIGHT>
+    <CONTACT>customer.service@classicsonline.com</CONTACT>
+  </PROVIDER>
+  <SERVER>
+    <NAME>NAXOS.com</NAME>
+    <DESC>NAXOS content server</DESC>
+    <NETNAME>download.classicsonline.com</NETNAME>
+    <LOCATION>/downloader/download.axd?fid=%fid&amp;fmt=MP3</LOCATION>
+    <KEY>Not used</KEY>
+  </SERVER>
+</PACKAGE>
