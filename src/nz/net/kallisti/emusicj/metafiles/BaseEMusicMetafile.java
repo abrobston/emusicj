@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,7 +43,11 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -75,15 +80,24 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
 	private final IStrings strings;
+	private final IImageFactory images;
+	private final Logger logger;
 
 	@Inject
 	public BaseEMusicMetafile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
-			Provider<ICoverDownloader> coverDownloaderProvider) {
+			Provider<ICoverDownloader> coverDownloaderProvider,
+			IImageFactory images) {
 		this.prefs = prefs;
 		this.strings = strings;
 		this.musicDownloaderProvider = musicDownloaderProvider;
 		this.coverDownloaderProvider = coverDownloaderProvider;
+		// This is needed so we can update the logo if the .col file tells us
+		// it's changed. This is annoyingly tightly coupled to the SWT view
+		// implementation, and so the design may need to be revisited in the
+		// future.
+		this.images = images;
+		logger = LogUtils.getLogger(this);
 	}
 
 	public void setMetafile(File file) throws IOException {
@@ -119,9 +133,34 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			} else if (node.getNodeType() == Node.ELEMENT_NODE
 					&& node.getNodeName().equalsIgnoreCase("server")) {
 				server = new EMPServer(node);
+			} else if (node.getNodeType() == Node.ELEMENT_NODE
+					&& node.getNodeName().equalsIgnoreCase("logo")) {
+				setLogo(node);
 			}
 		}
 
+	}
+
+	/**
+	 * @param node
+	 */
+	private void setLogo(Node node) {
+		String url = node.getTextContent();
+		IDynamicImageProvider logoProvider = images
+				.getApplicationLogoProvider();
+		if (logoProvider instanceof IURLDynamicImageProvider) {
+			try {
+				((IURLDynamicImageProvider) logoProvider)
+						.changeURL(new URL(url));
+			} catch (MalformedURLException e) {
+				logger.warning("Invalid logo URL provided in metafile: [" + url
+						+ "]");
+			}
+		} else {
+			logger
+					.warning("Logo change requested on non-URL-based dynamic image (logoProvider.getClass()="
+							+ logoProvider.getClass());
+		}
 	}
 
 	/**

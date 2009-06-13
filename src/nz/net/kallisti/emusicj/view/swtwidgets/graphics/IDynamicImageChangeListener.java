@@ -16,10 +16,12 @@ public interface IDynamicImageChangeListener {
 	 * This is called when the image changes.
 	 * 
 	 * @param dynImage
-	 *            the dynamic image provider that changed
+	 *            the dynamic image provider that changed.
 	 * @param image
 	 *            the new image, or <code>null</code> if the image was removed
-	 *            and not replaced
+	 *            and not replaced. Note that this instance may be shared, so
+	 *            don't dispose it yourself. It will be automatically disposed
+	 *            on update.
 	 */
 	public void newImage(IDynamicImageProvider dynImage, Image image);
 

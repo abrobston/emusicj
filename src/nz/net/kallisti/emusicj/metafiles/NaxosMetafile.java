@@ -30,16 +30,21 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * <p>Loads a Naxos metafile, and creates downloaders from it. The Naxos
- * format is identical to the eMusic file, without the layer of encryption.</p>
+ * <p>
+ * Loads a Naxos metafile, and creates downloaders from it. The Naxos format is
+ * identical to the eMusic file, without the layer of encryption.
+ * </p>
  * 
- * <p>$Id: EMPMetafile.java 147 2006-12-28 07:21:53Z robin $</p>
- *
+ * <p>
+ * $Id: EMPMetafile.java 147 2006-12-28 07:21:53Z robin $
+ * </p>
+ * 
  * @author Robin Sheat <robin@kallisti.net.nz>
  * @author Paul Focke <paul.focke@gmail.com>
  */
@@ -53,31 +58,38 @@ public class NaxosMetafile extends BaseEMusicMetafile {
 	@Inject
 	public NaxosMetafile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
-			Provider<ICoverDownloader> coverDownloaderProvider) {
-		super(prefs, strings, musicDownloaderProvider, coverDownloaderProvider);
+			Provider<ICoverDownloader> coverDownloaderProvider,
+			IImageFactory images) {
+		super(prefs, strings, musicDownloaderProvider, coverDownloaderProvider,
+				images);
 	}
 
+	@Override
 	protected InputStream getFileStream(File file) throws IOException {
 		return new FileInputStream(file);
-	}	
+	}
 
 	/**
 	 * Does a simple test to see if the file is one we recognise.
-	 * @param file the file to test
-	 * @return true if the file is file looks like an EMP file 
-	 * @throws IOException if the file can't be read
+	 * 
+	 * @param file
+	 *            the file to test
+	 * @return true if the file is file looks like an EMP file
+	 * @throws IOException
+	 *             if the file can't be read
 	 */
 	public static boolean canParse(File file) throws IOException {
-		if (!file.getName().endsWith(".col") && !file.getName().endsWith(".COL"))
+		if (!file.getName().endsWith(".col")
+				&& !file.getName().endsWith(".COL"))
 			return false;
 		FileInputStream stream = new FileInputStream(file);
 		// just look at the first Kb
 		byte[] buff = new byte[1024];
-        // ignore return value, we don't really care
+		// ignore return value, we don't really care
 		stream.read(buff);
-		String s = new String(buff);		
-        stream.close();
+		String s = new String(buff);
+		stream.close();
 		return s.indexOf("<PACKAGE>") != -1;
 	}
-	
+
 }

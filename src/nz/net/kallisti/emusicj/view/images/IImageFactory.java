@@ -83,7 +83,8 @@ public interface IImageFactory {
 	 *            the parent widget for this one
 	 * @param style
 	 *            the SWT style
-	 * @return a label containing the logo
+	 * @return a dynamic image provider that supplies the image. This will be
+	 *         the same instance for every call to this.
 	 */
 	public IDynamicImageProvider getApplicationLogoProvider();
 
