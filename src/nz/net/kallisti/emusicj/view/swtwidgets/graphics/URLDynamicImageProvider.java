@@ -96,7 +96,8 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 				md5 = MessageDigest.getInstance("MD5");
 				md5.update(url.toString().getBytes());
 				Base64 base64 = new Base64();
-				String filename = new String(base64.encode(md5.digest()));
+				String filename = new String(base64.encode(md5.digest()))
+						.replace('/', '_');
 				File cacheFile = new File(this.cacheDir, filename);
 				if (cacheFile.exists()) {
 					setImage(cacheFile);
