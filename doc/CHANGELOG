@@ -12,7 +12,7 @@ V0.25-svn
 * Improved the scrolling distance of the list of tracks
 * Added support for CUE file format
 * Made the application logo at the top-right clickable, also able to be sourced
-  from a URL if desired in alternate brandings
+  from a URL if desired in alternate brandings, or updated from a metafile
 * Added a button to open the download directory straight from the application 
   (#67)
 * Fixed that annoying flicker of the download status that was happening (#10)
