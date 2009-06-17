@@ -14,6 +14,8 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.urls.naxos.NaxosURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.images.naxos.NaxosImageFactory;
+import nz.net.kallisti.emusicj.view.menu.CustomerSupportMenuBarBuilder;
+import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -40,6 +42,7 @@ public class NaxosBindings extends AbstractModule {
 				Scopes.SINGLETON);
 		bind(IURLFactory.class).to(NaxosURLFactory.class).in(Scopes.SINGLETON);
 		bind(IPreferences.class).to(NaxosPreferences.class).asEagerSingleton();
+		bind(IMenuBuilder.class).to(CustomerSupportMenuBarBuilder.class);
 	}
 
 }

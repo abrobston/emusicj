@@ -30,6 +30,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.bindingtypes.WatchFiles;
@@ -43,6 +45,7 @@ import nz.net.kallisti.emusicj.ipc.IIPCListener;
 import nz.net.kallisti.emusicj.ipc.IPCServerClient;
 import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.strings.IStrings;
@@ -86,6 +89,7 @@ public class EMusicController implements IEMusicController,
 	private final IUpdateCheck updateCheck;
 	private final IURLFactory urlFactory;
 	private final IStrings strings;
+	private final Logger logger;
 
 	@Inject
 	public EMusicController(IEMusicView view, IPreferences preferences,
@@ -102,6 +106,7 @@ public class EMusicController implements IEMusicController,
 		this.dropDirMon.setListener(this);
 		this.metafileLoader = metafileLoader;
 		this.updateCheck = updateCheck;
+		logger = LogUtils.getLogger(this);
 	}
 
 	public void run(String[] args) {
@@ -175,6 +180,10 @@ public class EMusicController implements IEMusicController,
 			if (view != null)
 				view.processEvents(this);
 			// Clean up the program
+		} catch (Exception e) {
+			logger
+					.log(Level.SEVERE, "Unexpected exception causing shutdown",
+							e);
 		} finally {
 			shutdown();
 		}

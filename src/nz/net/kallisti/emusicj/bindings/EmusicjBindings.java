@@ -14,6 +14,8 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.urls.emusicj.EmusicjURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.images.emusicj.EmusicjImageFactory;
+import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
+import nz.net.kallisti.emusicj.view.menu.StandardMenuBarBuilder;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -42,6 +44,7 @@ public class EmusicjBindings extends AbstractModule {
 				.in(Scopes.SINGLETON);
 		bind(IPreferences.class).to(EmusicjPreferences.class)
 				.asEagerSingleton();
+		bind(IMenuBuilder.class).to(StandardMenuBarBuilder.class);
 	}
 
 }

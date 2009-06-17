@@ -340,6 +340,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the image to use as the system tray icon
 	 */
 	private void buildSystemTray(SWTView view, Image icon) {
+		// Things should be refactored to use the IMenuBuilder stuff in the
+		// future
 		Tray tray = display.getSystemTray();
 		if (tray != null) {
 			sysTray = new SystemTrayManager(view, icon, tray, strings
