@@ -86,4 +86,8 @@ public class ReggaeCountryURLFactory implements IURLFactory {
 		return null;
 	}
 
+	public URL getCustomerSupportURL() {
+		return null;
+	}
+
 }

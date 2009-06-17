@@ -70,4 +70,8 @@ public class EmusicjURLFactory implements IURLFactory {
 		return null;
 	}
 
+	public URL getCustomerSupportURL() {
+		return null;
+	}
+
 }

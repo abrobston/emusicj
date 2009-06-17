@@ -99,4 +99,14 @@ public class NaxosURLFactory implements IURLFactory {
 		return null;
 	}
 
+	public URL getCustomerSupportURL() {
+		try {
+			return new URL(props.getProperty(CUSTOMERSUPPORTURL_KEY));
+		} catch (MalformedURLException e) {
+			logger.log(Level.WARNING, "Unable to load "
+					+ CUSTOMERSUPPORTURL_KEY + " URL", e);
+		}
+		return null;
+	}
+
 }

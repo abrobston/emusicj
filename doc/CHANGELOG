@@ -19,6 +19,7 @@ V0.25-svn
 * Added a 'pause all downloads' toolbar button
 * Cancel/requeue buttons on downloads themselves
 * [Naxos] cover art now saves with the base name 'album' by default
+* [Naxos] added a 'Customer service' help menu entry
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

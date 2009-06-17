@@ -14,6 +14,8 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.urls.reggaecountry.ReggaeCountryURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.images.reggaecountry.ReggaeCountryImageFactory;
+import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
+import nz.net.kallisti.emusicj.view.menu.StandardMenuBarBuilder;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -43,6 +45,7 @@ public class ReggaeCountryBindings extends AbstractModule {
 				Scopes.SINGLETON);
 		bind(IPreferences.class).to(ReggaeCountryPreferences.class)
 				.asEagerSingleton();
+		bind(IMenuBuilder.class).to(StandardMenuBarBuilder.class);
 	}
 
 }

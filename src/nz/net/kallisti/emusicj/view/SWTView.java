@@ -43,6 +43,7 @@ import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.Creds
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
+import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
@@ -134,17 +135,19 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	private final IImageFactory imageFactory;
 	private final IURLFactory urlFactory;
 	private final Logger logger;
+	private final IMenuBuilder menuBuilder;
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
 			IEMusicController controller, IImageFactory imageFactory,
-			IURLFactory urlFactory) {
+			IURLFactory urlFactory, IMenuBuilder menuBuilder) {
 		super();
 		this.prefs = prefs;
 		this.strings = strings;
 		this.controller = controller;
 		this.imageFactory = imageFactory;
 		this.urlFactory = urlFactory;
+		this.menuBuilder = menuBuilder;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -337,6 +340,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the image to use as the system tray icon
 	 */
 	private void buildSystemTray(SWTView view, Image icon) {
+		// Things should be refactored to use the IMenuBuilder stuff in the
+		// future
 		Tray tray = display.getSystemTray();
 		if (tray != null) {
 			sysTray = new SystemTrayManager(view, icon, tray, strings
@@ -428,36 +433,8 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	 *            the shell to display it on
 	 */
 	private void buildMenuBar(Shell shell) {
-		Menu bar = new Menu(shell, SWT.BAR);
-		shell.setMenuBar(bar);
-		// --- File menu ---
-		Menu fileMenu = SWTUtils.createDropDown(shell, bar, "&File");
-		SWTUtils.createMenuItem(fileMenu, "&Open...\tCtrl-O", SWT.CTRL + 'O',
-				this, "openFile");
-		new MenuItem(fileMenu, SWT.SEPARATOR);
-		SWTUtils.createMenuItem(fileMenu, "&Quit\tCtrl-Q", SWT.CTRL + 'Q',
-				this, "quitProgram");
-		// --- Downloads menu ---
-		Menu downloadsMenu = SWTUtils.createDropDown(shell, bar, "&Downloads");
-		SWTUtils.createMenuItem(downloadsMenu, "&Pause downloads\tCtrl-P",
-				SWT.CTRL + 'P', this, "pauseDownloads");
-		SWTUtils.createMenuItem(downloadsMenu, "&Resume downloads\tCtrl-R",
-				SWT.CTRL + 'R', this, "resumeDownloads");
-		SWTUtils.createMenuItem(downloadsMenu, "Cancel &all downloads",
-				SWT.NONE, this, "cancelAllDownloads");
-		new MenuItem(downloadsMenu, SWT.SEPARATOR);
-		SWTUtils.createMenuItem(downloadsMenu, "&Clean up downloads\tCtrl-C",
-				SWT.CTRL + 'C', this, "cleanUpDownloads");
-		// --- Settings menu
-		Menu settingsMenu = SWTUtils.createDropDown(shell, bar, "&Settings");
-		SWTUtils.createMenuItem(settingsMenu, "&Preferences...", SWT.NONE,
-				this, "displayPreferences");
-		// --- Help menu ---
-		Menu aboutMenu = SWTUtils.createDropDown(shell, bar, "&Help");
-		SWTUtils.createMenuItem(aboutMenu, "&User Manual...", SWT.NONE, this,
-				"userManual");
-		SWTUtils.createMenuItem(aboutMenu, "&About...", SWT.NONE, this,
-				"aboutBox");
+		Menu menu = menuBuilder.getMenu(shell, this);
+		shell.setMenuBar(menu);
 	}
 
 	/**
