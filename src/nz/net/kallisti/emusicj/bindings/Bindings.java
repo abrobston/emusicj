@@ -53,6 +53,8 @@ import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
+import nz.net.kallisti.emusicj.view.menu.StandardMenuBuilder;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.StreamDynamicImageProvider;
@@ -105,5 +107,6 @@ public class Bindings extends AbstractModule {
 				StreamDynamicImageProvider.class);
 		bind(IURLDynamicImageProvider.class).to(URLDynamicImageProvider.class);
 		bind(ISimpleDownloader.class).to(SimpleDownloader.class);
+		bind(IMenuBuilder.class).to(StandardMenuBuilder.class);
 	}
 }
