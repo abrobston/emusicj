@@ -39,10 +39,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- *
+ * 
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
 public class UpdateDialogue {
@@ -56,8 +56,8 @@ public class UpdateDialogue {
 	private final IStrings strings;
 	private final IURLFactory urlFactory;
 
-	public UpdateDialogue(Shell shell, SWTView view, String newVersion, IPreferences prefs,
-			IStrings strings, IURLFactory urlFactory) {
+	public UpdateDialogue(Shell shell, SWTView view, String newVersion,
+			IPreferences prefs, IStrings strings, IURLFactory urlFactory) {
 		this.shell = shell;
 		this.view = view;
 		this.newVersion = newVersion;
@@ -67,52 +67,56 @@ public class UpdateDialogue {
 	}
 
 	public void open() {
-		dialog = new Shell (shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		dialog.setLayout (new GridLayout(3,false));
+		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		dialog.setLayout(new GridLayout(3, false));
 		dialog.setText("New Version Available");
 		Label textLabel = new Label(dialog, SWT.WRAP);
-		textLabel.setText("A new version of "+strings.getAppName()+" is available.\n" +
-				"Version "+newVersion+" has been released.\n"+
-				"It can be downloaded from "+urlFactory.getAppURL());
+		textLabel.setText("A new version of " + strings.getAppName()
+				+ " is available.\n" + "Version " + newVersion
+				+ " has been released.\n" + "It can be downloaded from:\n"
+				+ urlFactory.getAppURL());
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		textLabel.setLayoutData(gd);
 		againButton = new Button(dialog, SWT.CHECK);
 		againButton.setText("Don't check for updates automatically");
 		gd = new GridData();
-        gd.horizontalSpan = 3;
-        againButton.setLayoutData(gd);
-//		Label againLabel = new Label(dialog, SWT.NONE);
-//		againLabel.setText("Don't check for updates automatically");
-		
-        Button openInBrowser = new Button(dialog, SWT.PUSH);
-        gd = new GridData();
-        gd.horizontalAlignment=SWT.RIGHT;
-        openInBrowser.setLayoutData(gd);
-        openInBrowser.setText("Open in browser");
-        openInBrowser.addSelectionListener(new SelectionAdapter(){
-            public void action(SelectionEvent e) {
-                openPageInBrowser();
-            }
-        });        
-        
-        Button copy = new Button(dialog, SWT.PUSH);
-        gd = new GridData();
-        gd.horizontalAlignment=SWT.RIGHT;
-        copy.setLayoutData(gd);
-        copy.setText("Copy URL to clipboard");
-        copy.addSelectionListener(new SelectionAdapter(){
-            public void action(SelectionEvent e) {
-                copyToClip();
-            }
-        });
-        
-        Button close = new Button(dialog, SWT.PUSH);
+		gd.horizontalSpan = 3;
+		againButton.setLayoutData(gd);
+		// Label againLabel = new Label(dialog, SWT.NONE);
+		// againLabel.setText("Don't check for updates automatically");
+
+		Button openInBrowser = new Button(dialog, SWT.PUSH);
 		gd = new GridData();
-		gd.horizontalAlignment=SWT.RIGHT;
+		gd.horizontalAlignment = SWT.RIGHT;
+		openInBrowser.setLayoutData(gd);
+		openInBrowser.setText("Open in browser");
+		openInBrowser.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent e) {
+				openPageInBrowser();
+			}
+		});
+
+		Button copy = new Button(dialog, SWT.PUSH);
+		gd = new GridData();
+		gd.horizontalAlignment = SWT.RIGHT;
+		copy.setLayoutData(gd);
+		copy.setText("Copy URL to clipboard");
+		copy.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent e) {
+				copyToClip();
+			}
+		});
+
+		Button close = new Button(dialog, SWT.PUSH);
+		gd = new GridData();
+		gd.horizontalAlignment = SWT.RIGHT;
 		close.setLayoutData(gd);
 		close.setText("Close");
-		close.addSelectionListener(new SelectionAdapter(){
+		close.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void action(SelectionEvent e) {
 				close();
 			}
@@ -124,32 +128,43 @@ public class UpdateDialogue {
 	}
 
 	/**
-     * Copies the application URL to the clipboard
-     */
-    protected void copyToClip() {
-        String textData = urlFactory.getAppURL().toString();
-        TextTransfer textTransfer = TextTransfer.getInstance();
-        SWTView.getClipboard().setContents(new Object[]{textData}, new Transfer[]{textTransfer});
-    }
+	 * Copies the application URL to the clipboard
+	 */
+	protected void copyToClip() {
+		String textData = urlFactory.getAppURL().toString();
+		TextTransfer textTransfer = TextTransfer.getInstance();
+		SWTView.getClipboard().setContents(new Object[] { textData },
+				new Transfer[] { textTransfer });
+	}
 
-    public void close() {
+	public void close() {
 		prefs.setCheckForUpdates(!againButton.getSelection());
 		dialog.dispose();
-		new Thread() { public void run() { prefs.save(); } }.start();
-	}
-    
-    public void openPageInBrowser() {
 		new Thread() {
+			@Override
+			public void run() {
+				prefs.save();
+			}
+		}.start();
+	}
+
+	public void openPageInBrowser() {
+		new Thread() {
+			@Override
 			public void run() {
 				try {
 					BrowserLauncher.openURL(urlFactory.getAppURL());
 				} catch (Exception e) {
-					view.error("Error launching browser", "There seemed to be a " +
-							"problem launching the browser. The user manual can" +
-							"be found at "+urlFactory.getAppURL());
-				}				
+					view
+							.error(
+									"Error launching browser",
+									"There seemed to be a "
+											+ "problem launching the browser. The user manual can"
+											+ "be found at "
+											+ urlFactory.getAppURL());
+				}
 			}
 		}.start();
-    }
-	
+	}
+
 }
