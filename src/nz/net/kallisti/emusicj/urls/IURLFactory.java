@@ -18,6 +18,7 @@ public interface IURLFactory {
 	public static final String APPURL_KEY = "appurl";
 	public static final String TOOLBARICONSOURCE_KEY = "toolbariconsrc";
 	public static final String TOOLBARICONDEST_KEY = "toolbaricondest";
+	public static final String CUSTOMERSUPPORTURL_KEY = "customersupporturl";
 
 	/**
 	 * Gets the URL to check for updates
@@ -55,5 +56,15 @@ public interface IURLFactory {
 	 *         <code>null</code>.
 	 */
 	public URL getToolbarIconClickURL();
+
+	/**
+	 * Gets the URL that the user will be taken to if they select 'customer
+	 * support' from the help menu.
+	 * 
+	 * @return the URL to open when the user want support. May be
+	 *         <code>null</code> if there is no such entry, otherwise it should
+	 *         be there.
+	 */
+	public URL getCustomerSupportURL();
 
 }
