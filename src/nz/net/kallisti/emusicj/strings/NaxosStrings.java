@@ -76,7 +76,7 @@ public class NaxosStrings extends AbstractStrings {
 	}
 
 	public String getVersion() {
-		return "1.1";
+		return "2.0-alpha";
 	}
 
 	@Override
