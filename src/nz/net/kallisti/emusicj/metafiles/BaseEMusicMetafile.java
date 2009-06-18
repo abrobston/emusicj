@@ -173,7 +173,7 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 
 	/**
 	 * This processes the date that is contained in the node text, and turns it
-	 * into a real date.
+	 * into a real date. It expects RFC 3339 dates.
 	 * 
 	 * @param node
 	 *            the node that contains the date
@@ -185,7 +185,10 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 		String data = node.getTextContent();
 		if (data == null)
 			return null;
-		Date date = df.parse(node.getTextContent(), pos);
+		// because SimpleDateFormat is stupid we need to remove the ':' from the
+		// timezone
+		data = data.replaceFirst("([+-]\\d\\d):(\\d\\d)$", "$1$2");
+		Date date = df.parse(data, pos);
 		if (date == null) {
 			logger.warning("Unable to parse date (" + data + "), error in pos "
 					+ pos.getErrorIndex());
