@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<PACKAGE>
+  <TITLE>DownloadPackage_RS63614_6182009175542.col</TITLE>
+  <ACTION>download</ACTION>
+  <TARGET>Not used</TARGET>
+  <EXP_DATE>2009-06-18 22:50:00+10:00</EXP_DATE>
+  <PROVIDER>
+    <AUTHOR>CLASSICSONLINE.com</AUTHOR>
+    <NAME>CLASSICSONLINE.com</NAME>
+    <URL>http://www.classicsonline.com</URL>
+    <COPYRIGHT>Portions Copyright (C) 2004 Naxos Global Distribution Ltd.; see http://www.naxos.com for more details</COPYRIGHT>
+    <CONTACT>customer.service@classicsonline.com</CONTACT>
+  </PROVIDER>
+  <SERVER>
+    <NAME>NAXOS.com</NAME>
+    <DESC>NAXOS content server</DESC>
+    <NETNAME>download.classicsonline.com</NETNAME>
+    <LOCATION>/downloader/download.axd?fid=%fid&amp;fmt=MP3</LOCATION>
+    <KEY>Not used</KEY>
+  </SERVER>
+  <TRACKLIST>
+    <LISTID>0</LISTID>
+    <TRACK>
+      <TRACKID>72babb31-f3b9-4904-adb7-0ef794dbc156</TRACKID>
+      <TRACKNUM>3</TRACKNUM>
+      <TITLE>1_3_piano_concerto_no_2_in_a_fla~1_iii_moderato_innocente</TITLE>
+      <ALBUM>ClassicsOnline_Exclusive_The_Piano_Concerto_Collection</ALBUM>
+      <ARTIST>Not used</ARTIST>
+      <GENRE>Classical Music</GENRE>
+      <FILENAME>796669.mp3</FILENAME>
+      <FORMAT>.mp3</FORMAT>
+      <QUALITY>1024</QUALITY>
+      <CHANNELS>-2147483648</CHANNELS>
+      <DURATION>11</DURATION>
+      <ALBUMART>http://smallfiles.classicsonline.com/images/cds/others/9.40240.gif</ALBUMART>
+    </TRACK>
+  </TRACKLIST>
+</PACKAGE>

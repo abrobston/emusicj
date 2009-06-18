@@ -20,6 +20,8 @@ V0.25-svn
 * Cancel/requeue buttons on downloads themselves
 * [Naxos] cover art now saves with the base name 'album' by default
 * [Naxos] added a 'Customer service' help menu entry
+* Now understands that URLs can expire, and will highlight the fact rather than
+  just say 'failed' assuming the info is in the metafile
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

@@ -236,6 +236,11 @@ public class DownloadDisplay extends Composite implements
 		} else if (state == DLState.FAILED) {
 			lblState = "Failed";
 			lblProgress = "(" + monitor.getFailureCount() + ")";
+		} else if (state == DLState.EXPIRED) {
+			lblState = "Expired";
+			lblProgress = "";
+		} else {
+			lblState = "Unknown";
 		}
 		if (pThread != null)
 			pThread.interrupt();

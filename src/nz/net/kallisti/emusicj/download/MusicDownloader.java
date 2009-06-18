@@ -24,6 +24,7 @@ package nz.net.kallisti.emusicj.download;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
@@ -162,6 +163,10 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 
 	public String getGenre() {
 		return genre;
+	}
+
+	public void setExpiry(Date expiry) {
+		super.setExpiry(expiry);
 	}
 
 }

@@ -26,7 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Logger;
@@ -124,25 +127,30 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 					"File appears to contain no downloads");
 		}
 		NodeList pkg = root.getChildNodes();
-
+		// The expiry date of the track URLs.
+		Date expiry = null;
 		for (int count = 0; count < pkg.getLength(); count++) {
 			Node node = pkg.item(count);
-			if (node.getNodeType() == Node.ELEMENT_NODE
-					&& node.getNodeName().equalsIgnoreCase("tracklist")) {
-				loadTrackList(node);
-			} else if (node.getNodeType() == Node.ELEMENT_NODE
-					&& node.getNodeName().equalsIgnoreCase("server")) {
+			if (node.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			if (node.getNodeName().equalsIgnoreCase("tracklist")) {
+				loadTrackList(node, expiry);
+			} else if (node.getNodeName().equalsIgnoreCase("server")) {
 				server = new EMPServer(node);
-			} else if (node.getNodeType() == Node.ELEMENT_NODE
-					&& node.getNodeName().equalsIgnoreCase("logo")) {
+			} else if (node.getNodeName().equalsIgnoreCase("logo")) {
 				setLogo(node);
+			} else if (node.getNodeName().equalsIgnoreCase("exp_date")) {
+				expiry = parseDate(node);
 			}
 		}
 
 	}
 
 	/**
+	 * This sets the logo to the URL provided in the .col file.
+	 * 
 	 * @param node
+	 *            the node containing the URL
 	 */
 	private void setLogo(Node node) {
 		String url = node.getTextContent();
@@ -164,16 +172,45 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	}
 
 	/**
+	 * This processes the date that is contained in the node text, and turns it
+	 * into a real date. It expects RFC 3339 dates.
+	 * 
+	 * @param node
+	 *            the node that contains the date
+	 * @return the parsed date, or <code>null</code> if it can't be parsed.
+	 */
+	private Date parseDate(Node node) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+		ParsePosition pos = new ParsePosition(0);
+		String data = node.getTextContent();
+		if (data == null)
+			return null;
+		// because SimpleDateFormat is stupid we need to remove the ':' from the
+		// timezone
+		data = data.replaceFirst("([+-]\\d\\d):(\\d\\d)$", "$1$2");
+		Date date = df.parse(data, pos);
+		if (date == null) {
+			logger.warning("Unable to parse date (" + data + "), error in pos "
+					+ pos.getErrorIndex());
+			return null;
+		}
+		return date;
+	}
+
+	/**
 	 * This takes the filename that was provided and turns it into a stream that
 	 * will provide the raw XML.
 	 * 
 	 * @param file
 	 *            the filename to process
+	 * @param expiry
+	 *            the date that the file tells us this track will expire, or
+	 *            <code>null</code> if there isn't an expiry date.
 	 * @return an input stream providing the EMP file content
 	 */
 	protected abstract InputStream getFileStream(File file) throws IOException;
 
-	private void loadTrackList(Node tracklistNode) {
+	private void loadTrackList(Node tracklistNode, Date expiry) {
 		NodeList tracklist = tracklistNode.getChildNodes();
 		for (int count = 0; count < tracklist.getLength(); count++) {
 			Node node = tracklist.item(count);
@@ -181,7 +218,7 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 					.equalsIgnoreCase("track"))) {
 				continue;
 			}
-			loadTrack(node);
+			loadTrack(node, expiry);
 		}
 	}
 
@@ -189,7 +226,7 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	 * @param node
 	 * @throws MalformedURLException
 	 */
-	private void loadTrack(Node trackNode) {
+	private void loadTrack(Node trackNode, Date expiry) {
 		NodeList track = trackNode.getChildNodes();
 		String id = null;
 		String num = null;
@@ -244,6 +281,8 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
+		if (expiry != null)
+			dl.setExpiry(expiry);
 		try {
 			dl.setDuration(Integer.parseInt(duration));
 		} catch (NumberFormatException e) {

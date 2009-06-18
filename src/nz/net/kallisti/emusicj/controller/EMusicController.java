@@ -314,8 +314,7 @@ public class EMusicController implements IEMusicController,
 			if (monitorStateChangedIsRunning)
 				return;
 			// Poor-mans synchronization, can't use synchronized on the method
-			// as
-			// it may cause deadlocks
+			// as it may cause deadlocks
 			monitorStateChangedIsRunning = false;
 		}
 		try {
