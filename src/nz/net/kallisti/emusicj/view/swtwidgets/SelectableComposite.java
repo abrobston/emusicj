@@ -210,9 +210,10 @@ public class SelectableComposite extends Composite implements
 					control.unselect();
 			}
 			selected.clear();
-			if (selCtrl != null)
+			if (selCtrl != null) {
 				selected.add(selCtrl);
-			selCtrl.select();
+				selCtrl.select();
+			}
 			lastSelected = selCtrl;
 			markSelected = selCtrl;
 			markSelected2 = null;
