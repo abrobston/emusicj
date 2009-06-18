@@ -24,37 +24,41 @@ package nz.net.kallisti.emusicj.download;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import org.w3c.dom.Element;
 
 /**
- * <p></p>
+ * <p>
+ * </p>
  * 
- * <p>$Id$</p>
- *
+ * <p>
+ * $Id$
+ * </p>
+ * 
  * @author robin
  */
 public interface IMusicDownloader extends IDownloader {
 
-    public int getTrackNum();
-    
-    public String getTrackName();
-    
-    public String getArtistName();
-    
-    public String getAlbumName();
-    
-    public File getCoverArt();
-    
-    public void setGenre(String genre);
-    
-    public String getGenre();
-    
-    public void setDuration(int i);
-    
-    public int getDuration();
-    
-    public IMusicDownloadMonitor getMusicDownloadMonitor();
+	public int getTrackNum();
+
+	public String getTrackName();
+
+	public String getArtistName();
+
+	public String getAlbumName();
+
+	public File getCoverArt();
+
+	public void setGenre(String genre);
+
+	public String getGenre();
+
+	public void setDuration(int i);
+
+	public int getDuration();
+
+	public IMusicDownloadMonitor getMusicDownloadMonitor();
 
 	public void setDownloader(URL url, File outputFile, int trackNum,
 			String songName, String album, String artist);
@@ -63,5 +67,15 @@ public interface IMusicDownloader extends IDownloader {
 			int trackNum, String songName, String album, String artist);
 
 	public void setDownloader(Element el) throws MalformedURLException;
-    
+
+	/**
+	 * The music download tracks may expire. This is that date that this will
+	 * happen to this one.
+	 * 
+	 * @param expiry
+	 *            the expiry date. May be <code>null</code> if there is no
+	 *            expiry for this track.
+	 */
+	public void setExpiry(Date expiry);
+
 }

@@ -38,7 +38,7 @@ public interface IDownloadMonitor {
 	public enum DLState {
 		NOTSTARTED(true, false), CONNECTING(true, false), DOWNLOADING(true,
 				false), PAUSED(true, false), CANCELLED(false, true), FINISHED(
-				false, false), FAILED(true, true);
+				false, false), FAILED(true, true), EXPIRED(false, false);
 
 		private final boolean cancellable;
 		private final boolean requeuable;

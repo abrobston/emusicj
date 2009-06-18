@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,6 +72,7 @@ public class HTTPDownloader implements IDownloader {
 	protected IPreferences prefs;
 	protected Logger logger;
 	private final IHttpClientProvider clientProvider;
+	private Date expiry;
 
 	@Inject
 	public HTTPDownloader(IPreferences prefs, IHttpClientProvider clientProvider) {
@@ -132,6 +134,31 @@ public class HTTPDownloader implements IDownloader {
 			throw new MalformedURLException("Missing output filename");
 		createMonitor();
 		setState(DLState.NOTSTARTED);
+		String tOut = el.getAttribute("outputfile");
+		if (!"".equals(tOut))
+			outputFile = new File(tOut);
+		String tMime = el.getAttribute("mimetype");
+		if (!"".equals(tMime)) {
+			try {
+				String[] parts = tMime.split(",");
+				mimeType = new IMimeType[parts.length];
+				for (int i = 0; i < parts.length; i++)
+					mimeType[i] = new MimeType(parts[i]);
+			} catch (MimeTypeParseException e) {
+				e.printStackTrace();
+			}
+		}
+		String tExpiry = el.getAttribute("expiry");
+		if (!"".equals(tExpiry)) {
+			try {
+				expiry = new Date(Long.parseLong(tExpiry));
+			} catch (NumberFormatException e) {
+				logger.warning("Invalid expiry value in state file (" + tExpiry
+						+ ") - ignoring");
+			}
+		}
+		// This should come last to ensure everything is set up before we risk
+		// executing start()
 		String tState = el.getAttribute("state");
 		if (!"".equals(tState)) {
 			if (tState.equals("CONNECTING") || tState.equals("DOWNLOADING")) {
@@ -145,20 +172,8 @@ public class HTTPDownloader implements IDownloader {
 				setState(DLState.PAUSED);
 			} else if (tState.equals("FINISHED")) {
 				setState(DLState.FINISHED);
-			}
-		}
-		String tOut = el.getAttribute("outputfile");
-		if (!"".equals(tOut))
-			outputFile = new File(tOut);
-		String tMime = el.getAttribute("mimetype");
-		if (!"".equals(tMime)) {
-			try {
-				String[] parts = tMime.split(",");
-				mimeType = new IMimeType[parts.length];
-				for (int i = 0; i < parts.length; i++)
-					mimeType[i] = new MimeType(parts[i]);
-			} catch (MimeTypeParseException e) {
-				e.printStackTrace();
+			} else if (tState.equals("EXPIRED")) {
+				setState(DLState.EXPIRED);
 			}
 		}
 	}
@@ -187,6 +202,9 @@ public class HTTPDownloader implements IDownloader {
 				out += mimeType[i].toString();
 			}
 			el.setAttribute("mimetype", out);
+		}
+		if (expiry != null) {
+			el.setAttribute("expiry", expiry.getTime() + "");
 		}
 	}
 
@@ -302,6 +320,10 @@ public class HTTPDownloader implements IDownloader {
 
 	public void resetFailureCount() {
 		failureCount = 0;
+	}
+
+	public void setExpiry(Date expiry) {
+		this.expiry = expiry;
 	}
 
 	/**
