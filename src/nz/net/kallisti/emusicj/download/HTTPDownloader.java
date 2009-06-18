@@ -176,6 +176,7 @@ public class HTTPDownloader implements IDownloader {
 				setState(DLState.EXPIRED);
 			}
 		}
+		hasExpired();
 	}
 
 	protected void createMonitor() {
@@ -213,6 +214,8 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	public synchronized void start() {
+		if (hasExpired())
+			return;
 		if (dlThread == null) {
 			dlThread = new DownloadThread();
 			dlThread.start();
@@ -227,6 +230,8 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	public synchronized void stop() {
+		if (hasExpired())
+			return;
 		if (dlThread != null)
 			dlThread.finish();
 		state = DLState.CANCELLED;
@@ -235,6 +240,8 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	public synchronized void requeue() {
+		if (hasExpired())
+			return;
 		if (dlThread != null)
 			dlThread.finish();
 		state = DLState.NOTSTARTED;
@@ -251,6 +258,8 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	public synchronized void pause() {
+		if (hasExpired())
+			return;
 		if (dlThread != null)
 			dlThread.finish();
 		state = DLState.PAUSED;
@@ -322,8 +331,32 @@ public class HTTPDownloader implements IDownloader {
 		failureCount = 0;
 	}
 
-	public void setExpiry(Date expiry) {
+	/**
+	 * After this date, the state will be set to 'expired' and not much more
+	 * will be able to happen.
+	 * 
+	 * @param expiry
+	 *            the date to define as expiry, or <code>null</code> if there is
+	 *            none.
+	 */
+	protected void setExpiry(Date expiry) {
 		this.expiry = expiry;
+		hasExpired();
+	}
+
+	public boolean hasExpired() {
+		if (state == DLState.EXPIRED)
+			return true;
+		if (expiry == null)
+			return false;
+		// If we're in the process of downloading, we don't expire
+		if (state == DLState.CONNECTING || state == DLState.DOWNLOADING)
+			return false;
+		if (expiry.compareTo(new Date()) < 0) {
+			setState(DLState.EXPIRED);
+			return true;
+		}
+		return false;
 	}
 
 	/**
