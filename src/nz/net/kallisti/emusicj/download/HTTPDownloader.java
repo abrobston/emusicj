@@ -573,10 +573,7 @@ public class HTTPDownloader implements IDownloader {
 			bytesDown = resumePoint;
 			try {
 				while ((count = in.read(buff)) != -1) {
-					synchronized (HTTPDownloader.this) {
-						// synch because an assignment to a long isn't atomic
-						bytesDown += count;
-					}
+					bytesDown += count;
 					out.write(buff, 0, count);
 					if (abort) {
 						get.abort();

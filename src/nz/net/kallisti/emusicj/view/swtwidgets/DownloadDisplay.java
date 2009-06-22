@@ -325,6 +325,7 @@ public class DownloadDisplay extends Composite implements
 
 		@Override
 		public void run() {
+			setName("Display: " + lblName);
 			int oldPerc = (int) monitor.getDownloadPercent();
 			long oldBytesDown = monitor.getBytesDown();
 			boolean alreadyFinished = false;

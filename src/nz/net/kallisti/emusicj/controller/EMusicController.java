@@ -84,7 +84,8 @@ public class EMusicController implements IEMusicController,
 	private PollDownloads pollThread;
 	private final IDirectoryMonitor dropDirMon;
 	private int maxDownloadFailures;
-	private Boolean monitorStateChangedIsRunning = false;
+	private final Object monitorStateChangedLock = new Object();
+	private boolean monitorStateChangedIsRunning = false;
 	private final IMetafileLoader metafileLoader;
 	private final IUpdateCheck updateCheck;
 	private final IURLFactory urlFactory;
@@ -310,12 +311,12 @@ public class EMusicController implements IEMusicController,
 	 *            order to just ensure that downloads are happening.
 	 */
 	public void monitorStateChanged(IDownloadMonitor monitor) {
-		synchronized (monitorStateChangedIsRunning) {
+		synchronized (monitorStateChangedLock) {
 			if (monitorStateChangedIsRunning)
 				return;
 			// Poor-mans synchronization, can't use synchronized on the method
 			// as it may cause deadlocks
-			monitorStateChangedIsRunning = false;
+			monitorStateChangedIsRunning = true;
 		}
 		try {
 			if (shuttingDown)
