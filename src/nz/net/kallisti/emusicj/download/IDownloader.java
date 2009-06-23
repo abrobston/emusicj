@@ -100,10 +100,26 @@ public interface IDownloader {
 	/**
 	 * This will check to see if the URL information has expired. It is publicly
 	 * visible as it may be useful to poll this every so often to keep it
-	 * reasonably up to date.
+	 * reasonably up to date. This may cause side-effects, such as events to be
+	 * triggered, if a state change occurs.
 	 * 
 	 * @return true if the URL has expired, false otherwise
 	 */
 	public boolean hasExpired();
+
+	/**
+	 * If this is called, then this downloader will update its more transient
+	 * values from the supplied downloader. This includes things such as the
+	 * source URL and the expirey time. It will also cause a reset of failure
+	 * and expired statuses.
+	 * 
+	 * It is legitimate for this to do nothing if the provided downloader type
+	 * is not recognised by this one.
+	 * 
+	 * @param dl
+	 *            the downloader that contains the information that you want to
+	 *            update this one with
+	 */
+	public void updateFrom(IDownloader dl);
 
 }

@@ -252,4 +252,16 @@ public class TestDownloader implements IDownloader {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * nz.net.kallisti.emusicj.download.IDownloader#updateFrom(nz.net.kallisti
+	 * .emusicj.download.IDownloader)
+	 */
+	public void updateFrom(IDownloader dl) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

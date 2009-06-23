@@ -22,6 +22,9 @@ V0.25-svn
 * [Naxos] added a 'Customer service' help menu entry
 * Now understands that URLs can expire, and will highlight the fact rather than
   just say 'failed' assuming the info is in the metafile
+* Loading a metafile that contains information on an already existing download
+  will cause the original one to be updated with the new info, and restart if
+  appropriate.
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)
