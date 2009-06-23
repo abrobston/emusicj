@@ -26,9 +26,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -79,9 +79,12 @@ public class DownloadsModel implements IDownloadsModel {
 	private final List<IDownloadsModelListener> listeners;
 	/**
 	 * Contains the download in a way that can be searched quickly. <i>Must</i>
-	 * be kept synchronous with {@link downloads} at all times.
+	 * be kept synchronous with {@link downloads} at all times. Note that both
+	 * the key and the value must be the same. This allows the specific instance
+	 * to be retrieved, as downloader hash and equals tests are done based only
+	 * on the output file.
 	 */
-	private final Set<IDownloader> dlsHash;
+	private final Map<IDownloader, IDownloader> dlsHash;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
 	private final Provider<IDownloader> downloaderProvider;
@@ -100,7 +103,8 @@ public class DownloadsModel implements IDownloadsModel {
 		this.downloaderProvider = downloaderProvider;
 		this.strings = strings;
 		downloads = Collections.synchronizedList(new ArrayList<IDownloader>());
-		dlsHash = Collections.synchronizedSet(new HashSet<IDownloader>());
+		dlsHash = Collections
+				.synchronizedMap(new HashMap<IDownloader, IDownloader>());
 		listeners = Collections
 				.synchronizedList(new ArrayList<IDownloadsModelListener>());
 	}
@@ -188,24 +192,24 @@ public class DownloadsModel implements IDownloadsModel {
 				}
 				if (dlNode.getNodeName().equals("MusicDownloader")
 						|| (dlNode.getNodeName().equals("HTTPMusicDownloader"))) { // backwards
-																					// compatibility
-																					// after
-																					// class
-																					// rename
+					// compatibility
+					// after
+					// class
+					// rename
 					IMusicDownloader dl = musicDownloaderProvider.get();
 					dl.setDownloader((Element) dlNode);
 					downloads.add(dl);
-					dlsHash.add(dl);
+					dlsHash.put(dl, dl);
 				} else if (dlNode.getNodeName().equals("CoverDownloader")) {
 					ICoverDownloader dl = coverDownloaderProvider.get();
 					dl.setDownloader((Element) dlNode);
 					downloads.add(dl);
-					dlsHash.add(dl);
+					dlsHash.put(dl, dl);
 				} else if (dlNode.getNodeName().equals("HTTPDownloader")) {
 					IDownloader dl = downloaderProvider.get();
 					dl.setDownloader((Element) dlNode);
 					downloads.add(dl);
-					dlsHash.add(dl);
+					dlsHash.put(dl, dl);
 				}
 			}
 		} catch (Exception e) {
@@ -243,25 +247,32 @@ public class DownloadsModel implements IDownloadsModel {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti.emusicj.download.IMusicDownloader)
+	 * @see
+	 * nz.net.kallisti.emusicj.models.IDownloadsModel#addDownload(nz.net.kallisti
+	 * .emusicj.download.IMusicDownloader)
 	 */
 	public void addDownload(IDownloader dl) {
-		if (!dlsHash.contains(dl)) {
+		if (!dlsHash.containsKey(dl)) {
 			downloads.add(dl);
-			dlsHash.add(dl);
+			dlsHash.put(dl, dl);
 			notifyListeners();
+		} else {
+			IDownloader existingDl = dlsHash.get(dl);
+			existingDl.updateFrom(dl);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see nz.net.kallisti.emusicj.models.IDownloadsModel#removeDownloads(java.util.List)
+	 * @see
+	 * nz.net.kallisti.emusicj.models.IDownloadsModel#removeDownloads(java.util
+	 * .List)
 	 */
 	public void removeDownloads(List<IDownloader> toRemove) {
 		if (toRemove.size() != 0) {
 			for (IDownloader dl : toRemove) {
-				if (dlsHash.contains(dl)) {
+				if (dlsHash.containsKey(dl)) {
 					downloads.remove(dl);
 					dlsHash.remove(dl);
 				}
@@ -271,7 +282,7 @@ public class DownloadsModel implements IDownloadsModel {
 	}
 
 	public void removeDownload(IDownloader dl) {
-		if (dlsHash.contains(dl)) {
+		if (dlsHash.containsKey(dl)) {
 			downloads.remove(dl);
 			dlsHash.remove(dl);
 			notifyListeners();

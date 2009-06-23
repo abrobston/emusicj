@@ -344,11 +344,26 @@ public class HTTPDownloader implements IDownloader {
 		hasExpired();
 	}
 
+	public void updateFrom(IDownloader dl) {
+		if (!(dl instanceof HTTPDownloader))
+			return;
+		HTTPDownloader httpdl = (HTTPDownloader) dl;
+		this.url = httpdl.url;
+		this.expiry = httpdl.expiry;
+		// Note we rely on the side effects of hasExpired() to allow for the
+		// status to be updated if the expiry date changed in a way that
+		// matters.
+		if (!hasExpired() && state == DLState.FAILED) {
+			failureCount = 0;
+			setState(DLState.NOTSTARTED);
+		}
+	}
+
 	public boolean hasExpired() {
-		if (state == DLState.EXPIRED)
-			return true;
-		if (expiry == null)
+		if (expiry == null) {
+			resetExpiry();
 			return false;
+		}
 		// If we're in the process of downloading, we don't expire
 		if (state == DLState.CONNECTING || state == DLState.DOWNLOADING)
 			return false;
@@ -356,7 +371,19 @@ public class HTTPDownloader implements IDownloader {
 			setState(DLState.EXPIRED);
 			return true;
 		}
+		resetExpiry();
 		return false;
+	}
+
+	/**
+	 * If the current status has us set to expired, this will set it to a
+	 * default waiting state. Note that it doesn't check to see if this is
+	 * legitimate, so only call it if you know we shouldn't be expired.
+	 */
+	private void resetExpiry() {
+		if (state == DLState.EXPIRED) {
+			setState(DLState.NOTSTARTED);
+		}
 	}
 
 	/**

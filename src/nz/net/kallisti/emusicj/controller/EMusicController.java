@@ -256,9 +256,8 @@ public class EMusicController implements IEMusicController,
 		// are recorded.
 		try {
 			saveState();
-		} catch (FileNotFoundException e) {
-			System.err.println("Error saving downloader state");
-			e.printStackTrace();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Error saving downloader state", e);
 		}
 	}
 
