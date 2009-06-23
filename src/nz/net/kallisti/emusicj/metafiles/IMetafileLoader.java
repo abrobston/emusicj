@@ -10,9 +10,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 
 /**
- * 
- * 
- * $Id:$
+ * <p>
  * 
  * @author robin
  */

@@ -550,8 +550,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		} catch (SWTException e) {
 			// If a GUI error occurs hopefully we can shut down somewhat
 			// gracefully
-			System.err.println("A GUI error occurred. Shutting down.");
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "A GUI error occurred. Shutting down.", e);
 		}
 		for (DownloadDisplay disp : dlDisplays) {
 			disp.stop();
