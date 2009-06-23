@@ -277,8 +277,10 @@ public class DownloadDisplay extends Composite implements
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
 					DLState state = monitor.getDownloadState();
-					cancelButton.setEnabled(state.isCancellable());
-					requeueButton.setEnabled(state.isRequeuable());
+					if (!cancelButton.isDisposed())
+						cancelButton.setEnabled(state.isCancellable());
+					if (!requeueButton.isDisposed())
+						requeueButton.setEnabled(state.isRequeuable());
 				}
 			});
 		}
