@@ -213,14 +213,17 @@ public class HTTPDownloader implements IDownloader {
 		return monitor;
 	}
 
-	public synchronized void start() {
+	public void start() {
 		if (hasExpired())
 			return;
-		if (dlThread == null) {
-			dlThread = new DownloadThread();
-			dlThread.start();
-		} else {
-			setState(DLState.DOWNLOADING);
+		// Basically we want to avoid state signals happening inside a
+		// synchronization block, otherwise we risk deadlocks. But we want to
+		// keep the thread manipulation inside it.
+		synchronized (this) {
+			if (dlThread == null) {
+				dlThread = new DownloadThread();
+				dlThread.start();
+			}
 		}
 	}
 
@@ -229,42 +232,50 @@ public class HTTPDownloader implements IDownloader {
 		monitor.setState(state);
 	}
 
-	public synchronized void stop() {
+	public void stop() {
 		if (hasExpired())
 			return;
-		if (dlThread != null)
-			dlThread.finish();
-		state = DLState.CANCELLED;
+		synchronized (this) {
+			if (dlThread != null)
+				dlThread.finish();
+			dlThread = null;
+			state = DLState.CANCELLED;
+		}
 		monitor.setState(state);
-		dlThread = null;
 	}
 
-	public synchronized void requeue() {
+	public void requeue() {
 		if (hasExpired())
 			return;
-		if (dlThread != null)
-			dlThread.finish();
-		state = DLState.NOTSTARTED;
+		synchronized (this) {
+			if (dlThread != null)
+				dlThread.finish();
+			state = DLState.NOTSTARTED;
+			dlThread = null;
+		}
 		monitor.setState(state);
-		dlThread = null;
 	}
 
-	public synchronized void hardStop() {
-		if (dlThread != null)
-			dlThread.hardFinish();
-		state = DLState.CANCELLED;
+	public void hardStop() {
+		synchronized (this) {
+			if (dlThread != null)
+				dlThread.hardFinish();
+			state = DLState.CANCELLED;
+			dlThread = null;
+		}
 		monitor.setState(state);
-		dlThread = null;
 	}
 
 	public synchronized void pause() {
 		if (hasExpired())
 			return;
-		if (dlThread != null)
-			dlThread.finish();
-		state = DLState.PAUSED;
+		synchronized (this) {
+			if (dlThread != null)
+				dlThread.finish();
+			state = DLState.PAUSED;
+			dlThread = null;
+		}
 		monitor.setState(state);
-		dlThread = null;
 	}
 
 	public URL getURL() {
@@ -280,24 +291,29 @@ public class HTTPDownloader implements IDownloader {
 		return outputFile;
 	}
 
-	private synchronized void downloadError(Exception e) {
-		logger.log(Level.WARNING, dlThread + ": A download error occurred", e);
-		failureCount++;
-		state = DLState.FAILED;
+	private void downloadError(Exception e) {
+		synchronized (this) {
+			logger.log(Level.WARNING, dlThread + ": A download error occurred",
+					e);
+			failureCount++;
+			state = DLState.FAILED;
+			dlThread = null;
+		}
 		monitor.setState(state);
-		dlThread = null;
 	}
 
-	private synchronized void downloadError(String s, Exception ex) {
-		if (ex == null) {
-			logger.log(Level.WARNING, dlThread + ": " + s);
-		} else {
-			logger.log(Level.WARNING, dlThread + ": " + s, ex);
+	private void downloadError(String s, Exception ex) {
+		synchronized (this) {
+			if (ex == null) {
+				logger.log(Level.WARNING, dlThread + ": " + s);
+			} else {
+				logger.log(Level.WARNING, dlThread + ": " + s, ex);
+			}
+			failureCount++;
+			state = DLState.FAILED;
+			dlThread = null;
 		}
-		failureCount++;
-		state = DLState.FAILED;
 		monitor.setState(state);
-		dlThread = null;
 	}
 
 	/**
