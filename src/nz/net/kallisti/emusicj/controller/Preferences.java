@@ -103,9 +103,15 @@ public abstract class Preferences implements IPreferences {
 		loadProps();
 	}
 
+	/**
+	 * This creates the default save path for saving files in. It checks to see
+	 * if some standard ones exist, and if they do, it uses the first one of
+	 * them that it finds. If not, it defaults to 'My Music'.
+	 * 
+	 * @return a string containing the default path for saving downloaded files
+	 *         to
+	 */
 	private String buildDefaultSavePath() {
-		this.path = System.getProperty("user.home") + File.separatorChar
-				+ "mp3" + File.separatorChar + strings.getAppPathname();
 		String home = System.getProperty("user.home");
 		String[] check = { "My Music", "Music" };
 		for (String dir : check) {
@@ -113,8 +119,8 @@ public abstract class Preferences implements IPreferences {
 				return home + File.separatorChar + dir + File.separatorChar
 						+ strings.getAppPathname();
 		}
-		return home + File.separatorChar + check[check.length - 1]
-				+ File.separatorChar + strings.getAppPathname();
+		return home + File.separatorChar + check[0] + File.separatorChar
+				+ strings.getAppPathname();
 	}
 
 	private void loadProps() {
