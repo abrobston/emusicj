@@ -119,8 +119,8 @@ public abstract class Preferences implements IPreferences {
 				return home + File.separatorChar + dir + File.separatorChar
 						+ strings.getAppPathname();
 		}
-		return home + File.separatorChar + check[0] + File.separatorChar
-				+ strings.getAppPathname();
+		return home + File.separatorChar + check[check.length - 1]
+				+ File.separatorChar + strings.getAppPathname();
 	}
 
 	private void loadProps() {
