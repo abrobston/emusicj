@@ -25,6 +25,7 @@ V0.25-svn
 * Loading a metafile that contains information on an already existing download
   will cause the original one to be updated with the new info, and restart if
   appropriate.
+* Try to reduce the chances that a .part file is left lying around
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

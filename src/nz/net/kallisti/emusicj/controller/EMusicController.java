@@ -41,6 +41,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.dropdir.IDirectoryMonitor;
 import nz.net.kallisti.emusicj.dropdir.IDirectoryMonitorListener;
+import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.ipc.IIPCListener;
 import nz.net.kallisti.emusicj.ipc.IPCServerClient;
 import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
@@ -91,18 +92,20 @@ public class EMusicController implements IEMusicController,
 	private final IURLFactory urlFactory;
 	private final IStrings strings;
 	private final Logger logger;
+	private final ICleanupFiles cleanupFiles;
 
 	@Inject
 	public EMusicController(IEMusicView view, IPreferences preferences,
 			IDownloadsModel downloadsModel,
 			@WatchFiles Provider<IDirectoryMonitor> dropDirMonProvider,
 			IMetafileLoader metafileLoader, IUpdateCheck updateCheck,
-			IURLFactory urlFactory, IStrings strings) {
+			IURLFactory urlFactory, IStrings strings, ICleanupFiles cleanupFiles) {
 		this.view = view;
 		this.prefs = preferences;
 		this.downloadsModel = downloadsModel;
 		this.urlFactory = urlFactory;
 		this.strings = strings;
+		this.cleanupFiles = cleanupFiles;
 		this.dropDirMon = dropDirMonProvider.get();
 		this.dropDirMon.setListener(this);
 		this.metafileLoader = metafileLoader;
@@ -212,6 +215,7 @@ public class EMusicController implements IEMusicController,
 			dl.hardStop();
 		}
 		prefs.save();
+		cleanupFiles.deleteFiles();
 		System.exit(0);
 	}
 

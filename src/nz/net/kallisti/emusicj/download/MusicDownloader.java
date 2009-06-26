@@ -29,6 +29,7 @@ import java.util.Date;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
+import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.w3c.dom.Document;
@@ -57,8 +58,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
-			IHttpClientProvider clientProvider) {
-		super(prefs, clientProvider);
+			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles) {
+		super(prefs, clientProvider, cleanupFiles);
 	}
 
 	public void setDownloader(URL url, File outputFile, int trackNum,
@@ -165,6 +166,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		return genre;
 	}
 
+	@Override
 	public void setExpiry(Date expiry) {
 		super.setExpiry(expiry);
 	}
