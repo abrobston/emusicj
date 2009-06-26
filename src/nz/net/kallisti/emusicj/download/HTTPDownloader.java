@@ -38,6 +38,8 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeType;
+import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.apache.commons.httpclient.Header;
@@ -73,12 +75,15 @@ public class HTTPDownloader implements IDownloader {
 	protected Logger logger;
 	private final IHttpClientProvider clientProvider;
 	private Date expiry;
+	private final ICleanupFiles cleanupFiles;
 
 	@Inject
-	public HTTPDownloader(IPreferences prefs, IHttpClientProvider clientProvider) {
+	public HTTPDownloader(IPreferences prefs,
+			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles) {
 		this.prefs = prefs;
 		this.clientProvider = clientProvider;
-		this.logger = Logger.getLogger("nz.net.kallisti.emusicj.download");
+		this.cleanupFiles = cleanupFiles;
+		this.logger = LogUtils.getLogger(this);
 		createMonitor();
 	}
 
@@ -625,6 +630,7 @@ public class HTTPDownloader implements IDownloader {
 						} catch (IOException e) {
 						}
 						if (!hardAbort) {
+							// This can sometimes take time
 							try {
 								in.close();
 							} catch (IOException e) {
@@ -643,6 +649,7 @@ public class HTTPDownloader implements IDownloader {
 					if (needToRename)
 						partFile.renameTo(outputFile);
 					get.releaseConnection();
+					cleanupFiles.removeFile(partFile);
 				} else {
 					// if we didn't get the whole file, mark it and it'll
 					// be tried again later
@@ -653,6 +660,10 @@ public class HTTPDownloader implements IDownloader {
 					out.close();
 					in.close();
 					get.releaseConnection();
+					// We want to avoid leaving partial files lying around. If
+					// the download successfully completes later, then this gets
+					// removed.
+					cleanupFiles.addFile(partFile);
 				}
 			} catch (IOException e) {
 				get.abort();
@@ -663,6 +674,7 @@ public class HTTPDownloader implements IDownloader {
 				}
 				get.releaseConnection();
 				downloadError(e);
+				cleanupFiles.addFile(partFile);
 				return;
 			}
 		}

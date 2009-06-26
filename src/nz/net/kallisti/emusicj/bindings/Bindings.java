@@ -33,6 +33,8 @@ import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
+import nz.net.kallisti.emusicj.files.cleanup.CleanupFiles;
+import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
 import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
 import nz.net.kallisti.emusicj.metafiles.IMetafile;
@@ -105,5 +107,6 @@ public class Bindings extends AbstractModule {
 				StreamDynamicImageProvider.class);
 		bind(IURLDynamicImageProvider.class).to(URLDynamicImageProvider.class);
 		bind(ISimpleDownloader.class).to(SimpleDownloader.class);
+		bind(ICleanupFiles.class).to(CleanupFiles.class).in(Scopes.SINGLETON);
 	}
 }
