@@ -25,8 +25,8 @@ import nz.net.kallisti.emusicj.bindingtypes.Emusic;
 import nz.net.kallisti.emusicj.bindingtypes.EmusicEmx;
 import nz.net.kallisti.emusicj.bindingtypes.Naxos;
 import nz.net.kallisti.emusicj.bindingtypes.PlainText;
-import nz.net.kallisti.emusicj.controller.EMusicController;
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.EmusicjController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.CoverDownloader;
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
@@ -81,7 +81,7 @@ public class Bindings extends AbstractModule {
 	@Override
 	public void configure() {
 		bind(IEMusicView.class).to(SWTView.class).in(Scopes.SINGLETON);
-		bind(IEMusicController.class).to(EMusicController.class).in(
+		bind(IEmusicjController.class).to(EmusicjController.class).in(
 				Scopes.SINGLETON);
 		// bind(MacSupport.class).asEagerSingleton();
 

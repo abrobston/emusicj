@@ -23,7 +23,7 @@ package nz.net.kallisti.emusicj;
 
 import nz.net.kallisti.emusicj.bindings.Bindings;
 import nz.net.kallisti.emusicj.bindings.NaxosBindings;
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 import com.google.inject.Guice;
@@ -50,7 +50,7 @@ public class ClassicsOnline {
     	Injector injector = Guice.createInjector(Stage.PRODUCTION, new Bindings(), new NaxosBindings());
         IEMusicView view = injector.getInstance(IEMusicView.class);
         view.setState(IEMusicView.ViewState.STARTUP);
-        IEMusicController controller = injector.getInstance(IEMusicController.class);
+        IEmusicjController controller = injector.getInstance(IEmusicjController.class);
         startApp(controller, args);
     }
     
@@ -59,7 +59,7 @@ public class ClassicsOnline {
      * @param controller the application controller
      * @param args the command line arguments
      */
-    public void startApp(IEMusicController controller, String[] args) {
+    public void startApp(IEmusicjController controller, String[] args) {
         controller.run(args);
     }
     

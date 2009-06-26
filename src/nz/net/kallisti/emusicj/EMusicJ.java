@@ -23,7 +23,7 @@ package nz.net.kallisti.emusicj;
 
 import nz.net.kallisti.emusicj.bindings.Bindings;
 import nz.net.kallisti.emusicj.bindings.EmusicjBindings;
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.view.IEMusicView;
 
 import com.google.inject.Guice;
@@ -56,8 +56,8 @@ public class EMusicJ {
 				new Bindings(), new EmusicjBindings());
 		IEMusicView view = injector.getInstance(IEMusicView.class);
 		view.setState(IEMusicView.ViewState.STARTUP);
-		IEMusicController controller = injector
-				.getInstance(IEMusicController.class);
+		IEmusicjController controller = injector
+				.getInstance(IEmusicjController.class);
 		controller.run(args);
 	}
 
@@ -69,7 +69,7 @@ public class EMusicJ {
 	 * @param args
 	 *            the command line arguments
 	 */
-	public void startApp(IEMusicController controller, String[] args) {
+	public void startApp(IEmusicjController controller, String[] args) {
 		controller.run(args);
 	}
 

@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
@@ -109,7 +109,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 	private static Display display;
 	private static Clipboard clipboard;
 	private Shell shell;
-	private final IEMusicController controller;
+	private final IEmusicjController controller;
 	private IDownloadsModel downloadsModel;
 	private ScrolledComposite downloadsList;
 	private ViewState state;
@@ -139,7 +139,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
-			IEMusicController controller, IImageFactory imageFactory,
+			IEmusicjController controller, IImageFactory imageFactory,
 			IURLFactory urlFactory, IMenuBuilder menuBuilder) {
 		super();
 		this.prefs = prefs;
@@ -528,7 +528,7 @@ public class SWTView implements IEMusicView, IDownloadsModelListener,
 		}.start();
 	}
 
-	public void processEvents(IEMusicController controller) {
+	public void processEvents(IEmusicjController controller) {
 		try {
 			shell.addControlListener(this);
 			running = true;

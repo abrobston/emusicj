@@ -37,7 +37,7 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
  *
  * @author robin
  */
-public interface IEMusicController {
+public interface IEmusicjController {
 
     /**
      * This starts the controller running. It will perform any initialisation 

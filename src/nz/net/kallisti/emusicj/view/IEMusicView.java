@@ -21,7 +21,7 @@
  */
 package nz.net.kallisti.emusicj.view;
 
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.CredsCallback;
 
@@ -65,7 +65,7 @@ public interface IEMusicView {
 	 * @param controller
 	 *            the controller to pass events on to
 	 */
-	public void processEvents(IEMusicController controller);
+	public void processEvents(IEmusicjController controller);
 
 	/**
 	 * A view has a downloads model to keep track of what downloads are in the

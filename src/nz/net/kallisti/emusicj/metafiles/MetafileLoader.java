@@ -30,7 +30,7 @@ import nz.net.kallisti.emusicj.bindingtypes.Emusic;
 import nz.net.kallisti.emusicj.bindingtypes.EmusicEmx;
 import nz.net.kallisti.emusicj.bindingtypes.Naxos;
 import nz.net.kallisti.emusicj.bindingtypes.PlainText;
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 
@@ -66,7 +66,7 @@ public class MetafileLoader implements IMetafileLoader {
     /* (non-Javadoc)
 	 * @see nz.net.kallisti.emusicj.metafiles.IMetafileLoader#load(nz.net.kallisti.emusicj.controller.IEMusicController, java.io.File)
 	 */
-    public List<IDownloader> load(IEMusicController controller, File filename)
+    public List<IDownloader> load(IEmusicjController controller, File filename)
         throws FileNotFoundException, IOException, UnknownFileException {
         if (!filename.exists() || !filename.canRead())
             throw new FileNotFoundException(filename+" not found or not readable.");

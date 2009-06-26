@@ -71,7 +71,7 @@ import com.google.inject.Provider;
  * 
  * @author robin
  */
-public class EMusicController implements IEMusicController,
+public class EmusicjController implements IEmusicjController,
 		IDownloadMonitorListener, IDownloadsModelListener,
 		IUpdateCheckListener, IDirectoryMonitorListener,
 		IPreferenceChangeListener, IIPCListener {
@@ -95,7 +95,7 @@ public class EMusicController implements IEMusicController,
 	private final ICleanupFiles cleanupFiles;
 
 	@Inject
-	public EMusicController(IEMusicView view, IPreferences preferences,
+	public EmusicjController(IEMusicView view, IPreferences preferences,
 			IDownloadsModel downloadsModel,
 			@WatchFiles Provider<IDirectoryMonitor> dropDirMonProvider,
 			IMetafileLoader metafileLoader, IUpdateCheck updateCheck,

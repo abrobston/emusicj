@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 
@@ -31,7 +31,7 @@ public interface IMetafileLoader {
 	 * @throws FileNotFoundException
 	 *             if the file doesn't exist or is unreadable
 	 */
-	public List<IDownloader> load(IEMusicController controller, File filename)
+	public List<IDownloader> load(IEmusicjController controller, File filename)
 			throws FileNotFoundException, IOException, UnknownFileException;
 
 }
