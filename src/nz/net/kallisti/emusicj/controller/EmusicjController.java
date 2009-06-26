@@ -53,7 +53,7 @@ import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.IUpdateCheckListener;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
-import nz.net.kallisti.emusicj.view.IEMusicView;
+import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -76,7 +76,7 @@ public class EmusicjController implements IEmusicjController,
 		IUpdateCheckListener, IDirectoryMonitorListener,
 		IPreferenceChangeListener, IIPCListener {
 
-	private final IEMusicView view;
+	private final IEmusicjView view;
 	private final IDownloadsModel downloadsModel;
 	private boolean noAutoStartDownloads = false;
 	private final IPreferences prefs;
@@ -95,7 +95,7 @@ public class EmusicjController implements IEmusicjController,
 	private final ICleanupFiles cleanupFiles;
 
 	@Inject
-	public EmusicjController(IEMusicView view, IPreferences preferences,
+	public EmusicjController(IEmusicjView view, IPreferences preferences,
 			IDownloadsModel downloadsModel,
 			@WatchFiles Provider<IDirectoryMonitor> dropDirMonProvider,
 			IMetafileLoader metafileLoader, IUpdateCheck updateCheck,
@@ -139,7 +139,7 @@ public class EmusicjController implements IEmusicjController,
 				maxDownloadFailures = Constants.MAX_FAILURES;
 			}
 			if (view != null)
-				view.setState(IEMusicView.ViewState.STARTUP);
+				view.setState(IEmusicjView.ViewState.STARTUP);
 			try {
 				downloadsModel.loadState(new FileInputStream(prefs
 						.getStatePath()
@@ -168,7 +168,7 @@ public class EmusicjController implements IEmusicjController,
 			// Pass the system state on to the view to ensure it's up to date
 			if (view != null) {
 				view.setDownloadsModel(downloadsModel);
-				view.setState(IEMusicView.ViewState.RUNNING);
+				view.setState(IEmusicjView.ViewState.RUNNING);
 				view.pausedStateChanged(noAutoStartDownloads);
 			}
 

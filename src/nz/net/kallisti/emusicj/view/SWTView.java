@@ -103,7 +103,7 @@ import com.google.inject.Inject;
  * 
  * @author robin
  */
-public class SWTView implements IEMusicView, IDownloadsModelListener,
+public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		SelectionListener, ControlListener {
 
 	private static Display display;

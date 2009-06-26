@@ -27,7 +27,7 @@ import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.Creds
 
 import org.apache.commons.httpclient.auth.AuthScheme;
 
-public interface IEMusicView {
+public interface IEmusicjView {
 
 	/**
 	 * <p>

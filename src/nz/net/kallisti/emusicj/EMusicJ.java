@@ -24,7 +24,7 @@ package nz.net.kallisti.emusicj;
 import nz.net.kallisti.emusicj.bindings.Bindings;
 import nz.net.kallisti.emusicj.bindings.EmusicjBindings;
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
-import nz.net.kallisti.emusicj.view.IEMusicView;
+import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -54,8 +54,8 @@ public class EMusicJ {
 	public EMusicJ(String[] args) {
 		Injector injector = Guice.createInjector(Stage.PRODUCTION,
 				new Bindings(), new EmusicjBindings());
-		IEMusicView view = injector.getInstance(IEMusicView.class);
-		view.setState(IEMusicView.ViewState.STARTUP);
+		IEmusicjView view = injector.getInstance(IEmusicjView.class);
+		view.setState(IEmusicjView.ViewState.STARTUP);
 		IEmusicjController controller = injector
 				.getInstance(IEmusicjController.class);
 		controller.run(args);

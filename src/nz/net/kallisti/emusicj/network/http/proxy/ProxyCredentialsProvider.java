@@ -3,7 +3,7 @@ package nz.net.kallisti.emusicj.network.http.proxy;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import nz.net.kallisti.emusicj.view.IEMusicView;
+import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.NTCredentials;
@@ -34,7 +34,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 	 * asked again.
 	 */
 	private volatile boolean userCancelled = false;
-	private final IEMusicView view;
+	private final IEmusicjView view;
 	private final Semaphore semaphore = new Semaphore(1);
 	private final AtomicInteger blockedCounter = new AtomicInteger();
 
@@ -43,7 +43,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 	 * request things from the user via it.
 	 */
 	@Inject
-	public ProxyCredentialsProvider(IEMusicView view) {
+	public ProxyCredentialsProvider(IEmusicjView view) {
 		this.view = view;
 	}
 

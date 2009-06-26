@@ -53,7 +53,7 @@ import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
 import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
-import nz.net.kallisti.emusicj.view.IEMusicView;
+import nz.net.kallisti.emusicj.view.IEmusicjView;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
@@ -80,7 +80,7 @@ public class Bindings extends AbstractModule {
 
 	@Override
 	public void configure() {
-		bind(IEMusicView.class).to(SWTView.class).in(Scopes.SINGLETON);
+		bind(IEmusicjView.class).to(SWTView.class).in(Scopes.SINGLETON);
 		bind(IEmusicjController.class).to(EmusicjController.class).in(
 				Scopes.SINGLETON);
 		// bind(MacSupport.class).asEagerSingleton();
