@@ -69,7 +69,7 @@ public abstract class Preferences implements IPreferences {
 	public final String statePath;
 	private String path;
 	private String filePattern;
-	private int minDownloads = 2;
+	private int minDownloads;
 	private Properties props;
 	private String proxyHost = "";
 	private int proxyPort = 0;
@@ -91,6 +91,7 @@ public abstract class Preferences implements IPreferences {
 		this.statePath = System.getProperty("user.home") + File.separatorChar
 				+ "." + strings.getAppPathname() + File.separatorChar;
 		this.filePattern = strings.getDefaultFilePattern();
+		this.minDownloads = getDefaultMinDownloads();
 		// Make sure the state path exists, as other things may need it
 		new File(statePath).mkdirs();
 		// Set the proxy variables
@@ -101,6 +102,15 @@ public abstract class Preferences implements IPreferences {
 		} catch (MalformedURLException e) {
 		}
 		loadProps();
+	}
+
+	/**
+	 * This provides the default number of downloads that will happen at once.
+	 * 
+	 * @return a number. Probably a fairly small one.
+	 */
+	protected int getDefaultMinDownloads() {
+		return 2;
 	}
 
 	/**

@@ -26,4 +26,12 @@ public class NaxosPreferences extends Preferences {
 		return false;
 	}
 
+	/**
+	 * Classicsonline wants more downloads by default
+	 */
+	@Override
+	protected int getDefaultMinDownloads() {
+		return 4;
+	}
+
 }

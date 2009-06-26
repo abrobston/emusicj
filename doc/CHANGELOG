@@ -26,6 +26,7 @@ V0.25-svn
   will cause the original one to be updated with the new info, and restart if
   appropriate.
 * Try to reduce the chances that a .part file is left lying around
+* [Naxos] increase the preferred download count to 4
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)
