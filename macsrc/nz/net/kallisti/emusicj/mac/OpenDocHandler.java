@@ -1,6 +1,6 @@
 package nz.net.kallisti.emusicj.mac;
 
-import nz.net.kallisti.emusicj.controller.IEMusicController;
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.mac.access.OSXAccess;
 
 import org.eclipse.swt.internal.Callback;
@@ -34,9 +34,9 @@ public class OpenDocHandler {
 	private static final int typeText = ('T' << 24) + ('E' << 16) + ('X' << 8)
 			+ 'T';
 
-	private final IEMusicController controller;
+	private final IEmusicjController controller;
 
-	public OpenDocHandler(IEMusicController controller) {
+	public OpenDocHandler(IEmusicjController controller) {
 		this.controller = controller;
 		registerFile();
 	}
