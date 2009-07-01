@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,7 @@ import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
 import org.w3c.dom.Document;
@@ -60,8 +62,8 @@ public class EMXMetaFile extends AbstractMetafile {
 	public EMXMetaFile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images) {
-		super(images);
+			IImageFactory images, IURLFactory urls) {
+		super(images, urls);
 		this.prefs = prefs;
 		this.strings = strings;
 		this.musicDownloaderProvider = musicDownloaderProvider;
@@ -105,6 +107,8 @@ public class EMXMetaFile extends AbstractMetafile {
 				setLogo(node);
 			} else if (node.getNodeName().equalsIgnoreCase("exp_date")) {
 				expiry = parseDate(node.getTextContent());
+			} else if (node.getNodeName().equalsIgnoreCase("banner")) {
+				setBanner(node);
 			}
 		}
 
@@ -118,6 +122,36 @@ public class EMXMetaFile extends AbstractMetafile {
 		} catch (MalformedURLException e) {
 			logger.warning("Invalid logo URL provided in metafile: [" + urlStr
 					+ "]");
+		}
+	}
+
+	/**
+	 * This sets the banner from the node provided. Banner XML looks like:
+	 * &lt;banner
+	 * href="http://example.com/clickdest"&gt;http://example.com/image
+	 * .png&lt;/banner&gt;
+	 * 
+	 * @param node
+	 *            the node containing the banner info
+	 */
+	private void setBanner(Node node) {
+		String clickUrlStr = node.getAttributes().getNamedItem("href")
+				.getNodeValue();
+		String imgUrlStr = node.getTextContent();
+		URL clickUrl = null;
+		try {
+			if (clickUrlStr != null && "".equals(clickUrlStr))
+				clickUrl = new URL(clickUrlStr);
+		} catch (MalformedURLException e) {
+			logger.log(Level.WARNING, "href URL in banner node not valid: "
+					+ clickUrlStr);
+		}
+		try {
+			URL imgUrl = new URL(imgUrlStr);
+			setBanner(imgUrl, clickUrl);
+		} catch (MalformedURLException e) {
+			logger.log(Level.WARNING,
+					"image source URL in banner node not valid: " + imgUrlStr);
 		}
 	}
 

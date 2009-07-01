@@ -30,6 +30,7 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
 import com.google.inject.Inject;
@@ -59,9 +60,9 @@ public class NaxosMetafile extends BaseEMusicMetafile {
 	public NaxosMetafile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images) {
+			IImageFactory images, IURLFactory urls) {
 		super(prefs, strings, musicDownloaderProvider, coverDownloaderProvider,
-				images);
+				images, urls);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package nz.net.kallisti.emusicj.view.images;
 import java.io.File;
 
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -100,6 +101,6 @@ public interface IImageFactory {
 	 * 
 	 * @return the banner image provider
 	 */
-	public IDynamicImageProvider getBannerProvider();
+	public IURLDynamicImageProvider getBannerProvider();
 
 }

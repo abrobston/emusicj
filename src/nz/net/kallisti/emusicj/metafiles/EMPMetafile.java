@@ -31,6 +31,7 @@ import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.streams.EMPDecoderStream;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
 import com.google.inject.Inject;
@@ -55,9 +56,9 @@ public class EMPMetafile extends BaseEMusicMetafile {
 	public EMPMetafile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images) {
+			IImageFactory images, IURLFactory urls) {
 		super(prefs, strings, musicDownloaderProvider, coverDownloaderProvider,
-				images);
+				images, urls);
 	}
 
 	@Override
