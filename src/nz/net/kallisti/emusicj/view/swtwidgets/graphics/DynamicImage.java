@@ -32,11 +32,12 @@ public class DynamicImage extends Composite implements
 		IDynamicImageChangeListener {
 
 	private final Label lbl;
-	private final URL url;
+	private URL url;
 	private Logger logger;
 	private final SWTView view;
 	private GridLayout thisLayout;
 	protected final Composite parent;
+	private Cursor clickyCursor;
 
 	/**
 	 * Creates an instance of the application icon widget that uses a static
@@ -100,8 +101,8 @@ public class DynamicImage extends Composite implements
 		dynImage.addListener(this);
 		newImage(dynImage, dynImage.getImage());
 		if (url != null) {
-			final Cursor cursor = new Cursor(display, SWT.CURSOR_HAND);
-			lbl.setCursor(cursor);
+			clickyCursor = new Cursor(display, SWT.CURSOR_HAND);
+			lbl.setCursor(clickyCursor);
 			lbl.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseDown(MouseEvent e) {
@@ -121,6 +122,20 @@ public class DynamicImage extends Composite implements
 				parent.layout();
 			}
 		});
+	}
+
+	/**
+	 * Updates the URL that will be opened when this is clicked.
+	 * 
+	 * @param url
+	 *            the new URL, or none to make it not clickable.
+	 */
+	public void changeUrl(URL url) {
+		this.url = url;
+		if (url == null)
+			lbl.setCursor(null);
+		else
+			lbl.setCursor(clickyCursor);
 	}
 
 	/**
