@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
@@ -49,8 +47,6 @@ import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
-import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -74,7 +70,7 @@ import com.google.inject.Provider;
  * @author Robin Sheat <robin@kallisti.net.nz>
  * @author Paul Focke <paul.focke@gmail.com>
  */
-public abstract class BaseEMusicMetafile implements IMetafile {
+public abstract class BaseEMusicMetafile extends AbstractMetafile {
 
 	List<IDownloader> downloaders = new ArrayList<IDownloader>();
 	private static Hashtable<String, File> coverArtCache;
@@ -83,7 +79,6 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
 	private final IStrings strings;
-	private final IImageFactory images;
 	private final Logger logger;
 
 	@Inject
@@ -91,15 +86,11 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
 			IImageFactory images) {
+		super(images);
 		this.prefs = prefs;
 		this.strings = strings;
 		this.musicDownloaderProvider = musicDownloaderProvider;
 		this.coverDownloaderProvider = coverDownloaderProvider;
-		// This is needed so we can update the logo if the .col file tells us
-		// it's changed. This is annoyingly tightly coupled to the SWT view
-		// implementation, and so the design may need to be revisited in the
-		// future.
-		this.images = images;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -140,61 +131,27 @@ public abstract class BaseEMusicMetafile implements IMetafile {
 			} else if (node.getNodeName().equalsIgnoreCase("logo")) {
 				setLogo(node);
 			} else if (node.getNodeName().equalsIgnoreCase("exp_date")) {
-				expiry = parseDate(node);
+				expiry = parseDate(node.getTextContent());
 			}
 		}
 
 	}
 
 	/**
-	 * This sets the logo to the URL provided in the .col file.
+	 * This sets the logo to the URL provided in the metafile.
 	 * 
 	 * @param node
 	 *            the node containing the URL
 	 */
 	private void setLogo(Node node) {
-		String url = node.getTextContent();
-		IDynamicImageProvider logoProvider = images
-				.getApplicationLogoProvider();
-		if (logoProvider instanceof IURLDynamicImageProvider) {
-			try {
-				((IURLDynamicImageProvider) logoProvider)
-						.changeURL(new URL(url));
-			} catch (MalformedURLException e) {
-				logger.warning("Invalid logo URL provided in metafile: [" + url
-						+ "]");
-			}
-		} else {
-			logger
-					.warning("Logo change requested on non-URL-based dynamic image (logoProvider.getClass()="
-							+ logoProvider.getClass());
+		String urlStr = node.getTextContent();
+		try {
+			URL url = new URL(urlStr);
+			setLogo(url);
+		} catch (MalformedURLException e) {
+			logger.warning("Invalid logo URL provided in metafile: [" + urlStr
+					+ "]");
 		}
-	}
-
-	/**
-	 * This processes the date that is contained in the node text, and turns it
-	 * into a real date. It expects RFC 3339 dates.
-	 * 
-	 * @param node
-	 *            the node that contains the date
-	 * @return the parsed date, or <code>null</code> if it can't be parsed.
-	 */
-	private Date parseDate(Node node) {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
-		ParsePosition pos = new ParsePosition(0);
-		String data = node.getTextContent();
-		if (data == null)
-			return null;
-		// because SimpleDateFormat is stupid we need to remove the ':' from the
-		// timezone
-		data = data.replaceFirst("([+-]\\d\\d):(\\d\\d)$", "$1$2");
-		Date date = df.parse(data, pos);
-		if (date == null) {
-			logger.warning("Unable to parse date (" + data + "), error in pos "
-					+ pos.getErrorIndex());
-			return null;
-		}
-		return date;
 	}
 
 	/**

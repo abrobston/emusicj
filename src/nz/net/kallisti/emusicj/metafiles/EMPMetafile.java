@@ -41,10 +41,6 @@ import com.google.inject.Provider;
  * Loads a .emp file, and creates downloaders from it.
  * </p>
  * 
- * <p>
- * $Id$
- * </p>
- * 
  * @author Robin Sheat <robin@kallisti.net.nz>
  * @author Paul Focke <paul.focke@gmail.com>
  */

@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,7 +23,9 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -34,16 +38,15 @@ import com.google.inject.Provider;
 /**
  * <p>
  * This handles loading of the eMusic .emx format. This is a different format to
- * the old .emp type, and is unencrypted. See
- * {@link http://code.google.com/p/emusicremote/wiki/EMX_File_Format} for a
- * description.
+ * the old .emp type, and is unencrypted. See {@link http
+ * ://code.google.com/p/emusicremote/wiki/EMX_File_Format} for a description.
  * </p>
  * 
  * $Id: EMXMetaFile.java,v 1.1 2007/10/05 23:15:42 mike Exp $
  * 
  * @author Michael MacDonald
  */
-public class EMXMetaFile implements IMetafile {
+public class EMXMetaFile extends AbstractMetafile {
 
 	List<IDownloader> downloaders = new ArrayList<IDownloader>();
 	private static Hashtable<String, File> coverArtCache;
@@ -51,15 +54,19 @@ public class EMXMetaFile implements IMetafile {
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
 	private final IStrings strings;
+	private final Logger logger;
 
 	@Inject
 	public EMXMetaFile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
-			Provider<ICoverDownloader> coverDownloaderProvider) {
+			Provider<ICoverDownloader> coverDownloaderProvider,
+			IImageFactory images) {
+		super(images);
 		this.prefs = prefs;
 		this.strings = strings;
 		this.musicDownloaderProvider = musicDownloaderProvider;
 		this.coverDownloaderProvider = coverDownloaderProvider;
+		logger = LogUtils.getLogger(this);
 	}
 
 	public void setMetafile(File file) throws IOException {
@@ -87,18 +94,34 @@ public class EMXMetaFile implements IMetafile {
 					"EMXMetaFile File appears to contain no downloads");
 		}
 		NodeList pkg = root.getChildNodes();
-
+		Date expiry = null;
 		for (int count = 0; count < pkg.getLength(); count++) {
 			Node node = pkg.item(count);
-			if (node.getNodeType() == Node.ELEMENT_NODE
-					&& node.getNodeName().equalsIgnoreCase("tracklist")) {
-				loadTrackList(node);
+			if (node.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			if (node.getNodeName().equalsIgnoreCase("tracklist")) {
+				loadTrackList(node, expiry);
+			} else if (node.getNodeName().equalsIgnoreCase("logo")) {
+				setLogo(node);
+			} else if (node.getNodeName().equalsIgnoreCase("exp_date")) {
+				expiry = parseDate(node.getTextContent());
 			}
 		}
 
 	}
 
-	private void loadTrackList(Node tracklistNode) {
+	private void setLogo(Node node) {
+		String urlStr = node.getTextContent();
+		try {
+			URL url = new URL(urlStr);
+			setLogo(url);
+		} catch (MalformedURLException e) {
+			logger.warning("Invalid logo URL provided in metafile: [" + urlStr
+					+ "]");
+		}
+	}
+
+	private void loadTrackList(Node tracklistNode, Date expiry) {
 		NodeList tracklist = tracklistNode.getChildNodes();
 		for (int count = 0; count < tracklist.getLength(); count++) {
 			Node node = tracklist.item(count);
@@ -106,7 +129,7 @@ public class EMXMetaFile implements IMetafile {
 					.equalsIgnoreCase("track"))) {
 				continue;
 			}
-			loadTrack(node);
+			loadTrack(node, expiry);
 		}
 	}
 
@@ -114,7 +137,7 @@ public class EMXMetaFile implements IMetafile {
 	 * @param node
 	 * @throws MalformedURLException
 	 */
-	private void loadTrack(Node trackNode) {
+	private void loadTrack(Node trackNode, Date expiry) {
 		NodeList track = trackNode.getChildNodes();
 		String num = null;
 		String title = null;
@@ -163,6 +186,8 @@ public class EMXMetaFile implements IMetafile {
 				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
+		if (expiry != null)
+			dl.setExpiry(expiry);
 		try {
 			dl.setDuration(Integer.parseInt(duration));
 		} catch (NumberFormatException e) {
