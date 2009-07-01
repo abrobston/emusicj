@@ -20,17 +20,17 @@ public interface IURLDynamicImageProvider extends IDynamicImageProvider {
 	 * Sets up this dynamic image provider. This may be called multiple time to
 	 * change, but must be called at least once.
 	 * </p>
-	 * 
+	 * @param display
+	 *            the display instance that is used to generate the images.
 	 * @param url
 	 *            the URL that is to be displayed. May not be <code>null</code>
 	 * @param cacheDir
 	 *            the directory that will be used to cache the file. Should not
 	 *            be <code>null</code>.
-	 * @param display
-	 *            the display instance that is used to generate the images.
+	 * 
 	 * @see #changeURL(URL)
 	 */
-	public abstract void setParams(URL url, File cacheDir, Display display);
+	public abstract void setParams(Display display, URL url, File cacheDir);
 
 	/**
 	 * Allows the URL to be updated. <code>setParams</code> must be called first
@@ -38,7 +38,7 @@ public interface IURLDynamicImageProvider extends IDynamicImageProvider {
 	 * 
 	 * @param url
 	 *            the new URL
-	 * @see #setParams(URL, File, Display)
+	 * @see #setParams(Display, URL, File)
 	 */
 	public abstract void changeURL(URL url);
 

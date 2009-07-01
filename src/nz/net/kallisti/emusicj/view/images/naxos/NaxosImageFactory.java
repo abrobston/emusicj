@@ -1,9 +1,9 @@
 package nz.net.kallisti.emusicj.view.images.naxos;
 
-import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
@@ -24,19 +24,16 @@ import com.google.inject.Provider;
  */
 public class NaxosImageFactory extends AbstractImageFactory {
 
-	private final IURLFactory urls;
-
 	@Inject
 	public NaxosImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
 			Provider<IURLDynamicImageProvider> urlImageProvider,
-			IURLFactory urls) {
-		super(streamImageProvider, urlImageProvider);
-		this.urls = urls;
+			Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider) {
+		super(streamImageProvider, urlImageProvider, streamAndUrlImageProvider);
 	}
 
 	private Display display;
-	private IURLDynamicImageProvider appIconProvider;
+	private IStreamAndURLDynamicImageProvider appIconProvider;
 
 	@Override
 	public void setDisplay(Display display) {
@@ -93,8 +90,8 @@ public class NaxosImageFactory extends AbstractImageFactory {
 	}
 
 	public IDynamicImageProvider getApplicationLogoProvider() {
-		appIconProvider = initURLImageProvider(appIconProvider, urls
-				.getToolbarIconSourceURL());
+		appIconProvider = initStreamURLImageProvider(appIconProvider, this
+				.getClass().getResourceAsStream("col-app-toolbar.png"), null);
 		return appIconProvider;
 	}
 

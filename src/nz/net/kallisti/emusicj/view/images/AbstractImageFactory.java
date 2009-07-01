@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
@@ -25,12 +26,15 @@ public abstract class AbstractImageFactory implements IImageFactory {
 	protected final Provider<IStreamDynamicImageProvider> streamImageProvider;
 	private final Provider<IURLDynamicImageProvider> urlImageProvider;
 	private File cacheDir;
+	private final Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider;
 
 	public AbstractImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
-			Provider<IURLDynamicImageProvider> urlImageProvider) {
+			Provider<IURLDynamicImageProvider> urlImageProvider,
+			Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider) {
 		this.streamImageProvider = streamImageProvider;
 		this.urlImageProvider = urlImageProvider;
+		this.streamAndUrlImageProvider = streamAndUrlImageProvider;
 	}
 
 	public void setDisplay(Display display) {
@@ -73,7 +77,17 @@ public abstract class AbstractImageFactory implements IImageFactory {
 		if (prov != null)
 			return prov;
 		IURLDynamicImageProvider provider = urlImageProvider.get();
-		provider.setParams(url, cacheDir, display);
+		provider.setParams(display, url, cacheDir);
+		return provider;
+	}
+
+	protected synchronized IStreamAndURLDynamicImageProvider initStreamURLImageProvider(
+			IStreamAndURLDynamicImageProvider prov, InputStream stream, URL url) {
+		if (prov != null)
+			return prov;
+		IStreamAndURLDynamicImageProvider provider = streamAndUrlImageProvider
+				.get();
+		provider.setParams(display, url, stream, cacheDir);
 		return provider;
 	}
 
