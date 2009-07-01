@@ -43,7 +43,11 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 	private Display display;
 	private Image image;
 	private File cacheDir;
-	private final Object lock = new Object();
+	/**
+	 * This prevents multiple downloads happening at once. It locks across the
+	 * application in case two instances try to pull down one file.
+	 */
+	private static final Object downloadLock = new Object();
 	/**
 	 * This tracks URLs that have already been downloaded this session so that
 	 * multiple requests aren't made.
@@ -66,7 +70,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 		logger = LogUtils.getLogger(this);
 	}
 
-	public void setParams(URL url, File cacheDir, Display display) {
+	public void setParams(Display display, URL url, File cacheDir) {
 		this.cacheDir = cacheDir;
 		this.display = display;
 		if (cacheDir == null)
@@ -83,7 +87,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 	 *            the URL to source the image from
 	 */
 	private void downloadImage(final URL url) {
-		synchronized (lock) {
+		synchronized (downloadLock) {
 			// If the URL is null, then we can't download anything. Really, we
 			// shouldn't be getting one in this case, but it happens.
 			if (url == null)
@@ -130,7 +134,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 	}
 
 	public void changeURL(URL url) {
-		synchronized (lock) {
+		synchronized (downloadLock) {
 			if (cacheDir == null)
 				throw new IllegalArgumentException(
 						"setParams must be called first");

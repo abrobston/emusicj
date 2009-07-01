@@ -3,6 +3,7 @@ package nz.net.kallisti.emusicj.view.images.bluepie;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
@@ -27,8 +28,9 @@ public class BluePieImageFactory extends AbstractImageFactory {
 	@Inject
 	public BluePieImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
-			Provider<IURLDynamicImageProvider> urlImageProvider) {
-		super(streamImageProvider, urlImageProvider);
+			Provider<IURLDynamicImageProvider> urlImageProvider,
+			Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider) {
+		super(streamImageProvider, urlImageProvider, streamAndUrlImageProvider);
 	}
 
 	private Display display;

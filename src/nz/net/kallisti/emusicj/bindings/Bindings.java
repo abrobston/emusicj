@@ -55,8 +55,10 @@ import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
 import nz.net.kallisti.emusicj.view.SWTView;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.StreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.StreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.URLDynamicImageProvider;
 
@@ -106,6 +108,8 @@ public class Bindings extends AbstractModule {
 		bind(IStreamDynamicImageProvider.class).to(
 				StreamDynamicImageProvider.class);
 		bind(IURLDynamicImageProvider.class).to(URLDynamicImageProvider.class);
+		bind(IStreamAndURLDynamicImageProvider.class).to(
+				StreamAndURLDynamicImageProvider.class);
 		bind(ISimpleDownloader.class).to(SimpleDownloader.class);
 		bind(ICleanupFiles.class).to(CleanupFiles.class).in(Scopes.SINGLETON);
 	}

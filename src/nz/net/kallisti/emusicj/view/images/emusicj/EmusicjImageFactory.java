@@ -4,6 +4,7 @@ import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.AbstractImageFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
 
@@ -29,8 +30,9 @@ public class EmusicjImageFactory extends AbstractImageFactory implements
 	@Inject
 	public EmusicjImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
-			Provider<IURLDynamicImageProvider> urlImageProvider) {
-		super(streamImageProvider, urlImageProvider);
+			Provider<IURLDynamicImageProvider> urlImageProvider,
+			Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider) {
+		super(streamImageProvider, urlImageProvider, streamAndUrlImageProvider);
 	}
 
 	public Image getDownloadingIcon() {
