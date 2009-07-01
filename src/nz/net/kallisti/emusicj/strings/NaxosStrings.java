@@ -26,11 +26,11 @@ public class NaxosStrings extends AbstractStrings {
 	}
 
 	public String getAppName() {
-		return "Classicsonline Download Manager";
+		return "ClassicsOnline Download Manager";
 	}
 
 	public String getShortAppName() {
-		return "Classicsonline";
+		return "ClassicsOnline";
 	}
 
 	public String getAppPathname() {
@@ -54,7 +54,7 @@ public class NaxosStrings extends AbstractStrings {
 	}
 
 	public String getAboutBoxText() {
-		return "Classicsonline Download Manager "
+		return "ClassicsOnline Download Manager "
 				+ getVersion()
 				+ ", Copyright (C) 2006-2009 Robin Sheat <robin@kallisti.net.nz>\n\n"
 				+
@@ -64,7 +64,7 @@ public class NaxosStrings extends AbstractStrings {
 				+ "terms of the GNU General Public License. A copy of this is contained in "
 				+ "the file 'COPYING'.\n\n" +
 
-				"Artwork Copyright (C) 2007 Classicsonline.com and Naxos Digital Rights Ltd";
+				"Artwork Copyright (C) 2007 ClassicsOnline.com and Naxos Digital Rights Ltd";
 	}
 
 	public String getDefaultFilePattern() {
