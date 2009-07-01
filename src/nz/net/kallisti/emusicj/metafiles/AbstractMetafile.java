@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.urls.IDynamicURL;
+import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
@@ -23,13 +25,15 @@ public abstract class AbstractMetafile implements IMetafile {
 
 	private final IImageFactory images;
 	private final Logger logger;
+	private final IURLFactory urls;
 
-	public AbstractMetafile(IImageFactory images) {
+	public AbstractMetafile(IImageFactory images, IURLFactory urls) {
 		// This is needed so we can update the logo if the .col file tells us
 		// it's changed. This is annoyingly tightly coupled to the SWT view
 		// implementation, and so the design may need to be revisited in the
 		// future.
 		this.images = images;
+		this.urls = urls;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -75,6 +79,25 @@ public abstract class AbstractMetafile implements IMetafile {
 			return null;
 		}
 		return date;
+	}
+
+	/**
+	 * Sets the banner, along with its clickability.
+	 * 
+	 * @param imgUrl
+	 *            the URL to source the image from. If <code>null</code> the
+	 *            entire call is ignored.
+	 * @param clickUrl
+	 *            the URL that the user is taken to when they click on the
+	 *            banner. If <code>null</code>, it won't be clickable.
+	 */
+	protected void setBanner(URL imgUrl, URL clickUrl) {
+		if (imgUrl == null)
+			return;
+		IURLDynamicImageProvider bannerImage = images.getBannerProvider();
+		bannerImage.changeURL(imgUrl);
+		IDynamicURL bannerClick = urls.getBannerClickURL();
+		bannerClick.setURL(clickUrl);
 	}
 
 }

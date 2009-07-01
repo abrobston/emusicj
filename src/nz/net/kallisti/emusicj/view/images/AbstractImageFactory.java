@@ -27,6 +27,7 @@ public abstract class AbstractImageFactory implements IImageFactory {
 	private final Provider<IURLDynamicImageProvider> urlImageProvider;
 	private File cacheDir;
 	private final Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider;
+	private IURLDynamicImageProvider bannerProvider;
 
 	public AbstractImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
@@ -89,6 +90,15 @@ public abstract class AbstractImageFactory implements IImageFactory {
 				.get();
 		provider.setParams(display, url, stream, cacheDir);
 		return provider;
+	}
+
+	public synchronized IURLDynamicImageProvider getBannerProvider() {
+		// By default, this starts off empty.
+		if (bannerProvider == null) {
+			bannerProvider = urlImageProvider.get();
+			bannerProvider.setParams(display, null, cacheDir);
+		}
+		return bannerProvider;
 	}
 
 }

@@ -53,6 +53,8 @@ import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
 import nz.net.kallisti.emusicj.updater.IUpdateCheck;
 import nz.net.kallisti.emusicj.updater.UpdateCheck;
+import nz.net.kallisti.emusicj.urls.DynamicURL;
+import nz.net.kallisti.emusicj.urls.IDynamicURL;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
@@ -112,5 +114,6 @@ public class Bindings extends AbstractModule {
 				StreamAndURLDynamicImageProvider.class);
 		bind(ISimpleDownloader.class).to(SimpleDownloader.class);
 		bind(ICleanupFiles.class).to(CleanupFiles.class).in(Scopes.SINGLETON);
+		bind(IDynamicURL.class).to(DynamicURL.class);
 	}
 }

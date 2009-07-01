@@ -7,7 +7,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import nz.net.kallisti.emusicj.urls.IURLFactory;
+import nz.net.kallisti.emusicj.urls.AbstractURLFactory;
+import nz.net.kallisti.emusicj.urls.IDynamicURL;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -18,7 +22,7 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
  * 
  * @author robin
  */
-public class ReggaeCountryURLFactory implements IURLFactory {
+public class ReggaeCountryURLFactory extends AbstractURLFactory {
 
 	private static final String UPDATEURL_KEY = "updateurl";
 	private static final String MANUALURL_KEY = "manualurl";
@@ -29,7 +33,9 @@ public class ReggaeCountryURLFactory implements IURLFactory {
 	 * This initialises the URL factory and loads the properties file containing
 	 * the URLs.
 	 */
-	public ReggaeCountryURLFactory() {
+	@Inject
+	public ReggaeCountryURLFactory(Provider<IDynamicURL> dynUrlProvider) {
+		super(dynUrlProvider);
 		props = new Properties();
 		File loc = new File("lib", "reggaecountry.properties");
 		try {

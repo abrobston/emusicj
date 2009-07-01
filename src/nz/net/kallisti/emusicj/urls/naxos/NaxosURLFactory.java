@@ -10,7 +10,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.LogUtils;
-import nz.net.kallisti.emusicj.urls.IURLFactory;
+import nz.net.kallisti.emusicj.urls.AbstractURLFactory;
+import nz.net.kallisti.emusicj.urls.IDynamicURL;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -21,7 +25,7 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
  * 
  * @author robin
  */
-public class NaxosURLFactory implements IURLFactory {
+public class NaxosURLFactory extends AbstractURLFactory {
 
 	private final Properties props;
 	private final Logger logger;
@@ -30,7 +34,9 @@ public class NaxosURLFactory implements IURLFactory {
 	 * This initialises the URL factory and loads the properties file containing
 	 * the URLs.
 	 */
-	public NaxosURLFactory() {
+	@Inject
+	public NaxosURLFactory(Provider<IDynamicURL> dynUrlProvider) {
+		super(dynUrlProvider);
 		props = new Properties();
 		File loc = new File("lib", "classicsonline.properties");
 		logger = LogUtils.getLogger(this);
