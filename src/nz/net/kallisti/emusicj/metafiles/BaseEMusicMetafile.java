@@ -160,9 +160,6 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 	 * 
 	 * @param file
 	 *            the filename to process
-	 * @param expiry
-	 *            the date that the file tells us this track will expire, or
-	 *            <code>null</code> if there isn't an expiry date.
 	 * @return an input stream providing the EMP file content
 	 */
 	protected abstract InputStream getFileStream(File file) throws IOException;

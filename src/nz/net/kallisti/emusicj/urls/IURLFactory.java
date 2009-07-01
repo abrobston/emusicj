@@ -67,4 +67,11 @@ public interface IURLFactory {
 	 */
 	public URL getCustomerSupportURL();
 
+	/**
+	 * Gets the dynamic URL instance for the toolbar banner.
+	 * 
+	 * @return the dynamic URL instance.
+	 */
+	public IDynamicURL getBannerClickURL();
+
 }

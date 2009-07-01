@@ -6,7 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.LogUtils;
-import nz.net.kallisti.emusicj.urls.IURLFactory;
+import nz.net.kallisti.emusicj.urls.AbstractURLFactory;
+import nz.net.kallisti.emusicj.urls.IDynamicURL;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -17,11 +21,13 @@ import nz.net.kallisti.emusicj.urls.IURLFactory;
  * 
  * @author robin
  */
-public class EmusicjURLFactory implements IURLFactory {
+public class EmusicjURLFactory extends AbstractURLFactory {
 
 	private final Logger logger;
 
-	public EmusicjURLFactory() {
+	@Inject
+	public EmusicjURLFactory(Provider<IDynamicURL> dynUrlProvider) {
+		super(dynUrlProvider);
 		logger = LogUtils.getLogger(this);
 	}
 
