@@ -88,8 +88,7 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 	 */
 	private void downloadImage(final URL url) {
 		synchronized (downloadLock) {
-			// If the URL is null, then we can't download anything. Really, we
-			// shouldn't be getting one in this case, but it happens.
+			// If the URL is null, then we can't download anything.
 			if (url == null)
 				return;
 			// First thing, check cache - files in the cache are known by an MD5

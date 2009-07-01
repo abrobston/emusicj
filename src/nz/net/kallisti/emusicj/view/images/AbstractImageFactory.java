@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
+import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamAndURLDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IStreamDynamicImageProvider;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.IURLDynamicImageProvider;
@@ -27,6 +28,7 @@ public abstract class AbstractImageFactory implements IImageFactory {
 	private final Provider<IURLDynamicImageProvider> urlImageProvider;
 	private File cacheDir;
 	private final Provider<IStreamAndURLDynamicImageProvider> streamAndUrlImageProvider;
+	private IURLDynamicImageProvider bannerProvider;
 
 	public AbstractImageFactory(
 			Provider<IStreamDynamicImageProvider> streamImageProvider,
@@ -89,6 +91,15 @@ public abstract class AbstractImageFactory implements IImageFactory {
 				.get();
 		provider.setParams(display, url, stream, cacheDir);
 		return provider;
+	}
+
+	public synchronized IDynamicImageProvider getBannerProvider() {
+		// By default, this starts off empty.
+		if (bannerProvider == null) {
+			bannerProvider = urlImageProvider.get();
+			bannerProvider.setParams(display, null, cacheDir);
+		}
+		return bannerProvider;
 	}
 
 }

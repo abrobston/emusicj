@@ -95,4 +95,11 @@ public interface IImageFactory {
 	 */
 	public Image getFolderIcon();
 
+	/**
+	 * Gets the provider for the banner image
+	 * 
+	 * @return the banner image provider
+	 */
+	public IDynamicImageProvider getBannerProvider();
+
 }
