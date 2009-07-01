@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
-import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
@@ -35,43 +34,9 @@ public class DynamicImage extends Composite implements
 	private URL url;
 	private Logger logger;
 	private final SWTView view;
-	private GridLayout thisLayout;
+	private final GridLayout thisLayout;
 	protected final Composite parent;
-	private Cursor clickyCursor;
-
-	/**
-	 * Creates an instance of the application icon widget that uses a static
-	 * widget provided by the image factory
-	 * 
-	 * @param parent
-	 *            the parent widget for this
-	 * @param style
-	 *            the SWT style settings
-	 * @param url
-	 *            the URL that a browser will be opened to if this widget is
-	 *            clicked. May be <code>null</code>, in which case this isn't
-	 *            clickable.
-	 * @param image
-	 *            the image to show
-	 */
-	public DynamicImage(Composite parent, int style, URL url, Image image,
-			SWTView view) {
-		super(parent, style);
-		this.parent = parent;
-		this.view = view;
-		logger = LogUtils.getLogger(this);
-		this.url = url;
-		lbl = new Label(this, SWT.NONE);
-		lbl.setImage(image);
-		if (url != null) {
-			lbl.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseDown(MouseEvent e) {
-					wasClicked();
-				}
-			});
-		}
-	}
+	private final Cursor clickyCursor;
 
 	/**
 	 * Creates an instance of the application icon widget that uses a dynamic
@@ -95,21 +60,23 @@ public class DynamicImage extends Composite implements
 		this.view = view;
 		thisLayout = new GridLayout(1, false);
 		thisLayout.marginWidth = 0;
+		thisLayout.marginLeft = 0;
+		thisLayout.marginRight = 0;
+		thisLayout.horizontalSpacing = 0;
 		this.setLayout(thisLayout);
 		this.url = url;
 		lbl = new Label(this, SWT.NONE);
 		dynImage.addListener(this);
 		newImage(dynImage, dynImage.getImage());
-		if (url != null) {
-			clickyCursor = new Cursor(display, SWT.CURSOR_HAND);
+		clickyCursor = new Cursor(display, SWT.CURSOR_HAND);
+		if (url != null)
 			lbl.setCursor(clickyCursor);
-			lbl.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseDown(MouseEvent e) {
-					wasClicked();
-				}
-			});
-		}
+		lbl.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				wasClicked();
+			}
+		});
 	}
 
 	public void newImage(IDynamicImageProvider dynImage, final Image image) {

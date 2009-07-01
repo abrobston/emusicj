@@ -173,7 +173,7 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 		String imgUrlStr = node.getTextContent();
 		URL clickUrl = null;
 		try {
-			if (clickUrlStr != null && "".equals(clickUrlStr))
+			if (clickUrlStr != null && !"".equals(clickUrlStr))
 				clickUrl = new URL(clickUrlStr);
 		} catch (MalformedURLException e) {
 			logger.log(Level.WARNING, "href URL in banner node not valid: "

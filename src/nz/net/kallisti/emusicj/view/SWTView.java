@@ -22,6 +22,7 @@
 package nz.net.kallisti.emusicj.view;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,8 @@ import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.CredsCallback;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.urls.IDynamicURL;
+import nz.net.kallisti.emusicj.urls.IDynamicURLListener;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
@@ -258,7 +261,8 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	 * @param shell
 	 *            the shell to build the interface on
 	 */
-	private void buildInterface(Shell shell, int topAmount, int bottomAmount) {
+	private void buildInterface(final Shell shell, int topAmount,
+			int bottomAmount) {
 		setAppIcon(shell);
 		downloadingIcon = imageFactory.getDownloadingIcon();
 		notDownloadingIcon = imageFactory.getNotDownloadingIcon();
@@ -269,13 +273,15 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 
 		// This contains the toolbar, and lets us put an image on the right
 		// side
-		Composite toolbarRow = new Composite(shell, SWT.NONE);
+		final Composite toolbarRow = new Composite(shell, SWT.NONE);
 		// This griddata is for the toolbar row within the shell
 		GridData toolbarGridData = new GridData();
-		toolbarGridData.grabExcessHorizontalSpace = true;
 		toolbarGridData.horizontalAlignment = SWT.FILL;
+		toolbarGridData.grabExcessHorizontalSpace = true;
 		toolbarRow.setLayoutData(toolbarGridData);
-		GridLayout toolbarLayout = new GridLayout(2, false);
+		GridLayout toolbarLayout = new GridLayout(3, false);
+		toolbarLayout.horizontalSpacing = 0;
+		toolbarLayout.marginRight = 0;
 		toolbarRow.setLayout(toolbarLayout);
 
 		ToolBar toolBar = new ToolBar(toolbarRow, SWT.FLAT);
@@ -283,7 +289,10 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		// This griddata is for the components within the toolbar row
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
+		toolbarRowData.verticalAlignment = SWT.TOP;
 		toolBar.setLayoutData(toolbarRowData);
+
+		// Logo
 		DynamicImage toolbarIcon = new DynamicImage(toolbarRow, SWT.NONE,
 				display, urlFactory.getToolbarIconClickURL(), imageFactory
 						.getApplicationLogoProvider(), this);
@@ -292,6 +301,31 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		toolbarRowData.horizontalAlignment = SWT.RIGHT;
 		toolbarRowData.verticalAlignment = SWT.TOP;
 		toolbarIcon.setLayoutData(toolbarRowData);
+
+		// Banner (for emusic/j this will always be blank)
+		final IDynamicURL bannerClickURL = urlFactory.getBannerClickURL();
+		bannerClickURL.addListener(new IDynamicURLListener() {
+			DynamicImage banner;
+
+			public synchronized void newURL(IDynamicURL dynamicUrl, URL url) {
+				if (banner == null) {
+					// This is an ugly hack to prevent it taking up space
+					// when there is actually no banner
+					toolbarRow.setRedraw(false);
+					banner = new DynamicImage(toolbarRow, SWT.NONE, display,
+							url, imageFactory.getBannerProvider(), SWTView.this);
+					GridData toolbarRowData = new GridData();
+					toolbarRowData.grabExcessHorizontalSpace = false;
+					toolbarRowData.horizontalAlignment = SWT.RIGHT;
+					toolbarRowData.verticalAlignment = SWT.CENTER;
+					toolbarRowData.horizontalIndent = 5;
+					banner.setLayoutData(toolbarRowData);
+					toolbarRow.setRedraw(true);
+				} else {
+					banner.changeUrl(url);
+				}
+			}
+		});
 
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
 		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
