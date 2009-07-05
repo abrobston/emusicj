@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,11 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
-import nz.net.kallisti.emusicj.download.IDownloadMonitor;
-import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
-import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
@@ -44,18 +40,14 @@ import com.google.inject.Provider;
  * ://code.google.com/p/emusicremote/wiki/EMX_File_Format} for a description.
  * </p>
  * 
- * $Id: EMXMetaFile.java,v 1.1 2007/10/05 23:15:42 mike Exp $
- * 
  * @author Michael MacDonald
+ * @author Robin Sheat
  */
 public class EMXMetaFile extends AbstractMetafile {
 
 	List<IDownloader> downloaders = new ArrayList<IDownloader>();
-	private static Hashtable<String, File> coverArtCache;
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
-	private final Provider<ICoverDownloader> coverDownloaderProvider;
-	private final IStrings strings;
 	private final Logger logger;
 
 	@Inject
@@ -63,11 +55,9 @@ public class EMXMetaFile extends AbstractMetafile {
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
 			IImageFactory images, IURLFactory urls) {
-		super(images, urls);
+		super(images, urls, strings, coverDownloaderProvider);
 		this.prefs = prefs;
-		this.strings = strings;
 		this.musicDownloaderProvider = musicDownloaderProvider;
-		this.coverDownloaderProvider = coverDownloaderProvider;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -181,6 +171,8 @@ public class EMXMetaFile extends AbstractMetafile {
 		String genre = null;
 		String track_url = null;
 		String duration = null;
+		String diskNumStr = null;
+		String diskCountStr = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)
@@ -201,6 +193,10 @@ public class EMXMetaFile extends AbstractMetafile {
 				genre = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("duration"))
 				duration = node.getFirstChild().getNodeValue();
+			else if (node.getNodeName().equalsIgnoreCase("discnum"))
+				diskNumStr = node.getFirstChild().getNodeValue();
+			else if (node.getNodeName().equalsIgnoreCase("disccount"))
+				diskCountStr = node.getFirstChild().getNodeValue();
 		}
 		URL url;
 		try {
@@ -209,12 +205,24 @@ public class EMXMetaFile extends AbstractMetafile {
 			throw new UnknownFileException(e);
 		}
 		int trackNum = Integer.parseInt(num);
+		Integer disk = null;
+		Integer diskCount = null;
+		if (diskNumStr != null && diskCountStr != null) {
+			try {
+				disk = Integer.parseInt(diskNumStr);
+				diskCount = Integer.parseInt(diskCountStr);
+			} catch (NumberFormatException e) {
+				logger.log(Level.WARNING,
+						"Unable to parse disk or disk count information", e);
+			}
+		}
+
 		File outputFile = new File(prefs.getFilename(trackNum, title, album,
-				artist, ".mp3"));
+				artist, ".mp3", disk, diskCount));
 		File coverArtFile = null;
 		if (coverArt != null)
-			coverArtFile = getCoverArtCached(coverArt, prefs, trackNum, title,
-					album, artist);
+			coverArtFile = getCoverArtCached(downloaders, coverArt, prefs,
+					trackNum, title, album, artist, disk, diskCount);
 		IMusicDownloader dl = musicDownloaderProvider.get();
 		dl.setDownloader(url, outputFile, coverArtFile, trackNum, title, album,
 				artist);
@@ -227,75 +235,6 @@ public class EMXMetaFile extends AbstractMetafile {
 		} catch (NumberFormatException e) {
 			// do nothing
 		}
-	}
-
-	/**
-	 * This is passed a String URL of where to find the coverart for a track. It
-	 * turns it into a filename. If the file doesn't exist, and we haven't
-	 * already created a downloader for it, then a download is added to the
-	 * list.
-	 * 
-	 * @param coverArt
-	 *            the string form of the URL to load
-	 * @param artist
-	 *            the artist this cover is for
-	 * @param album
-	 *            the album it's from
-	 * @param title
-	 *            the title of the track
-	 * @param trackNum
-	 *            the number of the track
-	 * @return a file corresponding the coverart. It may not exist yet, but that
-	 *         is where it eventually will be. If we aren't going to be
-	 *         downloading the cover art, this will return <code>null</code>.
-	 */
-	private File getCoverArtCached(final String coverArt, IPreferences prefs,
-			int trackNum, String title, String album, String artist) {
-		if (!prefs.downloadCoverArt())
-			return null;
-		if (coverArtCache == null)
-			coverArtCache = new Hashtable<String, File>();
-		File cachedFile = coverArtCache.get(coverArt);
-		if (cachedFile != null)
-			return cachedFile;
-		URL coverUrl;
-		try {
-			coverUrl = new URL(coverArt);
-		} catch (MalformedURLException e) {
-			return null;
-		}
-		File coverFile;
-		File savePath = prefs.getPathFor(trackNum, title, album, artist);
-		int dotPos = coverArt.lastIndexOf(".");
-		if (dotPos != -1) {
-			String filetype = coverArt.substring(dotPos);
-			if (filetype.equalsIgnoreCase(".jpeg"))
-				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension
-			// anyway?
-			coverFile = new File(savePath, strings.getCoverArtName() + filetype);
-		} else {
-			return null;
-		}
-		if (!coverFile.exists()) {
-			coverArtCache.put(coverArt, coverFile);
-			// add the downloader
-			ICoverDownloader dl = coverDownloaderProvider.get();
-			// Create a monitor that will remove this entry from the cache when
-			// the download has finished
-			IDownloadMonitor mon = dl.getMonitor();
-			mon.addStateListener(new IDownloadMonitorListener() {
-				// This is a bt icky, but it'll do the job in 99% of cases.
-				public void monitorStateChanged(IDownloadMonitor monitor) {
-					if (monitor.getDownloadState() == DLState.CANCELLED
-							|| monitor.getDownloadState() == DLState.FINISHED) {
-						coverArtCache.remove(coverArt);
-					}
-				}
-			});
-			dl.setDownloader(coverUrl, coverFile);
-			downloaders.add(dl);
-		}
-		return coverFile;
 	}
 
 	/**

@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
 import nz.net.kallisti.emusicj.misc.ListUtils;
+import nz.net.kallisti.emusicj.misc.StringUtils;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.strings.IStrings;
 
@@ -65,6 +66,7 @@ public abstract class Preferences implements IPreferences {
 	private static final String LOG_LEVEL = "logLevel";
 	private static final String WINDOWS_MAX_PATH_LENGTH = "windowsMaxPathLength";
 	private static final String DOWNLOAD_COVER_ART = "downloadCoverArt";
+	private static final String MULTIDISK_NAME = "disc";
 
 	public final String statePath;
 	private String path;
@@ -186,7 +188,7 @@ public abstract class Preferences implements IPreferences {
 	}
 
 	public String getFilename(int track, String song, String album,
-			String artist, String format) {
+			String artist, String format, Integer disk, Integer diskNum) {
 		DecimalFormat df = new DecimalFormat("00");
 		String[] filePatternParts;
 		// Ticket #70 - turn '/' and '\' to whatever is appropriate on this
@@ -199,12 +201,23 @@ public abstract class Preferences implements IPreferences {
 		} else {
 			filePatternParts = pattern.split(File.separator);
 		}
+		// This calculates the multidisk name, which will be inserted after the
+		// album name
+		String multiDisk = null;
+		if (disk != null && diskNum != null && diskNum > 1) {
+			String diskForm = formatToMatch(disk, diskNum);
+			multiDisk = MULTIDISK_NAME + " " + diskForm;
+		}
+
 		List<String> nameParts = new ArrayList<String>();
 		for (String part : filePatternParts) {
 			StringBuffer convPattern = new StringBuffer(part);
 			int pos;
-			while ((pos = convPattern.indexOf("%a")) != -1)
+			boolean wasAlbum = false;
+			while ((pos = convPattern.indexOf("%a")) != -1) {
 				convPattern.replace(pos, pos + 2, album.trim());
+				wasAlbum = true;
+			}
 			while ((pos = convPattern.indexOf("%b")) != -1)
 				convPattern.replace(pos, pos + 2, artist.trim());
 			while ((pos = convPattern.indexOf("%n")) != -1)
@@ -212,9 +225,12 @@ public abstract class Preferences implements IPreferences {
 			while ((pos = convPattern.indexOf("%t")) != -1)
 				convPattern.replace(pos, pos + 2, song.trim());
 			nameParts.add(convPattern.toString());
+			if (wasAlbum && multiDisk != null)
+				nameParts.add(multiDisk);
 		}
 		List<String> finalNameParts = nameCleaner.cleanName(nameParts, "true"
 				.equals(props.getProperty("spacesToUnderscore", "false")));
+
 		String convPattern = ListUtils.join(finalNameParts, File.separator);
 		String fname = path + File.separatorChar + convPattern;
 		String os = System.getProperty("os.name");
@@ -231,6 +247,29 @@ public abstract class Preferences implements IPreferences {
 	}
 
 	/**
+	 * This formats the first value to ensure that it has the same number of
+	 * digits as 'format'. Negatives etc. will cause this to be weird, so don't
+	 * do that.
+	 * 
+	 * @param value
+	 *            the value to format
+	 * @param format
+	 *            the value that contains the number of digits we want to match
+	 * @return a string containing 'value' padded to the appropriate number of
+	 *         digits.
+	 */
+	private static String formatToMatch(int value, int format) {
+		// most common case is handled quickly
+		if (format < 10) {
+			return String.valueOf(value);
+		}
+		String formValue = String.valueOf(format);
+		String fmt = StringUtils.repeat("0", formValue.length());
+		DecimalFormat df = new DecimalFormat(fmt);
+		return df.format(value);
+	}
+
+	/**
 	 * Works out the directory where a track with the provided parameters will
 	 * be saved to
 	 * 
@@ -240,8 +279,10 @@ public abstract class Preferences implements IPreferences {
 	 * @param artist
 	 * @return
 	 */
-	public File getPathFor(int track, String song, String album, String artist) {
-		String filename = getFilename(track, song, album, artist, ".foo");
+	public File getPathFor(int track, String song, String album, String artist,
+			Integer disk, Integer diskNum) {
+		String filename = getFilename(track, song, album, artist, ".foo", disk,
+				diskNum);
 		File file = new File(filename);
 		File path = new File(file.getParent());
 		return path;
