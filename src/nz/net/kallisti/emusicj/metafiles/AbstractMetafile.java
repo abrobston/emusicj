@@ -7,9 +7,9 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,8 +42,10 @@ public abstract class AbstractMetafile implements IMetafile {
 	private final IImageFactory images;
 	private final Logger logger;
 	private final IURLFactory urls;
-	private static Map<String, File> coverArtCache = Collections
-			.synchronizedMap(new HashMap<String, File>());
+	// If the file is in the cache, then we know we don't need to create
+	// downloaders for it
+	private static Set<File> coverArtCache = Collections
+			.synchronizedSet(new HashSet<File>());
 	private final IStrings strings;
 	private final Provider<ICoverDownloader> coverDownloaderProvider;
 
@@ -157,9 +159,6 @@ public abstract class AbstractMetafile implements IMetafile {
 			Integer diskCount) {
 		if (!prefs.downloadCoverArt())
 			return null;
-		File cachedFile = coverArtCache.get(coverArt);
-		if (cachedFile != null)
-			return cachedFile;
 		URL coverUrl;
 		try {
 			coverUrl = new URL(coverArt);
@@ -179,11 +178,17 @@ public abstract class AbstractMetafile implements IMetafile {
 				filetype = ".jpg"; // who the hell uses ".jpeg" as an extension
 			// anyway?
 			coverFile = new File(savePath, strings.getCoverArtName() + filetype);
+			// No need for a downloader (we can't check this based on the URL,
+			// as sometimes one URL will supply multiple albums, especially in
+			// the case of multidisk stuff)
+			if (coverArtCache.contains(coverFile))
+				return coverFile;
+
 		} else {
 			return null;
 		}
 		if (!coverFile.exists()) {
-			coverArtCache.put(coverArt, coverFile);
+			coverArtCache.add(coverFile);
 			// add the downloader
 			ICoverDownloader dl = coverDownloaderProvider.get();
 			// Create a monitor that will remove this entry from the cache when
