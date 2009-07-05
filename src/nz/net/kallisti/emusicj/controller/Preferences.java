@@ -225,7 +225,7 @@ public abstract class Preferences implements IPreferences {
 			while ((pos = convPattern.indexOf("%t")) != -1)
 				convPattern.replace(pos, pos + 2, song.trim());
 			nameParts.add(convPattern.toString());
-			if (wasAlbum)
+			if (wasAlbum && multiDisk != null)
 				nameParts.add(multiDisk);
 		}
 		List<String> finalNameParts = nameCleaner.cleanName(nameParts, "true"

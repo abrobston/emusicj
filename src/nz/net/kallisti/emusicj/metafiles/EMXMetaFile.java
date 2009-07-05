@@ -207,7 +207,7 @@ public class EMXMetaFile extends AbstractMetafile {
 		int trackNum = Integer.parseInt(num);
 		Integer disk = null;
 		Integer diskCount = null;
-		if (disk != null && diskCount != null) {
+		if (diskNumStr != null && diskCountStr != null) {
 			try {
 				disk = Integer.parseInt(diskNumStr);
 				diskCount = Integer.parseInt(diskCountStr);

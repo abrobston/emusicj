@@ -259,7 +259,7 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 		int trackNum = Integer.parseInt(num);
 		Integer disk = null;
 		Integer diskCount = null;
-		if (disk != null && diskCount != null) {
+		if (diskStr != null && diskCountStr != null) {
 			try {
 				disk = Integer.parseInt(diskStr);
 				diskCount = Integer.parseInt(diskCountStr);
