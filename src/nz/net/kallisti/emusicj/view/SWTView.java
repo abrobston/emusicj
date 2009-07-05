@@ -511,6 +511,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		controller.removeDownloads(DLState.CANCELLED);
 		controller.removeDownloads(DLState.EXPIRED);
 		// controller.removeDownloads(DLState.FAILED);
+		controller.removeFailedDownloads();
 	}
 
 	/**

@@ -459,6 +459,17 @@ public class EmusicjController implements IEmusicjController,
 		downloadsModel.removeDownloads(toRemove);
 	}
 
+	public void removeFailedDownloads() {
+		ArrayList<IDownloader> toRemove = new ArrayList<IDownloader>();
+		for (IDownloader dl : downloadsModel.getDownloaders()) {
+			if (dl.getMonitor().getDownloadState() == DLState.FAILED
+					&& dl.getFailureCount() >= maxDownloadFailures) {
+				toRemove.add(dl);
+			}
+		}
+		downloadsModel.removeDownloads(toRemove);
+	}
+
 	public void downloadsModelChanged(IDownloadsModel model) {
 		monitorStateChanged(null);
 	}
