@@ -66,7 +66,7 @@ public abstract class Preferences implements IPreferences {
 	private static final String LOG_LEVEL = "logLevel";
 	private static final String WINDOWS_MAX_PATH_LENGTH = "windowsMaxPathLength";
 	private static final String DOWNLOAD_COVER_ART = "downloadCoverArt";
-	private static final String MULTIDISK_NAME = "disk";
+	private static final String MULTIDISK_NAME = "disc";
 
 	public final String statePath;
 	private String path;
