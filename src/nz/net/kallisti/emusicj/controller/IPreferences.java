@@ -20,8 +20,30 @@ public interface IPreferences {
 	 */
 	public void save();
 
+	/**
+	 * Provides the path and filename that the described track should be saved
+	 * as.
+	 * 
+	 * @param track
+	 *            the track number
+	 * @param song
+	 *            the track name
+	 * @param album
+	 *            the album the track belongs to
+	 * @param artist
+	 *            the artist of the track
+	 * @param format
+	 *            the format, including the leading '.' (e.g. ".mp3")
+	 * @param disk
+	 *            the disk number that this belongs to. May be <code>null</code>
+	 *            .
+	 * @param diskNum
+	 *            the total number of disks that are in this album. May be
+	 *            <code>null</code>.
+	 * @return a string that is the full path and filename for the file.
+	 */
 	public String getFilename(int track, String song, String album,
-			String artist, String format);
+			String artist, String format, Integer disk, Integer diskNum);
 
 	/**
 	 * Works out the directory where a track with the provided parameters will
@@ -31,9 +53,15 @@ public interface IPreferences {
 	 * @param song
 	 * @param album
 	 * @param artist
+	 * @param diskCount
+	 *            the total number of disks in this album, may be
+	 *            <code>null</code>.
+	 * @param disk
+	 *            the disk that this track belongs to, may be <code>null</code>
 	 * @return
 	 */
-	public File getPathFor(int track, String song, String album, String artist);
+	public File getPathFor(int track, String song, String album, String artist,
+			Integer disk, Integer diskCount);
 
 	/**
 	 * @param text

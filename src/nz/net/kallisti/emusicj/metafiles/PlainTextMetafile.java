@@ -108,7 +108,7 @@ public class PlainTextMetafile implements IMetafile {
 				return null;
 			}
 			File outputFile = new File(prefs.getFilename(tnum, parts[2],
-					parts[3], parts[4], ".mp3"));
+					parts[3], parts[4], ".mp3", null, null));
 			IMusicDownloader dl = musicDownloaderProvider.get();
 			dl.setDownloader(url, outputFile, tnum, parts[2], parts[3],
 					parts[4]);
