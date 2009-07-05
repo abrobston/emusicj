@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
@@ -163,6 +164,9 @@ public abstract class AbstractMetafile implements IMetafile {
 		try {
 			coverUrl = new URL(coverArt);
 		} catch (MalformedURLException e) {
+			logger
+					.log(Level.WARNING, "Malformed cover art URL: " + coverArt,
+							e);
 			return null;
 		}
 		File coverFile;
