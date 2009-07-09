@@ -188,4 +188,11 @@ public interface IPreferences {
 	 */
 	public int getMaxDownloadFailures();
 
+	/**
+	 * This determines whether the individual track controls should be shown.
+	 * 
+	 * @return true if the track controls should be shown, false otherwise
+	 */
+	public boolean showTrackControls();
+
 }

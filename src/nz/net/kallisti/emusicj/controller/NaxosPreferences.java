@@ -39,4 +39,11 @@ public class NaxosPreferences extends Preferences {
 		return false;
 	}
 
+	@Override
+	public boolean showTrackControls() {
+		if ("true".equalsIgnoreCase(getProperty("showTrackControls", "false"))) {
+			return true;
+		}
+		return false;
+	}
 }

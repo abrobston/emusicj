@@ -519,4 +519,8 @@ public abstract class Preferences implements IPreferences {
 		return 5;
 	}
 
+	public boolean showTrackControls() {
+		return true;
+	}
+
 }
