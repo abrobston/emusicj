@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.controller.IPreferenceChangeListener.Pref;
 import nz.net.kallisti.emusicj.misc.ListUtils;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.misc.StringUtils;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.strings.IStrings;
@@ -83,10 +84,12 @@ public abstract class Preferences implements IPreferences {
 	private int windowsMaxPathLength = 250;
 	private boolean dlCoverArt = true;
 	private final IFileNameCleaner nameCleaner;
+	private final Logger logger;
 
 	@Inject
 	public Preferences(IStrings strings, IFileNameCleaner nameCleaner) {
 		super();
+		logger = LogUtils.getLogger(this);
 		this.strings = strings;
 		this.nameCleaner = nameCleaner;
 		this.path = buildDefaultSavePath();
@@ -492,6 +495,28 @@ public abstract class Preferences implements IPreferences {
 	public boolean isAutoloadAllowed() {
 		// Default
 		return true;
+	}
+
+	public int getMaxDownloadFailures() {
+		String failures = getProperty("maxDownloadFailures",
+				getDefaultMaxDownloadFailures() + "");
+		try {
+			return Integer.parseInt(failures);
+		} catch (Exception e) {
+			logger.log(Level.WARNING,
+					"Unparsable value for maxDownloadFailures: " + failures);
+		}
+		return getDefaultMaxDownloadFailures();
+	}
+
+	/**
+	 * The default number of allowed download failures. May be overridden if a
+	 * different value is wanted.
+	 * 
+	 * @return an int specifying the default number of allowed download failures
+	 */
+	protected int getDefaultMaxDownloadFailures() {
+		return 5;
 	}
 
 }

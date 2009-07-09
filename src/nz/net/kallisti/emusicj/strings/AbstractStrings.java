@@ -44,4 +44,8 @@ public abstract class AbstractStrings implements IStrings {
 		return "Files";
 	}
 
+	public String dlMaxFailures() {
+		return "Download Failed";
+	}
+
 }

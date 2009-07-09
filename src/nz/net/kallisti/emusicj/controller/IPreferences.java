@@ -180,4 +180,12 @@ public interface IPreferences {
 	 */
 	public boolean isAutoloadAllowed();
 
+	/**
+	 * The maximum number of failures that will be allowed before downloading
+	 * gives up on the file
+	 * 
+	 * @return the maximum number of downloads
+	 */
+	public int getMaxDownloadFailures();
+
 }

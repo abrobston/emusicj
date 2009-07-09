@@ -117,4 +117,9 @@ public interface IStrings {
 	 * "Downloads"
 	 */
 	public String prefsDownloadsGroupTitle();
+
+	/**
+	 * The string shown when the maximum number of failures has been reached.
+	 */
+	public String dlMaxFailures();
 }

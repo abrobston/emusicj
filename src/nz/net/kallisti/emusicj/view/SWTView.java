@@ -240,7 +240,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 						if (addedMons.contains(mon)) {
 							DownloadDisplay disp = new DownloadDisplay(
 									downloadsListComp, SWT.NONE, display,
-									SWTView.this, imageFactory);
+									SWTView.this, imageFactory, prefs, strings);
 							downloadsListComp.addSelectableControl(disp);
 							disp.setLayoutData(new GridData(SWT.FILL,
 									SWT.BEGINNING, true, false));

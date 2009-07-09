@@ -103,4 +103,9 @@ public class NaxosStrings extends AbstractStrings {
 		return "Automatically check for updates when program started";
 	}
 
+	@Override
+	public String dlMaxFailures() {
+		return "Track Download Error - Contact CS";
+	}
+
 }

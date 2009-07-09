@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.Constants;
 import nz.net.kallisti.emusicj.bindingtypes.WatchFiles;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
@@ -130,14 +129,7 @@ public class EmusicjController implements IEmusicjController,
 		// Any number of errors can occur in here, so we at least allow a clean
 		// shutdown
 		try {
-
-			try {
-				// allow max download failures to be overridden
-				maxDownloadFailures = Integer.parseInt(prefs.getProperty(
-						"maxDownloadFailures", Constants.MAX_FAILURES + ""));
-			} catch (Exception e) {
-				maxDownloadFailures = Constants.MAX_FAILURES;
-			}
+			maxDownloadFailures = prefs.getMaxDownloadFailures();
 			if (view != null)
 				view.setState(IEmusicjView.ViewState.STARTUP);
 			try {

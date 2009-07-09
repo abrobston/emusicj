@@ -24,9 +24,11 @@ package nz.net.kallisti.emusicj.view.swtwidgets;
 import java.util.HashSet;
 import java.util.Set;
 
+import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitorListener;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.view.SWTUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -82,15 +84,20 @@ public class DownloadDisplay extends Composite implements
 	private final Button cancelButton;
 	private final Composite progArea;
 	private final Button requeueButton;
+	private final IPreferences prefs;
+	private final IStrings strings;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
 	 * forth.
 	 */
 	public DownloadDisplay(Composite parent, int style, Display display,
-			SWTView view, IImageFactory images) {
+			SWTView view, IImageFactory images, IPreferences prefs,
+			IStrings strings) {
 		super(parent, style);
 		this.view = view;
+		this.prefs = prefs;
+		this.strings = strings;
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
 		gridLayout.verticalSpacing = 1;
@@ -234,8 +241,14 @@ public class DownloadDisplay extends Composite implements
 			lblState = "Completed";
 			lblProgress = "";
 		} else if (state == DLState.FAILED) {
-			lblState = "Failed";
-			lblProgress = "(" + monitor.getFailureCount() + ")";
+			int failures = monitor.getFailureCount();
+			if (failures < prefs.getMaxDownloadFailures()) {
+				lblState = "Failed";
+				lblProgress = "(" + failures + ")";
+			} else {
+				lblState = strings.dlMaxFailures();
+				lblProgress = "";
+			}
 		} else if (state == DLState.EXPIRED) {
 			lblState = "Expired";
 			lblProgress = "";
