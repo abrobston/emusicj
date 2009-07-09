@@ -456,7 +456,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 				}
 			}
 		});
-		openDownloadDir.setToolTipText("Open download directory");
+		openDownloadDir.setToolTipText("Go to my downloads folder");
 		toolBar.pack();
 	}
 
