@@ -52,7 +52,7 @@ public class EmusicjStrings extends AbstractStrings {
 				"All Files (*.*)" };
 	}
 
-	public String getAutoLoadDescription() {
+	public String getPrefsAutoLoadDescription() {
 		return "Automatically load .emp files from:";
 	}
 

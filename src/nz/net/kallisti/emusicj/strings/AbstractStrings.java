@@ -32,4 +32,16 @@ public abstract class AbstractStrings implements IStrings {
 		return "cover";
 	}
 
+	public String prefsAutomaticallyCheck() {
+		return "Automatically check for updates to the program";
+	}
+
+	public String prefsDownloadsGroupTitle() {
+		return "Downloads";
+	}
+
+	public String prefsFilesGroupTitle() {
+		return "Files";
+	}
+
 }

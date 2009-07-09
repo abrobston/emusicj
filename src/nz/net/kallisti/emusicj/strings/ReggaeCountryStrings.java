@@ -47,7 +47,7 @@ public class ReggaeCountryStrings extends AbstractStrings {
 		return new String[] { "ReggaeCountry files (*.rcm)", "All Files (*.*)" };
 	}
 
-	public String getAutoLoadDescription() {
+	public String getPrefsAutoLoadDescription() {
 		return "Automatically load .rcm files from:";
 	}
 

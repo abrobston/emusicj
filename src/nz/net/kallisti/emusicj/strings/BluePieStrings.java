@@ -47,7 +47,7 @@ public class BluePieStrings extends AbstractStrings {
 		return new String[] { "BluePie files (*.pie)", "All Files (*.*)" };
 	}
 
-	public String getAutoLoadDescription() {
+	public String getPrefsAutoLoadDescription() {
 		return "Automatically load .pie files from:";
 	}
 

@@ -34,4 +34,9 @@ public class NaxosPreferences extends Preferences {
 		return 4;
 	}
 
+	@Override
+	public boolean isAutoloadAllowed() {
+		return false;
+	}
+
 }

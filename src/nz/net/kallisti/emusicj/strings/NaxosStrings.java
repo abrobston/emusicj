@@ -49,7 +49,7 @@ public class NaxosStrings extends AbstractStrings {
 		return new String[] { "col files (*.col)", "All Files (*.*)" };
 	}
 
-	public String getAutoLoadDescription() {
+	public String getPrefsAutoLoadDescription() {
 		return "Automatically load .col files from:";
 	}
 
@@ -86,6 +86,21 @@ public class NaxosStrings extends AbstractStrings {
 			return userDefined;
 		// Naxos wants 'album' as the name
 		return "album";
+	}
+
+	@Override
+	public String prefsFilesGroupTitle() {
+		return "Downloads Folder Location";
+	}
+
+	@Override
+	public String prefsDownloadsGroupTitle() {
+		return "Downloads Control";
+	}
+
+	@Override
+	public String prefsAutomaticallyCheck() {
+		return "Automatically check for updates when program started";
 	}
 
 }

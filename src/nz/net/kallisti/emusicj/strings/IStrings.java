@@ -65,7 +65,7 @@ public interface IStrings {
 	 * @return the description presented to the user regarding automatically
 	 *         opening files
 	 */
-	public String getAutoLoadDescription();
+	public String getPrefsAutoLoadDescription();
 
 	/**
 	 * The text to be shown in the 'about' dialogue
@@ -95,10 +95,26 @@ public interface IStrings {
 	 * @return the version of the application
 	 */
 	public String getVersion();
-	
+
 	/**
 	 * This provides the base name (without extension) for cover art files
+	 * 
 	 * @return the base name for cover art files
 	 */
 	public String getCoverArtName();
+
+	/**
+	 * "Automatically check for updates to this program"
+	 */
+	public String prefsAutomaticallyCheck();
+
+	/**
+	 * "Files"
+	 */
+	public String prefsFilesGroupTitle();
+
+	/**
+	 * "Downloads"
+	 */
+	public String prefsDownloadsGroupTitle();
 }

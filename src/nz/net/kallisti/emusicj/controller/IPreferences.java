@@ -171,4 +171,13 @@ public interface IPreferences {
 	 */
 	public File getIconCacheDir();
 
+	/**
+	 * If true, then autoloading of files from a directory should be allowed. If
+	 * false, it shouldn't. This is mostly used in relation to branding
+	 * differences.
+	 * 
+	 * @return true to allow autoloading of files, false to not allow it.
+	 */
+	public boolean isAutoloadAllowed();
+
 }

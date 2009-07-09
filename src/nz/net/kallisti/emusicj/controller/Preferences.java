@@ -47,14 +47,14 @@ import com.google.inject.Inject;
 
 /**
  * <p>
- * This is a singleton class that tracks the application preferences. To get an
- * instance, use the getInstance() method. It does things like provide a full
- * filename given track information, and provides access to other user-definable
- * options.
+ * This is a singleton class that tracks the application preferences. It does
+ * things like provide a full filename given track information, and provides
+ * access to other user-definable options.
  * </p>
- * 
- * 
- * $Id$
+ * <p>
+ * It's started to become a bit of a monster, being a central point of all sorts
+ * of information.
+ * </p>
  * 
  * @author robin
  */
@@ -487,6 +487,11 @@ public abstract class Preferences implements IPreferences {
 
 	public File getIconCacheDir() {
 		return new File(statePath, "iconcache");
+	}
+
+	public boolean isAutoloadAllowed() {
+		// Default
+		return true;
 	}
 
 }
