@@ -81,11 +81,12 @@ public class DownloadDisplay extends Composite implements
 			1);
 	private boolean selected;
 	private final SWTView view;
-	private final Button cancelButton;
+	private Button cancelButton;
 	private final Composite progArea;
-	private final Button requeueButton;
+	private Button requeueButton;
 	private final IPreferences prefs;
 	private final IStrings strings;
+	private final boolean showingTrackControls;
 
 	/**
 	 * This constructor initialises the display, creating the parts of it and so
@@ -135,7 +136,12 @@ public class DownloadDisplay extends Composite implements
 
 		progArea = new Composite(this, SWT.NONE);
 		progArea.addMouseListener(getMouseListener());
-		gridLayout = new GridLayout(3, false);
+		showingTrackControls = prefs.showTrackControls();
+		if (showingTrackControls) {
+			gridLayout = new GridLayout(3, false);
+		} else {
+			gridLayout = new GridLayout(1, false);
+		}
 		gridLayout.horizontalSpacing = 1;
 		gridLayout.verticalSpacing = 1;
 		progArea.setLayout(gridLayout);
@@ -145,29 +151,31 @@ public class DownloadDisplay extends Composite implements
 		progBar.addMouseListener(getMouseListener());
 		progBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		requeueButton = new Button(progArea, SWT.PUSH);
-		requeueButton.setImage(images.getRequeueIcon());
-		requeueButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
-				false));
-		requeueButton.setToolTipText("Add download back into the queue");
-		requeueButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void action(SelectionEvent ev) {
-				requeueClicked();
-			}
-		});
+		if (showingTrackControls) {
+			requeueButton = new Button(progArea, SWT.PUSH);
+			requeueButton.setImage(images.getRequeueIcon());
+			requeueButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER,
+					false, false));
+			requeueButton.setToolTipText("Add download back into the queue");
+			requeueButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void action(SelectionEvent ev) {
+					requeueClicked();
+				}
+			});
 
-		cancelButton = new Button(progArea, SWT.PUSH);
-		cancelButton.setImage(images.getCancelIcon());
-		cancelButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false,
-				false));
-		cancelButton.setToolTipText("Cancel download");
-		cancelButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void action(SelectionEvent ev) {
-				cancelClicked();
-			}
-		});
+			cancelButton = new Button(progArea, SWT.PUSH);
+			cancelButton.setImage(images.getCancelIcon());
+			cancelButton.setLayoutData(new GridData(SWT.NONE, SWT.CENTER,
+					false, false));
+			cancelButton.setToolTipText("Cancel download");
+			cancelButton.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void action(SelectionEvent ev) {
+					cancelClicked();
+				}
+			});
+		}
 		this.addMouseListener(getMouseListener());
 		labelArea.pack();
 		layout();
@@ -286,6 +294,8 @@ public class DownloadDisplay extends Composite implements
 	}
 
 	private void setButtonStates() {
+		if (!showingTrackControls)
+			return;
 		if (!isDisposed()) {
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
@@ -396,11 +406,12 @@ public class DownloadDisplay extends Composite implements
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		progArea
 				.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
-		cancelButton.setBackground(SWTView
-				.getSystemColor(SWT.COLOR_LIST_SELECTION));
-		requeueButton.setBackground(SWTView
-				.getSystemColor(SWT.COLOR_LIST_SELECTION));
-
+		if (showingTrackControls) {
+			cancelButton.setBackground(SWTView
+					.getSystemColor(SWT.COLOR_LIST_SELECTION));
+			requeueButton.setBackground(SWTView
+					.getSystemColor(SWT.COLOR_LIST_SELECTION));
+		}
 		// progBar.setBackground(SWTView.getSystemColor(SWT.COLOR_LIST_SELECTION));
 		titleLabel.setBackground(SWTView
 				.getSystemColor(SWT.COLOR_LIST_SELECTION));
@@ -419,8 +430,10 @@ public class DownloadDisplay extends Composite implements
 		setBackground(oldBG);
 		labelArea.setBackground(oldBG);
 		progArea.setBackground(oldBG);
-		cancelButton.setBackground(oldBG);
-		requeueButton.setBackground(oldBG);
+		if (showingTrackControls) {
+			cancelButton.setBackground(oldBG);
+			requeueButton.setBackground(oldBG);
+		}
 		// progBar.setBackground(oldProgBG);
 		titleLabel.setBackground(oldLabelBG);
 		titleLabel.setForeground(oldLabelFG);
