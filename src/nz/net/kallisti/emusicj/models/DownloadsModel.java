@@ -239,8 +239,10 @@ public class DownloadsModel implements IDownloadsModel {
 
 	public List<IDownloadMonitor> getDownloadMonitors() {
 		ArrayList<IDownloadMonitor> dm = new ArrayList<IDownloadMonitor>();
-		for (IDownloader d : downloads)
-			dm.add(d.getMonitor());
+		synchronized (downloads) {
+			for (IDownloader d : downloads)
+				dm.add(d.getMonitor());
+		}
 		return dm;
 	}
 
@@ -253,8 +255,10 @@ public class DownloadsModel implements IDownloadsModel {
 	 */
 	public void addDownload(IDownloader dl) {
 		if (!dlsHash.containsKey(dl)) {
-			downloads.add(dl);
-			dlsHash.put(dl, dl);
+			synchronized (downloads) {
+				downloads.add(dl);
+				dlsHash.put(dl, dl);
+			}
 			notifyListeners();
 		} else {
 			IDownloader existingDl = dlsHash.get(dl);
@@ -271,10 +275,12 @@ public class DownloadsModel implements IDownloadsModel {
 	 */
 	public void removeDownloads(List<IDownloader> toRemove) {
 		if (toRemove.size() != 0) {
-			for (IDownloader dl : toRemove) {
-				if (dlsHash.containsKey(dl)) {
-					downloads.remove(dl);
-					dlsHash.remove(dl);
+			synchronized (downloads) {
+				for (IDownloader dl : toRemove) {
+					if (dlsHash.containsKey(dl)) {
+						downloads.remove(dl);
+						dlsHash.remove(dl);
+					}
 				}
 			}
 			notifyListeners();
@@ -283,8 +289,10 @@ public class DownloadsModel implements IDownloadsModel {
 
 	public void removeDownload(IDownloader dl) {
 		if (dlsHash.containsKey(dl)) {
-			downloads.remove(dl);
-			dlsHash.remove(dl);
+			synchronized (downloads) {
+				downloads.remove(dl);
+				dlsHash.remove(dl);
+			}
 			notifyListeners();
 		}
 	}

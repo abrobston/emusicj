@@ -238,8 +238,6 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	public void stop() {
-		if (hasExpired())
-			return;
 		synchronized (this) {
 			if (dlThread != null)
 				dlThread.finish();
@@ -424,6 +422,8 @@ public class HTTPDownloader implements IDownloader {
 		@Override
 		public void run() {
 			setName(outputFile.toString() + " (#" + getNextThreadNumber() + ")");
+			if (abort)
+				return;
 			setState(DLState.CONNECTING);
 			BufferedOutputStream out = null;
 			File partFile;
@@ -688,6 +688,16 @@ public class HTTPDownloader implements IDownloader {
 			this.hardAbort = true;
 			this.abort = true;
 			this.interrupt();
+		}
+
+		private void downloadError(Exception e) {
+			if (!abort)
+				HTTPDownloader.this.downloadError(e);
+		}
+
+		private void downloadError(String s, Exception e) {
+			if (!abort)
+				HTTPDownloader.this.downloadError(s, e);
 		}
 
 	}

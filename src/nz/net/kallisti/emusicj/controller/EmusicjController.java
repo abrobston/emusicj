@@ -306,6 +306,8 @@ public class EmusicjController implements IEmusicjController,
 	 *            order to just ensure that downloads are happening.
 	 */
 	public void monitorStateChanged(IDownloadMonitor monitor) {
+		if (shuttingDown)
+			return;
 		synchronized (monitorStateChangedLock) {
 			if (monitorStateChangedIsRunning)
 				return;
@@ -314,8 +316,6 @@ public class EmusicjController implements IEmusicjController,
 			monitorStateChangedIsRunning = true;
 		}
 		try {
-			if (shuttingDown)
-				return;
 			// If we're supposed to auto-remove downloads, then we fire up a
 			// thread for that here.
 			if (monitor != null
@@ -324,24 +324,24 @@ public class EmusicjController implements IEmusicjController,
 				final IDownloader downloader = monitor.getDownloader();
 				attachAutoRemoveTimer(downloader);
 			}
-			int count = 0, finished = 0;
+			int inProgress = 0, finished = 0;
 			int total = downloadsModel.getDownloadMonitors().size();
 			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 				if (mon.getDownloadState() == DLState.DOWNLOADING
 						|| mon.getDownloadState() == DLState.CONNECTING) {
-					count++;
+					inProgress++;
 				}
 				if (mon.getDownloadState() == DLState.FINISHED) {
 					finished++;
 				}
 			}
 			if (view != null)
-				view.downloadCount(count, finished, total);
+				view.downloadCount(inProgress, finished, total);
 			// This is down here so that the view still gets notified about
 			// what's going on
 			if (noAutoStartDownloads)
 				return;
-			int num = prefs.getMinDownloads() - count;
+			int num = prefs.getMinDownloads() - inProgress;
 			if (num > 0) {
 				for (IDownloadMonitor mon : downloadsModel
 						.getDownloadMonitors()) {
