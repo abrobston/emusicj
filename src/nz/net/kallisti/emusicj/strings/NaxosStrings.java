@@ -3,6 +3,7 @@ package nz.net.kallisti.emusicj.strings;
 import java.io.File;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.misc.StringUtils;
 
 import com.google.inject.Inject;
 
@@ -106,6 +107,19 @@ public class NaxosStrings extends AbstractStrings {
 	@Override
 	public String dlMaxFailures() {
 		return "Track Download Error - Contact CS";
+	}
+
+	@Override
+	public String networkFailureMessage() {
+		return StringUtils.capitalise(getAppNameArticle())
+				+ getAppName()
+				+ " could not establish a connection to the download server.  "
+				+ "This may be due to problems with your internet connection.\n"
+				+ "\n"
+				+ "If the problem persists, please contact Customer Support.\n"
+				+ "\n"
+				+ "Your downloads have been paused. To resume them, press "
+				+ "the 'unpause' button on the toolbar.";
 	}
 
 }

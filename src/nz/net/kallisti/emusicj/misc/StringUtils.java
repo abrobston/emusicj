@@ -25,4 +25,24 @@ public class StringUtils {
 		return sb.toString();
 	}
 
+	/**
+	 * Returns the capitalised form of the string. E.g. abc -> Abc
+	 * 
+	 * @param str
+	 *            the input string
+	 * @return the input string with a capitalised first letter. If
+	 *         <code>str</code> is <code>null</code>, then an empty string is
+	 *         returned.
+	 */
+	public static String capitalise(String str) {
+		if (str == null || str.length() == 0)
+			return "";
+		char c = Character.toUpperCase(str.charAt(0));
+		StringBuffer sb = new StringBuffer(c);
+		if (str.length() == 1)
+			return sb.toString();
+		sb.append(str.substring(1));
+		return sb.toString();
+	}
+
 }

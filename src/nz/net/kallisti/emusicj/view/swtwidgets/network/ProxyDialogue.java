@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.view.swtwidgets;
+package nz.net.kallisti.emusicj.view.swtwidgets.network;
 
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider.CredsCallback;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
