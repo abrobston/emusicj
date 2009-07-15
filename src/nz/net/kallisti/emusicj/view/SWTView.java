@@ -800,6 +800,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	}
 
 	public void connectionIssues() {
+		controller.pauseDownloads();
 		deferViewEvent(new Runnable() {
 			public void run() {
 				NetworkFailureDialogue failureDialogue = new NetworkFailureDialogue(

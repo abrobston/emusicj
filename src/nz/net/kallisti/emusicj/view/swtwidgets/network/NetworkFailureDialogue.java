@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.view.swtwidgets.network;
 
+import nz.net.kallisti.emusicj.misc.NumberUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
@@ -45,14 +46,35 @@ public class NetworkFailureDialogue {
 	 */
 	public void open() {
 		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		dialog.setLayout(new GridLayout(2, false));
+		dialog.setLayout(new GridLayout(1, false));
 		dialog.setText("Network Problem");
 		Label text = new Label(dialog, SWT.WRAP);
 		text.setText(strings.networkFailureMessage());
 		text.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false,
-				2, 1));
-		getQuitButton(dialog);
-		getDoNothingButton(dialog);
+				1, 1));
+
+		Composite buttons = new Composite(dialog, SWT.NONE);
+		GridLayout buttonsLayout = new GridLayout(2, true);
+		buttons.setLayout(buttonsLayout);
+		GridData buttonsLayoutData = new GridData(SWT.END, SWT.CENTER, false,
+				false);
+		buttons.setLayoutData(buttonsLayoutData);
+
+		Button quitBtn = getQuitButton(buttons);
+		Button doNothingBtn = getDoNothingButton(buttons);
+		GridData buttonData = new GridData(SWT.END, SWT.CENTER, false, false);
+		buttonData.widthHint = NumberUtils.max(quitBtn.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, false).x, doNothingBtn.computeSize(SWT.DEFAULT,
+				SWT.DEFAULT, false).x);
+		buttonData.heightHint = NumberUtils.max(quitBtn.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT, false).y, doNothingBtn.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT, false).y);
+		quitBtn.setLayoutData(buttonData);
+		doNothingBtn.setLayoutData(buttonData);
+		dialog.pack();
+		dialog.setSize(400, dialog.getSize().y);
+		dialog.layout();
+		dialog.open();
 	}
 
 	private Button getQuitButton(Composite parent) {

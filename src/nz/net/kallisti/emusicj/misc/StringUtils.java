@@ -38,7 +38,8 @@ public class StringUtils {
 		if (str == null || str.length() == 0)
 			return "";
 		char c = Character.toUpperCase(str.charAt(0));
-		StringBuffer sb = new StringBuffer(c);
+		StringBuffer sb = new StringBuffer();
+		sb.append(c);
 		if (str.length() == 1)
 			return sb.toString();
 		sb.append(str.substring(1));
