@@ -56,6 +56,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
+import nz.net.kallisti.emusicj.view.swtwidgets.network.NetworkFailureDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.network.ProxyDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
@@ -799,7 +800,13 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	}
 
 	public void connectionIssues() {
-		// TODO complete
+		deferViewEvent(new Runnable() {
+			public void run() {
+				NetworkFailureDialogue failureDialogue = new NetworkFailureDialogue(
+						shell, strings, SWTView.this);
+				failureDialogue.open();
+			}
+		});
 	}
 
 	/**
