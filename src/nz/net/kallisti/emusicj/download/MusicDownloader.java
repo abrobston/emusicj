@@ -30,6 +30,7 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
+import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.w3c.dom.Document;
@@ -58,8 +59,9 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
-			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles) {
-		super(prefs, clientProvider, cleanupFiles);
+			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
+			INetworkFailure networkFailure) {
+		super(prefs, clientProvider, cleanupFiles, networkFailure);
 	}
 
 	public void setDownloader(URL url, File outputFile, int trackNum,
@@ -109,8 +111,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	}
 
 	@Override
-	public void saveTo(Element el, Document doc) {
-		super.saveTo(el, doc);
+	public void saveTo(Element el, Document doc, boolean ignorePause) {
+		super.saveTo(el, doc, ignorePause);
 		el.setAttribute("tracknum", trackNum + "");
 		el.setAttribute("trackname", trackName);
 		el.setAttribute("albumname", albumName);

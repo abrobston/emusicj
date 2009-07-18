@@ -51,12 +51,13 @@ import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
 import nz.net.kallisti.emusicj.view.swtwidgets.PreferencesDialogue;
-import nz.net.kallisti.emusicj.view.swtwidgets.ProxyDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.SelectableComposite;
 import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
+import nz.net.kallisti.emusicj.view.swtwidgets.network.NetworkFailureDialogue;
+import nz.net.kallisti.emusicj.view.swtwidgets.network.ProxyDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
@@ -764,18 +765,23 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		}
 	}
 
-	public void pausedStateChanged(boolean state) {
-		pausedState = state;
-		if (state) {
-			statusLine.setText("All Downloads Paused");
-			if (pauseSysTrayMenuItem != null) // on mac this will be null
-				pauseSysTrayMenuItem.setText("Resume downloads");
-		} else {
-			statusLine.unsetText();
-			if (pauseSysTrayMenuItem != null)
-				pauseSysTrayMenuItem.setText("Pause downloads");
-		}
-		pauseResumeButton.setSelection(state);
+	public void pausedStateChanged(final boolean state) {
+		deferViewEvent(new Runnable() {
+			public void run() {
+				pausedState = state;
+				if (state) {
+					statusLine.setText("All Downloads Paused");
+					if (pauseSysTrayMenuItem != null) // on mac this will be
+														// null
+						pauseSysTrayMenuItem.setText("Resume downloads");
+				} else {
+					statusLine.unsetText();
+					if (pauseSysTrayMenuItem != null)
+						pauseSysTrayMenuItem.setText("Pause downloads");
+				}
+				pauseResumeButton.setSelection(state);
+			}
+		});
 	}
 
 	/**
@@ -794,6 +800,17 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 				ProxyDialogue proxyDialogue = new ProxyDialogue(shell,
 						authScheme, host, port, credsCallback);
 				proxyDialogue.open();
+			}
+		});
+	}
+
+	public void connectionIssues() {
+		controller.pauseDownloads();
+		deferViewEvent(new Runnable() {
+			public void run() {
+				NetworkFailureDialogue failureDialogue = new NetworkFailureDialogue(
+						shell, strings, SWTView.this);
+				failureDialogue.open();
 			}
 		});
 	}

@@ -20,6 +20,15 @@ public interface IStrings {
 	public String getAppName();
 
 	/**
+	 * If the application name should have a definite article when used in
+	 * sentences, this should be it, uncapitalised and with a trailing space if
+	 * one is appropriate.
+	 * 
+	 * @return "the " or "".
+	 */
+	public String getAppNameArticle();
+
+	/**
 	 * The short form of the application name, for system tray stuff
 	 * 
 	 * @return the short form of the application name
@@ -122,4 +131,9 @@ public interface IStrings {
 	 * The string shown when the maximum number of failures has been reached.
 	 */
 	public String dlMaxFailures();
+
+	/**
+	 * The message displayed when there is a network connection issue
+	 */
+	public String networkFailureMessage();
 }

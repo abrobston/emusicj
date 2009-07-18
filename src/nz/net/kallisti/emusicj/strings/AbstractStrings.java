@@ -1,6 +1,7 @@
 package nz.net.kallisti.emusicj.strings;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.misc.StringUtils;
 
 /**
  * <p>
@@ -48,4 +49,18 @@ public abstract class AbstractStrings implements IStrings {
 		return "Download Failed";
 	}
 
+	public String getAppNameArticle() {
+		// In many cases we want 'the'
+		return "the ";
+	}
+
+	public String networkFailureMessage() {
+		return StringUtils.capitalise(getAppNameArticle())
+				+ getAppName()
+				+ " could not establish a connection to the download server.  "
+				+ "This may be due to problems with your internet connection.\n"
+				+ "\n"
+				+ "Your downloads have been paused. To resume them, press "
+				+ "the 'unpause' button on the toolbar.";
+	}
 }

@@ -30,6 +30,12 @@ public class EmusicjStrings extends AbstractStrings {
 		return "eMusic/J Download Manager";
 	}
 
+	@Override
+	public String getAppNameArticle() {
+		// No definite article here I think
+		return "";
+	}
+
 	public String getShortAppName() {
 		return "eMusic/J";
 	}

@@ -29,6 +29,7 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
+import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.w3c.dom.Element;
@@ -46,8 +47,9 @@ public class CoverDownloader extends HTTPDownloader implements ICoverDownloader 
 
 	@Inject
 	public CoverDownloader(IPreferences prefs,
-			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles) {
-		super(prefs, clientProvider, cleanupFiles);
+			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
+			INetworkFailure networkFailure) {
+		super(prefs, clientProvider, cleanupFiles, networkFailure);
 	}
 
 	/**

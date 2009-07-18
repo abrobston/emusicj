@@ -37,8 +37,8 @@ public interface IEmusicjView {
 	 * </p>
 	 * <ul>
 	 * <li><code>STARTUP</code> indicates the program is initialising</li>
-	 * <li><code>RUNNING</code> indicates the program is in its normal
-	 * running mode</li>
+	 * <li><code>RUNNING</code> indicates the program is in its normal running
+	 * mode</li>
 	 * </ul>
 	 */
 	enum ViewState {
@@ -133,5 +133,11 @@ public interface IEmusicjView {
 	 */
 	public void getProxyCredentials(AuthScheme authScheme, String host,
 			int port, CredsCallback credsCallback);
+
+	/**
+	 * This should notify the user that there are connection issues and that
+	 * their downloads have been paused.
+	 */
+	public void connectionIssues();
 
 }

@@ -219,7 +219,7 @@ public class EmusicjController implements IEmusicjController,
 	 */
 	private void saveState() throws FileNotFoundException {
 		downloadsModel.saveState(new FileOutputStream(prefs.getStatePath()
-				+ "downloads.xml"));
+				+ "downloads.xml"), noAutoStartDownloads);
 	}
 
 	/**
@@ -529,4 +529,7 @@ public class EmusicjController implements IEmusicjController,
 		}
 	}
 
+	public void networkIssuesDetected() {
+		view.connectionIssues();
+	}
 }

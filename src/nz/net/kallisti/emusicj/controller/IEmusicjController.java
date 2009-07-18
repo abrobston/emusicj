@@ -141,4 +141,9 @@ public interface IEmusicjController {
 	 */
 	public void cancelDownloads();
 
+	/**
+	 * If network connectivity issues are detected, this should be notified.
+	 */
+	public void networkIssuesDetected();
+
 }

@@ -27,6 +27,7 @@ V0.25-svn
   appropriate.
 * Try to reduce the chances that a .part file is left lying around
 * [Naxos] increase the preferred download count to 4
+* Add detection and notification of a network failure
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)

@@ -46,6 +46,8 @@ import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
+import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
+import nz.net.kallisti.emusicj.network.failure.NetworkFailure;
 import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
 import nz.net.kallisti.emusicj.network.http.downloader.SimpleDownloader;
 import nz.net.kallisti.emusicj.network.http.proxy.HttpClientProvider;
@@ -115,5 +117,7 @@ public class Bindings extends AbstractModule {
 		bind(ISimpleDownloader.class).to(SimpleDownloader.class);
 		bind(ICleanupFiles.class).to(CleanupFiles.class).in(Scopes.SINGLETON);
 		bind(IDynamicURL.class).to(DynamicURL.class);
+		bind(INetworkFailure.class).to(NetworkFailure.class).in(
+				Scopes.SINGLETON);
 	}
 }
