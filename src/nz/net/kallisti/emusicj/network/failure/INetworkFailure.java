@@ -15,7 +15,7 @@ public interface INetworkFailure {
 	/**
 	 * Call this when a network failure is suspected. Multiple calls to this are
 	 * acceptable, they will block until the first one is completed (which may
-	 * take time as it could involve communication to the user.)
+	 * take time as it could involve waiting for networks to time out.)
 	 * 
 	 * @param url
 	 *            the URL that failed. The host of this will be used to check
