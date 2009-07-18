@@ -115,9 +115,11 @@ public class DownloadsModel implements IDownloadsModel {
 	 * 
 	 * @param str
 	 *            the stream to save to
+	 * @param ignorePause
+	 *            if true, then pause states will be ignored
 	 * @return true if everything was OK
 	 */
-	public boolean saveState(OutputStream str) {
+	public boolean saveState(OutputStream str, boolean ignorePause) {
 		DocumentBuilder builder;
 		try {
 			builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -133,15 +135,15 @@ public class DownloadsModel implements IDownloadsModel {
 		for (int i = 0; i < dls.length; i++) {
 			if (dls[i] instanceof MusicDownloader) {
 				Element dlEl = doc.createElement("MusicDownloader");
-				((MusicDownloader) dls[i]).saveTo(dlEl, doc);
+				((MusicDownloader) dls[i]).saveTo(dlEl, doc, ignorePause);
 				el.appendChild(dlEl);
 			} else if (dls[i] instanceof CoverDownloader) {
 				Element dlEl = doc.createElement("CoverDownloader");
-				((CoverDownloader) dls[i]).saveTo(dlEl, doc);
+				((CoverDownloader) dls[i]).saveTo(dlEl, doc, ignorePause);
 				el.appendChild(dlEl);
 			} else if (dls[i] instanceof HTTPDownloader) {
 				Element dlEl = doc.createElement("HTTPDownloader");
-				((HTTPDownloader) dls[i]).saveTo(dlEl, doc);
+				((HTTPDownloader) dls[i]).saveTo(dlEl, doc, ignorePause);
 				el.appendChild(dlEl);
 			}
 		}

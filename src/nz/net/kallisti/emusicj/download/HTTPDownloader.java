@@ -200,9 +200,16 @@ public class HTTPDownloader implements IDownloader {
 	 * @param doc
 	 *            the document this is a part of
 	 */
-	public void saveTo(Element el, Document doc) {
+	public void saveTo(Element el, Document doc, boolean ignorePause) {
 		el.setAttribute("url", url.toString());
-		el.setAttribute("state", state.toString());
+		if (!ignorePause) {
+			el.setAttribute("state", state.toString());
+		} else {
+			DLState myState = state;
+			if (myState == DLState.PAUSED)
+				myState = DLState.NOTSTARTED;
+			el.setAttribute("state", myState.toString());
+		}
 		el.setAttribute("outputfile", outputFile.toString());
 		if (mimeType != null) {
 			String out = "";

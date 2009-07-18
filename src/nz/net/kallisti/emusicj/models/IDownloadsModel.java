@@ -34,31 +34,44 @@ import nz.net.kallisti.emusicj.download.IDownloader;
  * being added or removed)
  * 
  * $Id$
- *
+ * 
  * @author robin
  */
 public interface IDownloadsModel {
 
 	public void addListener(IDownloadsModelListener listener);
-	
+
 	public void removeListener(IDownloadsModelListener listener);
-	
+
 	public List<IDownloader> getDownloaders();
-	
+
 	public List<IDownloadMonitor> getDownloadMonitors();
 
-    public void addDownload(IDownloader dl);
+	public void addDownload(IDownloader dl);
 
-    public void removeDownload(IDownloader dl);
-    
-    /**
-     * Removes downloads from the model
-     * @param toRemove the downloads to remove
-     */
-    public void removeDownloads(List<IDownloader> toRemove);
+	public void removeDownload(IDownloader dl);
 
-	public boolean saveState(OutputStream stream);
+	/**
+	 * Removes downloads from the model
+	 * 
+	 * @param toRemove
+	 *            the downloads to remove
+	 */
+	public void removeDownloads(List<IDownloader> toRemove);
+
+	/**
+	 * This requests the model to save the state of all the downloaders to the
+	 * provided stream
+	 * 
+	 * @param stream
+	 *            the stream to save to
+	 * @param ignorePause
+	 *            if true, then downloads in a 'paused' state will be instead
+	 *            saved as 'not started'
+	 * @return true on success, false on failure
+	 */
+	public boolean saveState(OutputStream stream, boolean ignorePause);
 
 	public void loadState(InputStream stream);
-	
+
 }

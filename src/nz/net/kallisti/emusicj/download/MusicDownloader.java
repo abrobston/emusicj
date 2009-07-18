@@ -111,8 +111,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	}
 
 	@Override
-	public void saveTo(Element el, Document doc) {
-		super.saveTo(el, doc);
+	public void saveTo(Element el, Document doc, boolean ignorePause) {
+		super.saveTo(el, doc, ignorePause);
 		el.setAttribute("tracknum", trackNum + "");
 		el.setAttribute("trackname", trackName);
 		el.setAttribute("albumname", albumName);
