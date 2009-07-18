@@ -7,6 +7,8 @@ import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,6 +30,7 @@ public class NetworkFailureDialogue {
 	private Shell dialog;
 	private final IStrings strings;
 	private final SWTView view;
+	private static boolean showing = false;
 
 	/**
 	 * Instantiate the dialogue. Use {@link #open()} to show it
@@ -45,6 +48,9 @@ public class NetworkFailureDialogue {
 	 * Displays the dialogue
 	 */
 	public void open() {
+		if (showing)
+			return;
+		showing = true;
 		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.setLayout(new GridLayout(1, false));
 		dialog.setText("Network Problem");
@@ -71,6 +77,13 @@ public class NetworkFailureDialogue {
 				SWT.DEFAULT, SWT.DEFAULT, false).y);
 		quitBtn.setLayoutData(buttonData);
 		doNothingBtn.setLayoutData(buttonData);
+		dialog.addShellListener(new ShellAdapter() {
+			@Override
+			public void shellClosed(ShellEvent e) {
+				super.shellClosed(e);
+				showing = false;
+			}
+		});
 		dialog.pack();
 		dialog.setSize(400, dialog.getSize().y);
 		dialog.layout();
