@@ -765,18 +765,23 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		}
 	}
 
-	public void pausedStateChanged(boolean state) {
-		pausedState = state;
-		if (state) {
-			statusLine.setText("All Downloads Paused");
-			if (pauseSysTrayMenuItem != null) // on mac this will be null
-				pauseSysTrayMenuItem.setText("Resume downloads");
-		} else {
-			statusLine.unsetText();
-			if (pauseSysTrayMenuItem != null)
-				pauseSysTrayMenuItem.setText("Pause downloads");
-		}
-		pauseResumeButton.setSelection(state);
+	public void pausedStateChanged(final boolean state) {
+		deferViewEvent(new Runnable() {
+			public void run() {
+				pausedState = state;
+				if (state) {
+					statusLine.setText("All Downloads Paused");
+					if (pauseSysTrayMenuItem != null) // on mac this will be
+														// null
+						pauseSysTrayMenuItem.setText("Resume downloads");
+				} else {
+					statusLine.unsetText();
+					if (pauseSysTrayMenuItem != null)
+						pauseSysTrayMenuItem.setText("Pause downloads");
+				}
+				pauseResumeButton.setSelection(state);
+			}
+		});
 	}
 
 	/**
