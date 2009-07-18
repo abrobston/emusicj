@@ -40,6 +40,7 @@ import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeType;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.apache.commons.httpclient.Header;
@@ -76,13 +77,16 @@ public class HTTPDownloader implements IDownloader {
 	private final IHttpClientProvider clientProvider;
 	private Date expiry;
 	private final ICleanupFiles cleanupFiles;
+	private final INetworkFailure networkFailure;
 
 	@Inject
 	public HTTPDownloader(IPreferences prefs,
-			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles) {
+			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
+			INetworkFailure networkFailure) {
 		this.prefs = prefs;
 		this.clientProvider = clientProvider;
 		this.cleanupFiles = cleanupFiles;
+		this.networkFailure = networkFailure;
 		this.logger = LogUtils.getLogger(this);
 		createMonitor();
 	}
@@ -294,29 +298,52 @@ public class HTTPDownloader implements IDownloader {
 		return outputFile;
 	}
 
-	private void downloadError(Exception e) {
+	private void downloadError(Exception e, boolean maybeNetworkFailure) {
+		boolean isNetwork = false;
+		if (maybeNetworkFailure)
+			isNetwork = networkFailure.isFailure(url);
 		synchronized (this) {
-			logger.log(Level.WARNING, dlThread + ": A download error occurred",
-					e);
-			failureCount++;
-			state = DLState.FAILED;
+			if (isNetwork) {
+				logger.log(Level.WARNING, dlThread
+						+ ": network failure detected", e);
+			} else {
+				logger.log(Level.WARNING, dlThread
+						+ ": A download error occurred", e);
+				failureCount++;
+				state = DLState.FAILED;
+			}
 			dlThread = null;
 		}
-		monitor.setState(state);
+		if (!isNetwork)
+			monitor.setState(state);
 	}
 
-	private void downloadError(String s, Exception ex) {
+	private void downloadError(String s, Exception ex,
+			boolean maybeNetworkFailure) {
+		boolean isNetwork = false;
+		if (maybeNetworkFailure)
+			isNetwork = networkFailure.isFailure(url);
 		synchronized (this) {
-			if (ex == null) {
-				logger.log(Level.WARNING, dlThread + ": " + s);
+			if (isNetwork) {
+				if (ex == null)
+					logger.log(Level.WARNING, dlThread
+							+ ": network failure detected");
+				else
+					logger.log(Level.WARNING, dlThread
+							+ ": network failure detected", ex);
 			} else {
-				logger.log(Level.WARNING, dlThread + ": " + s, ex);
+				if (ex == null) {
+					logger.log(Level.WARNING, dlThread + ": " + s);
+				} else {
+					logger.log(Level.WARNING, dlThread + ": " + s, ex);
+				}
+				failureCount++;
+				state = DLState.FAILED;
 			}
-			failureCount++;
-			state = DLState.FAILED;
 			dlThread = null;
 		}
-		monitor.setState(state);
+		if (!isNetwork)
+			monitor.setState(state);
 	}
 
 	/**
@@ -458,7 +485,8 @@ public class HTTPDownloader implements IDownloader {
 						needToResume));
 			} catch (FileNotFoundException e) {
 				downloadError("needToResume=" + needToResume + " needToRename="
-						+ needToRename + " resumePoint=" + resumePoint, e);
+						+ needToRename + " resumePoint=" + resumePoint, e,
+						false);
 				return;
 			}
 			if (abort)
@@ -497,7 +525,7 @@ public class HTTPDownloader implements IDownloader {
 					get.abort();
 					get.releaseConnection();
 					downloadError("Download failed: server returned code "
-							+ statusCode, null);
+							+ statusCode, null, false);
 					if (out != null)
 						out.close();
 					return;
@@ -556,7 +584,7 @@ public class HTTPDownloader implements IDownloader {
 							+ "already complete file");
 				}
 				if (!isFile) {
-					downloadError("Result isn't a file", null);
+					downloadError("Result isn't a file", null, false);
 					get.abort();
 					out.close();
 					get.releaseConnection();
@@ -575,7 +603,8 @@ public class HTTPDownloader implements IDownloader {
 					return;
 				}
 				if (fileLength == -1) {
-					downloadError("Didn't get a Content-Length: header.", null);
+					downloadError("Didn't get a Content-Length: header.", null,
+							false);
 					get.abort();
 					out.close();
 					get.releaseConnection();
@@ -593,7 +622,7 @@ public class HTTPDownloader implements IDownloader {
 			} catch (IOException e) {
 				get.abort();
 				get.releaseConnection();
-				downloadError(e);
+				downloadError(e, true);
 				try {
 					out.close();
 				} catch (IOException e2) {
@@ -656,7 +685,7 @@ public class HTTPDownloader implements IDownloader {
 					downloadError(
 							"File downloaded not the size it should have "
 									+ "been: got " + bytesDown + ", expected "
-									+ fileLength, null);
+									+ fileLength, null, false);
 					out.close();
 					in.close();
 					get.releaseConnection();
@@ -673,7 +702,7 @@ public class HTTPDownloader implements IDownloader {
 				} catch (Exception ex) {
 				}
 				get.releaseConnection();
-				downloadError(e);
+				downloadError(e, true);
 				cleanupFiles.addFile(partFile);
 				return;
 			}
@@ -690,14 +719,15 @@ public class HTTPDownloader implements IDownloader {
 			this.interrupt();
 		}
 
-		private void downloadError(Exception e) {
+		private void downloadError(Exception e, boolean maybeNetworkFailure) {
 			if (!abort)
-				HTTPDownloader.this.downloadError(e);
+				HTTPDownloader.this.downloadError(e, maybeNetworkFailure);
 		}
 
-		private void downloadError(String s, Exception e) {
+		private void downloadError(String s, Exception e,
+				boolean maybeNetworkFailure) {
 			if (!abort)
-				HTTPDownloader.this.downloadError(s, e);
+				HTTPDownloader.this.downloadError(s, e, maybeNetworkFailure);
 		}
 
 	}

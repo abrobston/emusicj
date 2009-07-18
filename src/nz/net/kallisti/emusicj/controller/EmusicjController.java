@@ -529,4 +529,7 @@ public class EmusicjController implements IEmusicjController,
 		}
 	}
 
+	public void networkIssuesDetected() {
+		view.connectionIssues();
+	}
 }

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
@@ -29,6 +30,10 @@ import com.google.inject.Inject;
  * Failure states are cached for a while (see {@link #FAILURE_CACHE_SECONDS})
  * within which time, another check is not performed.
  * </p>
+ * <p>
+ * It will also signal the controller that a failure has occurred. This will not
+ * occur when reporting cached values.
+ * </p>
  * 
  * @author robin
  */
@@ -42,17 +47,20 @@ public class NetworkFailure implements INetworkFailure {
 	private boolean lastResult;
 	private final Logger logger;
 	private final IHttpClientProvider httpProvider;
+	private final IEmusicjController controller;
 
 	@Inject
-	public NetworkFailure(IHttpClientProvider httpProvider) {
+	public NetworkFailure(IHttpClientProvider httpProvider,
+			IEmusicjController controller) {
 		this.httpProvider = httpProvider;
+		this.controller = controller;
 		logger = LogUtils.getLogger(this);
 	}
 
 	public synchronized boolean isFailure(URL url) {
 		// First, check cache
 		long now = new Date().getTime();
-		if (lastCheck + FAILURE_CACHE_SECONDS > now)
+		if (lastCheck + FAILURE_CACHE_SECONDS * 1000 > now)
 			return lastResult;
 		// Build the URL we test
 		URL testUrl;
@@ -77,6 +85,8 @@ public class NetworkFailure implements INetworkFailure {
 			return cacheAndReturn(false);
 		} catch (IOException e) {
 			// This probably is
+			controller.networkIssuesDetected();
+			logger.log(Level.SEVERE, "Network issues detected", e);
 			return cacheAndReturn(true);
 		} finally {
 			get.releaseConnection();
