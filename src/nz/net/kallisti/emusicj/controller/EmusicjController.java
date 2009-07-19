@@ -141,8 +141,6 @@ public class EmusicjController implements IEmusicjController,
 			downloadsModel.addListener(this);
 			pollThread = new PollDownloads();
 			pollThread.start();
-			for (String file : args)
-				loadMetafile(file);
 			for (IDownloadMonitor mon : downloadsModel.getDownloadMonitors()) {
 				mon.addStateListener(this);
 				// add an auto-remove timer if we need to (fixes #41)
@@ -171,12 +169,16 @@ public class EmusicjController implements IEmusicjController,
 				updateCheck.setUpdateUrl(urlFactory.getUpdateURL());
 				updateCheck.check(strings.getVersion());
 			}
-
+			// Load files passed on the command line (this must be pretty much
+			// the last thing to happen, in some cases starting without a view
+			// configured may cause issues)
+			for (String file : args)
+				loadMetafile(file);
 			// Call the view's event loop
 			if (view != null)
 				view.processEvents(this);
 			// Clean up the program
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger
 					.log(Level.SEVERE, "Unexpected exception causing shutdown",
 							e);

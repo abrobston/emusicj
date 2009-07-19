@@ -161,8 +161,8 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 			// TODO do a splashscreen or something
 		} else if (state.equals(ViewState.RUNNING)) {
 			display = new Display();
-			imageFactory.setDisplay(display);
 			imageFactory.setCacheDir(prefs.getIconCacheDir());
+			imageFactory.setDisplay(display);
 			shell = new Shell(display);
 			shell.setText(strings.getAppName());
 			buildMenuBar(shell);
@@ -325,23 +325,30 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		bannerClickURL.addListener(new IDynamicURLListener() {
 			DynamicImage banner;
 
-			public synchronized void newURL(IDynamicURL dynamicUrl, URL url) {
-				if (banner == null) {
-					// This is an ugly hack to prevent it taking up space
-					// when there is actually no banner
-					outerToolbar.setRedraw(false);
-					banner = new DynamicImage(outerToolbar, SWT.NONE, display,
-							url, imageFactory.getBannerProvider(), SWTView.this);
-					GridData toolbarRowData = new GridData();
-					toolbarRowData.grabExcessHorizontalSpace = false;
-					toolbarRowData.horizontalAlignment = SWT.RIGHT;
-					toolbarRowData.verticalAlignment = SWT.CENTER;
-					toolbarRowData.horizontalIndent = 5;
-					banner.setLayoutData(toolbarRowData);
-					outerToolbar.setRedraw(true);
-				} else {
-					banner.changeUrl(url);
-				}
+			public synchronized void newURL(IDynamicURL dynamicUrl,
+					final URL url) {
+				deferViewEvent(new Runnable() {
+					public void run() {
+						if (banner == null) {
+							// This is an ugly hack to prevent it taking up
+							// space
+							// when there is actually no banner
+							outerToolbar.setRedraw(false);
+							banner = new DynamicImage(outerToolbar, SWT.NONE,
+									display, url, imageFactory
+											.getBannerProvider(), SWTView.this);
+							GridData toolbarRowData = new GridData();
+							toolbarRowData.grabExcessHorizontalSpace = false;
+							toolbarRowData.horizontalAlignment = SWT.RIGHT;
+							toolbarRowData.verticalAlignment = SWT.CENTER;
+							toolbarRowData.horizontalIndent = 5;
+							banner.setLayoutData(toolbarRowData);
+							outerToolbar.setRedraw(true);
+						} else {
+							banner.changeUrl(url);
+						}
+					}
+				});
 			}
 		});
 

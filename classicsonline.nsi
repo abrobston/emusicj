@@ -14,7 +14,7 @@ Name "ClassicsOnline Download Manager"
 OutFile "ClassicsOnline-installer.exe"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\Classicsonline
+InstallDir $PROGRAMFILES\ClassicsOnline
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
@@ -26,7 +26,7 @@ InstallDirRegKey HKLM "Software\Classicsonline_DLM" "Install_Dir"
 
 !define MUI_DIRECTORYPAGE_TEXT_TOP "Setup will install the ClassicsOnline Download Manager in the following folder. To install in a different folder, click Browse and select another folder. Click Install to start the installation. If you are not an administrator on this computer, make sure the folder selected is one you have permissions to save files in."
 
-!define MUI_FINISHPAGE_RUN $INSTDIR\ClassicsOnline.exe
+;!define MUI_FINISHPAGE_RUN $INSTDIR\Classicsonline.exe
 !define MUI_FINISHPAGE_LINK "Go to the ClassicsOnline website"
 !define MUI_FINISHPAGE_LINK_LOCATION http://www.classicsonline.com
 !define MUI_FINISHPAGE_NOREBOOTSUPPORT
@@ -63,7 +63,7 @@ Section "ClassicsOnline Download Manager" SecCOL
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "ClassicsOnline.exe"
+  File "Classicsonline.exe"
   File "COPYING"
   File "README-classicsonline.txt"
 
@@ -87,7 +87,7 @@ Section "Start Menu Shortcuts" SecSMS
 
   CreateDirectory "$SMPROGRAMS\ClassicsOnline"
   CreateShortCut "$SMPROGRAMS\ClassicsOnline\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\ClassicsOnline\ClassicsOnline.lnk" "$INSTDIR\ClassicsOnline.exe" "" "$INSTDIR\ClassicsOnline.exe" 0
+  CreateShortCut "$SMPROGRAMS\ClassicsOnline\ClassicsOnline.lnk" "$INSTDIR\Classicsonline.exe" "" "$INSTDIR\Classicsonline.exe" 0
   
 SectionEnd
 
@@ -104,10 +104,10 @@ Section "File Associations" SecFA
   StrCmp $0 "" 0 "${Index}-Skip"
 	WriteRegStr HKCR "ClassicsonlineDLM.AlbumFile" "" "ClassicsOnline Album File"
 	WriteRegStr HKCR "ClassicsonlineDLM.AlbumFile\shell" "" "open"
-	WriteRegStr HKCR "ClassicsonlineDLM.AlbumFile\DefaultIcon" "" "$INSTDIR\ClassicsOnline.exe,0" 
+	WriteRegStr HKCR "ClassicsonlineDLM.AlbumFile\DefaultIcon" "" "$INSTDIR\Classicsonline.exe,0" 
 "${Index}-Skip:"
   WriteRegStr HKCR "ClassicsonlineDLM.AlbumFile\shell\open\command" "" \
-    '$INSTDIR\ClassicsOnline.exe "%1"'
+    '$INSTDIR\Classicsonline.exe "%1"'
   WriteRegBin HKCR "ClassicsonlineDLM.AlbumFile" "EditFlags" 00000100
   System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 !undef Index
@@ -144,7 +144,7 @@ Section "Uninstall"
   
   ; Remove files and uninstaller
   Delete $INSTDIR\lib\*.*
-  Delete $INSTDIR\ClassicsOnline.exe
+  Delete $INSTDIR\Classicsonline.exe
   Delete $INSTDIR\COPYING
   Delete $INSTDIR\README-classicsonline.txt
   Delete $INSTDIR\uninstall.exe

@@ -98,12 +98,16 @@ public class DynamicImage extends Composite implements
 	 * @param url
 	 *            the new URL, or none to make it not clickable.
 	 */
-	public void changeUrl(URL url) {
-		this.url = url;
-		if (url == null)
-			lbl.setCursor(null);
-		else
-			lbl.setCursor(clickyCursor);
+	public void changeUrl(final URL url) {
+		view.deferViewEvent(new Runnable() {
+			public void run() {
+				DynamicImage.this.url = url;
+				if (url == null)
+					lbl.setCursor(null);
+				else
+					lbl.setCursor(clickyCursor);
+			}
+		});
 	}
 
 	/**
