@@ -12,7 +12,6 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>col</string>
-				<string>emp</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>ClassicsOnline download file</string>

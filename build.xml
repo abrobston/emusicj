@@ -72,8 +72,8 @@ Available targets:
 		<property name="jar.name" value="${basedir}/classicsonline.jar"/>
 		<property name="osx.jar.name" value="${basedir}/osx-classicsonline.jar"/>
 		<property name="app.name" value="classicsonline" />
-		<property name="app.name.caps" value="Classicsonline" />
-		<property name="exe.name" value="Classicsonline.exe" />
+		<property name="app.name.caps" value="ClassicsOnline" />
+		<property name="exe.name" value="ClassicsOnline.exe" />
 	</target>
 
 	<target name="reggaecountry_props">
