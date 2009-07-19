@@ -3,8 +3,8 @@ Build Notes for eMusic/J / Classicsonline / Reggae Country download manager
 http://www.kallisti.net.nz/EMusicJ/HomePage
 
 Compiling this from source is relatively simple, there is an ant build
-script that will compile and output four versions of the program:
-Linux i686 (32-bit), Linux x86_64 (64-bit), win32 and Mac OS X.
+script that will compile and output five versions of the program:
+Linux i686 (32-bit), Linux x86_64 (64-bit), Linux PPC, win32 and Mac OS X.
 
 It requires Sun Java JDK 1.5 or above, and pretty much any recent version of Ant
 to build. The source is configured as an Eclipse project, so using this will 
@@ -49,8 +49,8 @@ as it seems that it's only possible to do this when running on OSX itself.
 The Linux version is simply the application in its unpackaged form, it is ready
 for tarballing up and distributing.
 
-The latest version of this source can be downloaded using Subversion, currently
-at the URL: https://www.kallisti.net.nz/svn/emusicj/trunk
+The latest version of this source can be downloaded using Bazaar, see
+https://www.kallisti.net.nz/trac/emusicj for details.
 
 Adapting this code to create a customised version is fairly easy, see the 
 Naxos related Java and config files versus the EMusicJ ones to see how this is
@@ -58,6 +58,6 @@ done. Of course, if you do create and distribute a custom version, the source
 must be made available, as per the GPL.
 
 Unless otherwise noted, the source code contained here is under the GNU
-General Public Licence (see doc/COPYING).
+General Public Licence version 3 (see doc/COPYING).
 
--- Robin Sheat <robin@kallisti.net.nz>, 8 July 2008
+-- Robin Sheat <robin@kallisti.net.nz>, 20 July 2009
