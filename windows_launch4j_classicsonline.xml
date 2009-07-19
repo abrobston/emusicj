@@ -32,8 +32,8 @@
     <opt>-Denv.http_proxy_enabled=%HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable%</opt>
   </jre>
   <versionInfo>
-    <fileVersion>0.20.0.0</fileVersion>
-    <txtFileVersion>0.20-naxos-svn</txtFileVersion>
+    <fileVersion>0.26.0.0</fileVersion>
+    <txtFileVersion>0.26-naxos</txtFileVersion>
     <fileDescription>ClassicsOnline Download Manager</fileDescription>
     <copyright>Robin Sheat, 2009</copyright>
     <productVersion>1.99.0.0</productVersion>
