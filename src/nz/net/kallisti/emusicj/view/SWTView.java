@@ -269,28 +269,45 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		notDownloadingIcon = imageFactory.getNotDownloadingIcon();
 		buildSystemTray(this, notDownloadingIcon);
 		GridLayout shellLayout = new GridLayout();
+		shellLayout.marginHeight = 0;
 		shellLayout.numColumns = 1;
 		shell.setLayout(shellLayout);
 
+		// This contains the stuff that contains the toolbar, and lets us put
+		// a full-height banner on the outside (yeah, it's messy)
+		final Composite outerToolbar = new Composite(shell, SWT.NONE);
+		GridLayout outerToolbarLayout = new GridLayout(2, false);
+		outerToolbarLayout.horizontalSpacing = 0;
+		outerToolbarLayout.verticalSpacing = 0;
+		outerToolbarLayout.marginHeight = 0;
+		outerToolbarLayout.marginWidth = 0;
+		outerToolbar.setLayout(outerToolbarLayout);
+		GridData outerToolbarLayoutData = new GridData();
+		outerToolbarLayoutData.horizontalAlignment = SWT.FILL;
+		outerToolbarLayoutData.grabExcessHorizontalSpace = true;
+		outerToolbar.setLayoutData(outerToolbarLayoutData);
+
 		// This contains the toolbar, and lets us put an image on the right
 		// side
-		final Composite toolbarRow = new Composite(shell, SWT.NONE);
+		final Composite toolbarRow = new Composite(outerToolbar, SWT.NONE);
+		GridLayout toolbarLayout = new GridLayout(2, false);
+		toolbarLayout.horizontalSpacing = 0;
+		toolbarLayout.marginRight = 0;
+		toolbarLayout.marginHeight = 7;
+		toolbarRow.setLayout(toolbarLayout);
 		// This griddata is for the toolbar row within the shell
 		GridData toolbarGridData = new GridData();
 		toolbarGridData.horizontalAlignment = SWT.FILL;
+		toolbarGridData.verticalAlignment = SWT.TOP;
 		toolbarGridData.grabExcessHorizontalSpace = true;
 		toolbarRow.setLayoutData(toolbarGridData);
-		GridLayout toolbarLayout = new GridLayout(3, false);
-		toolbarLayout.horizontalSpacing = 0;
-		toolbarLayout.marginRight = 0;
-		toolbarRow.setLayout(toolbarLayout);
 
 		ToolBar toolBar = new ToolBar(toolbarRow, SWT.FLAT);
 		buildToolBar(toolBar);
 		// This griddata is for the components within the toolbar row
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
-		toolbarRowData.verticalAlignment = SWT.TOP;
+		toolbarRowData.verticalAlignment = SWT.CENTER;
 		toolBar.setLayoutData(toolbarRowData);
 
 		// Logo
@@ -300,7 +317,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		toolbarRowData = new GridData();
 		toolbarRowData.grabExcessHorizontalSpace = true;
 		toolbarRowData.horizontalAlignment = SWT.RIGHT;
-		toolbarRowData.verticalAlignment = SWT.TOP;
+		toolbarRowData.verticalAlignment = SWT.CENTER;
 		toolbarIcon.setLayoutData(toolbarRowData);
 
 		// Banner (for emusic/j this will always be blank)
@@ -312,8 +329,8 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 				if (banner == null) {
 					// This is an ugly hack to prevent it taking up space
 					// when there is actually no banner
-					toolbarRow.setRedraw(false);
-					banner = new DynamicImage(toolbarRow, SWT.NONE, display,
+					outerToolbar.setRedraw(false);
+					banner = new DynamicImage(outerToolbar, SWT.NONE, display,
 							url, imageFactory.getBannerProvider(), SWTView.this);
 					GridData toolbarRowData = new GridData();
 					toolbarRowData.grabExcessHorizontalSpace = false;
@@ -321,12 +338,15 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 					toolbarRowData.verticalAlignment = SWT.CENTER;
 					toolbarRowData.horizontalIndent = 5;
 					banner.setLayoutData(toolbarRowData);
-					toolbarRow.setRedraw(true);
+					outerToolbar.setRedraw(true);
 				} else {
 					banner.changeUrl(url);
 				}
 			}
 		});
+
+		outerToolbar.pack();
+		outerToolbar.layout();
 
 		mainArea = new SashForm(shell, SWT.VERTICAL | SWT.SMOOTH);
 		mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -772,7 +792,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 				if (state) {
 					statusLine.setText("All Downloads Paused");
 					if (pauseSysTrayMenuItem != null) // on mac this will be
-														// null
+						// null
 						pauseSysTrayMenuItem.setText("Resume downloads");
 				} else {
 					statusLine.unsetText();

@@ -63,6 +63,7 @@ public class DynamicImage extends Composite implements
 		thisLayout.marginLeft = 0;
 		thisLayout.marginRight = 0;
 		thisLayout.horizontalSpacing = 0;
+		thisLayout.marginHeight = 0;
 		this.setLayout(thisLayout);
 		this.url = url;
 		lbl = new Label(this, SWT.NONE);
