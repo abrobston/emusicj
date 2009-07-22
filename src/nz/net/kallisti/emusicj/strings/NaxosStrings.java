@@ -101,7 +101,7 @@ public class NaxosStrings extends AbstractStrings {
 
 	@Override
 	public String prefsAutomaticallyCheck() {
-		return "Automatically check for updates when program started";
+		return "Automatically check for updates when program starts";
 	}
 
 	@Override
@@ -120,6 +120,11 @@ public class NaxosStrings extends AbstractStrings {
 				+ "\n"
 				+ "Your downloads have been paused. To resume them, press "
 				+ "the 'unpause' button on the toolbar.";
+	}
+
+	@Override
+	public String prefsConcurrentDownloads() {
+		return "Concurrent downloads count (4 is recommended)";
 	}
 
 }

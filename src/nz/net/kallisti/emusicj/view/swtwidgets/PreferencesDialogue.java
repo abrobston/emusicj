@@ -205,7 +205,7 @@ public class PreferencesDialogue {
 		});
 		minDLSpin.pack();
 		Label minDLLabel = new Label(downloads, SWT.NONE);
-		minDLLabel.setText("Preferred number of downloads at once");
+		minDLLabel.setText(strings.prefsConcurrentDownloads());
 
 		autoCleanup = new Button(downloads, SWT.CHECK);
 		autoCleanup.setSelection(removeCompletedDownloads);

@@ -63,4 +63,8 @@ public abstract class AbstractStrings implements IStrings {
 				+ "Your downloads have been paused. To resume them, press "
 				+ "the 'unpause' button on the toolbar.";
 	}
+
+	public String prefsConcurrentDownloads() {
+		return "Preferred number of downloads at once";
+	}
 }

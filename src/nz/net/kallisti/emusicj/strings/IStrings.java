@@ -136,4 +136,9 @@ public interface IStrings {
 	 * The message displayed when there is a network connection issue
 	 */
 	public String networkFailureMessage();
+
+	/**
+	 * "Preferred number of downloads at once"
+	 */
+	public String prefsConcurrentDownloads();
 }
