@@ -85,7 +85,7 @@ public class NetworkFailureDialogue {
 			}
 		});
 		dialog.pack();
-		dialog.setSize(400, dialog.getSize().y);
+		dialog.setSize(dialog.computeSize(400, SWT.DEFAULT));
 		dialog.layout();
 		dialog.open();
 	}
