@@ -83,6 +83,8 @@ public class DynamicImage extends Composite implements
 	public void newImage(IDynamicImageProvider dynImage, final Image image) {
 		view.deferViewEvent(new Runnable() {
 			public void run() {
+				if (lbl.isDisposed())
+					return;
 				lbl.setImage(image);
 				lbl.pack();
 				pack();
