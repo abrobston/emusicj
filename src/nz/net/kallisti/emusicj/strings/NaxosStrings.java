@@ -60,7 +60,7 @@ public class NaxosStrings extends AbstractStrings {
 				+ ", Copyright (C) 2006-2009 Robin Sheat <robin@kallisti.net.nz>\n\n"
 				+
 
-				"The Classicsonline Download Manager comes with ABSOLUTELY NO WARRANTY. "
+				"The ClassicsOnline Download Manager comes with ABSOLUTELY NO WARRANTY. "
 				+ "This is free software, and you are welcome to redistribute it under the "
 				+ "terms of the GNU General Public License. A copy of this is contained in "
 				+ "the file 'COPYING'.\n\n" +
