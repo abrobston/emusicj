@@ -526,6 +526,20 @@ public class HTTPDownloader implements IDownloader {
 					out = new BufferedOutputStream(new FileOutputStream(
 							partFile, needToResume));
 				}
+				// The classicsonline server returns a 416 if we request an
+				// already completed file.
+				if (needToResume
+						&& statusCode == HttpStatus.SC_REQUESTED_RANGE_NOT_SATISFIABLE) {
+					get.abort();
+					setState(DLState.FINISHED);
+					if (out != null)
+						out.close();
+					if (needToRename)
+						partFile.renameTo(outputFile);
+					get.releaseConnection();
+					cleanupFiles.removeFile(partFile);
+					return;
+				}
 				// If not a code we expect, abort
 				if (statusCode != HttpStatus.SC_OK
 						&& statusCode != HttpStatus.SC_PARTIAL_CONTENT) {
