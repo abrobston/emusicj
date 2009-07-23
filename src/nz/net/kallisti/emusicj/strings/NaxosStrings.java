@@ -106,7 +106,7 @@ public class NaxosStrings extends AbstractStrings {
 
 	@Override
 	public String dlMaxFailures() {
-		return "Track Download Error - Contact CS";
+		return "Track Download Error - <A>Contact CS</A>";
 	}
 
 	@Override

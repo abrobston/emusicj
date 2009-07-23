@@ -129,6 +129,8 @@ public interface IStrings {
 
 	/**
 	 * The string shown when the maximum number of failures has been reached.
+	 * This can include &lt;A&gt; elements, which when clicked will open the
+	 * browser to the customer support URL.
 	 */
 	public String dlMaxFailures();
 

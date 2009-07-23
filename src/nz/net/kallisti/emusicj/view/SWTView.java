@@ -928,4 +928,29 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		public void performOperation(DownloadDisplay download);
 	}
 
+	/**
+	 * This opens the user's browser to customer support. If no customer support
+	 * URL is defined, this will do nothing.
+	 */
+	public void customerSupport() {
+		if (urlFactory.getCustomerSupportURL() == null)
+			return;
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					BrowserLauncher.openURL(urlFactory.getCustomerSupportURL());
+				} catch (Exception e) {
+					error(
+							"Error launching browser",
+							"There seemed to be a "
+									+ "problem launching the browser. The customer support page can"
+									+ "be found at "
+									+ urlFactory.getCustomerSupportURL());
+				}
+			}
+		}.start();
+
+	}
+
 }

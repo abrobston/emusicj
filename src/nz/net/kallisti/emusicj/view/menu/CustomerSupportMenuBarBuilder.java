@@ -3,13 +3,9 @@ package nz.net.kallisti.emusicj.view.menu;
 import java.util.ArrayList;
 import java.util.List;
 
-import nz.net.kallisti.emusicj.misc.BrowserLauncher;
-import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.SWTView;
 
 import org.eclipse.swt.SWT;
-
-import com.google.inject.Inject;
 
 /**
  * <p>
@@ -21,15 +17,8 @@ import com.google.inject.Inject;
  */
 public class CustomerSupportMenuBarBuilder extends StandardMenuBarBuilder {
 
-	private final IURLFactory urls;
-
-	@Inject
-	public CustomerSupportMenuBarBuilder(IURLFactory urls) {
-		this.urls = urls;
-	}
-
 	@Override
-	protected List<MenuDetails> buildMenuDetails(SWTView view) {
+	protected List<MenuDetails> buildMenuDetails(final SWTView view) {
 		List<MenuDetails> menuDetails = super.buildMenuDetails(view);
 		for (MenuDetails details : menuDetails) {
 			if ("&Help".equals(details.text)) {
@@ -37,37 +26,15 @@ public class CustomerSupportMenuBarBuilder extends StandardMenuBarBuilder {
 				ArrayList<MenuItemDetails> newItems = new ArrayList<MenuItemDetails>(
 						items);
 				newItems.add(0, new MenuItemDetails("&Customer Support",
-						SWT.NONE, customerSupport(view)));
+						SWT.NONE, new Runnable() {
+							public void run() {
+								view.customerSupport();
+							}
+						}));
 				details.entryDetails = newItems;
 			}
 		}
 		return menuDetails;
-	}
-
-	private Runnable customerSupport(final SWTView view) {
-		return new Runnable() {
-			public void run() {
-				new Thread() {
-					@Override
-					public void run() {
-						try {
-							BrowserLauncher.openURL(urls
-									.getCustomerSupportURL());
-						} catch (Exception e) {
-							view
-									.error(
-											"Error launching browser",
-											"There seemed to be a "
-													+ "problem launching the browser. The customer support page can"
-													+ "be found at "
-													+ urls
-															.getCustomerSupportURL());
-						}
-					}
-				}.start();
-
-			}
-		};
 	}
 
 }

@@ -50,7 +50,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 
 /**
@@ -66,7 +69,7 @@ public class DownloadDisplay extends Composite implements
 		IDownloadMonitorListener, ISelectableControl {
 
 	private final Label titleLabel;
-	private final Label statusLabel;
+	private final Link statusLabel;
 	private final Composite labelArea;
 	private final ProgressBar progBar;
 	private IDownloadMonitor monitor;
@@ -93,7 +96,7 @@ public class DownloadDisplay extends Composite implements
 	 * forth.
 	 */
 	public DownloadDisplay(Composite parent, int style, Display display,
-			SWTView view, IImageFactory images, IPreferences prefs,
+			final SWTView view, IImageFactory images, IPreferences prefs,
 			IStrings strings) {
 		super(parent, style);
 		this.view = view;
@@ -118,8 +121,13 @@ public class DownloadDisplay extends Composite implements
 		gd.grabExcessHorizontalSpace = true;
 		titleLabel.setLayoutData(gd);
 
-		statusLabel = new Label(labelArea, SWT.RIGHT);
+		statusLabel = new Link(labelArea, SWT.RIGHT);
 		statusLabel.addMouseListener(getMouseListener());
+		statusLabel.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				view.customerSupport();
+			}
+		});
 		Font initialFont = statusLabel.getFont();
 		FontData[] fontData = initialFont.getFontData();
 		for (int i = 0; i < fontData.length; i++) {
