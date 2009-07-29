@@ -35,7 +35,7 @@ public class IncreasingVersionUpdateChecker implements IUpdateChecker {
 		} catch (InvalidVersionException e) {
 			logger.log(Level.WARNING,
 					"Invalid version information supplied [curr=" + currVersion
-							+ ", supplied=" + versionInfo, e);
+							+ ", supplied=" + versionInfo + "]", e);
 			return null;
 		}
 		if (curr.compareTo(supplied) < 0) {

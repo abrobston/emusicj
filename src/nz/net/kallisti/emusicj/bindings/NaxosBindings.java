@@ -10,6 +10,8 @@ import nz.net.kallisti.emusicj.misc.NaxosFilenameFilter;
 import nz.net.kallisti.emusicj.providers.WatchFilesDirectoryMonitorProvider;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.strings.NaxosStrings;
+import nz.net.kallisti.emusicj.updater.IUpdateChecker;
+import nz.net.kallisti.emusicj.updater.IncreasingVersionUpdateChecker;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.urls.naxos.NaxosURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -43,6 +45,7 @@ public class NaxosBindings extends AbstractModule {
 		bind(IURLFactory.class).to(NaxosURLFactory.class).in(Scopes.SINGLETON);
 		bind(IPreferences.class).to(NaxosPreferences.class).asEagerSingleton();
 		bind(IMenuBuilder.class).to(CustomerSupportMenuBarBuilder.class);
+		bind(IUpdateChecker.class).to(IncreasingVersionUpdateChecker.class);
 	}
 
 }

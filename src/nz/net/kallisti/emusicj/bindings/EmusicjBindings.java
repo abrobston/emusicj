@@ -10,6 +10,8 @@ import nz.net.kallisti.emusicj.misc.EMPFilenameFilter;
 import nz.net.kallisti.emusicj.providers.WatchFilesDirectoryMonitorProvider;
 import nz.net.kallisti.emusicj.strings.EmusicjStrings;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.updater.IUpdateChecker;
+import nz.net.kallisti.emusicj.updater.StandardUpdateChecker;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.urls.emusicj.EmusicjURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -45,6 +47,7 @@ public class EmusicjBindings extends AbstractModule {
 		bind(IPreferences.class).to(EmusicjPreferences.class)
 				.asEagerSingleton();
 		bind(IMenuBuilder.class).to(StandardMenuBarBuilder.class);
+		bind(IUpdateChecker.class).to(StandardUpdateChecker.class);
 	}
 
 }

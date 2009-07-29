@@ -10,6 +10,8 @@ import nz.net.kallisti.emusicj.misc.ReggaeCountryFilenameFilter;
 import nz.net.kallisti.emusicj.providers.WatchFilesDirectoryMonitorProvider;
 import nz.net.kallisti.emusicj.strings.IStrings;
 import nz.net.kallisti.emusicj.strings.ReggaeCountryStrings;
+import nz.net.kallisti.emusicj.updater.IUpdateChecker;
+import nz.net.kallisti.emusicj.updater.StandardUpdateChecker;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.urls.reggaecountry.ReggaeCountryURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
@@ -46,6 +48,7 @@ public class ReggaeCountryBindings extends AbstractModule {
 		bind(IPreferences.class).to(ReggaeCountryPreferences.class)
 				.asEagerSingleton();
 		bind(IMenuBuilder.class).to(StandardMenuBarBuilder.class);
+		bind(IUpdateChecker.class).to(StandardUpdateChecker.class);
 	}
 
 }
