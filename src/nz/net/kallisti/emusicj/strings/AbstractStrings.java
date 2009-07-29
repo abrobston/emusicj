@@ -60,8 +60,8 @@ public abstract class AbstractStrings implements IStrings {
 				+ " could not establish a connection to the download server.  "
 				+ "This may be due to problems with your internet connection.\n"
 				+ "\n"
-				+ "Your downloads have been paused. To resume them, press "
-				+ "the 'unpause' button on the toolbar.";
+				+ "Your downloads have been paused.\n"
+				+ "Click on the resume button (\uFFFC) to continue downloading.";
 	}
 
 	public String prefsConcurrentDownloads() {

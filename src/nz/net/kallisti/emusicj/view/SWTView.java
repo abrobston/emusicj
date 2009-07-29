@@ -860,7 +860,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		deferViewEvent(new Runnable() {
 			public void run() {
 				NetworkFailureDialogue failureDialogue = new NetworkFailureDialogue(
-						shell, strings, SWTView.this);
+						shell, strings, SWTView.this, imageFactory);
 				failureDialogue.open();
 			}
 		});

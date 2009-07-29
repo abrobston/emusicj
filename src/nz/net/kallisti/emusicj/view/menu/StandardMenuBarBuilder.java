@@ -40,7 +40,9 @@ public class StandardMenuBarBuilder extends AbstractMenuBuilder {
 						// Prefs
 						new MenuItemDetails("&Preferences...", SWT.NONE,
 								makeCallback(view, "displayPreferences")),
-						null,
+						null, new MenuItemDetails("&Network Failure Test",
+								SWT.NONE,
+								makeCallback(view, "connectionIssues")),
 						// Quit
 						new MenuItemDetails("&Quit\tCtrl-Q", SWT.CTRL + 'Q',
 								makeCallback(view, "quitProgram")))));

@@ -53,6 +53,11 @@ public interface IImageFactory {
 	public Image getStartIcon();
 
 	/**
+	 * @return the small (max 16px height) version of the 'start' button image
+	 */
+	public Image getStartSmallIcon();
+
+	/**
 	 * @return the icon used on the 'requeue track' button
 	 */
 	public Image getRequeueIcon();

@@ -69,6 +69,11 @@ public class ReggaeCountryImageFactory extends AbstractImageFactory {
 				"start.png"));
 	}
 
+	public Image getStartSmallIcon() {
+		return new Image(display, this.getClass().getResourceAsStream(
+				"start_small.png"));
+	}
+
 	public Image[] getAppIcons() {
 		return new Image[] {
 				new Image(display, this.getClass().getResourceAsStream(

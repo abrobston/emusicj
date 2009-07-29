@@ -118,8 +118,8 @@ public class NaxosStrings extends AbstractStrings {
 				+ "\n"
 				+ "If the problem persists, please contact Customer Support.\n"
 				+ "\n"
-				+ "Your downloads have been paused. To resume them, press "
-				+ "the 'unpause' button on the toolbar.";
+				+ "Your downloads have been paused.\n"
+				+ "Click on the resume button (\uFFFC) to continue downloading.";
 	}
 
 	@Override

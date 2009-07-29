@@ -135,7 +135,9 @@ public interface IStrings {
 	public String dlMaxFailures();
 
 	/**
-	 * The message displayed when there is a network connection issue
+	 * The message displayed when there is a network connection issue. Including
+	 * '\uFFFC' in the text will cause the resume icon to be included at that
+	 * point.
 	 */
 	public String networkFailureMessage();
 
