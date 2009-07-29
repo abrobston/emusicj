@@ -9,13 +9,13 @@ import java.net.URL;
  *
  * @author robin
  */
-public interface IUpdateCheck {
+public interface IUpdateFetcher {
 
 	/**
 	 * Sets the listener to be notified if there is an updated available
 	 * @param listener the object to notify
 	 */
-	public void setListener(IUpdateCheckListener listener);
+	public void setListener(IUpdateFetcherListener listener);
 
 	/**
 	 * Specifies the URL to query for an update

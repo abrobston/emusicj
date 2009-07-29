@@ -28,7 +28,7 @@ package nz.net.kallisti.emusicj.updater;
  *
  * @author robin
  */
-public interface IUpdateCheckListener {
+public interface IUpdateFetcherListener {
 
 	public void updateAvailable(String newVersion);
 	

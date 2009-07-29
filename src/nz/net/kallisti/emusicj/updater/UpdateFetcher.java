@@ -36,32 +36,30 @@ import com.google.inject.Inject;
 
 /**
  * <p>
- * Checks to see if there is a new version of the program available. Reads the
- * provided URL, which contains a string containing a space-seperated list of
- * versions that are considered current. If the current version isn't on that
- * list, then it notifies the provided {@link IUpdateCheckListener}.
+ * This fetches the version update information from a URL, and passes it on to
+ * an {@link IUpdateChecker} that will determine if we are really up to date.
  * </p>
  * <p>
  * Note that if the update request fails, this will fail silently (with errors
- * going to STDERR)
+ * logged)
  * </p>
  * 
  * $Id$
  * 
  * @author robin
  */
-public class UpdateCheck implements IUpdateCheck {
+public class UpdateFetcher implements IUpdateFetcher {
 
-	private IUpdateCheckListener listener;
+	private IUpdateFetcherListener listener;
 	private URL updateUrl;
 	private final IHttpClientProvider clientProvider;
 
 	@Inject
-	public UpdateCheck(IHttpClientProvider clientProvider) {
+	public UpdateFetcher(IHttpClientProvider clientProvider) {
 		this.clientProvider = clientProvider;
 	}
 
-	public void setListener(IUpdateCheckListener listener) {
+	public void setListener(IUpdateFetcherListener listener) {
 		this.listener = listener;
 	}
 

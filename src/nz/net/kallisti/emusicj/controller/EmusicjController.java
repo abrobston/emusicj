@@ -49,8 +49,8 @@ import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.models.IDownloadsModel;
 import nz.net.kallisti.emusicj.models.IDownloadsModelListener;
 import nz.net.kallisti.emusicj.strings.IStrings;
-import nz.net.kallisti.emusicj.updater.IUpdateCheck;
-import nz.net.kallisti.emusicj.updater.IUpdateCheckListener;
+import nz.net.kallisti.emusicj.updater.IUpdateFetcher;
+import nz.net.kallisti.emusicj.updater.IUpdateFetcherListener;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
 
@@ -72,7 +72,7 @@ import com.google.inject.Provider;
  */
 public class EmusicjController implements IEmusicjController,
 		IDownloadMonitorListener, IDownloadsModelListener,
-		IUpdateCheckListener, IDirectoryMonitorListener,
+		IUpdateFetcherListener, IDirectoryMonitorListener,
 		IPreferenceChangeListener, IIPCListener {
 
 	private final IEmusicjView view;
@@ -87,7 +87,7 @@ public class EmusicjController implements IEmusicjController,
 	private final Object monitorStateChangedLock = new Object();
 	private boolean monitorStateChangedIsRunning = false;
 	private final IMetafileLoader metafileLoader;
-	private final IUpdateCheck updateCheck;
+	private final IUpdateFetcher updateCheck;
 	private final IURLFactory urlFactory;
 	private final IStrings strings;
 	private final Logger logger;
@@ -97,7 +97,7 @@ public class EmusicjController implements IEmusicjController,
 	public EmusicjController(IEmusicjView view, IPreferences preferences,
 			IDownloadsModel downloadsModel,
 			@WatchFiles Provider<IDirectoryMonitor> dropDirMonProvider,
-			IMetafileLoader metafileLoader, IUpdateCheck updateCheck,
+			IMetafileLoader metafileLoader, IUpdateFetcher updateCheck,
 			IURLFactory urlFactory, IStrings strings, ICleanupFiles cleanupFiles) {
 		this.view = view;
 		this.prefs = preferences;

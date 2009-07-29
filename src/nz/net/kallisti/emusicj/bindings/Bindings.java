@@ -53,8 +53,8 @@ import nz.net.kallisti.emusicj.network.http.downloader.SimpleDownloader;
 import nz.net.kallisti.emusicj.network.http.proxy.HttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
-import nz.net.kallisti.emusicj.updater.IUpdateCheck;
-import nz.net.kallisti.emusicj.updater.UpdateCheck;
+import nz.net.kallisti.emusicj.updater.IUpdateFetcher;
+import nz.net.kallisti.emusicj.updater.UpdateFetcher;
 import nz.net.kallisti.emusicj.urls.DynamicURL;
 import nz.net.kallisti.emusicj.urls.IDynamicURL;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
@@ -103,7 +103,7 @@ public class Bindings extends AbstractModule {
 				PlainTextMetafile.class);
 		bind(IMetafile.class).annotatedWith(EmusicEmx.class).to(
 				EMXMetaFile.class);
-		bind(IUpdateCheck.class).to(UpdateCheck.class);
+		bind(IUpdateFetcher.class).to(UpdateFetcher.class);
 		bind(IFileNameCleaner.class).to(FileNameCleaner.class);
 		bind(CredentialsProvider.class).to(ProxyCredentialsProvider.class).in(
 				Scopes.SINGLETON);
