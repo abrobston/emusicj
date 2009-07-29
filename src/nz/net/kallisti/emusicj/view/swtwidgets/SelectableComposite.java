@@ -74,6 +74,7 @@ public class SelectableComposite extends Composite implements
 
 	public void removeSelectableControl(ISelectableControl c) {
 		c.removeSelectionListener(this);
+		controls.remove(c);
 		if (c == lastSelected || selected.contains(c)) {
 			selected.remove(c);
 			if (lastSelected == c) {
@@ -235,7 +236,16 @@ public class SelectableComposite extends Composite implements
 	 *         This list will be zero-length if none are selected.
 	 */
 	public List<ISelectableControl> getSelected() {
-		return Collections.unmodifiableList(selected);
+		return new ArrayList<ISelectableControl>(selected);
+	}
+
+	/**
+	 * This provides all the controls that are managed by this composite.
+	 * 
+	 * @return a list containing all the controls in this composite.
+	 */
+	public List<ISelectableControl> getAllControls() {
+		return new ArrayList<ISelectableControl>(controls);
 	}
 
 	/**

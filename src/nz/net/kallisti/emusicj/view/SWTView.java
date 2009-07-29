@@ -196,6 +196,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 					if (prefs.isFirstLaunch()) {
 						displayPreferences();
 					}
+					updateFileInfoDisplay();
 				}
 			});
 		}
@@ -251,6 +252,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 							dlDisplays.add(disp);
 						}
 					downloadsListComp.pack();
+					updateFileInfoDisplay();
 				}
 			}
 		});
@@ -676,12 +678,29 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	 */
 	public void widgetSelected(SelectionEvent e) {
 		if (e.widget == downloadsListComp) {
-			if (downloadsListComp.getLastSelectedControl() != null)
-				fileInfo.setDownloader(((DownloadDisplay) downloadsListComp
-						.getLastSelectedControl()).getDownloadMonitor());
-			else
-				// It's null if it is unselected, eg by cleaning up downloads
+			updateFileInfoDisplay();
+		}
+	}
+
+	/**
+	 * This works out what should currently be displayed in the file info box,
+	 * and shows it.
+	 */
+	private void updateFileInfoDisplay() {
+		if (downloadsListComp.getLastSelectedControl() != null)
+			fileInfo.setDownloader(((DownloadDisplay) downloadsListComp
+					.getLastSelectedControl()).getDownloadMonitor());
+		else {
+			// It's null if it is unselected, eg by cleaning up downloads.
+			// In this case, we show the first item in the list (or null if
+			// the list is empty.)
+			List<ISelectableControl> dls = downloadsListComp.getAllControls();
+			if (dls.size() == 0) {
 				fileInfo.setDownloader(null);
+			} else {
+				fileInfo.setDownloader(((DownloadDisplay) dls.get(0))
+						.getDownloadMonitor());
+			}
 		}
 	}
 
