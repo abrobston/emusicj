@@ -66,6 +66,10 @@ public class NetworkFailureDialogue {
 		dialog.setLayout(new GridLayout(1, false));
 		dialog.setText("Network Problem");
 		StyledText text = new StyledText(dialog, SWT.WRAP);
+		text.setBackground(SWTView.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		text.setEditable(false);
+		text.setCaret(null);
 		String failureMsg = strings.networkFailureMessage();
 		text.setText(failureMsg);
 		final int offset = failureMsg.indexOf('\uFFFC');
