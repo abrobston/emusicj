@@ -140,6 +140,8 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	private final IURLFactory urlFactory;
 	private final Logger logger;
 	private final IMenuBuilder menuBuilder;
+	private Image pauseIcon;
+	private Image resumeIcon;
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
@@ -443,11 +445,13 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	 */
 	private void buildToolBar(ToolBar toolBar) {
 		pauseResumeButton = new ToolItem(toolBar, SWT.CHECK);
-		final Image pauseImg = imageFactory.getPauseIcon();
-		pauseResumeButton.setImage(pauseImg);
+		pauseIcon = imageFactory.getPauseIcon();
+		resumeIcon = imageFactory.getStartIcon();
+		pauseResumeButton.setImage(pauseIcon);
 		pauseResumeButton.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				pauseImg.dispose();
+				pauseIcon.dispose();
+				resumeIcon.dispose();
 			}
 		});
 		pauseResumeButton.addSelectionListener(new SelectionAdapter() {
@@ -807,6 +811,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 						pauseSysTrayMenuItem.setText("Pause downloads");
 				}
 				pauseResumeButton.setSelection(state);
+				pauseResumeButton.setImage(state ? resumeIcon : pauseIcon);
 			}
 		});
 	}
