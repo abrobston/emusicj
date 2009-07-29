@@ -23,7 +23,10 @@ package nz.net.kallisti.emusicj.updater;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -48,15 +51,20 @@ import com.google.inject.Inject;
  * 
  * @author robin
  */
-public class UpdateFetcher implements IUpdateFetcher {
+public class URLUpdateFetcher implements IUpdateFetcher {
 
 	private IUpdateFetcherListener listener;
 	private URL updateUrl;
 	private final IHttpClientProvider clientProvider;
+	private final Logger logger;
+	private final IUpdateChecker checker;
 
 	@Inject
-	public UpdateFetcher(IHttpClientProvider clientProvider) {
+	public URLUpdateFetcher(IHttpClientProvider clientProvider,
+			IUpdateChecker checker) {
 		this.clientProvider = clientProvider;
+		this.checker = checker;
+		logger = LogUtils.getLogger(this);
 	}
 
 	public void setListener(IUpdateFetcherListener listener) {
@@ -101,42 +109,35 @@ public class UpdateFetcher implements IUpdateFetcher {
 			try {
 				statusCode = http.executeMethod(get);
 			} catch (IOException e) {
-				System.err.println("Checking for updates failed [1]");
-				e.printStackTrace();
+				logger.log(Level.WARNING, "Checking for updates failed [1]", e);
 				return;
 			}
 			if (statusCode != HttpStatus.SC_OK) {
 				get.releaseConnection();
-				System.err.println("Checking for updates failed [2], code: "
-						+ statusCode);
+				logger.log(Level.WARNING,
+						"Checking for updates failed [2], code: " + statusCode);
 				return;
 			}
 			try {
 				String response = get.getResponseBodyAsString();
-				String[] versions = response.split("[ \n]");
-				if (versions.length == 0) {
-					get.releaseConnection();
-					System.err
-							.println("Checking for updates failed [3]: no versions found in response");
-					return;
-				}
-				boolean versionOK = false;
-				for (String v : versions) {
-					if (v.equals(currVersion)) {
-						versionOK = true;
-						break;
-					}
-				}
-				if (!versionOK) {
-					notifyListener(versions[0]);
-				}
+				String newVer = checker.isUpdateNeeded(currVersion, response);
+				/*
+				 * String[] versions = response.split("[ \n]"); if
+				 * (versions.length == 0) { get.releaseConnection(); logger
+				 * .warning
+				 * ("Checking for updates failed [3]: no versions found in response"
+				 * ); return; } boolean versionOK = false; for (String v :
+				 * versions) { if (v.equals(currVersion)) { versionOK = true;
+				 * break; } } if (!versionOK) { notifyListener(versions[0]); }
+				 */
+				if (newVer != null)
+					notifyListener(newVer);
 			} catch (IOException e) {
-				get.releaseConnection();
-				System.err.println("Checking for updates failed [4]");
-				e.printStackTrace();
+				logger.log(Level.WARNING, "Checking for updates failed [4]", e);
 				return;
+			} finally {
+				get.releaseConnection();
 			}
-			get.releaseConnection();
 		}
 
 	}
