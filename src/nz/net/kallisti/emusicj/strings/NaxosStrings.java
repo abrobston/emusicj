@@ -79,7 +79,7 @@ public class NaxosStrings extends AbstractStrings {
 	public String getVersion() {
 		// Due to using the IncreasingVersionUpdateChecker, this number must be
 		// of the form x[.y[.z]]
-		return "1.99.0";
+		return "2.0.0";
 	}
 
 	@Override
