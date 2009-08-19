@@ -85,7 +85,13 @@ public class DynamicImage extends Composite implements
 			public void run() {
 				if (lbl.isDisposed())
 					return;
-				lbl.setImage(image);
+				try {
+					lbl.setImage(image);
+				} catch (IllegalArgumentException e) {
+					// This can occur if something is wrong with the image
+					logger.log(Level.WARNING,
+							"An error occurred setting a new image", e);
+				}
 				lbl.pack();
 				pack();
 				layout();

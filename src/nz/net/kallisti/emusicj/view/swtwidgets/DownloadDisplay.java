@@ -285,6 +285,8 @@ public class DownloadDisplay extends Composite implements
 		if (!isDisposed()) {
 			SWTView.asyncExec(new Runnable() {
 				public void run() {
+					if (isDisposed())
+						return;
 					setRedraw(false); // needed to avoid flicker
 					if (!titleLabel.isDisposed())
 						titleLabel.setText(SWTUtils.deMonic(lblName));
