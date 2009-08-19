@@ -97,6 +97,11 @@ public abstract class AbstractMetafile implements IMetafile {
 		// because SimpleDateFormat is stupid we need to remove the ':' from the
 		// timezone
 		dateStr = dateStr.replaceFirst("([+-]\\d\\d):(\\d\\d)$", "$1$2");
+		// If people send a date with a 'T' separator, that needs to be replaced
+		// with a space.
+		dateStr = dateStr.replaceFirst("T", " ");
+		// If the timezone is given as 'Z', we turn that into something useful
+		dateStr = dateStr.replaceFirst("Z$", "+0000");
 		Date date = df.parse(dateStr, pos);
 		if (date == null) {
 			logger.warning("Unable to parse date (" + dateStr

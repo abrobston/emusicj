@@ -37,6 +37,7 @@ public class DynamicImage extends Composite implements
 	private final GridLayout thisLayout;
 	protected final Composite parent;
 	private final Cursor clickyCursor;
+	private Image prevImage;
 
 	/**
 	 * Creates an instance of the application icon widget that uses a dynamic
@@ -83,7 +84,7 @@ public class DynamicImage extends Composite implements
 	public void newImage(IDynamicImageProvider dynImage, final Image image) {
 		view.deferViewEvent(new Runnable() {
 			public void run() {
-				if (lbl.isDisposed())
+				if (lbl.isDisposed() || (image != null && image.isDisposed()))
 					return;
 				try {
 					lbl.setImage(image);
@@ -96,6 +97,11 @@ public class DynamicImage extends Composite implements
 				pack();
 				layout();
 				parent.layout();
+				if (prevImage != image && prevImage != null
+						&& !prevImage.isDisposed()) {
+					prevImage.dispose();
+				}
+				prevImage = image;
 			}
 		});
 	}
@@ -110,6 +116,8 @@ public class DynamicImage extends Composite implements
 		view.deferViewEvent(new Runnable() {
 			public void run() {
 				DynamicImage.this.url = url;
+				if (lbl.isDisposed())
+					return;
 				if (url == null)
 					lbl.setCursor(null);
 				else

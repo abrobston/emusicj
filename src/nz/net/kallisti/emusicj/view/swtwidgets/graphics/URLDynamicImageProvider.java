@@ -151,7 +151,8 @@ public class URLDynamicImageProvider implements IDynamicImageProvider,
 		try {
 			tempImage = new Image(display, file.toString());
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Unable to create image resource", e);
+			logger.log(Level.WARNING, "Unable to create image resource from "
+					+ file, e);
 			return;
 		}
 		if (image != null) {
