@@ -42,6 +42,7 @@ Available targets:
 	<target name="naxos"	depends="naxos_props,builddist" />
 	<target name="reggaecountry"	depends="reggaecountry_props,builddist" />
 	<target name="bluepie"	depends="bluepie_props,builddist" />
+	<target name="passionato"	depends="passionato_props,builddist" />
 	
 	<target name="emusicj_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.EMusicJ"/>
@@ -86,6 +87,16 @@ Available targets:
 		<property name="exe.name" value="ReggaeCountry.exe" />
 	</target>
 	
+	<target name="passionato_props">
+		<property name="main.class" value="nz.net.kallisti.emusicj.Passionato"/>
+		<property name="dist.dir" value="${basedir}/dist/passionato"/>
+		<property name="jar.name" value="${basedir}/passionato.jar"/>
+		<property name="osx.jar.name" value="${basedir}/osx-passionato.jar"/>
+		<property name="app.name" value="passionato" />
+		<property name="app.name.caps" value="Passionato" />
+		<property name="exe.name" value="Passionato.exe" />
+	</target>
+
 	<target name="bluepie_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.BluePie"/>
 		<property name="dist.dir" value="${basedir}/dist/bluepie"/>
