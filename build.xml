@@ -128,6 +128,10 @@ Available targets:
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry/*.png"/>
 		</copy>
+		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/passionato">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/passionato/*.png"/>
+		</copy>
 	</target>
 	
 	<target name="jar" description="Creates a runnable jar file.">

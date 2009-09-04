@@ -97,9 +97,9 @@ Section "File Associations" SecFA
   ReadRegStr $1 HKCR ".pas" ""
   StrCmp $1 "" "${Index}-NoBackup"
     StrCmp $1 "PassionatoDLM.AlbumFile" "${Index}-NoBackup"
-    WriteRegStr HKCR ".col" "backup_val" $1 
+    WriteRegStr HKCR ".psn" "backup_val" $1 
 "${Index}-NoBackup:"
-  WriteRegStr HKCR ".col" "" "PassionatoDLM.AlbumFile"
+  WriteRegStr HKCR ".psn" "" "PassionatoDLM.AlbumFile"
   ReadRegStr $0 HKCR "PassionatoDLM.AlbumFile" ""
   StrCmp $0 "" 0 "${Index}-Skip"
 	WriteRegStr HKCR "PassionatoDLM.AlbumFile" "" "Passionato Album File"
@@ -124,7 +124,7 @@ SectionEnd
   ;Language strings
   LangString DESC_SecCOL ${LANG_ENGLISH} "Passionato Download Manager"
   LangString DESC_SecSMS ${LANG_ENGLISH} "Start Menu Shortcuts"
-  LangString DESC_SecFA ${LANG_ENGLISH} "Associates .col files with this program"
+  LangString DESC_SecFA ${LANG_ENGLISH} "Associates .psn files with this program"
   LangString DESC_SecIJ ${LANG_ENGLISH} "Checks to see if Java is installed, and if not downloads and installs it"
 
   ;Assign language strings to sections
@@ -160,15 +160,15 @@ Section "Uninstall"
   RMDir "$PROFILE\.passionato"
 
 !define Index "Line${__LINE__}"
-  ReadRegStr $1 HKCR ".col" ""
+  ReadRegStr $1 HKCR ".psn" ""
   StrCmp $1 "PassionatoDLM.AlbumFile" 0 "${Index}-NoOwn" ; only do this if we own it
-    ReadRegStr $1 HKCR ".col" "backup_val"
+    ReadRegStr $1 HKCR ".psn" "backup_val"
     StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
-      DeleteRegKey HKCR ".col"
+      DeleteRegKey HKCR ".psn"
     Goto "${Index}-NoOwn"
 "${Index}-Restore:"
-      WriteRegStr HKCR ".col" "" $1
-      DeleteRegValue HKCR ".col" "backup_val"
+      WriteRegStr HKCR ".psn" "" $1
+      DeleteRegValue HKCR ".psn" "backup_val"
    
     DeleteRegKey HKCR "PassionatoDLM.AlbumFile" ;Delete key with association settings
  
