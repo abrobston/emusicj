@@ -308,6 +308,8 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 
 		ToolBar toolBar = new ToolBar(toolbarRow, SWT.FLAT);
 		buildToolBar(toolBar);
+		toolbarRow.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		toolbarRow.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		// This griddata is for the components within the toolbar row
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
