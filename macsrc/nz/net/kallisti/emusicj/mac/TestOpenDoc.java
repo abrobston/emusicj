@@ -78,7 +78,14 @@ public class TestOpenDoc {
 			}
 
 			public void cancelDownload(IDownloader dl) {
-				// TODO Auto-generated method stub
+
+			}
+
+			public void networkIssuesDetected() {
+
+			}
+
+			public void removeFailedDownloads() {
 
 			}
 
