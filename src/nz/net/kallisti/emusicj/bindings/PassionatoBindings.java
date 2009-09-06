@@ -18,6 +18,8 @@ import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.images.passionato.PassionatoImageFactory;
 import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
 import nz.net.kallisti.emusicj.view.menu.StandardMenuBarBuilder;
+import nz.net.kallisti.emusicj.view.style.IAppStyle;
+import nz.net.kallisti.emusicj.view.style.PassionatoStyle;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -48,6 +50,7 @@ public class PassionatoBindings extends AbstractModule {
 				.asEagerSingleton();
 		bind(IMenuBuilder.class).to(StandardMenuBarBuilder.class);
 		bind(IUpdateChecker.class).to(StandardUpdateChecker.class);
+		bind(IAppStyle.class).to(PassionatoStyle.class);
 	}
 
 }

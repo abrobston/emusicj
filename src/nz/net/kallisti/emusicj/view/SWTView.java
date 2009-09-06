@@ -47,6 +47,7 @@ import nz.net.kallisti.emusicj.urls.IDynamicURLListener;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
+import nz.net.kallisti.emusicj.view.style.IAppStyle;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
@@ -142,11 +143,12 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	private final IMenuBuilder menuBuilder;
 	private Image pauseIcon;
 	private Image resumeIcon;
+	private final IAppStyle appStyle;
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
 			IEmusicjController controller, IImageFactory imageFactory,
-			IURLFactory urlFactory, IMenuBuilder menuBuilder) {
+			IURLFactory urlFactory, IMenuBuilder menuBuilder, IAppStyle appStyle) {
 		super();
 		this.prefs = prefs;
 		this.strings = strings;
@@ -154,6 +156,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		this.imageFactory = imageFactory;
 		this.urlFactory = urlFactory;
 		this.menuBuilder = menuBuilder;
+		this.appStyle = appStyle;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -165,6 +168,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 			display = new Display();
 			imageFactory.setCacheDir(prefs.getIconCacheDir());
 			imageFactory.setDisplay(display);
+			appStyle.init(display);
 			shell = new Shell(display);
 			shell.setText(strings.getAppName());
 			buildMenuBar(shell);
@@ -294,6 +298,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		// This contains the toolbar, and lets us put an image on the right
 		// side
 		final Composite toolbarRow = new Composite(outerToolbar, SWT.NONE);
+		appStyle.styleToolbar(toolbarRow);
 		GridLayout toolbarLayout = new GridLayout(2, false);
 		toolbarLayout.horizontalSpacing = 0;
 		toolbarLayout.marginRight = 0;
@@ -308,8 +313,6 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 
 		ToolBar toolBar = new ToolBar(toolbarRow, SWT.FLAT);
 		buildToolBar(toolBar);
-		toolbarRow.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		toolbarRow.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		// This griddata is for the components within the toolbar row
 		GridData toolbarRowData = new GridData();
 		toolbarRowData.horizontalAlignment = SWT.LEFT;
