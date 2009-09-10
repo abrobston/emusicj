@@ -252,7 +252,9 @@ public class EMXMetaFile extends AbstractMetafile {
 				&& !file.getName().endsWith(".rcm")
 				&& !file.getName().endsWith(".RCM")
 				&& !file.getName().endsWith(".bpm")
-				&& !file.getName().endsWith(".BPM"))
+				&& !file.getName().endsWith(".BPM")
+				&& !file.getName().endsWith(".psn")
+				&& !file.getName().endsWith(".PSN"))
 			return false;
 		FileInputStream stream = new FileInputStream(file);
 		// just look at the first Kb
