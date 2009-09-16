@@ -24,9 +24,12 @@ package nz.net.kallisti.emusicj.view.swtwidgets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.download.IDisplayableDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.view.SWTUtils;
 
 import org.eclipse.swt.SWT;
@@ -59,6 +62,7 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 	private final Display display;
 	private final Hashtable<File, Image> imageCache;
 	private final ArrayList<Label> labels = new ArrayList<Label>();
+	private final Logger logger;
 
 	/**
 	 * Creates an instance of FileInfoPanel with the provided parent and style.
@@ -70,6 +74,7 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 	 */
 	public FileInfoPanel(Composite parent, int style, Display display) {
 		super(parent, style);
+		logger = LogUtils.getLogger(this);
 		imageCache = new Hashtable<File, Image>();
 		addDisposeListener(this);
 		this.display = display;
@@ -88,6 +93,9 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 	}
 
 	public void setDownloader(IDownloadMonitor dl) {
+		// Note that the download monitor contains all the facts to display
+		// about a file, they aren't defined explicitly here.
+
 		// Dispose all the labels being displayed at the moment...
 		for (Label l : labels) {
 			l.dispose();
@@ -109,9 +117,9 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 						// Sometimes an error here can cause the whole system
 						// to fall over, so we catch it and fail more
 						// gracefully
-						System.err.println("An error occurred loading the "
-								+ "image: " + ddl.getImageFile().toString());
-						e.printStackTrace();
+						logger.log(Level.WARNING,
+								"An error occurred loading the image: "
+										+ ddl.getImageFile().toString(), e);
 						im = null;
 					}
 				}

@@ -23,4 +23,20 @@ public class NumberUtils {
 		return curr;
 	}
 
+	/**
+	 * Given a duration in seconds, this turns it into [hour:]minute:seconds
+	 * 
+	 * @param seconds
+	 *            the duration in seconds
+	 * @return a nice string form of the duration
+	 */
+	public static String formatSeconds(int duration) {
+		int secs = duration % 60;
+		int mins = (duration / 60) % 60;
+		int hours = (duration / 3600);
+		boolean padMinutes = (hours != 0 && mins < 10);
+		return (hours != 0 ? hours + ":" : "") + (padMinutes ? "0" : "") + mins
+				+ ":" + (secs < 10 ? "0" : "") + secs;
+	}
+
 }
