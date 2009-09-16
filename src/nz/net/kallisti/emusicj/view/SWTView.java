@@ -797,20 +797,40 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	}
 
 	/**
+	 * <p>
 	 * Allows execution of something to be deferred until later. Later usually
-	 * means when the view has been initialised (to allow recieving and
+	 * means when the view has been initialised (to allow receiving and
 	 * processing events when starting up, but actually executing them later),
 	 * or next time the event thread comes around. Deferred events will always
 	 * be executed during the UI thread, so can happily make GUI modifications.
+	 * </p>
+	 * <p>
+	 * They are wrapped with a handler that will catch any exceptions and log
+	 * them, to reduce the chance of the application shutting down unexpectedly.
+	 * </p>
 	 * 
 	 * @param code
+	 *            the code to run in the GUI context
 	 */
-	public void deferViewEvent(Runnable code) {
+	public void deferViewEvent(final Runnable code) {
+		Runnable wrapped = new Runnable() {
+			public void run() {
+				try {
+					code.run();
+				} catch (Exception e) {
+					logger
+							.log(
+									Level.SEVERE,
+									"In SWTView.deferViewEvent: unexpected exception caught",
+									e);
+				}
+			}
+		};
 		if (running) {
-			asyncExec(code);
+			asyncExec(wrapped);
 		} else {
 			synchronized (deferredList) {
-				deferredList.add(code);
+				deferredList.add(wrapped);
 			}
 		}
 	}
