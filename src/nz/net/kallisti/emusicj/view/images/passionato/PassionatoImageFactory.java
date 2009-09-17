@@ -37,56 +37,56 @@ public class PassionatoImageFactory extends AbstractImageFactory implements
 
 	public Image getDownloadingIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"emusicj-dl-16.png"));
+				"passionato-dl-16.png"));
 	}
 
 	public Image getNotDownloadingIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"emusicj-nodl-16.png"));
+				"passionato-nodl-16.png"));
 	}
 
 	public Image getCancelIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"cancel.png"));
+				"passionato-cancel-16.png"));
 	}
 
 	public Image getPauseIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"pause.png"));
+				"passionato-pause-32.png"));
 	}
 
 	public Image getRequeueIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"requeue.png"));
+				"passionato-requeue-16.png"));
 	}
 
 	public Image getStartIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"start.png"));
+				"passionato-start-16.png"));
 	}
 
 	public Image getStartSmallIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"start_small.png"));
+				"passionato-start-16.png"));
 	}
 
 	public Image[] getAppIcons() {
 		return new Image[] {
 				new Image(display, this.getClass().getResourceAsStream(
-						"emusicj-app-16.png")),
+						"passionato-app-16.png")),
 				new Image(display, this.getClass().getResourceAsStream(
-						"emusicj-app-32.png")),
+						"passionato-app-32.png")),
 				new Image(display, this.getClass().getResourceAsStream(
-						"emusicj-app-48.png")),
+						"passionato-app-48.png")),
 				new Image(display, this.getClass().getResourceAsStream(
-						"emusicj-app-64.png")),
+						"passionato-app-64.png")),
 				new Image(display, this.getClass().getResourceAsStream(
-						"emusicj-app-128.png")) };
+						"passionato-app-128.png")) };
 	}
 
 	public Image getAboutLogo() {
 		return new Image(SWTView.getDisplay(), this.getClass()
-				.getResourceAsStream("emusicj-about.png"));
+				.getResourceAsStream("passionato-about-128.png"));
 	}
 
 	public IDynamicImageProvider getApplicationLogoProvider() {
@@ -97,7 +97,7 @@ public class PassionatoImageFactory extends AbstractImageFactory implements
 
 	public Image getFolderIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"folder_32.png"));
+				"passionato-open-32.png"));
 	}
 
 }
