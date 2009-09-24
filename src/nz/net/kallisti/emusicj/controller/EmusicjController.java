@@ -232,7 +232,14 @@ public class EmusicjController implements IEmusicjController,
 	 */
 	public void loadMetafile(String file) {
 		try {
-			newDownloads(metafileLoader.load(this, new File(file)));
+			String fixedFile = file;
+			// Snow Leopard (OSX 10.6 or so) adds 'file:/localhost' to the start
+			// of pathnames, because it's stupid. We need to remove it.
+			String prefix = "file:/localhost";
+			if (file.startsWith(prefix)) {
+				fixedFile = file.substring(prefix.length());
+			}
+			newDownloads(metafileLoader.load(this, new File(fixedFile)));
 		} catch (IOException e) {
 			error("Error reading file", e.getMessage());
 		} catch (UnknownFileException e) {
