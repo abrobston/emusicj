@@ -231,20 +231,26 @@ public class EmusicjController implements IEmusicjController,
 	 *            the filename of the metafile to load
 	 */
 	public void loadMetafile(String file) {
+		String fixedFile = file;
 		try {
-			String fixedFile = file;
 			// Snow Leopard (OSX 10.6 or so) adds 'file:/localhost' to the start
 			// of pathnames, because it's stupid. We need to remove it.
 			String prefix = "file:/localhost";
+			logger.warning("Loading metafile, name: " + file);
 			if (file.startsWith(prefix)) {
 				fixedFile = file.substring(prefix.length());
+				logger.warning("Modified metafile name, now: " + fixedFile);
 			}
 			newDownloads(metafileLoader.load(this, new File(fixedFile)));
 		} catch (IOException e) {
 			error("Error reading file", e.getMessage());
+			logger.log(Level.WARNING, "Unable to read metafile (" + fixedFile
+					+ ")", e);
 		} catch (UnknownFileException e) {
 			error("Error reading file", "The file is of an unknown type\n"
 					+ file);
+			logger.log(Level.WARNING, "Unknown metafile type (" + fixedFile
+					+ ")", e);
 		} catch (Exception e) {
 			// error("Error reading file", "Something failed while reading the "
 			// + "file\n" + file
@@ -255,7 +261,8 @@ public class EmusicjController implements IEmusicjController,
 			error("Error reading file", "Something failed while reading the "
 					+ "file\n" + file + "\nError details are below:\n"
 					+ sw.toString());
-			e.printStackTrace();
+			logger.log(Level.WARNING, "Unexpected failure reading metafile ("
+					+ fixedFile + ")", e);
 		}
 		// this means that if the machine crashes, the downloads in progress
 		// are recorded.
