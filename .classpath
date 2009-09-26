@@ -8,6 +8,7 @@
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry kind="lib" path="lib/guice-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/x86_64/swt.jar" sourcepath="lib/swt-src.zip"/>
+	<classpathentry kind="lib" path="lib/JID3.jar" sourcepath="/jid3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

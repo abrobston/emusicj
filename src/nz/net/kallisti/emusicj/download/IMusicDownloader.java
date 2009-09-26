@@ -26,6 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
+import nz.net.kallisti.emusicj.id3.IID3Data;
+
 import org.w3c.dom.Element;
 
 /**
@@ -77,5 +79,13 @@ public interface IMusicDownloader extends IDownloader {
 	 *            expiry for this track.
 	 */
 	public void setExpiry(Date expiry);
+
+	/**
+	 * Sets the ID3 data that will be saved to the MP3 file after it is saved.
+	 * 
+	 * @param id3
+	 *            the ID3 data
+	 */
+	public void setID3(IID3Data id3);
 
 }

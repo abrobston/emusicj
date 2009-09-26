@@ -30,6 +30,7 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
+import nz.net.kallisti.emusicj.id3.IID3Data;
 import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 
@@ -54,6 +55,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	File coverArt;
 	String genre;
 	int duration = -1;
+	IID3Data id3;
+
 	static IMimeType[] mimeTypes = { MimeTypes.AUDIO, MimeTypes.APP_OCTET,
 			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE };
 
@@ -171,6 +174,10 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	@Override
 	public void setExpiry(Date expiry) {
 		super.setExpiry(expiry);
+	}
+
+	public void setID3(IID3Data id3) {
+		this.id3 = id3;
 	}
 
 }

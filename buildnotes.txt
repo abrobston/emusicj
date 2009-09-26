@@ -17,6 +17,9 @@ The SWT libraries don't work if you are loading the wrong one, so if you
 see strange errors coming from SWT (especially relating to 'mmov'), you may
 need to switch the classpath that you are using to the appropriate platform.
 
+The JID3.jar is a branch of the original, and can be found here: 
+https://code.launchpad.net/~eythian/+junk/jid3
+
 This ant script has the following targets:
  * emusicj - the default target, this produces eMusic/J
  * naxos - this produces the Classicsonline download manager
