@@ -100,9 +100,7 @@ public class JID3FromXML implements IID3FromXML {
 			}
 
 		}
-
-		// TODO Auto-generated method stub
-		return null;
+		return id3;
 	}
 
 }
