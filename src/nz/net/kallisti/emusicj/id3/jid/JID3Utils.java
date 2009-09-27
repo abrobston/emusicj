@@ -40,10 +40,7 @@ public class JID3Utils {
 	public static final String ID3_TRACK = "TRCK";
 	public static final String ID3_COPYRIGHT = "TCOP";
 	public static final String ID3_WWW = "WCOM";
-	public static final String ID3_PSN_ID = "TXXX"; // Passionato-specific
-	public static final String ID3_GROUPING = "TXXX"; // Passionato-specific
-	public static final String ID3_ALBUM_ARTIST = "TXXX"; // Passionato-specific
-	public static final String ID3_PRIV_UMG = "TXXX"; // Passionato-specific
+	public static final String ID3_CUSTOM_TEXT = "TXXX";
 
 	/**
 	 * <p>
@@ -114,19 +111,17 @@ public class JID3Utils {
 				return null;
 			}
 		} else if (type.equals(ID3_COPYRIGHT)) {
-			return new TCOPTextInformationID3V2Frame(Integer.parseInt(values
-					.get(0)), values.get(1));
+			try {
+				return new TCOPTextInformationID3V2Frame(Integer
+						.parseInt(values.get(0)), values.get(1));
+			} catch (NumberFormatException e) {
+				return null;
+			}
 		} else if (type.equals(ID3_WWW)) {
 			return new WCOMUrlLinkID3V2Frame(values.get(0));
-		} else if (type.equals(ID3_PSN_ID)) {
-			return new TXXXTextInformationID3V2Frame("PSN ID", values.get(0));
-		} else if (type.equals(ID3_GROUPING)) {
-			return new TXXXTextInformationID3V2Frame("Grouping", values.get(0));
-		} else if (type.equals(ID3_ALBUM_ARTIST)) {
-			return new TXXXTextInformationID3V2Frame("Album Artist", values
-					.get(0));
-		} else if (type.equals(ID3_PRIV_UMG)) {
-			return new TXXXTextInformationID3V2Frame("PRIV UMG", values.get(0));
+		} else if (type.equals(ID3_CUSTOM_TEXT)) {
+			return new TXXXTextInformationID3V2Frame(values.get(0), values
+					.get(1));
 		}
 		throw new ID3Exception("An unknown type was specified: '" + type + "'");
 	}

@@ -440,6 +440,17 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	/**
+	 * This is called when the download is completed. It can be overridden for
+	 * filetype-specific operations.
+	 * 
+	 * @param file
+	 *            the resulting file of the download, after all renaming etc. is
+	 *            completed.
+	 */
+	protected void downloadCompleted(File file) {
+	}
+
+	/**
 	 * <p>
 	 * This class does the actual downloading of the file
 	 * </p>
@@ -700,6 +711,7 @@ public class HTTPDownloader implements IDownloader {
 						partFile.renameTo(outputFile);
 					get.releaseConnection();
 					cleanupFiles.removeFile(partFile);
+					downloadCompleted(outputFile);
 				} else {
 					// if we didn't get the whole file, mark it and it'll
 					// be tried again later

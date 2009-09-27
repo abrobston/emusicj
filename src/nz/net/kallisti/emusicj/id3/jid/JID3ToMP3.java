@@ -57,7 +57,7 @@ public class JID3ToMP3 implements IID3ToMP3 {
 				JID3Frame frameHolder = (JID3Frame) fr;
 				ID3V2Frame frame = frameHolder.getFrame();
 				try {
-					currentTag.update(frame);
+					currentTag.addFrame(frame);
 				} catch (ID3Exception e) {
 					logger.log(Level.SEVERE, "Error adding frame to tag, type="
 							+ type + ", frame type=" + frame.getClass() + " ["
@@ -69,7 +69,6 @@ public class JID3ToMP3 implements IID3ToMP3 {
 		try {
 			media.sync();
 		} catch (ID3Exception e) {
-			logger.log(Level.SEVERE, "Unable to write tags to file", e);
 			throw new IOException("Unable to save tags on MP3 file", e);
 		}
 	}

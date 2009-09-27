@@ -46,10 +46,10 @@
 		<GENRE>Baroque</GENRE>
 		<FILENAME>Beethoven: Symphony No7 in C minor Op67 - 1: Allegro Con Brio (28944740028)</FILENAME>
 		<CONDUCTOR>Carlos Kleiber</CONDUCTOR>
-		<ISRC>1234567890<ISRC>
+		<ISRC>123456789012</ISRC>
 		<DISC_NUMBER>1</DISC_NUMBER>
 		<TRACK>1</TRACK>
-		<COPYRIGHT year="2009">&copy; Some Label Ltd</COPYRIGHT>
+		<COPYRIGHT year="2009">Some Label Ltd</COPYRIGHT>
 		<WWW>www.passionato.com</WWW>
 		<COVER>http://www.passionato.com/linktoart/T345623487.jpg</COVER>
 		<PSN_ID>T345623487</PSN_ID>

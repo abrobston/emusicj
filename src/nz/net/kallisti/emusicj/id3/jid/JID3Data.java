@@ -42,6 +42,12 @@ public class JID3Data implements IID3Data {
 			try {
 				ID3V2Frame frame = JID3Utils.listToFrame(id3FrameType,
 						frameSpec);
+				if (frame == null) {
+					logger
+							.warning("An error occurred creating a frame of type "
+									+ id3FrameType + " with data: " + frameSpec);
+					continue;
+				}
 				result.add(new JID3Frame(frame));
 			} catch (ID3Exception e) {
 				logger.log(Level.WARNING,

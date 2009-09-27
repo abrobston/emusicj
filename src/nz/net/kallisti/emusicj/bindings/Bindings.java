@@ -35,6 +35,10 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.files.cleanup.CleanupFiles;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
+import nz.net.kallisti.emusicj.id3.IID3FromXML;
+import nz.net.kallisti.emusicj.id3.IID3ToMP3;
+import nz.net.kallisti.emusicj.id3.jid.JID3FromXML;
+import nz.net.kallisti.emusicj.id3.jid.JID3ToMP3;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
 import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
 import nz.net.kallisti.emusicj.metafiles.IMetafile;
@@ -119,5 +123,7 @@ public class Bindings extends AbstractModule {
 		bind(IDynamicURL.class).to(DynamicURL.class);
 		bind(INetworkFailure.class).to(NetworkFailure.class).in(
 				Scopes.SINGLETON);
+		bind(IID3FromXML.class).to(JID3FromXML.class);
+		bind(IID3ToMP3.class).to(JID3ToMP3.class);
 	}
 }

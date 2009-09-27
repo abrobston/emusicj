@@ -25,14 +25,17 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.logging.Level;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.id3.IID3Data;
+import nz.net.kallisti.emusicj.id3.IID3ToMP3;
 import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
+import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,6 +59,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	String genre;
 	int duration = -1;
 	IID3Data id3;
+	private final IID3ToMP3 id3ToMP3;
+	private final IEmusicjView view;
 
 	static IMimeType[] mimeTypes = { MimeTypes.AUDIO, MimeTypes.APP_OCTET,
 			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE };
@@ -63,8 +68,11 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
 			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
-			INetworkFailure networkFailure) {
+			INetworkFailure networkFailure, IID3ToMP3 id3ToMP3,
+			IEmusicjView view) {
 		super(prefs, clientProvider, cleanupFiles, networkFailure);
+		this.id3ToMP3 = id3ToMP3;
+		this.view = view;
 	}
 
 	public void setDownloader(URL url, File outputFile, int trackNum,
@@ -178,6 +186,22 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 
 	public void setID3(IID3Data id3) {
 		this.id3 = id3;
+	}
+
+	@Override
+	protected void downloadCompleted(File file) {
+		super.downloadCompleted(file);
+		if (id3 != null && file.getName().toLowerCase().endsWith(".mp3")) {
+			try {
+				id3ToMP3.writeMP3(id3, file);
+			} catch (Exception e) {
+				logger.log(Level.SEVERE,
+						"An error occurred saving the MP3 tag data", e);
+				view.error("Error writing file descriptions",
+						"An error occurred saving ID3 information to the downloaded file:\n"
+								+ e.getMessage());
+			}
+		}
 	}
 
 }

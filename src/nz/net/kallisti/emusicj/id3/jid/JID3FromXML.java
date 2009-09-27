@@ -77,7 +77,7 @@ public class JID3FromXML implements IID3FromXML {
 							.warning("'copyright' element has no year defined, skipping");
 					continue;
 				}
-				id3.addFrame(JID3Utils.ID3_COPYRIGHT, ListUtils.list(node
+				id3.addFrame(JID3Utils.ID3_COPYRIGHT, ListUtils.list(yearNode
 						.getNodeValue(), node.getTextContent()));
 			} else if (name.equals("www")) {
 				id3.addFrame(JID3Utils.ID3_WWW, ListUtils.list(node
@@ -86,17 +86,17 @@ public class JID3FromXML implements IID3FromXML {
 				// id3.addFrame(JID3Utils.ID3_COMPOSER,
 				// ListUtils.list(node.getFirstChild().getNodeValue()));
 			} else if (name.equals("psn_id")) {
-				id3.addFrame(JID3Utils.ID3_PSN_ID, ListUtils.list(node
-						.getFirstChild().getNodeValue()));
+				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
+						"PSN ID", node.getFirstChild().getNodeValue()));
 			} else if (name.equals("grouping")) {
-				id3.addFrame(JID3Utils.ID3_GROUPING, ListUtils.list(node
-						.getFirstChild().getNodeValue()));
+				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
+						"Grouping", node.getFirstChild().getNodeValue()));
 			} else if (name.equals("album_artist")) {
-				id3.addFrame(JID3Utils.ID3_ALBUM_ARTIST, ListUtils.list(node
-						.getFirstChild().getNodeValue()));
+				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
+						"Album Artist", node.getFirstChild().getNodeValue()));
 			} else if (name.equals("priv_umg")) {
-				id3.addFrame(JID3Utils.ID3_PRIV_UMG, ListUtils.list(node
-						.getFirstChild().getNodeValue()));
+				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
+						"Priv UMG", node.getFirstChild().getNodeValue()));
 			}
 
 		}
