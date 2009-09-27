@@ -20,6 +20,7 @@
     <cp>lib\commons-httpclient-3.0-rc4.jar</cp>
 	<cp>lib\guice-1.0.jar</cp>
 	<cp>lib\MRJAdapter.jar</cp>
+	<cp>lib\JID3.jar</cp>
   </classPath>
   <jre>
     <path></path>
