@@ -62,7 +62,7 @@ public class PassionatoImageFactory extends AbstractImageFactory implements
 
 	public Image getStartIcon() {
 		return new Image(display, this.getClass().getResourceAsStream(
-				"passionato-start-16.png"));
+				"passionato-start-32.png"));
 	}
 
 	public Image getStartSmallIcon() {
