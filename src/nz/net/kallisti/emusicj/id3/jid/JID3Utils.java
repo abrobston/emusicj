@@ -9,9 +9,11 @@ import org.blinkenlights.jid3.v2.TALBTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCOMTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCONTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCOPTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TIT1TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TIT2TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TOFNTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPE1TextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TPE2TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPE3TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPOSTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TRCKTextInformationID3V2Frame;
@@ -40,6 +42,8 @@ public class JID3Utils {
 	public static final String ID3_TRACK = "TRCK";
 	public static final String ID3_COPYRIGHT = "TCOP";
 	public static final String ID3_WWW = "WCOM";
+	public static final String ID3_ALBUM_ARTIST = "TPE2"; // these two are
+	public static final String ID3_GROUPING = "TIT1"; // itunes things
 	public static final String ID3_CUSTOM_TEXT = "TXXX";
 
 	/**
@@ -117,8 +121,12 @@ public class JID3Utils {
 			} catch (NumberFormatException e) {
 				return null;
 			}
+		} else if (type.equals(ID3_ALBUM_ARTIST)) {
+			return new TPE2TextInformationID3V2Frame(values.get(0));
 		} else if (type.equals(ID3_WWW)) {
 			return new WCOMUrlLinkID3V2Frame(values.get(0));
+		} else if (type.equals(ID3_GROUPING)) {
+			return new TIT1TextInformationID3V2Frame(values.get(0));
 		} else if (type.equals(ID3_CUSTOM_TEXT)) {
 			return new TXXXTextInformationID3V2Frame(values.get(0), values
 					.get(1));

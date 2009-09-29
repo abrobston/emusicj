@@ -88,12 +88,12 @@ public class JID3FromXML implements IID3FromXML {
 			} else if (name.equals("psn_id")) {
 				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
 						"PSN ID", node.getFirstChild().getNodeValue()));
-			} else if (name.equals("grouping")) {
-				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
-						"Grouping", node.getFirstChild().getNodeValue()));
 			} else if (name.equals("album_artist")) {
-				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
-						"Album Artist", node.getFirstChild().getNodeValue()));
+				id3.addFrame(JID3Utils.ID3_ALBUM_ARTIST, ListUtils.list(node
+						.getFirstChild().getNodeValue()));
+			} else if (name.equals("grouping")) {
+				id3.addFrame(JID3Utils.ID3_GROUPING, ListUtils.list(node
+						.getFirstChild().getNodeValue()));
 			} else if (name.equals("priv_umg")) {
 				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(
 						"Priv UMG", node.getFirstChild().getNodeValue()));
