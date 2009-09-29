@@ -71,7 +71,7 @@ public class SimpleDownloader implements ISimpleDownloader {
 	public void start() throws IllegalStateException {
 		if (url == null)
 			throw new IllegalStateException("The URL was not defined");
-		if (outputFile == null || outputStream == null)
+		if (outputFile == null && outputStream == null)
 			throw new IllegalStateException(
 					"The output file/stream was not defined");
 		new DownloadThread().start();
