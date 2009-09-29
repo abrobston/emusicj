@@ -9,11 +9,15 @@ import java.util.logging.Logger;
 import nz.net.kallisti.emusicj.id3.IID3Data;
 import nz.net.kallisti.emusicj.id3.IID3Serialiser;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -25,14 +29,17 @@ import org.w3c.dom.NodeList;
 public class JID3Serialiser implements IID3Serialiser {
 
 	private final Logger logger;
+	private final JID3Utils utils;
 
-	public JID3Serialiser() {
+	@Inject
+	public JID3Serialiser(Provider<ISimpleDownloader> dlProv) {
 		logger = LogUtils.getLogger(this);
+		utils = new JID3Utils(dlProv);
 	}
 
 	public IID3Data deserialise(Element el) {
 		NodeList childlings = el.getChildNodes();
-		JID3Data id3 = new JID3Data();
+		JID3Data id3 = new JID3Data(utils);
 		for (int i = 0; i < childlings.getLength(); i++) {
 			Node typeNode = childlings.item(i);
 			String type;

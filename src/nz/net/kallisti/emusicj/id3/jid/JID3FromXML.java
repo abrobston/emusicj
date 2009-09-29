@@ -6,11 +6,13 @@ import nz.net.kallisti.emusicj.id3.IID3Data;
 import nz.net.kallisti.emusicj.id3.IID3FromXML;
 import nz.net.kallisti.emusicj.misc.ListUtils;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * <p>
@@ -23,10 +25,12 @@ import com.google.inject.Inject;
 public class JID3FromXML implements IID3FromXML {
 
 	private final Logger logger;
+	private final JID3Utils utils;
 
 	@Inject
-	public JID3FromXML() {
+	public JID3FromXML(Provider<ISimpleDownloader> dlProv) {
 		logger = LogUtils.getLogger(this);
+		utils = new JID3Utils(dlProv);
 	}
 
 	/**
@@ -34,7 +38,7 @@ public class JID3FromXML implements IID3FromXML {
 	 */
 	public IID3Data getData(Node id3Node) {
 		NodeList fields = id3Node.getChildNodes();
-		JID3Data id3 = new JID3Data();
+		JID3Data id3 = new JID3Data(utils);
 		for (int i = 0; i < fields.getLength(); i++) {
 			Node node = fields.item(i);
 			if (node.getChildNodes() == null)
@@ -93,6 +97,9 @@ public class JID3FromXML implements IID3FromXML {
 						.getFirstChild().getNodeValue()));
 			} else if (name.equals("grouping")) {
 				id3.addFrame(JID3Utils.ID3_GROUPING, ListUtils.list(node
+						.getFirstChild().getNodeValue()));
+			} else if (name.equals("cover")) {
+				id3.addFrame(JID3Utils.ID3_COVERART, ListUtils.list(node
 						.getFirstChild().getNodeValue()));
 			} else if (name.equals("priv_umg")) {
 				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, ListUtils.list(

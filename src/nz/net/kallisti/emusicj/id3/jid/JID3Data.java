@@ -26,8 +26,10 @@ public class JID3Data implements IID3Data {
 
 	Map<String, Set<List<String>>> frames = new HashMap<String, Set<List<String>>>();
 	private final Logger logger;
+	private final JID3Utils utils;
 
-	public JID3Data() {
+	public JID3Data(JID3Utils utils) {
+		this.utils = utils;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -40,8 +42,7 @@ public class JID3Data implements IID3Data {
 		Set<List<String>> framesForType = frames.get(id3FrameType);
 		for (List<String> frameSpec : framesForType) {
 			try {
-				ID3V2Frame frame = JID3Utils.listToFrame(id3FrameType,
-						frameSpec);
+				ID3V2Frame frame = utils.listToFrame(id3FrameType, frameSpec);
 				if (frame == null) {
 					logger
 							.warning("An error occurred creating a frame of type "
