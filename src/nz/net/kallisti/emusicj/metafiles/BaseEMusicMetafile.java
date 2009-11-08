@@ -295,49 +295,24 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 	private static class EMPServer {
 
 		private final String protocol = "http";
-		private final String name;
-		private final String desc;
 		private final String server;
 		private final String location;
-		private final String key;
-
-		public EMPServer(String name, String desc, String server,
-				String location, String key) {
-			this.name = name;
-			this.desc = desc;
-			this.server = server;
-			this.location = location;
-			this.key = key;
-		}
 
 		public EMPServer(Node serverNode) {
-			String nname = "";
-			String ndesc = "";
 			String nserver = "";
 			String nlocation = "";
-			String nkey = "";
 			NodeList nodeList = serverNode.getChildNodes();
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node node = nodeList.item(i);
 				if (node.getFirstChild() == null)
 					continue;
-				if (node.getNodeName().equalsIgnoreCase("name"))
-					nname = node.getFirstChild().getNodeValue();
-				else if (node.getNodeName().equalsIgnoreCase("desc"))
-					ndesc = node.getFirstChild().getNodeValue();
-				else if (node.getNodeName().equalsIgnoreCase("netname"))
+				if (node.getNodeName().equalsIgnoreCase("netname"))
 					nserver = node.getFirstChild().getNodeValue();
 				else if (node.getNodeName().equalsIgnoreCase("location"))
 					nlocation = node.getFirstChild().getNodeValue();
-				else if (node.getNodeName().equalsIgnoreCase("key"))
-					nkey = node.getFirstChild().getNodeValue();
 			}
-
-			name = nname;
-			desc = ndesc;
 			server = nserver;
 			location = nlocation;
-			key = nkey;
 		}
 
 		public URL createDownloadURL(String id, String filename)
@@ -348,25 +323,5 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 			return new URL(protocol, server, filelocation);
 		}
 
-		/**
-		 * @return Returns the desc.
-		 */
-		public String getDesc() {
-			return desc;
-		}
-
-		/**
-		 * @return Returns the key.
-		 */
-		public String getKey() {
-			return key;
-		}
-
-		/**
-		 * @return Returns the name.
-		 */
-		public String getName() {
-			return name;
-		}
 	}
 }
