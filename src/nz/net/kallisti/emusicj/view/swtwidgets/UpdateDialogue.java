@@ -74,7 +74,8 @@ public class UpdateDialogue {
 		textLabel.setText("A new version of " + strings.getAppName()
 				+ " is available.\n" + "Version " + newVersion
 				+ " has been released.\n" + "It can be downloaded from:\n"
-				+ urlFactory.getAppURL());
+				+ urlFactory.getAppURL() + "\n\nYou must close the download "
+				+ "manager before installing the new version.");
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		textLabel.setLayoutData(gd);
