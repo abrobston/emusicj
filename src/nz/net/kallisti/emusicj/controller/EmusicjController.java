@@ -237,10 +237,8 @@ public class EmusicjController implements IEmusicjController,
 			// start
 			// of pathnames, because it's stupid. We need to remove it.
 			String prefix = "file://localhost";
-			logger.warning("Loading metafile, name: " + file);
 			if (file.startsWith(prefix)) {
 				fixedFile = file.substring(prefix.length());
-				logger.warning("Modified metafile name, now: " + fixedFile);
 			}
 			newDownloads(metafileLoader.load(this, new File(fixedFile)));
 		} catch (IOException e) {
