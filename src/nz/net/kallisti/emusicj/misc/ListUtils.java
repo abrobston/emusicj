@@ -51,4 +51,22 @@ public class ListUtils {
 		return l;
 	}
 
+	/**
+	 * Creates a list from the provided values. If any of the values are
+	 * <code>null</code> then this will return <code>null</code>.
+	 * 
+	 * @param values
+	 *            the values to place in the list
+	 * @return the list containing the values, or <code>null</code> if any
+	 *         values are <code>null</code>.
+	 */
+	public static <T> List<T> listIgnoreIfNull(T... values) {
+		List<T> l = new ArrayList<T>(values.length);
+		for (T v : values) {
+			if (v == null)
+				return null;
+			l.add(v);
+		}
+		return l;
+	}
 }

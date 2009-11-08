@@ -67,9 +67,12 @@ public class JID3Data implements IID3Data {
 	 * @param type
 	 *            the type of the frame
 	 * @param values
-	 *            the values for the frame
+	 *            the values for the frame. If this is <code>null</code>, no
+	 *            action is performed.
 	 */
 	void addFrame(String type, List<String> values) {
+		if (values == null)
+			return;
 		Set<List<String>> typeSet = frames.get(type);
 		if (typeSet == null) {
 			typeSet = new HashSet<List<String>>();
