@@ -112,7 +112,7 @@ Available targets:
 		
 		<!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
 		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="yes" nowarn="on"
-			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar:${lib.dir}/JID3.jar"/>
+			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar:${lib.dir}/JID3.jar"
 			target="1.5"/>
 		
 		<!-- copy the images in. A way to combine this into one statement would
@@ -253,7 +253,7 @@ Available targets:
 		
 		<!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
 		<javac destdir="${osx.build.dir}" debug="yes" nowarn="on"
-			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar:${lib.dir}/JID3.jar">
+			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar:${lib.dir}/JID3.jar"
 			target="1.5">
 			<src path="${src.dir}" />
 			<src path="${osx.src.dir}" />			
