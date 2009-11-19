@@ -167,10 +167,10 @@ public class EMXMetaFile extends AbstractMetafile {
 	 */
 	private void loadTrack(Node trackNode, Date expiry) {
 		NodeList track = trackNode.getChildNodes();
-		String num = null;
-		String title = null;
-		String album = null;
-		String artist = null;
+		String num = "0";
+		String title = "No Title";
+		String album = "No Album";
+		String artist = "No Artist";
 		String coverArt = null;
 		String genre = null;
 		String track_url = null;
