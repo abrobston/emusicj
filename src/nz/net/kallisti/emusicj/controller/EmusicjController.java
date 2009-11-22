@@ -502,6 +502,16 @@ public class EmusicjController implements IEmusicjController,
 		}
 	}
 
+	public void deferMetafileLoad() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void restoreMetafileLoad() {
+		// TODO Auto-generated method stub
+
+	}
+
 	/**
 	 * Every two minutes this thread makes the controller check the downloads
 	 * and ensure that the minimum is currently active. Its main use is to
