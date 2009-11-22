@@ -197,7 +197,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 			shell.open();
 			deferViewEvent(new Runnable() {
 				public void run() {
-					if (prefs.isFirstLaunch()) {
+					if (prefs.isFirstLaunch() && prefs.showPrefsOnFirstRun()) {
 						displayPreferences();
 					}
 					updateFileInfoDisplay();

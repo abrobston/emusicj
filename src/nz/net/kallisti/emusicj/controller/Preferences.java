@@ -523,4 +523,11 @@ public abstract class Preferences implements IPreferences {
 		return true;
 	}
 
+	/**
+	 * By default we show the prefs
+	 */
+	public boolean showPrefsOnFirstRun() {
+		return true;
+	}
+
 }

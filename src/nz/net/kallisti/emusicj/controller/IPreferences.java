@@ -195,4 +195,12 @@ public interface IPreferences {
 	 */
 	public boolean showTrackControls();
 
+	/**
+	 * If this returns true, then a preferences dialogue should be shown on the
+	 * first launch of the application.
+	 * 
+	 * @return true to show prefs, false to begin with the defaults
+	 */
+	public boolean showPrefsOnFirstRun();
+
 }
