@@ -20,6 +20,10 @@ need to switch the classpath that you are using to the appropriate platform.
 The JID3.jar is a branch of the original, and can be found here: 
 https://code.launchpad.net/~eythian/+junk/jid3
 
+Same goes with the iTunes control library (only applies to windows), the
+branch can be found here:
+https://code.launchpad.net/~eythian/+junk/itunescon
+
 This ant script has the following targets:
  * emusicj - the default target, this produces eMusic/J
  * naxos - this produces the Classicsonline download manager
