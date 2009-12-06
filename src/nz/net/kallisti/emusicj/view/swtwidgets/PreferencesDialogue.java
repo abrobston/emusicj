@@ -79,6 +79,7 @@ public class PreferencesDialogue {
 	private final List<ICloseListener<Object>> closeListeners = new ArrayList<ICloseListener<Object>>(
 			1);
 	private boolean normalClose = false;
+	private boolean firedClose = false;
 
 	/**
 	 * @param display
@@ -338,6 +339,7 @@ public class PreferencesDialogue {
 		}
 		prefs.save();
 		dialog.dispose();
+		fireCloseListeners(true);
 	}
 
 	/**
@@ -366,7 +368,11 @@ public class PreferencesDialogue {
 		}
 	}
 
-	private void fireCloseListeners(boolean okClose) {
+	private synchronized void fireCloseListeners(boolean okClose) {
+		// We only ever do this once
+		if (firedClose)
+			return;
+		firedClose = true;
 		synchronized (closeListeners) {
 			for (ICloseListener<Object> l : closeListeners) {
 				l.closed(this, okClose, null);

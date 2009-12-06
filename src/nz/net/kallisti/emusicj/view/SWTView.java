@@ -57,6 +57,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
+import nz.net.kallisti.emusicj.view.swtwidgets.hooks.ICloseListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.network.NetworkFailureDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.network.ProxyDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
@@ -201,9 +202,12 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 			deferViewEvent(new Runnable() {
 				public void run() {
 					if (prefs.isFirstLaunch() && prefs.showPrefsOnFirstRun()) {
-						// TODO allow this to undo the deferedMetafileloading
-						// when the prefs window closes
-						displayPreferences();
+						displayPreferences(new ICloseListener<Object>() {
+							public void closed(Object widget, boolean okClose,
+									Object data) {
+								controller.restoreMetafileLoad();
+							}
+						});
 					}
 					updateFileInfoDisplay();
 				}
@@ -561,9 +565,11 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	/**
 	 * Brings up the preferences dialogue
 	 */
-	public void displayPreferences() {
+	public void displayPreferences(ICloseListener<Object> closeListener) {
 		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
 				strings);
+		if (closeListener != null)
+			prefs.addCloseListener(closeListener);
 		prefs.open();
 	}
 
