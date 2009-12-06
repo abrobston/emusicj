@@ -195,9 +195,14 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 				shell.setSize(550, 550);
 			}
 			shell.open();
+			if (prefs.isFirstLaunch() && prefs.showPrefsOnFirstRun()) {
+				controller.deferMetafileLoad();
+			}
 			deferViewEvent(new Runnable() {
 				public void run() {
 					if (prefs.isFirstLaunch() && prefs.showPrefsOnFirstRun()) {
+						// TODO allow this to undo the deferedMetafileloading
+						// when the prefs window closes
 						displayPreferences();
 					}
 					updateFileInfoDisplay();
