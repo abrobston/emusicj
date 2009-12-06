@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -92,6 +93,8 @@ public class EmusicjController implements IEmusicjController,
 	private final IStrings strings;
 	private final Logger logger;
 	private final ICleanupFiles cleanupFiles;
+	private final AtomicInteger deferredMetafileStack = new AtomicInteger();
+	private final List<String> deferredMetafileLoads = new ArrayList<String>();
 
 	@Inject
 	public EmusicjController(IEmusicjView view, IPreferences preferences,
@@ -231,11 +234,16 @@ public class EmusicjController implements IEmusicjController,
 	 *            the filename of the metafile to load
 	 */
 	public void loadMetafile(String file) {
+		if (deferredMetafileStack.get() > 0) {
+			synchronized (deferredMetafileLoads) {
+				deferredMetafileLoads.add(file);
+			}
+			return;
+		}
 		String fixedFile = file;
 		try {
 			// Snow Leopard (OSX 10.6 or so) adds 'file://localhost' to the
-			// start
-			// of pathnames, because it's stupid. We need to remove it.
+			// start of pathnames, because it's stupid. We need to remove it.
 			String prefix = "file://localhost";
 			if (file.startsWith(prefix)) {
 				fixedFile = file.substring(prefix.length());
@@ -499,6 +507,34 @@ public class EmusicjController implements IEmusicjController,
 					dropDirMon.setDirToMonitor(new File(dd));
 				else
 					dropDirMon.setDirToMonitor(null);
+		}
+	}
+
+	public void deferMetafileLoad() {
+		deferredMetafileStack.incrementAndGet();
+	}
+
+	public void restoreMetafileLoad() {
+		int count = deferredMetafileStack.decrementAndGet();
+		if (count <= 0) {
+			if (count < 0) {
+				logger
+						.warning("Deferred metafile stack count underflow: this shouldn't be possible");
+				deferredMetafileStack.set(0);
+			}
+			processDeferredMetafileLoads();
+		}
+	}
+
+	/**
+	 * This runs through the list of deferred metafiles and forces them to be
+	 * loaded now, clearing the list afterwards.
+	 */
+	private void processDeferredMetafileLoads() {
+		synchronized (deferredMetafileLoads) {
+			for (String mf : deferredMetafileLoads)
+				loadMetafile(mf);
+			deferredMetafileLoads.clear();
 		}
 	}
 

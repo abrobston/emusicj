@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 /**
  * <p>
- * This contains the preferences that are specific to the Passionato varient of
+ * This contains the preferences that are specific to the Passionato variant of
  * the program.
  * </p>
  * 
@@ -24,6 +24,11 @@ public class PassionatoPreferences extends Preferences {
 
 	public boolean allowSaveFileAs() {
 		return true;
+	}
+
+	@Override
+	public boolean showPrefsOnFirstRun() {
+		return false;
 	}
 
 }

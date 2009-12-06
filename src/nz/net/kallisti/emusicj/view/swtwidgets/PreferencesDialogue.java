@@ -21,8 +21,12 @@
  */
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.view.swtwidgets.hooks.ICloseListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.eclipse.swt.SWT;
@@ -33,8 +37,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -70,6 +76,10 @@ public class PreferencesDialogue {
 	private final boolean removeCompletedDownloads;
 	private Button autoCleanup;
 	private final IStrings strings;
+	private final List<ICloseListener<Object>> closeListeners = new ArrayList<ICloseListener<Object>>(
+			1);
+	private boolean normalClose = false;
+	private boolean firedClose = false;
 
 	/**
 	 * @param display
@@ -93,6 +103,11 @@ public class PreferencesDialogue {
 		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.setLayout(new GridLayout(1, false));
 		dialog.setText("Preferences");
+		dialog.addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event) {
+				fireCloseListeners(normalClose);
+			}
+		});
 		Group files = new Group(dialog, SWT.NONE);
 		files.setLayout(new GridLayout(3, false));
 		files.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -308,6 +323,7 @@ public class PreferencesDialogue {
 	 * Close the dialog and save the preferences
 	 */
 	public void close() {
+		normalClose = true;
 		if (prefs.allowSaveFileAs())
 			prefs.setFilePattern(filePattern);
 		prefs.setSavePath(filePath);
@@ -321,13 +337,46 @@ public class PreferencesDialogue {
 		if (dropDirModified) {
 			prefs.setDropDir(dropDir.getText());
 		}
+		prefs.save();
 		dialog.dispose();
-		new Thread() {
-			@Override
-			public void run() {
-				prefs.save();
-			}
-		}.start();
+		fireCloseListeners(true);
 	}
 
+	/**
+	 * Adds a close listener to the preferences window that will be alerted when
+	 * it is closed. The data object part of this will be <code>null</code>.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	public void addCloseListener(ICloseListener<Object> listener) {
+		synchronized (closeListeners) {
+			closeListeners.add(listener);
+		}
+	}
+
+	/**
+	 * This removes a close listener that was added with
+	 * {@link #addCloseListener(ICloseListener)}.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeCloseListener(ICloseListener<Object> listener) {
+		synchronized (closeListeners) {
+			closeListeners.remove(listener);
+		}
+	}
+
+	private synchronized void fireCloseListeners(boolean okClose) {
+		// We only ever do this once
+		if (firedClose)
+			return;
+		firedClose = true;
+		synchronized (closeListeners) {
+			for (ICloseListener<Object> l : closeListeners) {
+				l.closed(this, okClose, null);
+			}
+		}
+	}
 }
