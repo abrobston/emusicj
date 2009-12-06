@@ -28,12 +28,14 @@ public interface IMediaPlayer {
 	public Set<IPlayer> supportedPlayers();
 
 	/**
-	 * This sets the player to be used.
+	 * This sets the player to be used. Not calling this is the equivalent of
+	 * calling it with <code>null</code> (i.e. all other functions become
+	 * no-op.)
 	 * 
 	 * @param playerKey
 	 *            the key of the player to be used. If this is null
 	 *            <code>null</code>, then no player is used, and the functional
-	 *            operations become noops.
+	 *            operations become no-ops.
 	 * @throws UnknownPlayerException
 	 *             if the supplied key doesn't match a known player. If this
 	 *             occurs, then the current selection is not changed.
@@ -41,8 +43,25 @@ public interface IMediaPlayer {
 	public void setPlayer(String playerKey) throws UnknownPlayerException;
 
 	/**
-	 * This adds a track to the media player. Failures are hidden, so this
-	 * should never cause any exception.
+	 * This sets a playlist that the tracks will be saved into (if supported by
+	 * the player.) If this is <code>null</code>, then no playlist will be used
+	 * if possible. It is recommended that this is used, and if it is, it should
+	 * happen prior to any calls to {@link #addTrack(File)}.
+	 * 
+	 * If the player doesn't support playlists, then this is ignored. If the
+	 * player requires playlists and none is supplied, then adding tracks
+	 * probably won't work.
+	 * 
+	 * @param playlist
+	 *            the name of the playlist that tracks should be added to.
+	 */
+	public void setPlaylist(String playlist);
+
+	/**
+	 * This adds a track to the media player. Failures are hidden (but logged),
+	 * so this should never cause any exception. Ideally, calls to
+	 * {@link #setPlayer(String)} and {@link #setPlaylist(String)} will have
+	 * come before this.
 	 * 
 	 * @param track
 	 *            the path to the track to add
