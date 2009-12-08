@@ -41,6 +41,8 @@ import nz.net.kallisti.emusicj.id3.IID3ToMP3;
 import nz.net.kallisti.emusicj.id3.jid.JID3FromXML;
 import nz.net.kallisti.emusicj.id3.jid.JID3Serialiser;
 import nz.net.kallisti.emusicj.id3.jid.JID3ToMP3;
+import nz.net.kallisti.emusicj.mediaplayer.ConfigureMediaPlayer;
+import nz.net.kallisti.emusicj.mediaplayer.IConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
 import nz.net.kallisti.emusicj.mediaplayer.NoopMediaPlayerSync;
 import nz.net.kallisti.emusicj.mediaplayer.windows.WindowsPlayers;
@@ -134,6 +136,8 @@ public class Bindings extends AbstractModule {
 		bind(IID3Serialiser.class).to(JID3Serialiser.class);
 		bind(IMediaPlayerSync.class).to(getMediaPlayerForPlatform()).in(
 				Scopes.SINGLETON);
+		bind(IConfigureMediaPlayer.class).to(ConfigureMediaPlayer.class)
+				.asEagerSingleton();
 	}
 
 	/**

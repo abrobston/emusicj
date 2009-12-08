@@ -523,4 +523,16 @@ public abstract class Preferences implements IPreferences {
 		return true;
 	}
 
+	public String getMediaPlayerSync() {
+		return getProperty("mediaSync", null);
+	}
+
+	public void setMediaPlayerSync(String mediaPlayer) {
+		if (mediaPlayer == null) {
+			props.remove("mediaSync");
+		} else {
+			setProperty("mediaSync", mediaPlayer);
+		}
+	}
+
 }
