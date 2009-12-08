@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayer;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
 import nz.net.kallisti.emusicj.mediaplayer.IPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.UnknownPlayerException;
 import nz.net.kallisti.emusicj.mediaplayer.common.PlayerType;
@@ -27,7 +27,7 @@ import com.google.inject.Inject;
  * 
  * @author robin
  */
-public class WindowsPlayers implements IMediaPlayer {
+public class WindowsPlayers implements IMediaPlayerSync {
 
 	private final Set<IPlayer> players = new HashSet<IPlayer>();
 	private IWinPlayer player = null;

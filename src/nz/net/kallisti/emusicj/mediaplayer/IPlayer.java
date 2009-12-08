@@ -4,7 +4,7 @@ package nz.net.kallisti.emusicj.mediaplayer;
  * <p>
  * This represents a particular player, suitable for having the user select
  * which player they want, and saving that value. It doesn't actually have any
- * player communication abilities. See {@link IMediaPlayer} for that stuff.
+ * player communication abilities. See {@link IMediaPlayerSync} for that stuff.
  * </p>
  * 
  * @author robin

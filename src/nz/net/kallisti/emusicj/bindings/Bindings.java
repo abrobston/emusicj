@@ -41,6 +41,8 @@ import nz.net.kallisti.emusicj.id3.IID3ToMP3;
 import nz.net.kallisti.emusicj.id3.jid.JID3FromXML;
 import nz.net.kallisti.emusicj.id3.jid.JID3Serialiser;
 import nz.net.kallisti.emusicj.id3.jid.JID3ToMP3;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
+import nz.net.kallisti.emusicj.mediaplayer.windows.WindowsPlayers;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
 import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
 import nz.net.kallisti.emusicj.metafiles.IMetafile;
@@ -48,6 +50,7 @@ import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.NaxosMetafile;
 import nz.net.kallisti.emusicj.metafiles.PlainTextMetafile;
+import nz.net.kallisti.emusicj.misc.PlatformUtils;
 import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
@@ -128,5 +131,19 @@ public class Bindings extends AbstractModule {
 		bind(IID3FromXML.class).to(JID3FromXML.class);
 		bind(IID3ToMP3.class).to(JID3ToMP3.class);
 		bind(IID3Serialiser.class).to(JID3Serialiser.class);
+		bind(IMediaPlayerSync.class).to(getMediaPlayerForPlatform()).in(
+				Scopes.SINGLETON);
+	}
+
+	/**
+	 * This provides the media player class that applies to the current platform
+	 * 
+	 * @return the media player class for this platform
+	 */
+	protected Class<? extends IMediaPlayerSync> getMediaPlayerForPlatform() {
+		if (PlatformUtils.isWindows()) {
+			return WindowsPlayers.class;
+		}
+		return null;
 	}
 }

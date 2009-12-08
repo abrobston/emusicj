@@ -5,9 +5,9 @@ import java.util.Set;
 
 /**
  * <p>
- * This is the core interface to all media-player related functions. The purpose
- * of these functions is to allow media players on the system to be updated with
- * the tracks as they get downloaded.
+ * This is the core interface to all media-player related sync functions. The
+ * purpose of these functions is to allow media players on the system to be
+ * updated with the tracks as they get downloaded.
  * </p>
  * <p>
  * Implementations of this will do things in a way that makes sense for the
@@ -18,7 +18,7 @@ import java.util.Set;
  * 
  * @author robin
  */
-public interface IMediaPlayer {
+public interface IMediaPlayerSync {
 
 	/**
 	 * This provides a set containing the media players that are supported

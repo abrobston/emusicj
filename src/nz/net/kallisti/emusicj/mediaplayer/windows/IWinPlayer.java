@@ -2,7 +2,7 @@ package nz.net.kallisti.emusicj.mediaplayer.windows;
 
 import java.io.File;
 
-import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayer;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
 
 /**
  * <p>
@@ -21,7 +21,7 @@ interface IWinPlayer {
 	 * @param playlist
 	 *            the name of the playlist that the track should be added to.
 	 *            May be <code>null</code>, see
-	 *            {@link IMediaPlayer#setPlaylist(String)} for more details.
+	 *            {@link IMediaPlayerSync#setPlaylist(String)} for more details.
 	 */
 	void addTrack(File track, String playlist);
 
