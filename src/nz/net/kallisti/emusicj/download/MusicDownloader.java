@@ -73,8 +73,9 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	public MusicDownloader(IPreferences prefs,
 			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
 			INetworkFailure networkFailure, IID3ToMP3 id3ToMP3,
-			IEmusicjView view, IID3Serialiser id3Serialiser) {
-		super(prefs, clientProvider, cleanupFiles, networkFailure);
+			IEmusicjView view, IID3Serialiser id3Serialiser,
+			IDownloadHooks dlHooks) {
+		super(prefs, clientProvider, cleanupFiles, networkFailure, dlHooks);
 		this.id3ToMP3 = id3ToMP3;
 		this.view = view;
 		this.id3Serialiser = id3Serialiser;
