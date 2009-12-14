@@ -30,9 +30,11 @@ import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.CoverDownloader;
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
+import nz.net.kallisti.emusicj.download.IDownloadHooks;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
+import nz.net.kallisti.emusicj.download.hooks.StandardDownloadHooks;
 import nz.net.kallisti.emusicj.files.cleanup.CleanupFiles;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.id3.IID3FromXML;
@@ -44,7 +46,6 @@ import nz.net.kallisti.emusicj.id3.jid.JID3ToMP3;
 import nz.net.kallisti.emusicj.mediaplayer.ConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
-import nz.net.kallisti.emusicj.mediaplayer.NoopMediaPlayerSync;
 import nz.net.kallisti.emusicj.mediaplayer.windows.WindowsPlayers;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
 import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
@@ -138,6 +139,7 @@ public class Bindings extends AbstractModule {
 				Scopes.SINGLETON);
 		bind(IConfigureMediaPlayer.class).to(ConfigureMediaPlayer.class)
 				.asEagerSingleton();
+		bind(IDownloadHooks.class).to(StandardDownloadHooks.class);
 	}
 
 	/**
@@ -149,6 +151,7 @@ public class Bindings extends AbstractModule {
 		if (PlatformUtils.isWindows()) {
 			return WindowsPlayers.class;
 		}
-		return NoopMediaPlayerSync.class;
+		return WindowsPlayers.class; // TODO remove - for testing only
+		// return NoopMediaPlayerSync.class;
 	}
 }

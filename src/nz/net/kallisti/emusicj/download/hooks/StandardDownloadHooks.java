@@ -31,6 +31,7 @@ public class StandardDownloadHooks implements IDownloadHooks {
 			IEmusicjView view, IID3ToMP3 id3ToMp3) {
 		MediaPlayerHook mediaPlayerHook = new MediaPlayerHook(mediaPlayer);
 		ID3v2Hook id3Hook = new ID3v2Hook(view, id3ToMp3);
+		// this list is ordered by what should happen first
 		hooks.add(id3Hook);
 		hooks.add(mediaPlayerHook);
 	}

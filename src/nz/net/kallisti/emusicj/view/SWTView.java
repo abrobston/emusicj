@@ -34,6 +34,7 @@ import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.misc.FolderOpener;
 import nz.net.kallisti.emusicj.misc.FolderOpenerException;
@@ -144,11 +145,13 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	private Image pauseIcon;
 	private Image resumeIcon;
 	private final IAppStyle appStyle;
+	private final IMediaPlayerSync mediaSync;
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
 			IEmusicjController controller, IImageFactory imageFactory,
-			IURLFactory urlFactory, IMenuBuilder menuBuilder, IAppStyle appStyle) {
+			IURLFactory urlFactory, IMenuBuilder menuBuilder,
+			IAppStyle appStyle, IMediaPlayerSync mediaSync) {
 		super();
 		this.prefs = prefs;
 		this.strings = strings;
@@ -157,6 +160,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		this.urlFactory = urlFactory;
 		this.menuBuilder = menuBuilder;
 		this.appStyle = appStyle;
+		this.mediaSync = mediaSync;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -558,7 +562,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	 */
 	public void displayPreferences() {
 		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
-				strings);
+				strings, mediaSync);
 		prefs.open();
 	}
 

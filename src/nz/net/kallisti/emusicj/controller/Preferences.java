@@ -533,6 +533,7 @@ public abstract class Preferences implements IPreferences {
 		} else {
 			setProperty("mediaSync", mediaPlayer);
 		}
+		notify(Pref.MEDIA_PLAYER_SYNC);
 	}
 
 }
