@@ -54,7 +54,7 @@ public class PassionatoStrings extends AbstractStrings {
 	}
 
 	public String[] getOpenDialogueFilterNames() {
-		return new String[] { "Passionato Files (*.emx)", "All Files (*.*)" };
+		return new String[] { "Passionato Files (*.psn)", "All Files (*.*)" };
 	}
 
 	public String getPrefsAutoLoadDescription() {
@@ -62,8 +62,7 @@ public class PassionatoStrings extends AbstractStrings {
 	}
 
 	public String getAboutBoxText() {
-		return "This program was written by Robin Sheat <robin@kallisti.net.nz> "
-				+ "[eMusic.com username: Eythian]\n\n"
+		return "This program was written by Robin Sheat <robin@kallisti.net.nz> \n\n"
 				+ "Thanks to:\n"
 				+ "Curtis Cooley (code)\n"
 				+ "Michael MacDonald (code)\n"
