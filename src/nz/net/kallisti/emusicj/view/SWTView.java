@@ -577,6 +577,12 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		prefs.open();
 	}
 
+	/**
+	 * Brings up the preference dialogue
+	 * 
+	 * Implementation note: this no-args version is needed to make the menu
+	 * callback system work.
+	 */
 	public void displayPreferences() {
 		this.displayPreferences(null);
 	}
