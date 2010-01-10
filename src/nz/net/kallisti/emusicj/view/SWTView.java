@@ -564,6 +564,10 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 
 	/**
 	 * Brings up the preferences dialogue
+	 * 
+	 * @param closeListener
+	 *            if this is set, then it will be notified when the dialogue is
+	 *            closed
 	 */
 	public void displayPreferences(ICloseListener<Object> closeListener) {
 		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
@@ -571,6 +575,10 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		if (closeListener != null)
 			prefs.addCloseListener(closeListener);
 		prefs.open();
+	}
+
+	public void displayPreferences() {
+		this.displayPreferences(null);
 	}
 
 	public void openFile() {
