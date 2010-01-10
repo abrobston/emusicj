@@ -1,5 +1,6 @@
 package nz.net.kallisti.emusicj.id3.jid;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -76,9 +77,6 @@ public class JID3FromXML implements IID3FromXML {
 						.getNodeValue(), node));
 			} else if (name.equals("www")) {
 				id3.addFrame(JID3Utils.ID3_WWW, makeNodeList(node));
-				// } else if (name.equals("cover")) {
-				// id3.addFrame(JID3Utils.ID3_COMPOSER,
-				// ListUtils.list(node.getFirstChild().getNodeValue()));
 			} else if (name.equals("psn_id")) {
 				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, makeNodeList("PSN ID",
 						node));
@@ -91,28 +89,54 @@ public class JID3FromXML implements IID3FromXML {
 			} else if (name.equals("priv_umg")) {
 				id3.addFrame(JID3Utils.ID3_CUSTOM_TEXT, makeNodeList(
 						"Priv UMG", node));
+			} else if (name.equals("recording_date")) {
+				Node dayNode = node.getAttributes().getNamedItem("day");
+				Node monthNode = node.getAttributes().getNamedItem("month");
+				if (dayNode == null || monthNode == null) {
+					logger
+							.warning("'recording_date' element is missing a field, should have both 'day' and 'month'. Skipping.");
+					continue;
+				}
+				id3.addFrame(JID3Utils.ID3_RECORDING_DATE, makeNodeList(
+						dayNode, monthNode));
+			} else if (name.equals("recording_dates")) {
+				id3.addFrame(JID3Utils.ID3_RECORDING_DATES, makeNodeList(node));
+			} else if (name.equals("recording_time")) {
+				Node hourNode = node.getAttributes().getNamedItem("hour");
+				Node minuteNode = node.getAttributes().getNamedItem("minute");
+				if (hourNode == null || minuteNode == null) {
+					logger
+							.warning("'recording_time' element is missing a field, should have both 'hour' and 'minute'. Skipping.");
+					continue;
+				}
+				id3.addFrame(JID3Utils.ID3_RECORDING_TIME, makeNodeList(
+						hourNode, minuteNode));
+			} else if (name.equals("recording_year")) {
+				id3.addFrame(JID3Utils.ID3_RECORDING_YEAR, makeNodeList(node));
 			}
-
 		}
 		return id3;
 	}
 
 	/**
-	 * This produces a list of one item containing the text content of the
-	 * provided node.
+	 * This produces a list containing the text content of each provided node.
 	 * 
-	 * @param node
-	 *            the node to get the content from
-	 * @return a list containing the node, or <code>null</code> if there is no
-	 *         text content
+	 * @param nodes
+	 *            the nodes to get the content from
+	 * @return a list containing the nodes' content, or <code>null</code> if
+	 *         there is no text content in one or more of them.
 	 */
-	private List<String> makeNodeList(Node node) {
-		String cont = node.getTextContent();
-		if (cont == null)
-			return null;
-		if (cont.equals(""))
-			return null;
-		return ListUtils.list(cont);
+	private List<String> makeNodeList(Node... nodes) {
+		ArrayList<String> list = new ArrayList<String>(nodes.length);
+		for (Node node : nodes) {
+			String cont = node.getTextContent();
+			if (cont == null)
+				return null;
+			if (cont.equals(""))
+				return null;
+			list.add(cont);
+		}
+		return list;
 	}
 
 	/**

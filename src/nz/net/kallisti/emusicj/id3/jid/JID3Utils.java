@@ -25,6 +25,8 @@ import org.blinkenlights.jid3.v2.TALBTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCOMTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCONTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCOPTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TDATTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TIMETextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TIT1TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TIT2TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TOFNTextInformationID3V2Frame;
@@ -33,8 +35,10 @@ import org.blinkenlights.jid3.v2.TPE2TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPE3TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPOSTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TRCKTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TRDATextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TSRCTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TXXXTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TYERTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.WCOMUrlLinkID3V2Frame;
 import org.blinkenlights.jid3.v2.APICID3V2Frame.PictureType;
 
@@ -67,6 +71,10 @@ public class JID3Utils {
 	public static final String ID3_GROUPING = "TIT1"; // itunes things
 	public static final String ID3_COVERART = "APIC";
 	public static final String ID3_CUSTOM_TEXT = "TXXX";
+	public static final String ID3_RECORDING_DATES = "TRDA"; // Don't confuse
+	public static final String ID3_RECORDING_DATE = "TDAT"; // these two
+	public static final String ID3_RECORDING_YEAR = "TYER";
+	public static final String ID3_RECORDING_TIME = "TIME";
 
 	private final Provider<ISimpleDownloader> dlProv;
 	private final Logger logger;
@@ -165,6 +173,31 @@ public class JID3Utils {
 					.get(1));
 		} else if (type.equals(ID3_COVERART)) {
 			return getCoverArt(values.get(0));
+		} else if (type.equals(ID3_RECORDING_DATE)) {
+			try {
+				return new TDATTextInformationID3V2Frame(Integer
+						.parseInt(values.get(0)), Integer.parseInt(values
+						.get(1)));
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		} else if (type.equals(ID3_RECORDING_DATES)) {
+			return new TRDATextInformationID3V2Frame(values.get(0));
+		} else if (type.equals(ID3_RECORDING_TIME)) {
+			try {
+				return new TIMETextInformationID3V2Frame(Integer
+						.parseInt(values.get(0)), Integer.parseInt(values
+						.get(1)));
+			} catch (NumberFormatException e) {
+				return null;
+			}
+		} else if (type.equals(ID3_RECORDING_YEAR)) {
+			try {
+				return new TYERTextInformationID3V2Frame(Integer
+						.parseInt(values.get(0)));
+			} catch (NumberFormatException e) {
+				return null;
+			}
 		}
 		throw new ID3Exception("An unknown type was specified: '" + type + "'");
 	}
