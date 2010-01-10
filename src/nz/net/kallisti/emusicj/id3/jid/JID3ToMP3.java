@@ -72,8 +72,13 @@ public class JID3ToMP3 implements IID3ToMP3 {
 		try {
 			media.sync();
 		} catch (ID3Exception e) {
+			logger
+					.log(
+							Level.WARNING,
+							"Unable to save tags on MP3 file, original exception follows.",
+							e);
 			throw new IOException("Unable to save tags on MP3 file: "
-					+ e.getMessage(), e);
+					+ e.getMessage());
 		}
 	}
 
