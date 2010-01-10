@@ -177,6 +177,7 @@ public class EMXMetaFile extends AbstractMetafile {
 		String duration = null;
 		String diskNumStr = null;
 		String diskCountStr = null;
+		String extension = null;
 		IID3Data id3 = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
@@ -204,6 +205,8 @@ public class EMXMetaFile extends AbstractMetafile {
 				diskCountStr = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("id3"))
 				id3 = id3Maker.getData(node);
+			else if (node.getNodeName().equalsIgnoreCase("extension"))
+				extension = node.getFirstChild().getNodeValue();
 		}
 		URL url;
 		try {
@@ -223,9 +226,12 @@ public class EMXMetaFile extends AbstractMetafile {
 						"Unable to parse disk or disk count information", e);
 			}
 		}
+		if (extension == null) {
+			extension = ".mp3";
+		}
 
 		File outputFile = new File(prefs.getFilename(trackNum, title, album,
-				artist, ".mp3", disk, diskCount));
+				artist, extension, disk, diskCount));
 		File coverArtFile = null;
 		if (coverArt != null)
 			coverArtFile = getCoverArtCached(downloaders, coverArt, prefs,

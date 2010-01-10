@@ -246,6 +246,12 @@ public abstract class Preferences implements IPreferences {
 										: fname.length());
 			}
 		}
+		format = format.toLowerCase();
+		// Passionato test files aren't always including the leading '.' on
+		// format
+		if (!format.startsWith(".")) {
+			format = "." + format;
+		}
 		return fname.toString() + format;
 	}
 
