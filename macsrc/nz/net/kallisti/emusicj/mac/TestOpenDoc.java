@@ -89,6 +89,14 @@ public class TestOpenDoc {
 
 			}
 
+			public void deferMetafileLoad() {
+
+			}
+
+			public void restoreMetafileLoad() {
+
+			}
+
 		});
 		Injector injector = Guice.createInjector(Stage.PRODUCTION,
 				new Bindings(), new EmusicjBindings());
