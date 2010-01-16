@@ -116,7 +116,7 @@ Available targets:
 			target="1.5"/>
 		
 		<!-- copy the images in. A way to combine this into one statement would
-			be nice -->
+			be nice. Don't forget to update the compile-osx target too. -->
 		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/emusicj">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/emusicj/*.png"/>
@@ -272,6 +272,10 @@ Available targets:
 		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry/*.png"/>
+		</copy>
+		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/passionato">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/passionato/*.png"/>
 		</copy>
 		<!-- now create a jar -->
 		<jar jarfile="${osx.jar.name}">
