@@ -46,6 +46,7 @@ import nz.net.kallisti.emusicj.id3.jid.JID3ToMP3;
 import nz.net.kallisti.emusicj.mediaplayer.ConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
+import nz.net.kallisti.emusicj.mediaplayer.NoopMediaPlayerSync;
 import nz.net.kallisti.emusicj.mediaplayer.windows.WindowsPlayers;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
 import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
@@ -151,7 +152,6 @@ public class Bindings extends AbstractModule {
 		if (PlatformUtils.isWindows()) {
 			return WindowsPlayers.class;
 		}
-		return WindowsPlayers.class; // TODO remove - for testing only
-		// return NoopMediaPlayerSync.class;
+		return NoopMediaPlayerSync.class;
 	}
 }
