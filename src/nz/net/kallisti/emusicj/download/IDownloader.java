@@ -68,6 +68,11 @@ public interface IDownloader {
 
 	public URL getURL();
 
+	/**
+	 * Returns the file that the download will be saved to.
+	 * 
+	 * @return the file, or null if the download hasn't started yet.
+	 */
 	public File getOutputFile();
 
 	public int getFailureCount();

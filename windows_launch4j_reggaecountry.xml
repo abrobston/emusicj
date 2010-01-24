@@ -21,6 +21,8 @@
 	<cp>lib\guice-1.0.jar</cp>
 	<cp>lib\MRJAdapter.jar</cp>
 	<cp>lib\JID3.jar</cp>
+	<cp>lib\itunescon.jar</cp>
+	<cp>lib\jacob.jar</cp>
   </classPath>
   <jre>
     <path></path>
