@@ -297,10 +297,17 @@ public class PreferencesDialogue {
 		dropDown.setLayoutData(gd);
 		// First add a 'nothing' option
 		dropDown.add("None");
+		int selectIndex = 0;
+		int count = 0;
+		String selectedKey = prefs.getMediaPlayerSync();
 		for (IPlayer player : players) {
+			count++; // the index starts at 1, 0 is 'none'
 			dropDown.add(player.playerName());
+			if (player.key().equals(selectedKey)) {
+				selectIndex = count;
+			}
 		}
-		dropDown.select(0);
+		dropDown.select(selectIndex);
 		// Add a null at the start of the list so that we can use this to easily
 		// work out what was selected later
 		players.add(0, null);
@@ -399,7 +406,8 @@ public class PreferencesDialogue {
 		if (dropDirModified) {
 			prefs.setDropDir(dropDir.getText());
 		}
-		prefs.setMediaPlayerSync(selectedPlayer.key());
+		prefs.setMediaPlayerSync(selectedPlayer != null ? selectedPlayer.key()
+				: null);
 		dialog.dispose();
 		new Thread() {
 			@Override
