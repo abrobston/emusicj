@@ -23,8 +23,10 @@ package nz.net.kallisti.emusicj.bindings;
 
 import nz.net.kallisti.emusicj.bindingtypes.Emusic;
 import nz.net.kallisti.emusicj.bindingtypes.EmusicEmx;
+import nz.net.kallisti.emusicj.bindingtypes.ID3Tagger;
 import nz.net.kallisti.emusicj.bindingtypes.Naxos;
 import nz.net.kallisti.emusicj.bindingtypes.PlainText;
+import nz.net.kallisti.emusicj.bindingtypes.VorbisTagger;
 import nz.net.kallisti.emusicj.controller.EmusicjController;
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.CoverDownloader;
@@ -35,6 +37,8 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.download.hooks.StandardDownloadHooks;
+import nz.net.kallisti.emusicj.download.hooks.tagging.ITaggingHook;
+import nz.net.kallisti.emusicj.download.hooks.tagging.TaggingHook;
 import nz.net.kallisti.emusicj.files.cleanup.CleanupFiles;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.mediaplayer.ConfigureMediaPlayer;
@@ -67,6 +71,9 @@ import nz.net.kallisti.emusicj.tagging.ITagWriter;
 import nz.net.kallisti.emusicj.tagging.jid.JID3FromXML;
 import nz.net.kallisti.emusicj.tagging.jid.JID3Serialiser;
 import nz.net.kallisti.emusicj.tagging.jid.JID3ToMP3;
+import nz.net.kallisti.emusicj.tagging.vorbiscomments.VorbisFromXML;
+import nz.net.kallisti.emusicj.tagging.vorbiscomments.VorbisSerialiser;
+import nz.net.kallisti.emusicj.tagging.vorbiscomments.VorbisWriter;
 import nz.net.kallisti.emusicj.updater.IUpdateFetcher;
 import nz.net.kallisti.emusicj.updater.URLUpdateFetcher;
 import nz.net.kallisti.emusicj.urls.DynamicURL;
@@ -133,9 +140,19 @@ public class Bindings extends AbstractModule {
 		bind(IDynamicURL.class).to(DynamicURL.class);
 		bind(INetworkFailure.class).to(NetworkFailure.class).in(
 				Scopes.SINGLETON);
-		bind(ITagFromXML.class).to(JID3FromXML.class);
-		bind(ITagWriter.class).to(JID3ToMP3.class);
-		bind(ITagSerialiser.class).to(JID3Serialiser.class);
+		bind(ITaggingHook.class).to(TaggingHook.class);
+		bind(ITagFromXML.class).annotatedWith(ID3Tagger.class).to(
+				JID3FromXML.class);
+		bind(ITagWriter.class).annotatedWith(ID3Tagger.class).to(
+				JID3ToMP3.class);
+		bind(ITagSerialiser.class).annotatedWith(ID3Tagger.class).to(
+				JID3Serialiser.class);
+		bind(ITagFromXML.class).annotatedWith(VorbisTagger.class).to(
+				VorbisFromXML.class);
+		bind(ITagWriter.class).annotatedWith(VorbisTagger.class).to(
+				VorbisWriter.class);
+		bind(ITagSerialiser.class).annotatedWith(VorbisTagger.class).to(
+				VorbisSerialiser.class);
 		bind(IMediaPlayerSync.class).to(getMediaPlayerForPlatform()).in(
 				Scopes.SINGLETON);
 		bind(IConfigureMediaPlayer.class).to(ConfigureMediaPlayer.class)

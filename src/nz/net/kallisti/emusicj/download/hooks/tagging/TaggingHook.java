@@ -1,10 +1,11 @@
-package nz.net.kallisti.emusicj.download.hooks.id3;
+package nz.net.kallisti.emusicj.download.hooks.tagging;
 
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.download.IDownloadHook;
+import nz.net.kallisti.emusicj.bindingtypes.ID3Tagger;
+import nz.net.kallisti.emusicj.bindingtypes.VorbisTagger;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.misc.LogUtils;
@@ -21,16 +22,19 @@ import com.google.inject.Inject;
  * 
  * @author robin
  */
-public class ID3v2Hook implements IDownloadHook {
+public class TaggingHook implements ITaggingHook {
 
 	private final IEmusicjView view;
-	private final ITagWriter id3ToMP3;
+	private final ITagWriter id3Tagger;
 	private final Logger logger;
+	private final ITagWriter vorbisTagger;
 
 	@Inject
-	public ID3v2Hook(IEmusicjView view, ITagWriter id3ToMP3) {
+	public TaggingHook(IEmusicjView view, @ID3Tagger ITagWriter id3Tagger,
+			@VorbisTagger ITagWriter vorbisTagger) {
 		this.view = view;
-		this.id3ToMP3 = id3ToMP3;
+		this.id3Tagger = id3Tagger;
+		this.vorbisTagger = vorbisTagger;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -38,14 +42,19 @@ public class ID3v2Hook implements IDownloadHook {
 		if (!(downloader instanceof MusicDownloader))
 			return;
 		MusicDownloader dl = (MusicDownloader) downloader;
-		ITagData id3 = dl.getID3();
-		if (id3 == null)
+		ITagData tagData = dl.getID3();
+		if (tagData == null)
 			return;
 		File file = dl.getOutputFile();
 		if (!file.getName().toLowerCase().endsWith(".mp3"))
 			return;
 		try {
-			id3ToMP3.writeTag(id3, file);
+			if (id3Tagger.supportedFile(file))
+				id3Tagger.writeTag(tagData, file);
+			else if (vorbisTagger.supportedFile(file))
+				vorbisTagger.writeTag(tagData, file);
+			else
+				logger.info("No supported tagger for " + file);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,
 					"An error occurred saving the MP3 tag data", e);
@@ -54,5 +63,4 @@ public class ID3v2Hook implements IDownloadHook {
 							+ e.getMessage());
 		}
 	}
-
 }
