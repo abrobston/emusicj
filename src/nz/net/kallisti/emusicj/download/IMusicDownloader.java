@@ -26,7 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
-import nz.net.kallisti.emusicj.id3.IID3Data;
+import nz.net.kallisti.emusicj.tagging.ITagData;
 
 import org.w3c.dom.Element;
 
@@ -86,6 +86,6 @@ public interface IMusicDownloader extends IDownloader {
 	 * @param id3
 	 *            the ID3 data
 	 */
-	public void setID3(IID3Data id3);
+	public void setID3(ITagData id3);
 
 }

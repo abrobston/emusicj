@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.id3.jid;
+package nz.net.kallisti.emusicj.tagging.jid;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,9 +8,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3Frame;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagFrame;
 
 import org.blinkenlights.jid3.ID3Exception;
 import org.blinkenlights.jid3.v2.ID3V2Frame;
@@ -22,7 +22,7 @@ import org.blinkenlights.jid3.v2.ID3V2Frame;
  * 
  * @author robin
  */
-public class JID3Data implements IID3Data {
+public class JID3Data implements ITagData {
 
 	Map<String, Set<List<String>>> frames = new HashMap<String, Set<List<String>>>();
 	private final Logger logger;
@@ -37,8 +37,8 @@ public class JID3Data implements IID3Data {
 		return frames.keySet();
 	}
 
-	public Set<IID3Frame> getFramesForType(String id3FrameType) {
-		Set<IID3Frame> result = new HashSet<IID3Frame>();
+	public Set<ITagFrame> getFramesForType(String id3FrameType) {
+		Set<ITagFrame> result = new HashSet<ITagFrame>();
 		Set<List<String>> framesForType = frames.get(id3FrameType);
 		for (List<String> frameSpec : framesForType) {
 			try {

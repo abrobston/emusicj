@@ -37,12 +37,6 @@ import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.download.hooks.StandardDownloadHooks;
 import nz.net.kallisti.emusicj.files.cleanup.CleanupFiles;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
-import nz.net.kallisti.emusicj.id3.IID3FromXML;
-import nz.net.kallisti.emusicj.id3.IID3Serialiser;
-import nz.net.kallisti.emusicj.id3.IID3ToMP3;
-import nz.net.kallisti.emusicj.id3.jid.JID3FromXML;
-import nz.net.kallisti.emusicj.id3.jid.JID3Serialiser;
-import nz.net.kallisti.emusicj.id3.jid.JID3ToMP3;
 import nz.net.kallisti.emusicj.mediaplayer.ConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IConfigureMediaPlayer;
 import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
@@ -67,6 +61,12 @@ import nz.net.kallisti.emusicj.network.http.downloader.SimpleDownloader;
 import nz.net.kallisti.emusicj.network.http.proxy.HttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
+import nz.net.kallisti.emusicj.tagging.ITagFromXML;
+import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
+import nz.net.kallisti.emusicj.tagging.ITagToFile;
+import nz.net.kallisti.emusicj.tagging.jid.JID3FromXML;
+import nz.net.kallisti.emusicj.tagging.jid.JID3Serialiser;
+import nz.net.kallisti.emusicj.tagging.jid.JID3ToMP3;
 import nz.net.kallisti.emusicj.updater.IUpdateFetcher;
 import nz.net.kallisti.emusicj.updater.URLUpdateFetcher;
 import nz.net.kallisti.emusicj.urls.DynamicURL;
@@ -133,9 +133,9 @@ public class Bindings extends AbstractModule {
 		bind(IDynamicURL.class).to(DynamicURL.class);
 		bind(INetworkFailure.class).to(NetworkFailure.class).in(
 				Scopes.SINGLETON);
-		bind(IID3FromXML.class).to(JID3FromXML.class);
-		bind(IID3ToMP3.class).to(JID3ToMP3.class);
-		bind(IID3Serialiser.class).to(JID3Serialiser.class);
+		bind(ITagFromXML.class).to(JID3FromXML.class);
+		bind(ITagToFile.class).to(JID3ToMP3.class);
+		bind(ITagSerialiser.class).to(JID3Serialiser.class);
 		bind(IMediaPlayerSync.class).to(getMediaPlayerForPlatform()).in(
 				Scopes.SINGLETON);
 		bind(IConfigureMediaPlayer.class).to(ConfigureMediaPlayer.class)

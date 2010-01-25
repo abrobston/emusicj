@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.id3;
+package nz.net.kallisti.emusicj.tagging;
 
 /**
  * <p>
@@ -8,6 +8,6 @@ package nz.net.kallisti.emusicj.id3;
  * 
  * @author robin
  */
-public interface IID3Frame {
+public interface ITagFrame {
 
 }

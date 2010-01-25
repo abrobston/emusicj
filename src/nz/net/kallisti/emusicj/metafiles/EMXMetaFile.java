@@ -19,11 +19,11 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3FromXML;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagFromXML;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
@@ -51,13 +51,13 @@ public class EMXMetaFile extends AbstractMetafile {
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Logger logger;
-	private final IID3FromXML id3Maker;
+	private final ITagFromXML id3Maker;
 
 	@Inject
 	public EMXMetaFile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images, IURLFactory urls, IID3FromXML id3Maker) {
+			IImageFactory images, IURLFactory urls, ITagFromXML id3Maker) {
 		super(images, urls, strings, coverDownloaderProvider);
 		this.prefs = prefs;
 		this.musicDownloaderProvider = musicDownloaderProvider;
@@ -178,7 +178,7 @@ public class EMXMetaFile extends AbstractMetafile {
 		String diskNumStr = null;
 		String diskCountStr = null;
 		String extension = null;
-		IID3Data id3 = null;
+		ITagData id3 = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)

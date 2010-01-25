@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.id3.jid;
+package nz.net.kallisti.emusicj.tagging.jid;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

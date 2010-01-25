@@ -1,6 +1,6 @@
-package nz.net.kallisti.emusicj.id3.jid;
+package nz.net.kallisti.emusicj.tagging.jid;
 
-import nz.net.kallisti.emusicj.id3.IID3Frame;
+import nz.net.kallisti.emusicj.tagging.ITagFrame;
 
 import org.blinkenlights.jid3.v2.ID3V2Frame;
 
@@ -11,7 +11,7 @@ import org.blinkenlights.jid3.v2.ID3V2Frame;
  * 
  * @author robin
  */
-class JID3Frame implements IID3Frame {
+class JID3Frame implements ITagFrame {
 
 	private final ID3V2Frame frame;
 

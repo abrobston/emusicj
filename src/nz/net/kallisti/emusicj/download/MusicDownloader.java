@@ -30,10 +30,10 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3Serialiser;
 import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,8 +58,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	File coverArt;
 	String genre;
 	int duration = -1;
-	IID3Data id3;
-	private final IID3Serialiser id3Serialiser;
+	ITagData id3;
+	private final ITagSerialiser id3Serialiser;
 
 	static IMimeType[] mimeTypes = { MimeTypes.AUDIO, MimeTypes.APP_OCTET,
 			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE };
@@ -67,7 +67,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
 			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
-			INetworkFailure networkFailure, IID3Serialiser id3Serialiser,
+			INetworkFailure networkFailure, ITagSerialiser id3Serialiser,
 			IDownloadHooks dlHooks) {
 		super(prefs, clientProvider, cleanupFiles, networkFailure, dlHooks);
 		this.id3Serialiser = id3Serialiser;
@@ -192,11 +192,11 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		super.setExpiry(expiry);
 	}
 
-	public void setID3(IID3Data id3) {
+	public void setID3(ITagData id3) {
 		this.id3 = id3;
 	}
 
-	public IID3Data getID3() {
+	public ITagData getID3() {
 		return this.id3;
 	}
 

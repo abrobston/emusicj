@@ -1,14 +1,14 @@
-package nz.net.kallisti.emusicj.id3.jid;
+package nz.net.kallisti.emusicj.tagging.jid;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3Frame;
-import nz.net.kallisti.emusicj.id3.IID3ToMP3;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagFrame;
+import nz.net.kallisti.emusicj.tagging.ITagToFile;
 
 import org.blinkenlights.jid3.ID3Exception;
 import org.blinkenlights.jid3.MP3File;
@@ -25,7 +25,7 @@ import org.blinkenlights.jid3.v2.ID3V2_3_0Tag;
  * 
  * @author robin
  */
-public class JID3ToMP3 implements IID3ToMP3 {
+public class JID3ToMP3 implements ITagToFile {
 
 	private final Logger logger;
 
@@ -33,7 +33,7 @@ public class JID3ToMP3 implements IID3ToMP3 {
 		logger = LogUtils.getLogger(this);
 	}
 
-	public void writeMP3(IID3Data id3Data, File file) throws RuntimeException,
+	public void writeTag(ITagData id3Data, File file) throws RuntimeException,
 			IOException {
 		if (!(id3Data instanceof JID3Data)) {
 			throw new RuntimeException("id3Data is of type "
@@ -51,7 +51,7 @@ public class JID3ToMP3 implements IID3ToMP3 {
 		}
 		// Add the frames to the tag
 		for (String type : id3Data.getFrameTypes()) {
-			for (IID3Frame fr : id3Data.getFramesForType(type)) {
+			for (ITagFrame fr : id3Data.getFramesForType(type)) {
 				if (!(fr instanceof JID3Frame)) {
 					throw new RuntimeException(
 							"Got frame object of unknown type " + fr.getClass());
@@ -139,6 +139,10 @@ public class JID3ToMP3 implements IID3ToMP3 {
 				}
 		}
 		media.setID3Tag(v1Tag);
+	}
+
+	public boolean supportedFile(File file) {
+		return file != null && file.toString().toLowerCase().endsWith(".mp3");
 	}
 
 }

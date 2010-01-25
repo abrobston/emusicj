@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 import nz.net.kallisti.emusicj.download.IDownloadHook;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3ToMP3;
 import nz.net.kallisti.emusicj.misc.LogUtils;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagToFile;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import com.google.inject.Inject;
@@ -24,11 +24,11 @@ import com.google.inject.Inject;
 public class ID3v2Hook implements IDownloadHook {
 
 	private final IEmusicjView view;
-	private final IID3ToMP3 id3ToMP3;
+	private final ITagToFile id3ToMP3;
 	private final Logger logger;
 
 	@Inject
-	public ID3v2Hook(IEmusicjView view, IID3ToMP3 id3ToMP3) {
+	public ID3v2Hook(IEmusicjView view, ITagToFile id3ToMP3) {
 		this.view = view;
 		this.id3ToMP3 = id3ToMP3;
 		logger = LogUtils.getLogger(this);
@@ -38,14 +38,14 @@ public class ID3v2Hook implements IDownloadHook {
 		if (!(downloader instanceof MusicDownloader))
 			return;
 		MusicDownloader dl = (MusicDownloader) downloader;
-		IID3Data id3 = dl.getID3();
+		ITagData id3 = dl.getID3();
 		if (id3 == null)
 			return;
 		File file = dl.getOutputFile();
 		if (!file.getName().toLowerCase().endsWith(".mp3"))
 			return;
 		try {
-			id3ToMP3.writeMP3(id3, file);
+			id3ToMP3.writeTag(id3, file);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE,
 					"An error occurred saving the MP3 tag data", e);
