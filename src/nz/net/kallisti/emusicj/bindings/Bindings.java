@@ -68,9 +68,12 @@ import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
 import nz.net.kallisti.emusicj.tagging.ITagFromXML;
 import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
 import nz.net.kallisti.emusicj.tagging.ITagWriter;
+import nz.net.kallisti.emusicj.tagging.general.GeneralFromXML;
+import nz.net.kallisti.emusicj.tagging.general.GeneralTagSerialiser;
+import nz.net.kallisti.emusicj.tagging.general.IGeneralTagFromXML;
 import nz.net.kallisti.emusicj.tagging.jid.JID3FromXML;
 import nz.net.kallisti.emusicj.tagging.jid.JID3Serialiser;
-import nz.net.kallisti.emusicj.tagging.jid.JID3ToMP3;
+import nz.net.kallisti.emusicj.tagging.jid.JID3Writer;
 import nz.net.kallisti.emusicj.tagging.vorbiscomments.VorbisFromXML;
 import nz.net.kallisti.emusicj.tagging.vorbiscomments.VorbisSerialiser;
 import nz.net.kallisti.emusicj.tagging.vorbiscomments.VorbisWriter;
@@ -141,10 +144,12 @@ public class Bindings extends AbstractModule {
 		bind(INetworkFailure.class).to(NetworkFailure.class).in(
 				Scopes.SINGLETON);
 		bind(ITaggingHook.class).to(TaggingHook.class);
+		bind(ITagSerialiser.class).to(GeneralTagSerialiser.class);
+		bind(IGeneralTagFromXML.class).to(GeneralFromXML.class);
 		bind(ITagFromXML.class).annotatedWith(ID3Tagger.class).to(
 				JID3FromXML.class);
 		bind(ITagWriter.class).annotatedWith(ID3Tagger.class).to(
-				JID3ToMP3.class);
+				JID3Writer.class);
 		bind(ITagSerialiser.class).annotatedWith(ID3Tagger.class).to(
 				JID3Serialiser.class);
 		bind(ITagFromXML.class).annotatedWith(VorbisTagger.class).to(

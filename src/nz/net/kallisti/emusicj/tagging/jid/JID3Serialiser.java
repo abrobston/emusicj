@@ -71,14 +71,12 @@ public class JID3Serialiser implements ITagSerialiser {
 					"Supplied data object is not of type JID3Data, it is "
 							+ data.getClass());
 		JID3Data id3 = (JID3Data) data;
-		Element id3El = doc.createElement("id3");
-		e.appendChild(id3El);
 		Map<String, Set<List<String>>> vals = id3.frames;
 		for (String t : vals.keySet()) {
 			Set<List<String>> set = vals.get(t);
 			for (List<String> list : set) {
 				Element typeEl = doc.createElement("type");
-				id3El.appendChild(typeEl);
+				e.appendChild(typeEl);
 				typeEl.setAttribute("code", t);
 				for (String datum : list) {
 					Element d = doc.createElement("datum");

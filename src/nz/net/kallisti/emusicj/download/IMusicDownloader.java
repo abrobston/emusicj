@@ -81,11 +81,11 @@ public interface IMusicDownloader extends IDownloader {
 	public void setExpiry(Date expiry);
 
 	/**
-	 * Sets the ID3 data that will be saved to the MP3 file after it is saved.
+	 * Sets the tag data that will be saved to the audio file after it is saved.
 	 * 
-	 * @param id3
-	 *            the ID3 data
+	 * @param tagData
+	 *            the audio data
 	 */
-	public void setID3(ITagData id3);
+	public void setTag(ITagData tagData);
 
 }

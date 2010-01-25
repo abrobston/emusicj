@@ -24,4 +24,16 @@ public interface ITagFromXML {
 	 */
 	public ITagData getData(Node tagNode);
 
+	/**
+	 * Specifies if a file with the provided name will be supported. Note that
+	 * this file may not really exist, and in fact it may only be the extension
+	 * part.
+	 * 
+	 * @param filename
+	 *            the filename to check
+	 * @return <code>true</code> if this file type is supported,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean supportedFile(String filename);
+
 }

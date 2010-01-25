@@ -115,7 +115,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		NodeList nodes = el.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node n = nodes.item(i);
-			if (n.getNodeName().toLowerCase().equals("id3")
+			if (n.getNodeName().toLowerCase().equals("tag")
 					&& n instanceof Element) {
 				id3 = id3Serialiser.deserialise((Element) n);
 			}
@@ -138,8 +138,10 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		el.setAttribute("duration", duration + "");
 		if (coverArt != null)
 			el.setAttribute("coverart", coverArt.toString());
-		if (id3 != null)
-			id3Serialiser.serialise(el, doc, id3);
+		if (id3 != null) {
+			Element tagEl = doc.createElement("tag");
+			id3Serialiser.serialise(tagEl, doc, id3);
+		}
 	}
 
 	public String getAlbumName() {
@@ -192,7 +194,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		super.setExpiry(expiry);
 	}
 
-	public void setID3(ITagData id3) {
+	public void setTag(ITagData id3) {
 		this.id3 = id3;
 	}
 

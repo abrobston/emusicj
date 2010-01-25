@@ -49,9 +49,9 @@ public class TaggingHook implements ITaggingHook {
 		if (!file.getName().toLowerCase().endsWith(".mp3"))
 			return;
 		try {
-			if (id3Tagger.supportedFile(file))
+			if (id3Tagger.supportedFile(file.toString()))
 				id3Tagger.writeTag(tagData, file);
-			else if (vorbisTagger.supportedFile(file))
+			else if (vorbisTagger.supportedFile(file.toString()))
 				vorbisTagger.writeTag(tagData, file);
 			else
 				logger.info("No supported tagger for " + file);

@@ -58,8 +58,6 @@ public class VorbisSerialiser implements ITagSerialiser {
 					"Supplied data object is not of type VorbisData, it is "
 							+ tagData.getClass());
 		VorbisData data = (VorbisData) tagData;
-		Element vorbisEl = doc.createElement("vorbiscomments");
-		e.appendChild(vorbisEl);
 		for (String type : data.getFrameTypes()) {
 			for (ITagFrame f : data.getFramesForType(type)) {
 				VorbisFrame frame = (VorbisFrame) f;
@@ -67,7 +65,7 @@ public class VorbisSerialiser implements ITagSerialiser {
 				Element fieldEl = doc.createElement("field");
 				fieldEl.setAttribute("name", field.name);
 				fieldEl.setTextContent(field.value);
-				vorbisEl.appendChild(fieldEl);
+				e.appendChild(fieldEl);
 			}
 		}
 	}

@@ -75,4 +75,8 @@ public class VorbisFromXML implements ITagFromXML {
 		return tag;
 	}
 
+	public boolean supportedFile(String filename) {
+		return VorbisWriter.supportedFileInternal(filename);
+	}
+
 }

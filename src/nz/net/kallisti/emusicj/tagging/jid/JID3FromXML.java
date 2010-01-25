@@ -163,4 +163,8 @@ public class JID3FromXML implements ITagFromXML {
 		return ListUtils.list(str, cont);
 	}
 
+	public boolean supportedFile(String filename) {
+		return JID3Writer.supportedFileInternal(filename);
+	}
+
 }

@@ -32,11 +32,11 @@ public interface ITagWriter {
 	 * This indicates that this writer can write tags to the provided file. For
 	 * example, the ID3 tagger can only write to MP3 files, not Ogg types.
 	 * 
-	 * @param file
+	 * @param filename
 	 *            the file to check
 	 * @return <code>true</code> if this file is supported, <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean supportedFile(File file);
+	public boolean supportedFile(String filename);
 
 }

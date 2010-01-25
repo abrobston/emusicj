@@ -25,11 +25,11 @@ import org.blinkenlights.jid3.v2.ID3V2_3_0Tag;
  * 
  * @author robin
  */
-public class JID3ToMP3 implements ITagWriter {
+public class JID3Writer implements ITagWriter {
 
 	private final Logger logger;
 
-	public JID3ToMP3() {
+	public JID3Writer() {
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -141,8 +141,12 @@ public class JID3ToMP3 implements ITagWriter {
 		media.setID3Tag(v1Tag);
 	}
 
-	public boolean supportedFile(File file) {
-		return file != null && file.toString().toLowerCase().endsWith(".mp3");
+	static boolean supportedFileInternal(String file) {
+		return file != null && file.toLowerCase().endsWith("mp3");
+	}
+
+	public boolean supportedFile(String filename) {
+		return supportedFileInternal(filename);
 	}
 
 }

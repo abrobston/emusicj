@@ -30,10 +30,14 @@ public class VorbisWriter implements ITagWriter {
 		this.strings = strings;
 	}
 
-	public boolean supportedFile(File file) {
-		String name = file.getName().toLowerCase();
-		return (name.endsWith(".flac") || name.endsWith(".ogg") || name
-				.endsWith(".oga"));
+	public static boolean supportedFileInternal(String file) {
+		String name = file.toLowerCase();
+		return (name.endsWith("flac") || name.endsWith("ogg") || name
+				.endsWith("oga"));
+	}
+
+	public boolean supportedFile(String filename) {
+		return supportedFileInternal(filename);
 	}
 
 	public void writeTag(ITagData tagData, File file) throws RuntimeException,
