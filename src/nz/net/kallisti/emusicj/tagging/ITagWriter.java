@@ -10,7 +10,7 @@ import java.io.IOException;
  * 
  * @author robin
  */
-public interface ITagToFile {
+public interface ITagWriter {
 
 	/**
 	 * Adds the provided MP3 data to the file.

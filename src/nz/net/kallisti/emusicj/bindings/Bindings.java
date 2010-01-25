@@ -63,7 +63,7 @@ import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
 import nz.net.kallisti.emusicj.tagging.ITagFromXML;
 import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
-import nz.net.kallisti.emusicj.tagging.ITagToFile;
+import nz.net.kallisti.emusicj.tagging.ITagWriter;
 import nz.net.kallisti.emusicj.tagging.jid.JID3FromXML;
 import nz.net.kallisti.emusicj.tagging.jid.JID3Serialiser;
 import nz.net.kallisti.emusicj.tagging.jid.JID3ToMP3;
@@ -134,7 +134,7 @@ public class Bindings extends AbstractModule {
 		bind(INetworkFailure.class).to(NetworkFailure.class).in(
 				Scopes.SINGLETON);
 		bind(ITagFromXML.class).to(JID3FromXML.class);
-		bind(ITagToFile.class).to(JID3ToMP3.class);
+		bind(ITagWriter.class).to(JID3ToMP3.class);
 		bind(ITagSerialiser.class).to(JID3Serialiser.class);
 		bind(IMediaPlayerSync.class).to(getMediaPlayerForPlatform()).in(
 				Scopes.SINGLETON);

@@ -7,7 +7,8 @@ import org.w3c.dom.Node;
  * Implementations of this will take an XML document node from the metafile and
  * produce an {@link ITagData} instance from it. Note that different
  * implementations may have different fields that they require, hence the
- * abstraction here.
+ * abstraction here. That said, they should all be able to support a common
+ * standard set.
  * </p>
  * 
  * @author robin

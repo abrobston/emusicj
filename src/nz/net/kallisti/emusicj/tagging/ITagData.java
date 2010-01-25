@@ -29,11 +29,11 @@ public interface ITagData {
 	/**
 	 * This gets a set of frames for the specified frame type.
 	 * 
-	 * @param id3FrameType
+	 * @param frameType
 	 *            the type you want the frames for, should be something returned
 	 *            by {@link #getFrameTypes()}
 	 * @return a set of frames
 	 */
-	public Set<ITagFrame> getFramesForType(String id3FrameType);
+	public Set<ITagFrame> getFramesForType(String frameType);
 
 }

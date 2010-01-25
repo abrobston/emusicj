@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.tagging.ITagData;
 import nz.net.kallisti.emusicj.tagging.ITagFrame;
-import nz.net.kallisti.emusicj.tagging.ITagToFile;
+import nz.net.kallisti.emusicj.tagging.ITagWriter;
 
 import org.blinkenlights.jid3.ID3Exception;
 import org.blinkenlights.jid3.MP3File;
@@ -25,7 +25,7 @@ import org.blinkenlights.jid3.v2.ID3V2_3_0Tag;
  * 
  * @author robin
  */
-public class JID3ToMP3 implements ITagToFile {
+public class JID3ToMP3 implements ITagWriter {
 
 	private final Logger logger;
 

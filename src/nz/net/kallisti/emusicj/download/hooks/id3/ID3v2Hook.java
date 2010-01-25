@@ -9,7 +9,7 @@ import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.tagging.ITagData;
-import nz.net.kallisti.emusicj.tagging.ITagToFile;
+import nz.net.kallisti.emusicj.tagging.ITagWriter;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import com.google.inject.Inject;
@@ -24,11 +24,11 @@ import com.google.inject.Inject;
 public class ID3v2Hook implements IDownloadHook {
 
 	private final IEmusicjView view;
-	private final ITagToFile id3ToMP3;
+	private final ITagWriter id3ToMP3;
 	private final Logger logger;
 
 	@Inject
-	public ID3v2Hook(IEmusicjView view, ITagToFile id3ToMP3) {
+	public ID3v2Hook(IEmusicjView view, ITagWriter id3ToMP3) {
 		this.view = view;
 		this.id3ToMP3 = id3ToMP3;
 		logger = LogUtils.getLogger(this);

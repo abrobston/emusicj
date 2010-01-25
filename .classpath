@@ -9,6 +9,11 @@
 	<classpathentry kind="lib" path="lib/x86_64/swt.jar" sourcepath="lib/swt-src.zip"/>
 	<classpathentry kind="lib" path="lib/JID3.jar" sourcepath="/jid3"/>
 	<classpathentry kind="lib" path="lib/itunescon.jar" sourcepath="/itunescon"/>
+	<classpathentry kind="lib" path="lib/jvorbiscomment-1.0.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/vorbis-comments/lib/jvorbiscomment-1.0.1.zip!/jvorbiscomment-1.0.1/docs/api"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
