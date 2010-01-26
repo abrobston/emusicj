@@ -28,6 +28,7 @@ V0.25-svn
 * Try to reduce the chances that a .part file is left lying around
 * [Naxos] increase the preferred download count to 4
 * Add detection and notification of a network failure
+* Fix mac support on eMusic/J specifically: opening files works again.
 V0.25
 * Overhauled the filename cleaning stuff, hopefully finally fixing issues on
   windows. (#56)
