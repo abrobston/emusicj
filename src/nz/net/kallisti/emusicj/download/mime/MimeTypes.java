@@ -38,6 +38,8 @@ public abstract class MimeTypes {
 	public static MimeType PDF;
 	public static MimeType OGG;
 	public static MimeType CUE;
+	public static MimeType FLAC;
+	public static MimeType FLAC2;
 
 	static {
 		try {
@@ -47,6 +49,8 @@ public abstract class MimeTypes {
 			PDF = new MimeType("application/pdf");
 			OGG = new MimeType("application/ogg");
 			CUE = new MimeType("application/cue");
+			FLAC = new MimeType("application/flac");
+			FLAC2 = new MimeType("application/x-flac");
 		} catch (MimeTypeParseException e) {
 			e.printStackTrace();
 		}

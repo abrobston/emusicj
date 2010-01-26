@@ -62,7 +62,8 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	private final ITagSerialiser id3Serialiser;
 
 	static IMimeType[] mimeTypes = { MimeTypes.AUDIO, MimeTypes.APP_OCTET,
-			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE };
+			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE, MimeTypes.FLAC,
+			MimeTypes.FLAC2 };
 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
