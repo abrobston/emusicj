@@ -98,16 +98,6 @@ public class TestOpenDoc {
 
 			}
 
-			public void networkIssuesDetected() {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void removeFailedDownloads() {
-				// TODO Auto-generated method stub
-
-			}
-
 		});
 		Injector injector = Guice.createInjector(Stage.PRODUCTION,
 				new Bindings(), new EmusicjBindings());
