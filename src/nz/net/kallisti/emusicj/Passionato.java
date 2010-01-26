@@ -58,7 +58,7 @@ public class Passionato {
 		view.setState(IEmusicjView.ViewState.STARTUP);
 		IEmusicjController controller = injector
 				.getInstance(IEmusicjController.class);
-		controller.run(args);
+		startApp(controller, args);
 	}
 
 	/**
