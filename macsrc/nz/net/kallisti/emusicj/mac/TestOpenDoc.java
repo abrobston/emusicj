@@ -7,6 +7,7 @@ import nz.net.kallisti.emusicj.bindings.EmusicjBindings;
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.mac.OpenDocHandler;
 import nz.net.kallisti.emusicj.view.IEmusicjView;
 
 import com.google.inject.Guice;
@@ -78,6 +79,16 @@ public class TestOpenDoc {
 			}
 
 			public void cancelDownload(IDownloader dl) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void networkIssuesDetected() {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void removeFailedDownloads() {
 				// TODO Auto-generated method stub
 
 			}
