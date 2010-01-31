@@ -241,8 +241,10 @@ public class EMXMetaFile extends AbstractMetafile {
 				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
-		ITagData tagData = tagMaker.getData(tagNode, extension);
-		dl.setTag(tagData);
+		if (tagNode != null) {
+			ITagData tagData = tagMaker.getData(tagNode, extension);
+			dl.setTag(tagData);
+		}
 		if (expiry != null)
 			dl.setExpiry(expiry);
 		try {
