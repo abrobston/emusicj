@@ -323,7 +323,7 @@ public class PreferencesDialogue {
 		// Add a null at the start of the list so that we can use this to easily
 		// work out what was selected later
 		players.add(0, null);
-
+		selectedPlayer = players.get(selectIndex);
 		dropDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void action(SelectionEvent ev) {
