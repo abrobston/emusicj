@@ -16,6 +16,7 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.tag.FieldDataInvalidException;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTag;
 
 import com.google.inject.Inject;
@@ -62,12 +63,11 @@ public class VorbisWriter implements ITagWriter {
 			return;
 		}
 		Tag fileTag = audioFile.getTag();
-		if (!(fileTag instanceof VorbisCommentTag)) {
+		if (!(fileTag instanceof VorbisCommentTag || fileTag instanceof FlacTag)) {
 			throw new RuntimeException(
 					"File does not appear to be a Vorbis or FLAC file. Got "
 							+ fileTag.getClass() + " instead.");
 		}
-		VorbisCommentTag vorbisTag = (VorbisCommentTag) fileTag;
 		final VorbisData tag = (VorbisData) tagData;
 		Set<String> types = tag.getFrameTypes();
 		for (String type : types) {
@@ -75,7 +75,12 @@ public class VorbisWriter implements ITagWriter {
 			for (ITagFrame frame : frames) {
 				VorbisFrame vf = (VorbisFrame) frame;
 				try {
-					vorbisTag.setField(vf.getKey(), vf.getValue());
+					if (fileTag instanceof VorbisCommentTag)
+						((VorbisCommentTag) fileTag).setField(vf.getKey(), vf
+								.getValue());
+					else if (fileTag instanceof FlacTag)
+						((FlacTag) fileTag)
+								.setField(vf.getKey(), vf.getValue());
 				} catch (FieldDataInvalidException e) {
 					logger.log(Level.WARNING, "Failed to write a tag field to "
 							+ file + ". key=[" + vf.getKey() + "] val=["
