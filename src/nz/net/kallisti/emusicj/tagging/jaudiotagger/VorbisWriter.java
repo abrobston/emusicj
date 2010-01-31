@@ -102,13 +102,22 @@ public class VorbisWriter implements ITagWriter {
 							((VorbisCommentTag) fileTag).setArtworkField(bytes,
 									"image/jpeg");
 						} else if (fileTag instanceof FlacTag) {
-							FlacTag flacTag = (FlacTag) fileTag;
-							Dimension d = TagUtils.getJPEGDimension(bytes);
-							flacTag.setField(flacTag.createArtworkField(bytes,
-									PictureTypes.DEFAULT_ID,
-									ImageFormats.MIME_TYPE_JPEG, "Cover Image",
-									d.width, d.height, 24, 0));
-
+							try {
+								FlacTag flacTag = (FlacTag) fileTag;
+								Dimension d = TagUtils.getJPEGDimension(bytes);
+								flacTag.setField(flacTag
+										.createArtworkField(bytes,
+												PictureTypes.DEFAULT_ID,
+												ImageFormats.MIME_TYPE_JPEG,
+												"Cover Image", d.width,
+												d.height, 24, 0));
+							} catch (RuntimeException e) {
+								logger
+										.log(
+												Level.WARNING,
+												"An error occurred processing the cover image file",
+												e);
+							}
 						}
 					} else {
 						if (fileTag instanceof VorbisCommentTag)
