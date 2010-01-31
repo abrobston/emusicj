@@ -59,7 +59,8 @@ public class VorbisFromXML implements ITagFromXML {
 			} else if (name.equals("grouping")) {
 				tag.addFrame("GROUPING", text);
 			} else if (name.equals("cover")) {
-				// TODO
+				tag.addFrame("COVERART", text); // this is handled specially
+												// when it is written
 			} else if (name.equals("priv_umg")) {
 				tag.addFrame("PRIV_UMG", text);
 			} else if (name.equals("recording_date")) {

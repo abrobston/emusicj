@@ -1,21 +1,12 @@
 package nz.net.kallisti.emusicj.tagging.jid;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.misc.LogUtils;
-import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloadListener;
 import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
+import nz.net.kallisti.emusicj.tagging.TagUtils;
 
 import org.blinkenlights.jid3.ID3Exception;
 import org.blinkenlights.jid3.v2.APICID3V2Frame;
@@ -78,8 +69,6 @@ public class JID3Utils {
 
 	private final Provider<ISimpleDownloader> dlProv;
 	private final Logger logger;
-	private static Map<String, APICID3V2Frame> cachedCovers = Collections
-			.synchronizedMap(new HashMap<String, APICID3V2Frame>());
 
 	@Inject
 	public JID3Utils(Provider<ISimpleDownloader> dlProv) {
@@ -211,61 +200,17 @@ public class JID3Utils {
 	 *         something goes wrong
 	 */
 	private ID3V2Frame getCoverArt(final String url) {
-		APICID3V2Frame cached = cachedCovers.get(url);
-		if (cached != null)
-			return cached;
-		ISimpleDownloader dl = dlProv.get();
+		TagUtils tagUtil = new TagUtils();
+		byte[] bytes = tagUtil.downloadCoverArt(url, dlProv);
+		if (bytes == null)
+			return null;
 		try {
-			dl.setURL(new URL(url));
-		} catch (MalformedURLException e) {
-			logger.log(Level.WARNING, "Invalid URL for cover: " + url, e);
+			return new APICID3V2Frame("image/jpeg", PictureType.FrontCover,
+					null, bytes);
+		} catch (ID3Exception e) {
+			logger.log(Level.WARNING, "Unable to create a cover art image", e);
 			return null;
 		}
-		final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		dl.setOutputStream(bytes);
-		final ArrayBlockingQueue<Object> queue = new ArrayBlockingQueue<Object>(
-				1);
-		ISimpleDownloadListener listener = new ISimpleDownloadListener() {
-			public void downloadFailed(ISimpleDownloader downloader) {
-				logger.log(Level.WARNING, "Downloading cover from " + url
-						+ " failed");
-				// this is a hack because we can't offer null
-				try {
-					queue.put(new Object());
-				} catch (InterruptedException e) {
-					// do nothing
-				}
-			}
-
-			public void downloadSucceeded(ISimpleDownloader downloader,
-					File file) {
-				APICID3V2Frame result = null;
-				try {
-					result = new APICID3V2Frame("image/jpeg",
-							PictureType.FrontCover, null, bytes.toByteArray());
-				} catch (ID3Exception e) {
-					logger.log(Level.WARNING,
-							"Exception creating cover image frame", e);
-				}
-				try {
-					queue.put(result);
-				} catch (InterruptedException e) {
-					// do nothing
-				}
-			}
-		};
-		dl.addListener(listener);
-		dl.start();
-		Object result = null;
-		try {
-			result = queue.poll(120, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			// do nothing
-		}
-		if (!(result instanceof APICID3V2Frame))
-			return null;
-		cachedCovers.put(url, (APICID3V2Frame) result);
-		return (ID3V2Frame) result;
 	}
 
 }
