@@ -19,11 +19,11 @@ import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3FromXML;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.general.IGeneralTagFromXML;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
@@ -51,17 +51,17 @@ public class EMXMetaFile extends AbstractMetafile {
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Logger logger;
-	private final IID3FromXML id3Maker;
+	private final IGeneralTagFromXML tagMaker;
 
 	@Inject
 	public EMXMetaFile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images, IURLFactory urls, IID3FromXML id3Maker) {
+			IImageFactory images, IURLFactory urls, IGeneralTagFromXML tagMaker) {
 		super(images, urls, strings, coverDownloaderProvider);
 		this.prefs = prefs;
 		this.musicDownloaderProvider = musicDownloaderProvider;
-		this.id3Maker = id3Maker;
+		this.tagMaker = tagMaker;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -178,7 +178,7 @@ public class EMXMetaFile extends AbstractMetafile {
 		String diskNumStr = null;
 		String diskCountStr = null;
 		String extension = null;
-		IID3Data id3 = null;
+		Node tagNode = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)
@@ -204,7 +204,7 @@ public class EMXMetaFile extends AbstractMetafile {
 			else if (node.getNodeName().equalsIgnoreCase("disccount"))
 				diskCountStr = node.getFirstChild().getNodeValue();
 			else if (node.getNodeName().equalsIgnoreCase("id3"))
-				id3 = id3Maker.getData(node);
+				tagNode = node;
 			else if (node.getNodeName().equalsIgnoreCase("extension"))
 				extension = node.getFirstChild().getNodeValue();
 		}
@@ -241,7 +241,8 @@ public class EMXMetaFile extends AbstractMetafile {
 				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
-		dl.setID3(id3);
+		ITagData tagData = tagMaker.getData(tagNode, extension);
+		dl.setTag(tagData);
 		if (expiry != null)
 			dl.setExpiry(expiry);
 		try {

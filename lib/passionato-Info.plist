@@ -46,6 +46,7 @@
 			<string>$JAVAROOT/guice-1.0.jar</string>
 			<string>$JAVAROOT/swt.jar</string>
 			<string>$JAVAROOT/JID3.jar</string>
+			<string>$JAVAROOT/jaudiotagger-2.0.1.jar</string>
 		</array>
 		<key>JVMVersion</key>
 		<string>1.5*</string>

@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.id3.jid;
+package nz.net.kallisti.emusicj.tagging.jid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3Serialiser;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,7 +26,7 @@ import com.google.inject.Provider;
  * 
  * @author robin
  */
-public class JID3Serialiser implements IID3Serialiser {
+public class JID3Serialiser implements ITagSerialiser {
 
 	private final Logger logger;
 	private final JID3Utils utils;
@@ -37,7 +37,7 @@ public class JID3Serialiser implements IID3Serialiser {
 		utils = new JID3Utils(dlProv);
 	}
 
-	public IID3Data deserialise(Element el) {
+	public ITagData deserialise(Element el) {
 		NodeList childlings = el.getChildNodes();
 		JID3Data id3 = new JID3Data(utils);
 		for (int i = 0; i < childlings.getLength(); i++) {
@@ -64,21 +64,19 @@ public class JID3Serialiser implements IID3Serialiser {
 		return id3;
 	}
 
-	public void serialise(Element e, Document doc, IID3Data data)
+	public void serialise(Element e, Document doc, ITagData data)
 			throws IllegalArgumentException {
 		if (!(data instanceof JID3Data))
 			throw new IllegalArgumentException(
 					"Supplied data object is not of type JID3Data, it is "
 							+ data.getClass());
 		JID3Data id3 = (JID3Data) data;
-		Element id3El = doc.createElement("id3");
-		e.appendChild(id3El);
 		Map<String, Set<List<String>>> vals = id3.frames;
 		for (String t : vals.keySet()) {
 			Set<List<String>> set = vals.get(t);
 			for (List<String> list : set) {
 				Element typeEl = doc.createElement("type");
-				id3El.appendChild(typeEl);
+				e.appendChild(typeEl);
 				typeEl.setAttribute("code", t);
 				for (String datum : list) {
 					Element d = doc.createElement("datum");

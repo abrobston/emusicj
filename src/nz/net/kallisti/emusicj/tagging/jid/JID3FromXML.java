@@ -1,14 +1,14 @@
-package nz.net.kallisti.emusicj.id3.jid;
+package nz.net.kallisti.emusicj.tagging.jid;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import nz.net.kallisti.emusicj.id3.IID3Data;
-import nz.net.kallisti.emusicj.id3.IID3FromXML;
 import nz.net.kallisti.emusicj.misc.ListUtils;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.network.http.downloader.ISimpleDownloader;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagFromXML;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -24,7 +24,7 @@ import com.google.inject.Provider;
  * 
  * @author robin
  */
-public class JID3FromXML implements IID3FromXML {
+public class JID3FromXML implements ITagFromXML {
 
 	private final Logger logger;
 	private final JID3Utils utils;
@@ -38,7 +38,7 @@ public class JID3FromXML implements IID3FromXML {
 	/**
 	 * Given an XML node, this builds the data object.
 	 */
-	public IID3Data getData(Node id3Node) {
+	public ITagData getData(Node id3Node) {
 		NodeList fields = id3Node.getChildNodes();
 		JID3Data id3 = new JID3Data(utils);
 		for (int i = 0; i < fields.getLength(); i++) {
@@ -161,6 +161,10 @@ public class JID3FromXML implements IID3FromXML {
 		if (cont.equals(""))
 			return null;
 		return ListUtils.list(str, cont);
+	}
+
+	public boolean supportedFile(String filename) {
+		return JID3Writer.supportedFileInternal(filename);
 	}
 
 }

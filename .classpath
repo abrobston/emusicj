@@ -9,6 +9,7 @@
 	<classpathentry kind="lib" path="lib/x86_64/swt.jar" sourcepath="lib/swt-src.zip"/>
 	<classpathentry kind="lib" path="lib/JID3.jar" sourcepath="/jid3"/>
 	<classpathentry kind="lib" path="lib/itunescon.jar" sourcepath="/itunescon"/>
+	<classpathentry kind="lib" path="lib/jaudiotagger-2.0.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

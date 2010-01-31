@@ -1,21 +1,21 @@
-package nz.net.kallisti.emusicj.id3;
+package nz.net.kallisti.emusicj.tagging;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * <p>
- * This serialises and deserialises {@link IID3Data} instances to XML for
+ * This serialises and deserialises {@link ITagData} instances to XML for
  * storage between DLM sessions. The implementation of this should be compatible
  * with the implementations that created the objects.
  * </p>
  * 
  * @author robin
  */
-public interface IID3Serialiser {
+public interface ITagSerialiser {
 
 	/**
-	 * Converts an <code>IID3Data</code> instance into a DOM, writing it to the
+	 * Converts an {@link ITagData} instance into a DOM, writing it to the
 	 * provided element.
 	 * 
 	 * @param e
@@ -28,16 +28,16 @@ public interface IID3Serialiser {
 	 *             if the type of <code>data</code> isn't understood by the
 	 *             serialiser implementation
 	 */
-	public void serialise(Element e, Document doc, IID3Data data)
+	public void serialise(Element e, Document doc, ITagData data)
 			throws IllegalArgumentException;
 
 	/**
-	 * Reads an element and creates and <code>IID3Data</code> from it.
+	 * Reads an element and creates an {@link ITagData} from it.
 	 * 
 	 * @param e
 	 *            the element containing the data
-	 * @return an IID3Data object
+	 * @return an {@link ITagData} object
 	 */
-	public IID3Data deserialise(Element e);
+	public ITagData deserialise(Element e);
 
 }

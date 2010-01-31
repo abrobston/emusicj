@@ -66,7 +66,7 @@ check_version
 
 # swt.jar is referenced twice because it is in a different place on a 
 # checked-out tree versus a dist build
-MY_CLASSPATH="${PROGRAM_DIR}/lib/${MACHINE}/swt.jar:${PROGRAM_DIR}/lib/swt.jar:${PROGRAM_DIR}/lib/commons-codec-1.3.jar:${PROGRAM_DIR}/lib/commons-httpclient-3.0-rc4.jar:${PROGRAM_DIR}/lib/commons-logging-api.jar:${PROGRAM_DIR}/lib/retroweaver-rt-1.2.4.jar:${PROGRAM_DIR}/lib/guice-1.0.jar:${PROGRAM_DIR}/lib/MRJAdapter.jar:${PROGRAM_DIR}/lib/JID3.jar:$CLASSPATH"
+MY_CLASSPATH="${PROGRAM_DIR}/lib/${MACHINE}/swt.jar:${PROGRAM_DIR}/lib/swt.jar:${PROGRAM_DIR}/lib/commons-codec-1.3.jar:${PROGRAM_DIR}/lib/commons-httpclient-3.0-rc4.jar:${PROGRAM_DIR}/lib/commons-logging-api.jar:${PROGRAM_DIR}/lib/retroweaver-rt-1.2.4.jar:${PROGRAM_DIR}/lib/guice-1.0.jar:${PROGRAM_DIR}/lib/MRJAdapter.jar:${PROGRAM_DIR}/lib/JID3.jar:${PROGRAM_DIR}/lib/jaudiotagger-2.0.1.jar:$CLASSPATH"
 
 if [ -e ${PROGRAM_DIR}/bin/nz/net/kallisti/emusicj/EMusicJ.class ] ; then
         java -cp "${PROGRAM_DIR}/bin:$MY_CLASSPATH" "-Djava.library.path=${PROGRAM_DIR}/lib/${MACHINE}" -Denv.http_proxy=${http_proxy} nz.net.kallisti.emusicj.EMusicJ "$@"
