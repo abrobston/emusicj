@@ -142,6 +142,7 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		if (id3 != null) {
 			Element tagEl = doc.createElement("tag");
 			id3Serialiser.serialise(tagEl, doc, id3);
+			el.appendChild(tagEl);
 		}
 	}
 
