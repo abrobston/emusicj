@@ -46,8 +46,6 @@ public class TaggingHook implements ITaggingHook {
 		if (tagData == null)
 			return;
 		File file = dl.getOutputFile();
-		if (!file.getName().toLowerCase().endsWith(".mp3"))
-			return;
 		try {
 			if (id3Tagger.supportedFile(file.toString()))
 				id3Tagger.writeTag(tagData, file);
@@ -56,10 +54,11 @@ public class TaggingHook implements ITaggingHook {
 			else
 				logger.info("No supported tagger for " + file);
 		} catch (Exception e) {
-			logger.log(Level.SEVERE,
-					"An error occurred saving the MP3 tag data", e);
+			logger
+					.log(Level.SEVERE, "An error occurred saving the tag data",
+							e);
 			view.error("Error writing file descriptions",
-					"An error occurred saving ID3 information to the downloaded file:\n"
+					"An error occurred saving tag information to the downloaded file:\n"
 							+ e.getMessage());
 		}
 	}
