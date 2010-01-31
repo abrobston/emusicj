@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.tagging.vorbiscomments;
+package nz.net.kallisti.emusicj.tagging.jaudiotagger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,7 +7,6 @@ import java.util.Set;
 
 import nz.net.kallisti.emusicj.tagging.ITagData;
 import nz.net.kallisti.emusicj.tagging.ITagFrame;
-import adamb.vorbis.CommentField;
 
 /**
  * <p>
@@ -28,8 +27,7 @@ public class VorbisData implements ITagData {
 		Set<String> fieldSet = fields.get(frameType);
 		Set<ITagFrame> result = new HashSet<ITagFrame>();
 		for (String field : fieldSet) {
-			VorbisFrame frame = new VorbisFrame(new CommentField(frameType,
-					field));
+			VorbisFrame frame = new VorbisFrame(frameType, field);
 			result.add(frame);
 		}
 		return result;

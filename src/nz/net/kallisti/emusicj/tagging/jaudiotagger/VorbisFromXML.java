@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.tagging.vorbiscomments;
+package nz.net.kallisti.emusicj.tagging.jaudiotagger;
 
 import nz.net.kallisti.emusicj.tagging.ITagData;
 import nz.net.kallisti.emusicj.tagging.ITagFromXML;

@@ -1,4 +1,4 @@
-package nz.net.kallisti.emusicj.tagging.vorbiscomments;
+package nz.net.kallisti.emusicj.tagging.jaudiotagger;
 
 import java.util.logging.Logger;
 
@@ -11,8 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import adamb.vorbis.CommentField;
 
 import com.google.inject.Inject;
 
@@ -61,10 +59,11 @@ public class VorbisSerialiser implements ITagSerialiser {
 		for (String type : data.getFrameTypes()) {
 			for (ITagFrame f : data.getFramesForType(type)) {
 				VorbisFrame frame = (VorbisFrame) f;
-				CommentField field = frame.getFrame();
+				String key = frame.getKey();
+				String value = frame.getValue();
 				Element fieldEl = doc.createElement("field");
-				fieldEl.setAttribute("name", field.name);
-				fieldEl.setTextContent(field.value);
+				fieldEl.setAttribute("name", key);
+				fieldEl.setTextContent(value);
 				e.appendChild(fieldEl);
 			}
 		}
