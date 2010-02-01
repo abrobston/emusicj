@@ -1,7 +1,6 @@
 package nz.net.kallisti.emusicj.mediaplayer.windows;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,9 +52,6 @@ public class ITunesPlayer implements IWinPlayer {
 		}
 	}
 
-	private final HashMap<String, ITUserPlaylist> playlistCache = new HashMap<String, ITUserPlaylist>(
-			1);
-
 	/**
 	 * This will pull a playlist from a cache. If it's not there, it'll find it
 	 * in iTunes. If it's not there, it'll create it.
@@ -69,8 +65,6 @@ public class ITunesPlayer implements IWinPlayer {
 	 *         one
 	 */
 	private ITUserPlaylist getPlaylist(iTunes itunes, String playlistName) {
-		if (playlistCache.containsKey(playlistName))
-			return playlistCache.get(playlistName);
 		if (playlistName == null) {
 			logger.severe("Unable to add tracks to itunes without a playlist");
 			return null;
@@ -100,8 +94,6 @@ public class ITunesPlayer implements IWinPlayer {
 			}
 			playlist = (ITUserPlaylist) pl;
 		}
-
-		playlistCache.put(playlistName, playlist);
 		return playlist;
 	}
 }
