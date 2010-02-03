@@ -26,7 +26,6 @@ public class ITunesPlayer implements IWinPlayer {
 
 	public static final String KEY = "itunes";
 	public static final String NAME = "iTunes";
-	private iTunes itunes;
 	private final Logger logger;
 
 	public ITunesPlayer() {
@@ -35,8 +34,9 @@ public class ITunesPlayer implements IWinPlayer {
 
 	public synchronized void addTrack(File track, String playlistName) {
 		try {
-			if (itunes == null)
-				itunes = new iTunes();
+			// Note that any objects gotten via this can't be cached, they seem
+			// to expire.
+			iTunes itunes = new iTunes();
 			// Check for our playlist
 			ITUserPlaylist pl = getPlaylist(itunes, playlistName);
 			if (pl == null)
