@@ -183,29 +183,30 @@ public class EMXMetaFile extends AbstractMetafile {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)
 				continue;
-			if (node.getNodeName().equalsIgnoreCase("tracknum"))
+			String nodeName = node.getNodeName();
+			if (nodeName.equalsIgnoreCase("tracknum"))
 				num = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("title"))
+			else if (nodeName.equalsIgnoreCase("title"))
 				title = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("album"))
+			else if (nodeName.equalsIgnoreCase("album"))
 				album = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("artist"))
+			else if (nodeName.equalsIgnoreCase("artist"))
 				artist = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("trackurl"))
+			else if (nodeName.equalsIgnoreCase("trackurl"))
 				track_url = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("albumart"))
+			else if (nodeName.equalsIgnoreCase("albumart"))
 				coverArt = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("genre"))
+			else if (nodeName.equalsIgnoreCase("genre"))
 				genre = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("duration"))
+			else if (nodeName.equalsIgnoreCase("duration"))
 				duration = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("discnum"))
+			else if (nodeName.equalsIgnoreCase("discnum"))
 				diskNumStr = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("disccount"))
+			else if (nodeName.equalsIgnoreCase("disccount"))
 				diskCountStr = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("id3"))
+			else if (nodeName.equalsIgnoreCase("id3"))
 				tagNode = node;
-			else if (node.getNodeName().equalsIgnoreCase("extension"))
+			else if (nodeName.equalsIgnoreCase("extension"))
 				extension = node.getFirstChild().getNodeValue();
 		}
 		URL url;
