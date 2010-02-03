@@ -192,6 +192,7 @@ public abstract class Preferences implements IPreferences {
 
 	public String getFilename(int track, String song, String album,
 			String artist, String format, Integer disk, Integer diskNum) {
+		// TODO refactor this out of preferences - it shouldn't be here
 		DecimalFormat df = new DecimalFormat("00");
 		String[] filePatternParts;
 		// Ticket #70 - turn '/' and '\' to whatever is appropriate on this
