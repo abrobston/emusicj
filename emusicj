@@ -62,6 +62,9 @@ else
 fi
 MACHINE=`uname -m`
 
+# Fix SWT on newer Ubuntu
+export GDK_NATIVE_WINDOWS=1
+
 check_version
 
 # swt.jar is referenced twice because it is in a different place on a 
