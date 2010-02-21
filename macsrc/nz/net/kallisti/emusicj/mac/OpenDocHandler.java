@@ -1,5 +1,7 @@
 package nz.net.kallisti.emusicj.mac;
 
+import java.lang.reflect.Method;
+
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.mac.access.OSXAccess;
 
@@ -34,6 +36,8 @@ public class OpenDocHandler {
 	private static final int typeText = ('T' << 24) + ('E' << 16) + ('X' << 8)
 			+ 'T';
 
+	private static int memmove_type;
+
 	private final IEmusicjController controller;
 
 	public OpenDocHandler(IEmusicjController controller) {
@@ -53,7 +57,7 @@ public class OpenDocHandler {
 						OS.kEventParamDirectObject, typeAEList, aeDesc);
 				if (result != OS.noErr) {
 					System.err
-							.println("OSX: Could call AEGetParamDesc. Error: "
+							.println("OSX: Could not call AEGetParamDesc. Error: "
 									+ result);
 					return OS.noErr;
 				}
@@ -77,7 +81,7 @@ public class OpenDocHandler {
 					if (OS.AEGetNthPtr(aeDesc, i + 1, OS.typeFSRef, aeKeyword,
 							typeCode, dataPtr, maximumSize, actualSize) == OS.noErr) {
 						byte[] fsRef = new byte[actualSize[0]];
-						OS.memcpy(fsRef, dataPtr, actualSize[0]);
+						memmove(fsRef, dataPtr, actualSize[0]);
 						int dirUrl = OS.CFURLCreateFromFSRef(
 								OS.kCFAllocatorDefault, fsRef);
 						int dirString = OS.CFURLCopyFileSystemPath(dirUrl,
@@ -95,7 +99,7 @@ public class OpenDocHandler {
 					if (OS.AEGetNthPtr(aeDesc, i + 1, typeText, aeKeyword,
 							typeCode, dataPtr, maximumSize, actualSize) == OS.noErr) {
 						byte[] urlRef = new byte[actualSize[0]];
-						OS.memcpy(urlRef, dataPtr, actualSize[0]);
+						memmove(urlRef, dataPtr, actualSize[0]);
 						fileNames[i] = new String(urlRef);
 					}
 
@@ -185,6 +189,60 @@ public class OpenDocHandler {
 		}
 
 		return OS.eventNotHandledErr;
+	}
+
+	/**
+	 * This seems to support the changing private API in SWT.
+	 */
+	@SuppressWarnings("unchecked")
+	private static void memmove(byte[] dest, int src, int size) {
+		switch (memmove_type) {
+		case 0:
+			try {
+				OSXAccess.memmove(dest, src, size);
+				memmove_type = 0;
+				return;
+			} catch (Throwable e) {
+			}
+			//$FALL-THROUGH$
+		case 1:
+			try {
+				Class cMemMove = Class
+						.forName("org.eclipse.swt.internal.carbon.OS");
+
+				Method method = cMemMove.getMethod("memmove", new Class[] {
+						byte[].class, Integer.TYPE, Integer.TYPE });
+
+				method.invoke(null, new Object[] { dest, new Integer(src),
+						new Integer(size) });
+				memmove_type = 1;
+				return;
+			} catch (Throwable e) {
+			}
+
+			//$FALL-THROUGH$
+		case 2:
+			try {
+				Class cMemMove = Class
+						.forName("org.eclipse.swt.internal.carbon.OS");
+
+				Method method = cMemMove.getMethod("memcpy", new Class[] {
+						byte[].class, Integer.TYPE, Integer.TYPE });
+
+				method.invoke(null, new Object[] { dest, new Integer(src),
+						new Integer(size) });
+
+				memmove_type = 2;
+				return;
+			} catch (Throwable e) {
+			}
+
+			//$FALL-THROUGH$
+		default:
+			break;
+		}
+
+		memmove_type = 3;
 	}
 
 }
