@@ -32,7 +32,6 @@ public class PassionatoStrings extends AbstractStrings {
 
 	@Override
 	public String getAppNameArticle() {
-		// No definite article here I think
 		return "the ";
 	}
 
