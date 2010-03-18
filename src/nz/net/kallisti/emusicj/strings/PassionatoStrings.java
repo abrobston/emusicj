@@ -85,7 +85,7 @@ public class PassionatoStrings extends AbstractStrings {
 	}
 
 	public String getVersion() {
-		return "1.0-bzr";
+		return "1.0";
 	}
 
 }
