@@ -33,7 +33,7 @@
       <CHANNELS>2</CHANNELS>
       <DURATION>120</DURATION>
       <ALBUMART>http://www.kallisti.net.nz/~robin/test.jpg</ALBUMART>
-      <TAG>
+      <TAGS>
                 <TITLE>A Test MP3 File</TITLE>
                 <ALBUM>Test Album</ALBUM>
                 <ARTIST>Test Artist</ARTIST>
@@ -49,7 +49,7 @@
                 <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
                 <GROUPING>Grouping is used by iTunes</GROUPING>
                 <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
-      </TAG>
+      </TAGS>
     </TRACK>
     <TRACK>
       <TRACKID>test.ogg</TRACKID>
@@ -64,7 +64,7 @@
       <CHANNELS>2</CHANNELS>
       <DURATION>120</DURATION>
       <ALBUMART>http://www.kallisti.net.nz/~robin/test.jpg</ALBUMART>
-      <TAG>
+      <TAGS>
                 <TITLE>A Test Ogg Vorbis File</TITLE>
                 <ALBUM>Test Album</ALBUM>
                 <ARTIST>Test Artist</ARTIST>
@@ -80,7 +80,7 @@
                 <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
                 <GROUPING>Grouping is used by iTunes</GROUPING>
                 <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
-      </TAG>
+      </TAGS>
     </TRACK>
     <TRACK>
       <TRACKID>test.flac</TRACKID>
@@ -95,7 +95,7 @@
       <CHANNELS>2</CHANNELS>
       <DURATION>120</DURATION>
       <ALBUMART>http://www.kallisti.net.nz/~robin/test.jpg</ALBUMART>
-      <TAG>
+      <TAGS>
                 <TITLE>A Test FLAC File</TITLE>
                 <ALBUM>Test Album</ALBUM>
                 <ARTIST>Test Artist</ARTIST>
@@ -111,7 +111,7 @@
                 <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
                 <GROUPING>Grouping is used by iTunes</GROUPING>
                 <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
-      </TAG>
+      </TAGS>
     </TRACK>
   </TRACKLIST>
 </PACKAGE>
