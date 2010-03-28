@@ -49,6 +49,8 @@
                 <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
                 <GROUPING>Grouping is used by iTunes</GROUPING>
                 <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
+		<PUBLISHER>Test Publisher</PUBLISHER>
+		<LYRICIST>Test Lyricist</LYRICIST>
       </TAGS>
     </TRACK>
     <TRACK>
@@ -80,6 +82,8 @@
                 <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
                 <GROUPING>Grouping is used by iTunes</GROUPING>
                 <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
+		<PUBLISHER>Test Publisher</PUBLISHER>
+		<LYRICIST>Test Lyricist</LYRICIST>
       </TAGS>
     </TRACK>
     <TRACK>
@@ -111,6 +115,8 @@
                 <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
                 <GROUPING>Grouping is used by iTunes</GROUPING>
                 <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
+		<PUBLISHER>Test Publisher</PUBLISHER>
+		<LYRICIST>Test Lyricist</LYRICIST>
       </TAGS>
     </TRACK>
   </TRACKLIST>
