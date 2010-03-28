@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!-- this downloads a handful of tracks of different types and tags them -->
+<PACKAGE>
+  <TITLE>DownloadPackage_RS63614_6182009175542.col</TITLE>
+  <ACTION>download</ACTION>
+  <TARGET>Not used</TARGET>
+  <PROVIDER>
+    <AUTHOR>CLASSICSONLINE.com</AUTHOR>
+    <NAME>CLASSICSONLINE.com</NAME>
+    <URL>http://www.classicsonline.com</URL>
+    <COPYRIGHT>Portions Copyright (C) 2004 Naxos Global Distribution Ltd.; see http://www.naxos.com for more details</COPYRIGHT>
+    <CONTACT>customer.service@classicsonline.com</CONTACT>
+  </PROVIDER>
+  <SERVER>
+    <NAME>NAXOS.com</NAME>
+    <DESC>NAXOS content server</DESC>
+    <NETNAME>www.kallisti.net.nz</NETNAME>
+    <LOCATION>/~robin/testmusic/%f</LOCATION>
+    <KEY>Not used</KEY>
+  </SERVER>
+  <TRACKLIST>
+    <LISTID>0</LISTID>
+    <TRACK>
+      <TRACKID>test.mp3</TRACKID>
+      <TRACKNUM>1</TRACKNUM>
+      <TITLE>A Test MP3 File</TITLE>
+      <ALBUM>Test Album</ALBUM>
+      <ARTIST>Test Artist</ARTIST>
+      <GENRE>Classical Music</GENRE>
+      <FILENAME>test.mp3</FILENAME>
+      <FORMAT>.mp3</FORMAT>
+      <QUALITY>0</QUALITY>
+      <CHANNELS>2</CHANNELS>
+      <DURATION>120</DURATION>
+      <ALBUMART>http://www.kallisti.net.nz/~robin/test.jpg</ALBUMART>
+      <TAG>
+                <TITLE>A Test MP3 File</TITLE>
+                <ALBUM>Test Album</ALBUM>
+                <ARTIST>Test Artist</ARTIST>
+                <COMPOSER>Test Composer</COMPOSER>
+                <GENRE>Test Genre</GENRE>
+                <FILENAME>Test Filename</FILENAME>
+                <CONDUCTOR>Test Conductor</CONDUCTOR>
+                <ISRC>123456789012</ISRC>
+                <DISC_NUMBER>1</DISC_NUMBER>
+                <TRACK>1</TRACK>
+                <COPYRIGHT year="2009">Some Label Ltd</COPYRIGHT>
+                <WWW>www.classicsonline.com</WWW>
+                <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
+                <GROUPING>Grouping is used by iTunes</GROUPING>
+                <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
+      </TAG>
+    </TRACK>
+    <TRACK>
+      <TRACKID>test.ogg</TRACKID>
+      <TRACKNUM>2</TRACKNUM>
+      <TITLE>A Test Ogg Vorbis File</TITLE>
+      <ALBUM>Test Album</ALBUM>
+      <ARTIST>Test Artist</ARTIST>
+      <GENRE>Classical Music</GENRE>
+      <FILENAME>test.ogg</FILENAME>
+      <FORMAT>.ogg</FORMAT>
+      <QUALITY>0</QUALITY>
+      <CHANNELS>2</CHANNELS>
+      <DURATION>120</DURATION>
+      <ALBUMART>http://www.kallisti.net.nz/~robin/test.jpg</ALBUMART>
+      <TAG>
+                <TITLE>A Test Ogg Vorbis File</TITLE>
+                <ALBUM>Test Album</ALBUM>
+                <ARTIST>Test Artist</ARTIST>
+                <COMPOSER>Test Composer</COMPOSER>
+                <GENRE>Test Genre</GENRE>
+                <FILENAME>Test Filename</FILENAME>
+                <CONDUCTOR>Test Conductor</CONDUCTOR>
+                <ISRC>123456789012</ISRC>
+                <DISC_NUMBER>1</DISC_NUMBER>
+                <TRACK>2</TRACK>
+                <COPYRIGHT year="2009">Some Label Ltd</COPYRIGHT>
+                <WWW>www.classicsonline.com</WWW>
+                <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
+                <GROUPING>Grouping is used by iTunes</GROUPING>
+                <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
+      </TAG>
+    </TRACK>
+    <TRACK>
+      <TRACKID>test.flac</TRACKID>
+      <TRACKNUM>3</TRACKNUM>
+      <TITLE>A Test FLAC File</TITLE>
+      <ALBUM>Test Album</ALBUM>
+      <ARTIST>Test Artist</ARTIST>
+      <GENRE>Classical Music</GENRE>
+      <FILENAME>test.flac</FILENAME>
+      <FORMAT>.flac</FORMAT>
+      <QUALITY>0</QUALITY>
+      <CHANNELS>2</CHANNELS>
+      <DURATION>120</DURATION>
+      <ALBUMART>http://www.kallisti.net.nz/~robin/test.jpg</ALBUMART>
+      <TAG>
+                <TITLE>A Test FLAC File</TITLE>
+                <ALBUM>Test Album</ALBUM>
+                <ARTIST>Test Artist</ARTIST>
+                <COMPOSER>Test Composer</COMPOSER>
+                <GENRE>Test Genre</GENRE>
+                <FILENAME>Test Filename</FILENAME>
+                <CONDUCTOR>Test Conductor</CONDUCTOR>
+                <ISRC>123456789012</ISRC>
+                <DISC_NUMBER>1</DISC_NUMBER>
+                <TRACK>3</TRACK>
+                <COPYRIGHT year="2009">Some Label Ltd</COPYRIGHT>
+                <WWW>www.classicsonline.com</WWW>
+                <COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
+                <GROUPING>Grouping is used by iTunes</GROUPING>
+                <ALBUM_ARTIST>Test Album Artist</ALBUM_ARTIST>
+      </TAG>
+    </TRACK>
+  </TRACKLIST>
+</PACKAGE>
