@@ -26,6 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 
+import nz.net.kallisti.emusicj.tagging.ITagData;
+
 import org.w3c.dom.Element;
 
 /**
@@ -77,5 +79,13 @@ public interface IMusicDownloader extends IDownloader {
 	 *            expiry for this track.
 	 */
 	public void setExpiry(Date expiry);
+
+	/**
+	 * Sets the tag data that will be saved to the audio file after it is saved.
+	 * 
+	 * @param tagData
+	 *            the audio data
+	 */
+	public void setTag(ITagData tagData);
 
 }

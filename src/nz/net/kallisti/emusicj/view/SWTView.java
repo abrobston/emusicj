@@ -34,6 +34,7 @@ import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.controller.IPreferences;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
 import nz.net.kallisti.emusicj.misc.BrowserLauncher;
 import nz.net.kallisti.emusicj.misc.FolderOpener;
 import nz.net.kallisti.emusicj.misc.FolderOpenerException;
@@ -47,6 +48,7 @@ import nz.net.kallisti.emusicj.urls.IDynamicURLListener;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 import nz.net.kallisti.emusicj.view.menu.IMenuBuilder;
+import nz.net.kallisti.emusicj.view.style.IAppStyle;
 import nz.net.kallisti.emusicj.view.swtwidgets.AboutDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.DownloadDisplay;
 import nz.net.kallisti.emusicj.view.swtwidgets.FileInfoPanel;
@@ -56,6 +58,7 @@ import nz.net.kallisti.emusicj.view.swtwidgets.StatusLine;
 import nz.net.kallisti.emusicj.view.swtwidgets.SystemTrayManager;
 import nz.net.kallisti.emusicj.view.swtwidgets.UpdateDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.graphics.DynamicImage;
+import nz.net.kallisti.emusicj.view.swtwidgets.hooks.ICloseListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.network.NetworkFailureDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.network.ProxyDialogue;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.ISelectableControl;
@@ -142,11 +145,14 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 	private final IMenuBuilder menuBuilder;
 	private Image pauseIcon;
 	private Image resumeIcon;
+	private final IAppStyle appStyle;
+	private final IMediaPlayerSync mediaSync;
 
 	@Inject
 	public SWTView(IPreferences prefs, IStrings strings,
 			IEmusicjController controller, IImageFactory imageFactory,
-			IURLFactory urlFactory, IMenuBuilder menuBuilder) {
+			IURLFactory urlFactory, IMenuBuilder menuBuilder,
+			IAppStyle appStyle, IMediaPlayerSync mediaSync) {
 		super();
 		this.prefs = prefs;
 		this.strings = strings;
@@ -154,6 +160,8 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		this.imageFactory = imageFactory;
 		this.urlFactory = urlFactory;
 		this.menuBuilder = menuBuilder;
+		this.appStyle = appStyle;
+		this.mediaSync = mediaSync;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -165,6 +173,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 			display = new Display();
 			imageFactory.setCacheDir(prefs.getIconCacheDir());
 			imageFactory.setDisplay(display);
+			appStyle.init(display);
 			shell = new Shell(display);
 			shell.setText(strings.getAppName());
 			buildMenuBar(shell);
@@ -191,10 +200,18 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 				shell.setSize(550, 550);
 			}
 			shell.open();
+			if (prefs.isFirstLaunch() && prefs.showPrefsOnFirstRun()) {
+				controller.deferMetafileLoad();
+			}
 			deferViewEvent(new Runnable() {
 				public void run() {
-					if (prefs.isFirstLaunch()) {
-						displayPreferences();
+					if (prefs.isFirstLaunch() && prefs.showPrefsOnFirstRun()) {
+						displayPreferences(new ICloseListener<Object>() {
+							public void closed(Object widget, boolean okClose,
+									Object data) {
+								controller.restoreMetafileLoad();
+							}
+						});
 					}
 					updateFileInfoDisplay();
 				}
@@ -294,6 +311,7 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 		// This contains the toolbar, and lets us put an image on the right
 		// side
 		final Composite toolbarRow = new Composite(outerToolbar, SWT.NONE);
+		appStyle.styleToolbar(toolbarRow);
 		GridLayout toolbarLayout = new GridLayout(2, false);
 		toolbarLayout.horizontalSpacing = 0;
 		toolbarLayout.marginRight = 0;
@@ -550,11 +568,27 @@ public class SWTView implements IEmusicjView, IDownloadsModelListener,
 
 	/**
 	 * Brings up the preferences dialogue
+	 * 
+	 * @param closeListener
+	 *            if this is set, then it will be notified when the dialogue is
+	 *            closed
+	 */
+	public void displayPreferences(ICloseListener<Object> closeListener) {
+		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
+				strings, mediaSync);
+		if (closeListener != null)
+			prefs.addCloseListener(closeListener);
+		prefs.open();
+	}
+
+	/**
+	 * Brings up the preference dialogue
+	 * 
+	 * Implementation note: this no-args version is needed to make the menu
+	 * callback system work.
 	 */
 	public void displayPreferences() {
-		PreferencesDialogue prefs = new PreferencesDialogue(shell, this.prefs,
-				strings);
-		prefs.open();
+		this.displayPreferences(null);
 	}
 
 	public void openFile() {
