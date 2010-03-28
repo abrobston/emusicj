@@ -60,7 +60,7 @@ public class VorbisFromXML implements ITagFromXML {
 				tag.addFrame("GROUPING", text);
 			} else if (name.equals("cover")) {
 				tag.addFrame("COVERART", text); // this is handled specially
-												// when it is written
+				// when it is written
 			} else if (name.equals("priv_umg")) {
 				tag.addFrame("PRIV_UMG", text);
 			} else if (name.equals("recording_date")) {
@@ -71,6 +71,10 @@ public class VorbisFromXML implements ITagFromXML {
 				// currently ignored
 			} else if (name.equals("recording_year")) {
 				// currently ignored
+			} else if (name.equals("publisher")) {
+				tag.addFrame("PUBLISHER", text);
+			} else if (name.equals("lyricist")) {
+				tag.addFrame("LYRICIST", text);
 			}
 		}
 		return tag;

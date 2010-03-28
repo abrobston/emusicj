@@ -113,6 +113,10 @@ public class JID3FromXML implements ITagFromXML {
 						hourNode, minuteNode));
 			} else if (name.equals("recording_year")) {
 				id3.addFrame(JID3Utils.ID3_RECORDING_YEAR, makeNodeList(node));
+			} else if (name.equals("publisher")) {
+				id3.addFrame(JID3Utils.ID3_PUBLISHER, makeNodeList(node));
+			} else if (name.equals("lyricist")) {
+				id3.addFrame(JID3Utils.ID3_LYRICIST, makeNodeList(node));
 			}
 		}
 		return id3;
