@@ -35,9 +35,6 @@ public class GeneralFromXML implements IGeneralTagFromXML {
 		logger = LogUtils.getLogger(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see nz.net.kallisti.emusicj.tagging.general.IGeneralTagFromXML#getData(org.w3c.dom.Node, java.lang.String)
-	 */
 	public ITagData getData(Node tagNode, String extension) {
 		if (id3Tagger.supportedFile(extension))
 			return id3Tagger.getData(tagNode);
