@@ -192,6 +192,7 @@ public abstract class Preferences implements IPreferences {
 
 	public String getFilename(int track, String song, String album,
 			String artist, String format, Integer disk, Integer diskNum) {
+		// TODO refactor this out of preferences - it shouldn't be here
 		DecimalFormat df = new DecimalFormat("00");
 		String[] filePatternParts;
 		// Ticket #70 - turn '/' and '\' to whatever is appropriate on this
@@ -245,6 +246,12 @@ public abstract class Preferences implements IPreferences {
 								fname.length() > windowsMaxPathLength ? windowsMaxPathLength
 										: fname.length());
 			}
+		}
+		format = format.toLowerCase();
+		// Passionato test files aren't always including the leading '.' on
+		// format
+		if (!format.startsWith(".")) {
+			format = "." + format;
 		}
 		return fname.toString() + format;
 	}
@@ -521,6 +528,26 @@ public abstract class Preferences implements IPreferences {
 
 	public boolean showTrackControls() {
 		return true;
+	}
+
+	/**
+	 * By default we show the prefs
+	 */
+	public boolean showPrefsOnFirstRun() {
+		return true;
+	}
+
+	public String getMediaPlayerSync() {
+		return getProperty("mediaSync", null);
+	}
+
+	public void setMediaPlayerSync(String mediaPlayer) {
+		if (mediaPlayer == null) {
+			props.remove("mediaSync");
+		} else {
+			setProperty("mediaSync", mediaPlayer);
+		}
+		notify(Pref.MEDIA_PLAYER_SYNC);
 	}
 
 }

@@ -195,4 +195,28 @@ public interface IPreferences {
 	 */
 	public boolean showTrackControls();
 
+	/**
+	 * If this returns true, then a preferences dialogue should be shown on the
+	 * first launch of the application.
+	 * 
+	 * @return true to show prefs, false to begin with the defaults
+	 */
+	public boolean showPrefsOnFirstRun();
+
+	/*
+	 * Sets the media player that tracks will be synced to.
+	 * 
+	 * @param mediaPlayer the media player key to use. Set to <code>null</code>
+	 * to remove any key.
+	 */
+	public void setMediaPlayerSync(String mediaPlayer);
+
+	/**
+	 * Gets the media player sync key
+	 * 
+	 * @return the key string for the media player to sync to, or
+	 *         <code>null</code> if none is defined.
+	 */
+	public String getMediaPlayerSync();
+
 }

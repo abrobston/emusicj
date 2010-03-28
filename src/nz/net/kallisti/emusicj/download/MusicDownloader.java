@@ -32,9 +32,13 @@ import nz.net.kallisti.emusicj.download.mime.MimeTypes;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
 import nz.net.kallisti.emusicj.network.failure.INetworkFailure;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.inject.Inject;
 
@@ -54,14 +58,20 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	File coverArt;
 	String genre;
 	int duration = -1;
+	ITagData id3;
+	private final ITagSerialiser id3Serialiser;
+
 	static IMimeType[] mimeTypes = { MimeTypes.AUDIO, MimeTypes.APP_OCTET,
-			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE };
+			MimeTypes.PDF, MimeTypes.OGG, MimeTypes.CUE, MimeTypes.FLAC,
+			MimeTypes.FLAC2 };
 
 	@Inject
 	public MusicDownloader(IPreferences prefs,
 			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
-			INetworkFailure networkFailure) {
-		super(prefs, clientProvider, cleanupFiles, networkFailure);
+			INetworkFailure networkFailure, ITagSerialiser id3Serialiser,
+			IDownloadHooks dlHooks) {
+		super(prefs, clientProvider, cleanupFiles, networkFailure, dlHooks);
+		this.id3Serialiser = id3Serialiser;
 	}
 
 	public void setDownloader(URL url, File outputFile, int trackNum,
@@ -103,6 +113,14 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		String tCov = el.getAttribute("coverart");
 		if (tCov != null)
 			coverArt = new File(tCov);
+		NodeList nodes = el.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node n = nodes.item(i);
+			if (n.getNodeName().toLowerCase().equals("tag")
+					&& n instanceof Element) {
+				id3 = id3Serialiser.deserialise((Element) n);
+			}
+		}
 	}
 
 	@Override
@@ -121,6 +139,11 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 		el.setAttribute("duration", duration + "");
 		if (coverArt != null)
 			el.setAttribute("coverart", coverArt.toString());
+		if (id3 != null) {
+			Element tagEl = doc.createElement("tag");
+			id3Serialiser.serialise(tagEl, doc, id3);
+			el.appendChild(tagEl);
+		}
 	}
 
 	public String getAlbumName() {
@@ -171,6 +194,14 @@ public class MusicDownloader extends HTTPDownloader implements IMusicDownloader 
 	@Override
 	public void setExpiry(Date expiry) {
 		super.setExpiry(expiry);
+	}
+
+	public void setTag(ITagData id3) {
+		this.id3 = id3;
+	}
+
+	public ITagData getID3() {
+		return this.id3;
 	}
 
 }

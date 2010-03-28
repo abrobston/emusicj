@@ -2,7 +2,10 @@ package nz.net.kallisti.emusicj.view.menu;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.view.SWTView;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
@@ -26,9 +29,11 @@ import com.google.inject.Inject;
  */
 public abstract class AbstractMenuBuilder implements IMenuBuilder {
 
+	private final Logger logger;
+
 	@Inject
 	public AbstractMenuBuilder() {
-
+		logger = LogUtils.getLogger(this);
 	}
 
 	public Menu getMenu(Shell shell, SWTView view) {
@@ -81,7 +86,9 @@ public abstract class AbstractMenuBuilder implements IMenuBuilder {
 							(Class[]) null);
 					m.invoke(handler, (Object[]) null);
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					logger.log(Level.WARNING,
+							"Unexpected exception while running callback '"
+									+ callback + "'", ex);
 				}
 			}
 		};

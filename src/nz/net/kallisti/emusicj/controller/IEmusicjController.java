@@ -146,4 +146,18 @@ public interface IEmusicjController {
 	 */
 	public void networkIssuesDetected();
 
+	/**
+	 * If there is some reason that metafiles shouldn't be loaded just yet, such
+	 * as if file paths are about to be changed, this should be called. Note
+	 * that it stacks, so two calls of this will require two calls to
+	 * {@link #restoreMetafileLoad()} before they are processed.
+	 */
+	public void deferMetafileLoad();
+
+	/**
+	 * This undoes a call to {@link #deferMetafileLoad()}. If this cancels out
+	 * the remaining defer call, then any deferred loads are processed now.
+	 */
+	public void restoreMetafileLoad();
+
 }

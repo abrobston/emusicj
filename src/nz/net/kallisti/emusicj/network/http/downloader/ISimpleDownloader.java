@@ -1,6 +1,7 @@
 package nz.net.kallisti.emusicj.network.http.downloader;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URL;
 
 /**
@@ -46,12 +47,21 @@ public interface ISimpleDownloader {
 
 	/**
 	 * The file to save to. If it already exists, it may be overwritten. If it
-	 * can't be written to, a failure is registered.
+	 * can't be written to, a failure is registered. If this is called, any
+	 * stream set by {@link #setOutputStream(OutputStream)} is not used.
 	 * 
 	 * @param file
 	 *            the file to save to
 	 */
 	public void setOutputFile(File file);
+
+	/**
+	 * Set a stream to write to. If this is called, a file won't be used.
+	 * 
+	 * @param stream
+	 *            the stream
+	 */
+	public void setOutputStream(OutputStream stream);
 
 	/**
 	 * Starts the download. This will return immediately, and the download

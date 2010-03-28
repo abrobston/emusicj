@@ -42,6 +42,7 @@ Available targets:
 	<target name="naxos"	depends="naxos_props,builddist" />
 	<target name="reggaecountry"	depends="reggaecountry_props,builddist" />
 	<target name="bluepie"	depends="bluepie_props,builddist" />
+	<target name="passionato"	depends="passionato_props,builddist" />
 	
 	<target name="emusicj_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.EMusicJ"/>
@@ -86,6 +87,16 @@ Available targets:
 		<property name="exe.name" value="ReggaeCountry.exe" />
 	</target>
 	
+	<target name="passionato_props">
+		<property name="main.class" value="nz.net.kallisti.emusicj.Passionato"/>
+		<property name="dist.dir" value="${basedir}/dist/passionato"/>
+		<property name="jar.name" value="${basedir}/passionato.jar"/>
+		<property name="osx.jar.name" value="${basedir}/osx-passionato.jar"/>
+		<property name="app.name" value="passionato" />
+		<property name="app.name.caps" value="Passionato" />
+		<property name="exe.name" value="Passionato.exe" />
+	</target>
+
 	<target name="bluepie_props">
 		<property name="main.class" value="nz.net.kallisti.emusicj.BluePie"/>
 		<property name="dist.dir" value="${basedir}/dist/bluepie"/>
@@ -101,11 +112,11 @@ Available targets:
 		
 		<!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
 		<javac srcdir="${src.dir}" destdir="${build.dir}" debug="yes" nowarn="on"
-			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar"
+			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar:${lib.dir}/JID3.jar:${lib.dir}/itunescon.jar:${lib.dir}/jaudiotagger-2.0.1.jar"
 			target="1.5"/>
 		
 		<!-- copy the images in. A way to combine this into one statement would
-			be nice -->
+			be nice. Don't forget to update the compile-osx target too. -->
 		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/emusicj">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/emusicj/*.png"/>
@@ -117,6 +128,10 @@ Available targets:
 		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry/*.png"/>
+		</copy>
+		<copy todir="${build.dir}/nz/net/kallisti/emusicj/view/images/passionato">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/passionato/*.png"/>
 		</copy>
 	</target>
 	
@@ -238,7 +253,7 @@ Available targets:
 		
 		<!-- <depend srcdir="${src.dir}" destdir="${build.dir}" closure="yes"/> -->
 		<javac destdir="${osx.build.dir}" debug="yes" nowarn="on"
-			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar"
+			classpath="${lib.dir}/Power Macintosh/swt.jar:${lib.dir}/commons-codec-1.3.jar:${lib.dir}/commons-httpclient-3.0-rc4.jar:${lib.dir}/guice-1.0.jar:${lib.dir}/JID3.jar:${lib.dir}/itunescon.jar:${lib.dir}/jaudiotagger-2.0.1.jar"
 			target="1.5">
 			<src path="${src.dir}" />
 			<src path="${osx.src.dir}" />			
@@ -257,6 +272,10 @@ Available targets:
 		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry">
 			<fileset
 				file="${src.dir}/nz/net/kallisti/emusicj/view/images/reggaecountry/*.png"/>
+		</copy>
+		<copy todir="${osx.build.dir}/nz/net/kallisti/emusicj/view/images/passionato">
+			<fileset
+				file="${src.dir}/nz/net/kallisti/emusicj/view/images/passionato/*.png"/>
 		</copy>
 		<!-- now create a jar -->
 		<jar jarfile="${osx.jar.name}">

@@ -79,17 +79,22 @@ public class TestOpenDoc {
 			}
 
 			public void cancelDownload(IDownloader dl) {
-				// TODO Auto-generated method stub
 
 			}
 
 			public void networkIssuesDetected() {
-				// TODO Auto-generated method stub
 
 			}
 
 			public void removeFailedDownloads() {
-				// TODO Auto-generated method stub
+
+			}
+
+			public void deferMetafileLoad() {
+
+			}
+
+			public void restoreMetafileLoad() {
 
 			}
 

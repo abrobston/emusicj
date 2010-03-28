@@ -55,12 +55,16 @@ public class StatusLine extends Composite {
 	}
 
 	public void setText(String text) {
+		if (label.isDisposed())
+			return;
 		label.setText(SWTUtils.deMonic(text));
 		label.pack();
 		pack();
 	}
 
 	public void unsetText() {
+		if (label.isDisposed())
+			return;
 		label.setText("");
 		label.pack();
 	}

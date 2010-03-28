@@ -23,18 +23,29 @@ package nz.net.kallisti.emusicj.bindings;
 
 import nz.net.kallisti.emusicj.bindingtypes.Emusic;
 import nz.net.kallisti.emusicj.bindingtypes.EmusicEmx;
+import nz.net.kallisti.emusicj.bindingtypes.ID3Tagger;
 import nz.net.kallisti.emusicj.bindingtypes.Naxos;
 import nz.net.kallisti.emusicj.bindingtypes.PlainText;
+import nz.net.kallisti.emusicj.bindingtypes.VorbisTagger;
 import nz.net.kallisti.emusicj.controller.EmusicjController;
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.download.CoverDownloader;
 import nz.net.kallisti.emusicj.download.HTTPDownloader;
 import nz.net.kallisti.emusicj.download.ICoverDownloader;
+import nz.net.kallisti.emusicj.download.IDownloadHooks;
 import nz.net.kallisti.emusicj.download.IDownloader;
 import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.download.MusicDownloader;
+import nz.net.kallisti.emusicj.download.hooks.StandardDownloadHooks;
+import nz.net.kallisti.emusicj.download.hooks.tagging.ITaggingHook;
+import nz.net.kallisti.emusicj.download.hooks.tagging.TaggingHook;
 import nz.net.kallisti.emusicj.files.cleanup.CleanupFiles;
 import nz.net.kallisti.emusicj.files.cleanup.ICleanupFiles;
+import nz.net.kallisti.emusicj.mediaplayer.ConfigureMediaPlayer;
+import nz.net.kallisti.emusicj.mediaplayer.IConfigureMediaPlayer;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
+import nz.net.kallisti.emusicj.mediaplayer.NoopMediaPlayerSync;
+import nz.net.kallisti.emusicj.mediaplayer.windows.WindowsPlayers;
 import nz.net.kallisti.emusicj.metafiles.EMPMetafile;
 import nz.net.kallisti.emusicj.metafiles.EMXMetaFile;
 import nz.net.kallisti.emusicj.metafiles.IMetafile;
@@ -42,6 +53,7 @@ import nz.net.kallisti.emusicj.metafiles.IMetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.MetafileLoader;
 import nz.net.kallisti.emusicj.metafiles.NaxosMetafile;
 import nz.net.kallisti.emusicj.metafiles.PlainTextMetafile;
+import nz.net.kallisti.emusicj.misc.PlatformUtils;
 import nz.net.kallisti.emusicj.misc.files.FileNameCleaner;
 import nz.net.kallisti.emusicj.misc.files.IFileNameCleaner;
 import nz.net.kallisti.emusicj.models.DownloadsModel;
@@ -53,6 +65,18 @@ import nz.net.kallisti.emusicj.network.http.downloader.SimpleDownloader;
 import nz.net.kallisti.emusicj.network.http.proxy.HttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.IHttpClientProvider;
 import nz.net.kallisti.emusicj.network.http.proxy.ProxyCredentialsProvider;
+import nz.net.kallisti.emusicj.tagging.ITagFromXML;
+import nz.net.kallisti.emusicj.tagging.ITagSerialiser;
+import nz.net.kallisti.emusicj.tagging.ITagWriter;
+import nz.net.kallisti.emusicj.tagging.general.GeneralFromXML;
+import nz.net.kallisti.emusicj.tagging.general.GeneralTagSerialiser;
+import nz.net.kallisti.emusicj.tagging.general.IGeneralTagFromXML;
+import nz.net.kallisti.emusicj.tagging.jaudiotagger.VorbisFromXML;
+import nz.net.kallisti.emusicj.tagging.jaudiotagger.VorbisSerialiser;
+import nz.net.kallisti.emusicj.tagging.jaudiotagger.VorbisWriter;
+import nz.net.kallisti.emusicj.tagging.jid.JID3FromXML;
+import nz.net.kallisti.emusicj.tagging.jid.JID3Serialiser;
+import nz.net.kallisti.emusicj.tagging.jid.JID3Writer;
 import nz.net.kallisti.emusicj.updater.IUpdateFetcher;
 import nz.net.kallisti.emusicj.updater.URLUpdateFetcher;
 import nz.net.kallisti.emusicj.urls.DynamicURL;
@@ -119,5 +143,37 @@ public class Bindings extends AbstractModule {
 		bind(IDynamicURL.class).to(DynamicURL.class);
 		bind(INetworkFailure.class).to(NetworkFailure.class).in(
 				Scopes.SINGLETON);
+		bind(ITaggingHook.class).to(TaggingHook.class);
+		bind(ITagSerialiser.class).to(GeneralTagSerialiser.class);
+		bind(IGeneralTagFromXML.class).to(GeneralFromXML.class);
+		bind(ITagFromXML.class).annotatedWith(ID3Tagger.class).to(
+				JID3FromXML.class);
+		bind(ITagWriter.class).annotatedWith(ID3Tagger.class).to(
+				JID3Writer.class);
+		bind(ITagSerialiser.class).annotatedWith(ID3Tagger.class).to(
+				JID3Serialiser.class);
+		bind(ITagFromXML.class).annotatedWith(VorbisTagger.class).to(
+				VorbisFromXML.class);
+		bind(ITagWriter.class).annotatedWith(VorbisTagger.class).to(
+				VorbisWriter.class);
+		bind(ITagSerialiser.class).annotatedWith(VorbisTagger.class).to(
+				VorbisSerialiser.class);
+		bind(IMediaPlayerSync.class).to(getMediaPlayerForPlatform()).in(
+				Scopes.SINGLETON);
+		bind(IConfigureMediaPlayer.class).to(ConfigureMediaPlayer.class)
+				.asEagerSingleton();
+		bind(IDownloadHooks.class).to(StandardDownloadHooks.class);
+	}
+
+	/**
+	 * This provides the media player class that applies to the current platform
+	 * 
+	 * @return the media player class for this platform
+	 */
+	protected Class<? extends IMediaPlayerSync> getMediaPlayerForPlatform() {
+		if (PlatformUtils.isWindows()) {
+			return WindowsPlayers.class;
+		}
+		return NoopMediaPlayerSync.class;
 	}
 }
