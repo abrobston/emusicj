@@ -355,9 +355,11 @@ Available targets:
 	<target name="clean"
 		description="Deletes all generated files, and any ~ files.">
 		<delete>
-			<fileset dir="." includes="**/*~,${jar.name}" defaultexcludes="no"/>
+			<fileset dir="." includes="**/*~,*.jar" defaultexcludes="no"/>
 		</delete>
 		<delete dir="${build.dir}"/>
+		<delete dir="bin/" />
+		<delete dir="${osx.build.dir}" />
 	</target>
 	
 </project>
