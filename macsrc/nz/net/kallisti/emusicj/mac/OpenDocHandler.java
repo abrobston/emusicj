@@ -3,6 +3,7 @@ package nz.net.kallisti.emusicj.mac;
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
 import nz.net.kallisti.emusicj.mac.access.OSXAccess;
 
+import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.carbon.AEDesc;
 import org.eclipse.swt.internal.carbon.CFRange;
@@ -11,7 +12,7 @@ import org.eclipse.swt.internal.carbon.OS;
 
 /**
  * <p>
- * This registers a handler for opendoc events in OSX</o<
+ * This registers a handler for opendoc events in OSX</o>
  * 
  * $Id:$
  * 
@@ -77,7 +78,7 @@ public class OpenDocHandler {
 					if (OS.AEGetNthPtr(aeDesc, i + 1, OS.typeFSRef, aeKeyword,
 							typeCode, dataPtr, maximumSize, actualSize) == OS.noErr) {
 						byte[] fsRef = new byte[actualSize[0]];
-						OS.memcpy(fsRef, dataPtr, actualSize[0]);
+						C.memmove(fsRef, dataPtr, actualSize[0]);
 						int dirUrl = OS.CFURLCreateFromFSRef(
 								OS.kCFAllocatorDefault, fsRef);
 						int dirString = OS.CFURLCopyFileSystemPath(dirUrl,
@@ -95,7 +96,7 @@ public class OpenDocHandler {
 					if (OS.AEGetNthPtr(aeDesc, i + 1, typeText, aeKeyword,
 							typeCode, dataPtr, maximumSize, actualSize) == OS.noErr) {
 						byte[] urlRef = new byte[actualSize[0]];
-						OS.memcpy(urlRef, dataPtr, actualSize[0]);
+						C.memmove(urlRef, dataPtr, actualSize[0]);
 						fileNames[i] = new String(urlRef);
 					}
 
@@ -112,10 +113,12 @@ public class OpenDocHandler {
 	};
 
 	private void registerFile() {
+		System.err.println("OpenDocHandler: registering opendoc even handler");
 		Callback openDocCallback = new Callback(target, "openDocProc", 3);
 		int openDocProc = openDocCallback.getAddress();
 		if (openDocProc == 0) {
-			System.err.println("OSX: Could not find Callback 'openDocProc'");
+			System.err
+					.println("OpenDocHandler: Could not find Callback 'openDocProc'");
 			openDocCallback.dispose();
 			return;
 		}
@@ -126,7 +129,7 @@ public class OpenDocHandler {
 
 		if (result != OS.noErr) {
 			System.err
-					.println("OSX: Could Install OpenDocs Event Handler. Error: "
+					.println("OpenDocHandler: Could not install OpenDocs event handler. Error: "
 							+ result);
 			return;
 		}
@@ -136,7 +139,7 @@ public class OpenDocHandler {
 
 		if (result != OS.noErr) {
 			System.err
-					.println("OSX: Could Install OpenDocs Event Handler. Error: "
+					.println("OpenDocHandler: Could not install OpenDocs/URLEvent handler. Error: "
 							+ result);
 			return;
 		}
@@ -149,10 +152,11 @@ public class OpenDocHandler {
 		result = OS.InstallEventHandler(appTarget, appleEventProc,
 				mask3.length / 2, mask3, 0, null);
 		if (result != OS.noErr) {
-			System.err.println("OSX: Could Install Event Handler. Error: "
+			System.err.println("OSX: Could not install event handler. Error: "
 					+ result);
 			return;
 		}
+		System.err.println("Completed installing event handler.");
 	}
 
 	int appleEventProc(int nextHandler, int theEvent, int userData) {
