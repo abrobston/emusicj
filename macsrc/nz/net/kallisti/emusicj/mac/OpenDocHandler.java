@@ -13,7 +13,7 @@ import org.eclipse.swt.internal.carbon.OS;
 
 /**
  * <p>
- * This registers a handler for opendoc events in OSX</o<
+ * This registers a handler for opendoc events in OSX</o>
  * 
  * $Id:$
  * 
@@ -116,10 +116,12 @@ public class OpenDocHandler {
 	};
 
 	private void registerFile() {
+		System.err.println("OpenDocHandler: registering opendoc even handler");
 		Callback openDocCallback = new Callback(target, "openDocProc", 3);
 		int openDocProc = openDocCallback.getAddress();
 		if (openDocProc == 0) {
-			System.err.println("OSX: Could not find Callback 'openDocProc'");
+			System.err
+					.println("OpenDocHandler: Could not find Callback 'openDocProc'");
 			openDocCallback.dispose();
 			return;
 		}
@@ -130,7 +132,7 @@ public class OpenDocHandler {
 
 		if (result != OS.noErr) {
 			System.err
-					.println("OSX: Could Install OpenDocs Event Handler. Error: "
+					.println("OpenDocHandler: Could not install OpenDocs event handler. Error: "
 							+ result);
 			return;
 		}
@@ -140,7 +142,7 @@ public class OpenDocHandler {
 
 		if (result != OS.noErr) {
 			System.err
-					.println("OSX: Could Install OpenDocs Event Handler. Error: "
+					.println("OpenDocHandler: Could not install OpenDocs/URLEvent handler. Error: "
 							+ result);
 			return;
 		}
@@ -153,10 +155,11 @@ public class OpenDocHandler {
 		result = OS.InstallEventHandler(appTarget, appleEventProc,
 				mask3.length / 2, mask3, 0, null);
 		if (result != OS.noErr) {
-			System.err.println("OSX: Could Install Event Handler. Error: "
+			System.err.println("OSX: Could not install event handler. Error: "
 					+ result);
 			return;
 		}
+		System.err.println("Completed installing event handler.");
 	}
 
 	int appleEventProc(int nextHandler, int theEvent, int userData) {
