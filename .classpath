@@ -8,7 +8,6 @@
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-api.jar"/>
 	<classpathentry kind="lib" path="lib/guice-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/x86_64/swt.jar" sourcepath="lib/swt-src.zip"/>
 	<classpathentry kind="lib" path="lib/JID3.jar" sourcepath="/jid3"/>
 	<classpathentry kind="lib" path="lib/itunescon.jar" sourcepath="/itunescon"/>
 	<classpathentry kind="lib" path="lib/jaudiotagger-2.0.1.jar"/>
