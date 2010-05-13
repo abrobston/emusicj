@@ -1,0 +1,50 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>lib\passionato.jar</jar>
+  <outfile>Passionato.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <icon>images/passionato.ico</icon>
+  <classPath>
+    <mainClass>nz.net.kallisti.emusicj.Passionato</mainClass>
+    <cp>lib\swt.jar</cp>
+    <cp>lib\commons-logging-api.jar</cp>
+    <cp>lib\commons-codec-1.3.jar</cp>
+    <cp>lib\commons-httpclient-3.0-rc4.jar</cp>
+	<cp>lib\guice-1.0.jar</cp>
+	<cp>lib\JID3.jar</cp>
+	<cp>lib\itunescon.jar</cp>
+	<cp>lib\jacob.jar</cp>
+	<cp>lib\jaudiotagger-2.0.1.jar</cp>
+  </classPath>
+  <jre>
+    <path></path>
+    <minVersion>1.5.0</minVersion>
+    <maxVersion></maxVersion>
+    <dontUsePrivateJres>false</dontUsePrivateJres>
+    <initialHeapSize>0</initialHeapSize>
+    <maxHeapSize>0</maxHeapSize>
+    <opt>-Djava.library.path=lib</opt>
+    <opt>-Denv.http_proxy=%HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyServer%</opt>
+    <opt>-Denv.http_proxy_enabled=%HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable%</opt>
+  </jre>
+  <versionInfo>
+    <fileVersion>0.26.0.0</fileVersion>
+    <txtFileVersion>0.26-naxos</txtFileVersion>
+    <fileDescription>Passionato Download Manager</fileDescription>
+    <copyright>Robin Sheat, 2009</copyright>
+    <productVersion>1.0.0.0</productVersion>
+    <txtProductVersion>1.0</txtProductVersion>
+    <productName>Passionato Download Manager</productName>
+    <companyName>Passionato Ltd</companyName>
+    <internalName>emusicj-passionato</internalName>
+    <originalFilename>Passionato.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>

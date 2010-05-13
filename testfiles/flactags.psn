@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding="UTF-8"?>
+  <PACKAGE>
+    <ACTION>download</ACTION>
+    <EXP_DATE>2012-06-18 22:50:00+10:00</EXP_DATE>
+
+    <PROVIDER>
+      <AUTHOR>Passionato</AUTHOR>
+      <NAME>Passionato</NAME>
+      <URL>http://www.passionato.com</URL>
+      <COPYRIGHT>Portions Copyright (C) 2004-2008 passionato.com Inc; see http://www.passionato.com for more details</COPYRIGHT>
+      <CONTACT>support@passionato.com</CONTACT>
+    </PROVIDER>
+
+    <TRACKLIST>
+      <TRACK>
+        <TRACKID>10001</TRACKID>
+        <TRACKURL>http://www.kallisti.net.nz/~robin/11%20-%20Jericho.flac</TRACKURL>
+        <TRACKNUM>1</TRACKNUM>
+        <TRACKCOUNT>3</TRACKCOUNT>
+        <DISCNUM>1</DISCNUM>
+        <DISCCOUNT>1</DISCCOUNT>
+        <TITLE>Test Title 1</TITLE>
+        <ALBUM>Test Album</ALBUM>
+        <ALBUMID>20001</ALBUMID>
+        <ALBUMURL>http://www.passionato.com/pathtoalbum</ALBUMURL>
+        <ARTIST>Test Artist</ARTIST>
+        <ARTISTID>30001</ARTISTID>
+        <ARTISTURL>http://www.passionato.com/pathtoartist</ARTISTURL>
+        <GENRE>Rock/Pop</GENRE>
+        <GENREID>277</GENREID>
+        <GENREURL>http://www.passionato.com/linktogenre</GENREURL>
+        <LABEL>Test Label</LABEL>
+        <LABELID>40001</LABELID>
+        <LABELURL>http://www.passionato.com/linktolabel</LABELURL>
+        <EXTENSION>.flac</EXTENSION>
+        <MIMETYPE>audio/flac</MIMETYPE>
+        <DURATION>210</DURATION>
+        <ALBUMART>http://www.passionato.com/linktoart/155x155.jpg</ALBUMART>
+        <ALBUMARTLARGE>http://www.passionato.com/600x600.jpg</ALBUMARTLARGE>
+        <STYLES>285:Pop,401:Dance,301:Indie Rock,316:Electronic Experimental</STYLES>
+	<ID3>
+		<TITLE>Test title</TITLE>
+		<ALBUM>Test album</ALBUM>
+		<ARTIST>Test artist</ARTIST>
+		<COMPOSER>Test composer</COMPOSER>
+		<GENRE>Industrial</GENRE>
+		<FILENAME>Test filename</FILENAME>
+		<CONDUCTOR>Test conductor</CONDUCTOR>
+		<ISRC>123456789012</ISRC>
+		<DISC_NUMBER>1</DISC_NUMBER>
+		<TRACK>11</TRACK>
+		<COPYRIGHT year="2009">Some Label Ltd</COPYRIGHT>
+		<WWW>www.passionato.com</WWW>
+		<COVER>http://www.kallisti.net.nz/~robin/test.jpg</COVER>
+		<PSN_ID>T345623487</PSN_ID>
+		<GROUPING>Test grouping</GROUPING>
+		<ALBUM_ARTIST>Test album artist</ALBUM_ARTIST>
+		<PRIV_UMG>ilvugwevuiwegbvuiwebvuiwebvil8webnvwebuibweuvbwruv6</PRIV_UMG>
+	</ID3>
+      </TRACK>
+
+    </TRACKLIST>
+  </PACKAGE>

@@ -22,6 +22,8 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.general.IGeneralTagFromXML;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
@@ -49,15 +51,17 @@ public class EMXMetaFile extends AbstractMetafile {
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Logger logger;
+	private final IGeneralTagFromXML tagMaker;
 
 	@Inject
 	public EMXMetaFile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images, IURLFactory urls) {
+			IImageFactory images, IURLFactory urls, IGeneralTagFromXML tagMaker) {
 		super(images, urls, strings, coverDownloaderProvider);
 		this.prefs = prefs;
 		this.musicDownloaderProvider = musicDownloaderProvider;
+		this.tagMaker = tagMaker;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -163,40 +167,47 @@ public class EMXMetaFile extends AbstractMetafile {
 	 */
 	private void loadTrack(Node trackNode, Date expiry) {
 		NodeList track = trackNode.getChildNodes();
-		String num = null;
-		String title = null;
-		String album = null;
-		String artist = null;
+		String num = "0";
+		String title = "No Title";
+		String album = "No Album";
+		String artist = "No Artist";
 		String coverArt = null;
 		String genre = null;
 		String track_url = null;
 		String duration = null;
 		String diskNumStr = null;
 		String diskCountStr = null;
+		String extension = null;
+		Node tagNode = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
 			if (node.getFirstChild() == null)
 				continue;
-			if (node.getNodeName().equalsIgnoreCase("tracknum"))
+			String nodeName = node.getNodeName();
+			if (nodeName.equalsIgnoreCase("tracknum"))
 				num = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("title"))
+			else if (nodeName.equalsIgnoreCase("title"))
 				title = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("album"))
+			else if (nodeName.equalsIgnoreCase("album"))
 				album = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("artist"))
+			else if (nodeName.equalsIgnoreCase("artist"))
 				artist = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("trackurl"))
+			else if (nodeName.equalsIgnoreCase("trackurl"))
 				track_url = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("albumart"))
+			else if (nodeName.equalsIgnoreCase("albumart"))
 				coverArt = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("genre"))
+			else if (nodeName.equalsIgnoreCase("genre"))
 				genre = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("duration"))
+			else if (nodeName.equalsIgnoreCase("duration"))
 				duration = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("discnum"))
+			else if (nodeName.equalsIgnoreCase("discnum"))
 				diskNumStr = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("disccount"))
+			else if (nodeName.equalsIgnoreCase("disccount"))
 				diskCountStr = node.getFirstChild().getNodeValue();
+			else if (nodeName.equalsIgnoreCase("id3"))
+				tagNode = node;
+			else if (nodeName.equalsIgnoreCase("extension"))
+				extension = node.getFirstChild().getNodeValue();
 		}
 		URL url;
 		try {
@@ -216,9 +227,12 @@ public class EMXMetaFile extends AbstractMetafile {
 						"Unable to parse disk or disk count information", e);
 			}
 		}
+		if (extension == null) {
+			extension = ".mp3";
+		}
 
 		File outputFile = new File(prefs.getFilename(trackNum, title, album,
-				artist, ".mp3", disk, diskCount));
+				artist, extension, disk, diskCount));
 		File coverArtFile = null;
 		if (coverArt != null)
 			coverArtFile = getCoverArtCached(downloaders, coverArt, prefs,
@@ -228,6 +242,10 @@ public class EMXMetaFile extends AbstractMetafile {
 				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
+		if (tagNode != null) {
+			ITagData tagData = tagMaker.getData(tagNode, extension);
+			dl.setTag(tagData);
+		}
 		if (expiry != null)
 			dl.setExpiry(expiry);
 		try {
@@ -252,7 +270,9 @@ public class EMXMetaFile extends AbstractMetafile {
 				&& !file.getName().endsWith(".rcm")
 				&& !file.getName().endsWith(".RCM")
 				&& !file.getName().endsWith(".bpm")
-				&& !file.getName().endsWith(".BPM"))
+				&& !file.getName().endsWith(".BPM")
+				&& !file.getName().endsWith(".psn")
+				&& !file.getName().endsWith(".PSN"))
 			return false;
 		FileInputStream stream = new FileInputStream(file);
 		// just look at the first Kb

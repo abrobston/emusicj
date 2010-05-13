@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding="UTF-8"?>
+  <PACKAGE>
+    <ACTION>download</ACTION>
+<!--    Real download of an MP3 file   -->
+
+    <PROVIDER>
+      <AUTHOR>Passionato</AUTHOR>
+      <NAME>Passionato</NAME>
+      <URL>http://www.passionato.com</URL>
+      <COPYRIGHT>Portions Copyright (C) 2004-2008 passionato.com Inc; see http://www.passionato.com for more details</COPYRIGHT>
+      <CONTACT>support@passionato.com</CONTACT>
+    </PROVIDER>
+
+    <TRACKLIST>
+      <TRACK>
+        <TRACKID>10001</TRACKID>
+        <TRACKURL>http://www.kallisti.net.nz/~robin/5%20Christmas%20at%20Our%20House.mp3</TRACKURL>
+        <TRACKNUM>5</TRACKNUM>
+        <TRACKCOUNT>10</TRACKCOUNT>
+        <DISCNUM>1</DISCNUM>
+        <DISCCOUNT>1</DISCCOUNT>
+        <TITLE>Christmas at Our House</TITLE>
+        <ALBUM>www.informationsociety.us</ALBUM>
+        <ALBUMID>20001</ALBUMID>
+        <ALBUMURL>http://www.passionato.com/pathtoalbum</ALBUMURL>
+        <ARTIST>Information Society</ARTIST>
+        <ARTISTID>30001</ARTISTID>
+        <ARTISTURL>http://www.passionato.com/pathtoartist</ARTISTURL>
+        <GENRE>Rock/Pop</GENRE>
+        <GENREID>277</GENREID>
+        <GENREURL>http://www.passionato.com/linktogenre</GENREURL>
+        <LABEL>Test Label</LABEL>
+        <LABELID>40001</LABELID>
+        <LABELURL>http://www.passionato.com/linktolabel</LABELURL>
+        <EXTENSION>.mp3</EXTENSION>
+        <MIMETYPE>audio/mpeg</MIMETYPE>
+        <DURATION>180</DURATION>
+<!--        <ALBUMART>http://www.passionato.com/linktoart/155x155.jpg</ALBUMART>
+        <ALBUMARTLARGE>http://www.passionato.com/600x600.jpg</ALBUMARTLARGE> -->
+        <STYLES>285:Pop,401:Dance,301:Indie Rock,316:Electronic Experimental</STYLES>
+      </TRACK>
+
+    </TRACKLIST>
+  </PACKAGE>

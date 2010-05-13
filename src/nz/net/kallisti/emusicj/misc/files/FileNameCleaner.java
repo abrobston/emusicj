@@ -3,6 +3,8 @@ package nz.net.kallisti.emusicj.misc.files;
 import java.util.ArrayList;
 import java.util.List;
 
+import nz.net.kallisti.emusicj.misc.PlatformUtils;
+
 /**
  * This cleans the file name up to the point where it will work on fat32
  * filesystems. This is needed in order to download on windows, but is also
@@ -72,6 +74,11 @@ public class FileNameCleaner implements IFileNameCleaner {
 		}
 		if (str.charAt(str.length() - 1) == '.')
 			str.setCharAt(str.length() - 1, '_');
+		// Windows sucks at filenames, so if we're on it, truncate the name of
+		// the part to 50 chars.
+		if (PlatformUtils.isWindows() && str.length() > 50) {
+			str.delete(50, str.length());
+		}
 		return str.toString();
 	}
 

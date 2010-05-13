@@ -48,8 +48,8 @@ public class CoverDownloader extends HTTPDownloader implements ICoverDownloader 
 	@Inject
 	public CoverDownloader(IPreferences prefs,
 			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
-			INetworkFailure networkFailure) {
-		super(prefs, clientProvider, cleanupFiles, networkFailure);
+			INetworkFailure networkFailure, IDownloadHooks dlHooks) {
+		super(prefs, clientProvider, cleanupFiles, networkFailure, dlHooks);
 	}
 
 	/**

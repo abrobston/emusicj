@@ -31,10 +31,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.download.IDownloadHook.EventType;
 import nz.net.kallisti.emusicj.download.IDownloadMonitor.DLState;
 import nz.net.kallisti.emusicj.download.mime.IMimeType;
 import nz.net.kallisti.emusicj.download.mime.MimeType;
@@ -78,15 +80,17 @@ public class HTTPDownloader implements IDownloader {
 	private Date expiry;
 	private final ICleanupFiles cleanupFiles;
 	private final INetworkFailure networkFailure;
+	private final IDownloadHooks dlHooks;
 
 	@Inject
 	public HTTPDownloader(IPreferences prefs,
 			IHttpClientProvider clientProvider, ICleanupFiles cleanupFiles,
-			INetworkFailure networkFailure) {
+			INetworkFailure networkFailure, IDownloadHooks dlHooks) {
 		this.prefs = prefs;
 		this.clientProvider = clientProvider;
 		this.cleanupFiles = cleanupFiles;
 		this.networkFailure = networkFailure;
+		this.dlHooks = dlHooks;
 		this.logger = LogUtils.getLogger(this);
 		createMonitor();
 	}
@@ -440,6 +444,23 @@ public class HTTPDownloader implements IDownloader {
 	}
 
 	/**
+	 * This is called when the download is completed. It can be overridden for
+	 * filetype-specific operations.
+	 * 
+	 * @param file
+	 *            the resulting file of the download, after all renaming etc. is
+	 *            completed.
+	 */
+	protected void downloadCompleted(File file) {
+		if (dlHooks != null) {
+			List<IDownloadHook> hooks = dlHooks.getCompletionHooks();
+			for (IDownloadHook hook : hooks) {
+				hook.downloadEvent(EventType.FINISHED, this);
+			}
+		}
+	}
+
+	/**
 	 * <p>
 	 * This class does the actual downloading of the file
 	 * </p>
@@ -700,6 +721,7 @@ public class HTTPDownloader implements IDownloader {
 						partFile.renameTo(outputFile);
 					get.releaseConnection();
 					cleanupFiles.removeFile(partFile);
+					downloadCompleted(outputFile);
 				} else {
 					// if we didn't get the whole file, mark it and it'll
 					// be tried again later

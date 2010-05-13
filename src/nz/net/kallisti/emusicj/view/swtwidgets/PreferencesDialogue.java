@@ -21,8 +21,17 @@
  */
 package nz.net.kallisti.emusicj.view.swtwidgets;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
 import nz.net.kallisti.emusicj.controller.IPreferences;
+import nz.net.kallisti.emusicj.mediaplayer.IMediaPlayerSync;
+import nz.net.kallisti.emusicj.mediaplayer.IPlayer;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.view.swtwidgets.hooks.ICloseListener;
 import nz.net.kallisti.emusicj.view.swtwidgets.selection.SelectionAdapter;
 
 import org.eclipse.swt.SWT;
@@ -32,9 +41,14 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -70,15 +84,23 @@ public class PreferencesDialogue {
 	private final boolean removeCompletedDownloads;
 	private Button autoCleanup;
 	private final IStrings strings;
+	private final List<ICloseListener<Object>> closeListeners = new ArrayList<ICloseListener<Object>>(
+			1);
+	private boolean normalClose = false;
+	private boolean firedClose = false;
+	private final IMediaPlayerSync mediaSync;
+	private IPlayer selectedPlayer = null;
 
 	/**
 	 * @param display
 	 * @param instance
 	 */
-	public PreferencesDialogue(Shell shell, IPreferences prefs, IStrings strings) {
+	public PreferencesDialogue(Shell shell, IPreferences prefs,
+			IStrings strings, IMediaPlayerSync mediaSync) {
 		this.shell = shell;
 		this.prefs = prefs;
 		this.strings = strings;
+		this.mediaSync = mediaSync;
 		filePath = prefs.getSavePath();
 		filePattern = prefs.getFilePattern();
 		minDL = prefs.getMinDownloads();
@@ -93,20 +115,25 @@ public class PreferencesDialogue {
 		dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.setLayout(new GridLayout(1, false));
 		dialog.setText("Preferences");
-		Group files = new Group(dialog, SWT.NONE);
-		files.setLayout(new GridLayout(3, false));
-		files.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		dialog.addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event) {
+				fireCloseListeners(normalClose);
+			}
+		});
+		Group filesGroup = new Group(dialog, SWT.NONE);
+		filesGroup.setLayout(new GridLayout(3, false));
+		filesGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		if (prefs.isAutoloadAllowed())
-			files.setText("Files");
+			filesGroup.setText("Files");
 		else
-			files.setText("Downloads Folder Location");
+			filesGroup.setText("Downloads Folder Location");
 
-		Label pathLabel = new Label(files, SWT.NONE);
+		Label pathLabel = new Label(filesGroup, SWT.NONE);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
 		pathLabel.setLayoutData(gd);
 		pathLabel.setText("Save files to:");
-		final Text savePath = new Text(files, SWT.READ_ONLY);
+		final Text savePath = new Text(filesGroup, SWT.READ_ONLY);
 		savePath.setText(prefs.getSavePath());
 		gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gd.horizontalSpan = 2;
@@ -116,7 +143,7 @@ public class PreferencesDialogue {
 				filePath = ((Text) e.getSource()).getText();
 			}
 		});
-		Button browseSavePath = new Button(files, SWT.PUSH);
+		Button browseSavePath = new Button(filesGroup, SWT.PUSH);
 		browseSavePath.setText("Browse...");
 		browseSavePath.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -129,13 +156,20 @@ public class PreferencesDialogue {
 			}
 		});
 
+		Control syncWidget = createMediaPlayerSync(filesGroup);
+		if (syncWidget != null) {
+			gd = new GridData();
+			gd.horizontalSpan = 3;
+			syncWidget.setLayoutData(gd);
+		}
+
 		if (prefs.allowSaveFileAs()) {
-			Label fileName = new Label(files, SWT.NONE);
+			Label fileName = new Label(filesGroup, SWT.NONE);
 			fileName.setText("Save files as:");
 			gd = new GridData();
 			gd.horizontalSpan = 3;
 			pathLabel.setLayoutData(gd);
-			final Text savePattern = new Text(files, SWT.BORDER);
+			final Text savePattern = new Text(filesGroup, SWT.BORDER);
 			gd = new GridData(SWT.FILL, SWT.NONE, true, false);
 			gd.horizontalSpan = 3;
 			savePattern.setLayoutData(gd);
@@ -145,7 +179,7 @@ public class PreferencesDialogue {
 					filePattern = ((Text) e.getSource()).getText();
 				}
 			});
-			Label savePatternKey = new Label(files, SWT.NONE);
+			Label savePatternKey = new Label(filesGroup, SWT.NONE);
 			savePatternKey.setText(strings.getFileNamingDetails());
 			gd = new GridData();
 			gd.horizontalSpan = 3;
@@ -155,14 +189,14 @@ public class PreferencesDialogue {
 		if (prefs.isAutoloadAllowed()) {
 			gd = new GridData();
 			gd.horizontalSpan = 3;
-			Label dropDirLabel = new Label(files, SWT.NONE);
+			Label dropDirLabel = new Label(filesGroup, SWT.NONE);
 			dropDirLabel.setLayoutData(gd);
 			dropDirLabel.setText(strings.getPrefsAutoLoadDescription());
-			dropDir = new Text(files, SWT.READ_ONLY);
+			dropDir = new Text(filesGroup, SWT.READ_ONLY);
 			dropDir.setText(prefs.getProperty("dropDir", ""));
 			dropDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 					false));
-			Button clearDropDir = new Button(files, SWT.PUSH);
+			Button clearDropDir = new Button(filesGroup, SWT.PUSH);
 			clearDropDir.setText("Clear");
 			clearDropDir.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -172,7 +206,7 @@ public class PreferencesDialogue {
 				}
 			});
 
-			Button browseDropDir = new Button(files, SWT.PUSH);
+			Button browseDropDir = new Button(filesGroup, SWT.PUSH);
 			browseDropDir.setText("Browse...");
 			browseDropDir.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -244,6 +278,69 @@ public class PreferencesDialogue {
 		dialog.open();
 	}
 
+	/**
+	 * This will add the media player sync stuff to the group, if it is
+	 * available. As a side-effect, it sets {@link #selectedPlayer} when the
+	 * selection is updated.
+	 * 
+	 * @return the widget that was created, or <code>null</code> if none was
+	 */
+	private Composite createMediaPlayerSync(Composite composite) {
+		Set<IPlayer> playerSet = mediaSync.supportedPlayers();
+		if (playerSet.size() == 0)
+			return null;
+
+		Composite comp = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		comp.setLayout(layout);
+		final List<IPlayer> players = new ArrayList<IPlayer>(playerSet);
+		// sort by name
+		Collections.sort(players, new Comparator<IPlayer>() {
+			public int compare(IPlayer o1, IPlayer o2) {
+				return o1.playerName().compareTo(o2.playerName());
+			}
+		});
+		final Combo dropDown = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY
+				| SWT.BORDER);
+		GridData gd = new GridData();
+		gd.verticalAlignment = SWT.CENTER;
+		dropDown.setLayoutData(gd);
+		// First add a 'nothing' option
+		dropDown.add("None");
+		int selectIndex = 0;
+		int count = 0;
+		String selectedKey = prefs.getMediaPlayerSync();
+		for (IPlayer player : players) {
+			count++; // the index starts at 1, 0 is 'none'
+			dropDown.add(player.playerName());
+			if (player.key().equals(selectedKey)) {
+				selectIndex = count;
+			}
+		}
+		dropDown.select(selectIndex);
+		// Add a null at the start of the list so that we can use this to easily
+		// work out what was selected later
+		players.add(0, null);
+		selectedPlayer = players.get(selectIndex);
+		dropDown.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void action(SelectionEvent ev) {
+				selectedPlayer = players.get(dropDown.getSelectionIndex());
+			}
+		});
+		Label label = new Label(comp, SWT.NONE);
+		label.setText("Media player to synchronise with");
+		gd = new GridData();
+		gd.verticalAlignment = SWT.CENTER;
+		label.setLayoutData(gd);
+		comp.pack();
+		comp.layout();
+		comp.setSize(0, dropDown.getSize().y + 10);
+		return comp;
+	}
+
 	private void createNetworkPanel() {
 		Group network = new Group(dialog, SWT.NONE);
 		network.setLayout(new GridLayout(3, false));
@@ -308,6 +405,7 @@ public class PreferencesDialogue {
 	 * Close the dialog and save the preferences
 	 */
 	public void close() {
+		normalClose = true;
 		if (prefs.allowSaveFileAs())
 			prefs.setFilePattern(filePattern);
 		prefs.setSavePath(filePath);
@@ -321,13 +419,48 @@ public class PreferencesDialogue {
 		if (dropDirModified) {
 			prefs.setDropDir(dropDir.getText());
 		}
+		prefs.setMediaPlayerSync(selectedPlayer != null ? selectedPlayer.key()
+				: null);
+		prefs.save();
 		dialog.dispose();
-		new Thread() {
-			@Override
-			public void run() {
-				prefs.save();
-			}
-		}.start();
+		fireCloseListeners(true);
 	}
 
+	/**
+	 * Adds a close listener to the preferences window that will be alerted when
+	 * it is closed. The data object part of this will be <code>null</code>.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	public void addCloseListener(ICloseListener<Object> listener) {
+		synchronized (closeListeners) {
+			closeListeners.add(listener);
+		}
+	}
+
+	/**
+	 * This removes a close listener that was added with
+	 * {@link #addCloseListener(ICloseListener)}.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeCloseListener(ICloseListener<Object> listener) {
+		synchronized (closeListeners) {
+			closeListeners.remove(listener);
+		}
+	}
+
+	private synchronized void fireCloseListeners(boolean okClose) {
+		// We only ever do this once
+		if (firedClose)
+			return;
+		firedClose = true;
+		synchronized (closeListeners) {
+			for (ICloseListener<Object> l : closeListeners) {
+				l.closed(this, okClose, null);
+			}
+		}
+	}
 }

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class SimpleDownloader implements ISimpleDownloader {
 	private File outputFile;
 	private URL url;
 	private final Logger logger;
+	private OutputStream outputStream;
 
 	@Inject
 	public SimpleDownloader(IHttpClientProvider httpClientProvider) {
@@ -53,7 +55,13 @@ public class SimpleDownloader implements ISimpleDownloader {
 	}
 
 	public void setOutputFile(File file) {
+		this.outputStream = null;
 		this.outputFile = file;
+	}
+
+	public void setOutputStream(OutputStream stream) {
+		this.outputFile = null;
+		this.outputStream = stream;
 	}
 
 	public void setURL(URL url) {
@@ -63,8 +71,9 @@ public class SimpleDownloader implements ISimpleDownloader {
 	public void start() throws IllegalStateException {
 		if (url == null)
 			throw new IllegalStateException("The URL was not defined");
-		if (outputFile == null)
-			throw new IllegalStateException("The output file was not defined");
+		if (outputFile == null && outputStream == null)
+			throw new IllegalStateException(
+					"The output file/stream was not defined");
 		new DownloadThread().start();
 	}
 
@@ -97,9 +106,13 @@ public class SimpleDownloader implements ISimpleDownloader {
 				return;
 			}
 			// Download the file
-			BufferedOutputStream out;
+			OutputStream out;
 			try {
-				out = new BufferedOutputStream(new FileOutputStream(outputFile));
+				if (outputFile != null)
+					out = new BufferedOutputStream(new FileOutputStream(
+							outputFile));
+				else
+					out = outputStream;
 			} catch (FileNotFoundException e) {
 				get.releaseConnection();
 				logger.log(Level.WARNING, "Failed to fetch " + url
