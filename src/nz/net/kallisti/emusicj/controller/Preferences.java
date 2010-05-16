@@ -244,7 +244,7 @@ public abstract class Preferences implements IPreferences {
 						.substring(
 								0,
 								fname.length() > windowsMaxPathLength ? windowsMaxPathLength
-										: fname.length());
+										: fname.length()).trim();
 			}
 		}
 		format = format.toLowerCase();
