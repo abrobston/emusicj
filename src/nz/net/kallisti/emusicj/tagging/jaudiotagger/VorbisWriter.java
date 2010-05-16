@@ -50,8 +50,9 @@ public class VorbisWriter implements ITagWriter {
 
 	public static boolean supportedFileInternal(String file) {
 		String name = file.toLowerCase();
-		return (name.endsWith("flac") || name.endsWith("ogg") || name
-				.endsWith("oga"));
+		return file != null
+				&& (name.endsWith("flac") || name.endsWith("ogg") || name
+						.endsWith("oga"));
 	}
 
 	public boolean supportedFile(String filename) {
