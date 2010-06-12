@@ -3,13 +3,13 @@ package nz.net.kallisti.emusicj.mac;
 import java.lang.reflect.Method;
 
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
-import nz.net.kallisti.emusicj.mac.access.OSXAccess;
 
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.carbon.AEDesc;
 import org.eclipse.swt.internal.carbon.CFRange;
 import org.eclipse.swt.internal.carbon.EventRecord;
 import org.eclipse.swt.internal.carbon.OS;
+import org.gudy.azureus2.platform.macosx.access.jnilib.OSXAccess;
 
 /**
  * <p>
@@ -64,6 +64,7 @@ public class OpenDocHandler {
 			} catch (java.lang.UnsatisfiedLinkError e) {
 				System.err
 						.println("OSX: AEGetParamDesc not available.  Can't open sent file");
+				e.printStackTrace();
 				return OS.noErr;
 			}
 
