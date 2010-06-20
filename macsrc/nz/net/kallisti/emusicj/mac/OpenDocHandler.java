@@ -1,17 +1,19 @@
 package nz.net.kallisti.emusicj.mac;
 
+import java.lang.reflect.Method;
+
 import nz.net.kallisti.emusicj.controller.IEmusicjController;
-import nz.net.kallisti.emusicj.mac.access.OSXAccess;
 
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.carbon.AEDesc;
 import org.eclipse.swt.internal.carbon.CFRange;
 import org.eclipse.swt.internal.carbon.EventRecord;
 import org.eclipse.swt.internal.carbon.OS;
+import org.gudy.azureus2.platform.macosx.access.jnilib.OSXAccess;
 
 /**
  * <p>
- * This registers a handler for opendoc events in OSX</o<
+ * This registers a handler for opendoc events in OSX</o>
  * 
  * $Id:$
  * 
@@ -34,6 +36,8 @@ public class OpenDocHandler {
 	private static final int typeText = ('T' << 24) + ('E' << 16) + ('X' << 8)
 			+ 'T';
 
+	private static int memmove_type;
+
 	private final IEmusicjController controller;
 
 	public OpenDocHandler(IEmusicjController controller) {
@@ -53,13 +57,14 @@ public class OpenDocHandler {
 						OS.kEventParamDirectObject, typeAEList, aeDesc);
 				if (result != OS.noErr) {
 					System.err
-							.println("OSX: Could call AEGetParamDesc. Error: "
+							.println("OSX: Could not call AEGetParamDesc. Error: "
 									+ result);
 					return OS.noErr;
 				}
 			} catch (java.lang.UnsatisfiedLinkError e) {
 				System.err
 						.println("OSX: AEGetParamDesc not available.  Can't open sent file");
+				e.printStackTrace();
 				return OS.noErr;
 			}
 
@@ -77,7 +82,7 @@ public class OpenDocHandler {
 					if (OS.AEGetNthPtr(aeDesc, i + 1, OS.typeFSRef, aeKeyword,
 							typeCode, dataPtr, maximumSize, actualSize) == OS.noErr) {
 						byte[] fsRef = new byte[actualSize[0]];
-						OS.memcpy(fsRef, dataPtr, actualSize[0]);
+						memmove(fsRef, dataPtr, actualSize[0]);
 						int dirUrl = OS.CFURLCreateFromFSRef(
 								OS.kCFAllocatorDefault, fsRef);
 						int dirString = OS.CFURLCopyFileSystemPath(dirUrl,
@@ -95,7 +100,7 @@ public class OpenDocHandler {
 					if (OS.AEGetNthPtr(aeDesc, i + 1, typeText, aeKeyword,
 							typeCode, dataPtr, maximumSize, actualSize) == OS.noErr) {
 						byte[] urlRef = new byte[actualSize[0]];
-						OS.memcpy(urlRef, dataPtr, actualSize[0]);
+						memmove(urlRef, dataPtr, actualSize[0]);
 						fileNames[i] = new String(urlRef);
 					}
 
@@ -112,10 +117,12 @@ public class OpenDocHandler {
 	};
 
 	private void registerFile() {
+		System.err.println("OpenDocHandler: registering opendoc even handler");
 		Callback openDocCallback = new Callback(target, "openDocProc", 3);
 		int openDocProc = openDocCallback.getAddress();
 		if (openDocProc == 0) {
-			System.err.println("OSX: Could not find Callback 'openDocProc'");
+			System.err
+					.println("OpenDocHandler: Could not find Callback 'openDocProc'");
 			openDocCallback.dispose();
 			return;
 		}
@@ -126,7 +133,7 @@ public class OpenDocHandler {
 
 		if (result != OS.noErr) {
 			System.err
-					.println("OSX: Could Install OpenDocs Event Handler. Error: "
+					.println("OpenDocHandler: Could not install OpenDocs event handler. Error: "
 							+ result);
 			return;
 		}
@@ -136,7 +143,7 @@ public class OpenDocHandler {
 
 		if (result != OS.noErr) {
 			System.err
-					.println("OSX: Could Install OpenDocs Event Handler. Error: "
+					.println("OpenDocHandler: Could not install OpenDocs/URLEvent handler. Error: "
 							+ result);
 			return;
 		}
@@ -149,10 +156,11 @@ public class OpenDocHandler {
 		result = OS.InstallEventHandler(appTarget, appleEventProc,
 				mask3.length / 2, mask3, 0, null);
 		if (result != OS.noErr) {
-			System.err.println("OSX: Could Install Event Handler. Error: "
+			System.err.println("OSX: Could not install event handler. Error: "
 					+ result);
 			return;
 		}
+		System.err.println("Completed installing event handler.");
 	}
 
 	int appleEventProc(int nextHandler, int theEvent, int userData) {
@@ -185,6 +193,60 @@ public class OpenDocHandler {
 		}
 
 		return OS.eventNotHandledErr;
+	}
+
+	/**
+	 * This seems to support the changing private API in SWT.
+	 */
+	@SuppressWarnings("unchecked")
+	private static void memmove(byte[] dest, int src, int size) {
+		switch (memmove_type) {
+		case 0:
+			try {
+				OSXAccess.memmove(dest, src, size);
+				memmove_type = 0;
+				return;
+			} catch (Throwable e) {
+			}
+			//$FALL-THROUGH$
+		case 1:
+			try {
+				Class cMemMove = Class
+						.forName("org.eclipse.swt.internal.carbon.OS");
+
+				Method method = cMemMove.getMethod("memmove", new Class[] {
+						byte[].class, Integer.TYPE, Integer.TYPE });
+
+				method.invoke(null, new Object[] { dest, new Integer(src),
+						new Integer(size) });
+				memmove_type = 1;
+				return;
+			} catch (Throwable e) {
+			}
+
+			//$FALL-THROUGH$
+		case 2:
+			try {
+				Class cMemMove = Class
+						.forName("org.eclipse.swt.internal.carbon.OS");
+
+				Method method = cMemMove.getMethod("memcpy", new Class[] {
+						byte[].class, Integer.TYPE, Integer.TYPE });
+
+				method.invoke(null, new Object[] { dest, new Integer(src),
+						new Integer(size) });
+
+				memmove_type = 2;
+				return;
+			} catch (Throwable e) {
+			}
+
+			//$FALL-THROUGH$
+		default:
+			break;
+		}
+
+		memmove_type = 3;
 	}
 
 }
