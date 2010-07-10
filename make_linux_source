@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# This script deletes everything but the source code and other assets that
+# required to build eMusic/J. In particular, it deletes all the external
+# libraries that are normally included. The result of this is intended
+# to be used by distributions such as Debian that provide the libraries
+# externally, rather than bundled as part of the app itself.
+# Note that after running this, the included build.xml probably won't work,
+# and the launcher scripts will need some serious patching.
+
+rm -rf bin *.launch bluepie.nsi build *~ dist *.nsi lib osx-bin windows*.xml \
+    .bzr
