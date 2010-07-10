@@ -79,7 +79,7 @@ public class FileNameCleaner implements IFileNameCleaner {
 		if (PlatformUtils.isWindows() && str.length() > 50) {
 			str.delete(50, str.length());
 		}
-		return str.toString();
+		return str.toString().trim();
 	}
 
 }

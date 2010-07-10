@@ -43,6 +43,8 @@ import nz.net.kallisti.emusicj.download.IMusicDownloader;
 import nz.net.kallisti.emusicj.metafiles.exceptions.UnknownFileException;
 import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.strings.IStrings;
+import nz.net.kallisti.emusicj.tagging.ITagData;
+import nz.net.kallisti.emusicj.tagging.general.IGeneralTagFromXML;
 import nz.net.kallisti.emusicj.urls.IURLFactory;
 import nz.net.kallisti.emusicj.view.images.IImageFactory;
 
@@ -75,15 +77,17 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 	private final IPreferences prefs;
 	private final Provider<IMusicDownloader> musicDownloaderProvider;
 	private final Logger logger;
+	private final IGeneralTagFromXML tagMaker;
 
 	@Inject
 	public BaseEMusicMetafile(IPreferences prefs, IStrings strings,
 			Provider<IMusicDownloader> musicDownloaderProvider,
 			Provider<ICoverDownloader> coverDownloaderProvider,
-			IImageFactory images, IURLFactory urls) {
+			IImageFactory images, IURLFactory urls, IGeneralTagFromXML tagMaker) {
 		super(images, urls, strings, coverDownloaderProvider);
 		this.prefs = prefs;
 		this.musicDownloaderProvider = musicDownloaderProvider;
+		this.tagMaker = tagMaker;
 		logger = LogUtils.getLogger(this);
 	}
 
@@ -221,34 +225,39 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 		String diskStr = null;
 		// The total count of disks for this album
 		String diskCountStr = null;
+		Node tagNode = null;
 		for (int count = 0; count < track.getLength(); count++) {
 			Node node = track.item(count);
-			if (node.getFirstChild() == null)
+			String nodeName = node.getNodeName();
+			if (node.getFirstChild() == null || nodeName == null)
 				continue;
-			if (node.getNodeName().equalsIgnoreCase("trackid"))
+			nodeName = nodeName.toLowerCase();
+			if (nodeName.equals("trackid"))
 				id = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("tracknum"))
+			else if (nodeName.equals("tracknum"))
 				num = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("title"))
+			else if (nodeName.equals("title"))
 				title = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("album"))
+			else if (nodeName.equals("album"))
 				album = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("artist"))
+			else if (nodeName.equals("artist"))
 				artist = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("filename"))
+			else if (nodeName.equals("filename"))
 				filename = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("format"))
+			else if (nodeName.equals("format"))
 				format = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("albumart"))
+			else if (nodeName.equals("albumart"))
 				coverArt = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("genre"))
+			else if (nodeName.equals("genre"))
 				genre = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("duration"))
+			else if (nodeName.equals("duration"))
 				duration = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("disk"))
+			else if (nodeName.equals("disk"))
 				diskStr = node.getFirstChild().getNodeValue();
-			else if (node.getNodeName().equalsIgnoreCase("disktotal"))
+			else if (nodeName.equals("disktotal"))
 				diskCountStr = node.getFirstChild().getNodeValue();
+			else if (nodeName.equals("tags"))
+				tagNode = node;
 		}
 		URL url;
 		try {
@@ -279,6 +288,10 @@ public abstract class BaseEMusicMetafile extends AbstractMetafile {
 				artist);
 		downloaders.add(dl);
 		dl.setGenre(genre);
+		if (tagNode != null) {
+			ITagData tagData = tagMaker.getData(tagNode, format);
+			dl.setTag(tagData);
+		}
 		if (expiry != null)
 			dl.setExpiry(expiry);
 		try {

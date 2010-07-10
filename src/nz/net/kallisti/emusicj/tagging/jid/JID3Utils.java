@@ -17,6 +17,7 @@ import org.blinkenlights.jid3.v2.TCOMTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCONTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TCOPTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TDATTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TEXTTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TIMETextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TIT1TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TIT2TextInformationID3V2Frame;
@@ -25,6 +26,7 @@ import org.blinkenlights.jid3.v2.TPE1TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPE2TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPE3TextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TPOSTextInformationID3V2Frame;
+import org.blinkenlights.jid3.v2.TPUBTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TRCKTextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TRDATextInformationID3V2Frame;
 import org.blinkenlights.jid3.v2.TSRCTextInformationID3V2Frame;
@@ -66,6 +68,8 @@ public class JID3Utils {
 	public static final String ID3_RECORDING_DATE = "TDAT"; // these two
 	public static final String ID3_RECORDING_YEAR = "TYER";
 	public static final String ID3_RECORDING_TIME = "TIME";
+	public static final String ID3_LYRICIST = "TEXT";
+	public static final String ID3_PUBLISHER = "TPUB";
 
 	private final Provider<ISimpleDownloader> dlProv;
 	private final Logger logger;
@@ -187,6 +191,10 @@ public class JID3Utils {
 			} catch (NumberFormatException e) {
 				return null;
 			}
+		} else if (type.equals(ID3_PUBLISHER)) {
+			return new TPUBTextInformationID3V2Frame(values.get(0));
+		} else if (type.equals(ID3_LYRICIST)) {
+			return new TEXTTextInformationID3V2Frame(values.get(0));
 		}
 		throw new ID3Exception("An unknown type was specified: '" + type + "'");
 	}
