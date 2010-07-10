@@ -37,13 +37,13 @@
     <opt>-Denv.http_proxy_enabled=%HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\ProxyEnable%</opt>
   </jre>
   <versionInfo>
-    <fileVersion>0.22.0.0</fileVersion>
-    <txtFileVersion>0.22</txtFileVersion>
-    <fileDescription>eMusic/J (Naxos variant)</fileDescription>
-    <copyright>Robin Sheat, 2007</copyright>
-    <productVersion>0.22.0.0</productVersion>
-    <txtProductVersion>0.22-naxos-svn</txtProductVersion>
-    <productName>eMusic/J (Naxos variant)</productName>
+    <fileVersion>0.26.0.0</fileVersion>
+    <txtFileVersion>0.26</txtFileVersion>
+    <fileDescription>eMusic/J</fileDescription>
+    <copyright>Robin Sheat, 2010</copyright>
+    <productVersion>0.26.0.0</productVersion>
+    <txtProductVersion>0.26</txtProductVersion>
+    <productName>eMusic/J</productName>
     <companyName></companyName>
     <internalName>emusicj</internalName>
     <originalFilename>emusicj.exe</originalFilename>

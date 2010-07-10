@@ -88,7 +88,7 @@ public class EmusicjStrings extends AbstractStrings {
 	}
 
 	public String getVersion() {
-		return "0.25-svn";
+		return "0.26";
 	}
 
 }

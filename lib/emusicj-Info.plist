@@ -11,7 +11,6 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>col</string>
 				<string>emp</string>
 				<string>emx</string>
 			</array>
@@ -36,7 +35,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.22</string>
+	<string>0.26</string>
 	<key>Java</key>
 	<dict>
 		<key>ClassPath</key>
