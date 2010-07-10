@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding="UTF-8"?>
+  <PACKAGE>
+    <ACTION>download</ACTION>
+<!--    <EXP_DATE>03/09/2010 05:34</EXP_DATE> -->
+
+    <PROVIDER>
+      <AUTHOR>Passionato</AUTHOR>
+      <NAME>Passionato</NAME>
+      <URL>http://www.passionato.com</URL>
+      <COPYRIGHT>Portions Copyright (C) 2004-2008 passionato.com Inc; see http://www.passionato.com for more details</COPYRIGHT>
+      <CONTACT>support@passionato.com</CONTACT>
+    </PROVIDER>
+
+    <TRACKLIST>
+      <TRACK>
+        <TRACKID>10001</TRACKID>
+        <TRACKURL>http://www.kallisti.net.nz/~robin/5%20Christmas%20at%20Our%20House.mp3</TRACKURL>
+        <TRACKNUM>1</TRACKNUM>
+        <TRACKCOUNT>3</TRACKCOUNT>
+        <DISCNUM>1</DISCNUM>
+        <DISCCOUNT>1</DISCCOUNT>
+        <TITLE>Test Title 1</TITLE>
+        <ALBUM>Test Album</ALBUM>
+        <ALBUMID>20001</ALBUMID>
+        <ALBUMURL>http://www.passionato.com/pathtoalbum</ALBUMURL>
+        <ARTIST>Test Artist</ARTIST>
+        <ARTISTID>30001</ARTISTID>
+        <ARTISTURL>http://www.passionato.com/pathtoartist</ARTISTURL>
+        <GENRE>Rock/Pop</GENRE>
+        <GENREID>277</GENREID>
+        <GENREURL>http://www.passionato.com/linktogenre</GENREURL>
+        <LABEL>Test Label</LABEL>
+        <LABELID>40001</LABELID>
+        <LABELURL>http://www.passionato.com/linktolabel</LABELURL>
+        <EXTENSION>.mp3</EXTENSION>
+        <MIMETYPE>audio/mpeg</MIMETYPE>
+        <DURATION>210</DURATION>
+        <ALBUMART>http://www.passionato.com/linktoart/155x155.jpg</ALBUMART>
+        <ALBUMARTLARGE>http://www.passionato.com/600x600.jpg</ALBUMARTLARGE>
+        <STYLES>285:Pop,401:Dance,301:Indie Rock,316:Electronic Experimental</STYLES>
+      </TRACK>
+
+      <TRACK>
+        <TRACKID>10002</TRACKID>
+        <TRACKURL>http://www.kallisti.net.nz/~robin/5%20Christmas%20at%20Our%20House.mp3</TRACKURL>
+        <TRACKNUM>2</TRACKNUM>
+        <TRACKCOUNT>3</TRACKCOUNT>
+        <DISCNUM>1</DISCNUM>
+        <DISCCOUNT>1</DISCCOUNT>
+        <TITLE>Test Title 2</TITLE>
+        <ALBUM>Test Album</ALBUM>
+        <ALBUMID>20001</ALBUMID>
+        <ALBUMURL>http://www.passionato.com/pathtoalbum</ALBUMURL>
+        <ARTIST>Test Artist</ARTIST>
+        <ARTISTID>30001</ARTISTID>
+        <ARTISTURL>http://www.passionato.com/pathtoartist</ARTISTURL>
+        <GENRE>Rock/Pop</GENRE>
+        <GENREID>277</GENREID>
+        <GENREURL>http://www.passionato.com/linktogenre</GENREURL>
+        <LABEL>Test Label</LABEL>
+        <LABELID>40001</LABELID>
+        <LABELURL>http://www.passionato.com/linktolabel</LABELURL>
+        <EXTENSION>.mp3</EXTENSION>
+        <MIMETYPE>audio/mpeg</MIMETYPE>
+        <DURATION>210</DURATION>
+        <ALBUMART>http://www.passionato.com/linktoart/155x155.jpg</ALBUMART>
+        <ALBUMARTLARGE>http://www.passionato.com/600x600.jpg</ALBUMARTLARGE>
+        <STYLES>285:Pop,401:Dance,301:Indie Rock,316:Electronic Experimental</STYLES>
+      </TRACK>
+      <TRACK>
+        <TRACKID>10003</TRACKID>
+        <TRACKURL>http://www.kallisti.net.nz/~robin/5%20Christmas%20at%20Our%20House.mp3</TRACKURL>
+        <TRACKNUM>3</TRACKNUM>
+        <TRACKCOUNT>3</TRACKCOUNT>
+        <DISCNUM>1</DISCNUM>
+        <DISCCOUNT>1</DISCCOUNT>
+        <TITLE>Test Title 3</TITLE>
+        <ALBUM>Test Album</ALBUM>
+        <ALBUMID>20001</ALBUMID>
+        <ALBUMURL>http://www.passionato.com/pathtoalbum</ALBUMURL>
+        <ARTIST>Test Artist</ARTIST>
+        <ARTISTID>30001</ARTISTID>
+        <ARTISTURL>http://www.passionato.com/pathtoartist</ARTISTURL>
+        <GENRE>Rock/Pop</GENRE>
+        <GENREID>277</GENREID>
+        <GENREURL>http://www.passionato.com/linktogenre</GENREURL>
+        <LABEL>Test Label</LABEL>
+        <LABELID>40001</LABELID>
+        <LABELURL>http://www.passionato.com/linktolabel</LABELURL>
+        <EXTENSION>.mp3</EXTENSION>
+        <MIMETYPE>audio/mpeg</MIMETYPE>
+        <DURATION>210</DURATION>
+        <ALBUMART>http://www.passionato.com/linktoart/155x155.jpg</ALBUMART>
+        <ALBUMARTLARGE>http://www.passionato.com/600x600.jpg</ALBUMARTLARGE>
+        <STYLES>285:Pop,401:Dance,301:Indie Rock,316:Electronic Experimental</STYLES>
+      </TRACK>
+
+    </TRACKLIST>
+  </PACKAGE>
