@@ -33,6 +33,7 @@ import nz.net.kallisti.emusicj.misc.LogUtils;
 import nz.net.kallisti.emusicj.view.SWTUtils;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -121,6 +122,13 @@ public class FileInfoPanel extends Composite implements DisposeListener {
 								"An error occurred loading the image: "
 										+ ddl.getImageFile().toString(), e);
 						im = null;
+					} catch (SWTError e) {
+						// This seems to trigger in some cases in Windows 7, it
+						// seems to be related to the size of the image: too big
+						// and it blows up.
+						logger.log(Level.WARNING,
+								"A serious error occurred loading the image: "
+										+ ddl.getImageFile().toString(), e);
 					}
 				}
 				imageLabel.setImage(im);
