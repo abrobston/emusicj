@@ -9,3 +9,9 @@ More recent addendum: this missing call appears to be fixed in the NSIS package
 distributed with Ubuntu 9.04, so copying it over is not necessary any more.
 
  --Robin, 22/5/2009
+
+The NSIS version in Lucid has a bug that causes it to sometimes spit out
+corrupted installers. If you find this is happening, you may need to downgrade
+the NSIS version used.
+
+ --Robin, 25/8/2010
