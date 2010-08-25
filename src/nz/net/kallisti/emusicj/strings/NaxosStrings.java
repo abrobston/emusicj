@@ -57,7 +57,7 @@ public class NaxosStrings extends AbstractStrings {
 	public String getAboutBoxText() {
 		return "ClassicsOnline Download Manager "
 				+ getVersion()
-				+ ", Copyright (C) 2006-2009 Robin Sheat <robin@kallisti.net.nz>\n\n"
+				+ ", Copyright (C) 2006-2010 Robin Sheat <robin@kallisti.net.nz>\n\n"
 				+
 
 				"The ClassicsOnline Download Manager comes with ABSOLUTELY NO WARRANTY. "
@@ -79,7 +79,7 @@ public class NaxosStrings extends AbstractStrings {
 	public String getVersion() {
 		// Due to using the IncreasingVersionUpdateChecker, this number must be
 		// of the form x[.y[.z]]
-		return "2.1.0";
+		return "2.1.1";
 	}
 
 	@Override
