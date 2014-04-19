@@ -53,7 +53,10 @@ InstallDirRegKey HKLM "Software\Passionato_DLM" "Install_Dir"
 ; Java Stuff
 !define JRE_VERSION "1.5"
 !define JRE_VERSION2 "1.6"
-!define JRE_URL "http://dlc.sun.com/jdk/jre-1_5_0_01-windows-i586-p.exe"
+!define JRE_VERSION3 "1.7"
+!define JRE_VERSION4 "1.8"
+!define JRE_VERSION5 "1.9"
+!define JRE_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=86895&/jre-7u55-windows-i586.exe"
 
 ;--------------------------------
 ; The stuff to install
@@ -188,7 +191,7 @@ SectionEnd
 ;--------------------------------
 ; Functions
 Function GetJRE
-        MessageBox MB_OK "The Passionato Download Manager uses Java 1.5, it will now \
+        MessageBox MB_OK "The Passionato Download Manager requires Java 1.5 or above, it will now \
                          be downloaded and installed"
  
         StrCpy $2 "$TEMP\Java Runtime Environment.exe"
@@ -207,6 +210,9 @@ Function DetectJRE
              "CurrentVersion"
   StrCmp $2 ${JRE_VERSION} done
   StrCmp $2 ${JRE_VERSION2} done
+  StrCmp $2 ${JRE_VERSION3} done
+  StrCmp $2 ${JRE_VERSION4} done
+  StrCmp $2 ${JRE_VERSION5} done
   
   Call GetJRE
   
